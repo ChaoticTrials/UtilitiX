@@ -1,0 +1,16 @@
+buildscript {
+    apply from: 'https://raw.githubusercontent.com/noeppi-noeppi/ModUtils/master/buildscript.gradle', to: buildscript
+}
+
+apply from: 'https://raw.githubusercontent.com/noeppi-noeppi/ModUtils/master/mod.gradle'
+
+repositories {
+    maven {
+        name = "JEI"
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
+}
+
+dependencies {
+    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
+}
