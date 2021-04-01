@@ -9,8 +9,16 @@ repositories {
         name = "JEI"
         url = "https://dvs1.progwml6.com/files/maven/"
     }
+    maven {
+        name = "LibX"
+        url = "https://maven.melanx.de/"
+    }
 }
 
 dependencies {
-    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
+    annotationProcessor fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.16.3-1.0.27")
+    compile fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.16.3-1.0.27")
+
+    runtimeOnly fg.deobf("mezz.jei:jei-1.16.3:7.6.0.51")
+    runtimeOnly fg.deobf("de.melanx.recipeprinter:recipeprinter-1.16.3:2.0.4")
 }

@@ -11,7 +11,8 @@ assignees: 'MelanX'
 <!-- Versions used for the bug -->
 Minecraft: 
 Forge: 
-Mod: 
+LibX: 
+UtilitX: 
 Modpack: 
 <!-- Do not forget the name of the modpack -->
 
