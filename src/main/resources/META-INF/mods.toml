@@ -6,12 +6,12 @@ issueTrackerURL = "http://www.github.com/MelanX/UtilitiX/issues/"
 [[mods]]
 modId = "utilitix"
 version = "${file.jarVersion}"
-displayName = "Mod ID"
+displayName = "UtilitiX"
 updateJSONURL = "https://raw.githubusercontent.com/MelanX/mod-updatechecker-files/master/utilitix.json"
 displayURL = "www.curseforge.com/members/melanx/"
 #logoFile="utilitix.png"
 credits = ""
-authors = "MelanX"
+authors = "MelanX, noeppi_noeppi"
 description = '''
 
 '''

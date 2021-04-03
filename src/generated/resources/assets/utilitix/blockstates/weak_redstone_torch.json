@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "utilitix:block/weak_redstone_torch"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "itemGroup.utilitix": "UtilitiX",
+
+  "block.utilitix.weak_redstone_torch": "Weak Redstone Torch",
+
+  "item.utilitix.hand_bell": "Hand Bell",
+  "item.utilitix.mob_bell": "Mob Bell",
+  "item.utilitix.tiny_coal": "Tiny Coal",
+  "item.utilitix.tiny_charcoal": "Tiny Charcoal",
+
+  "tooltip.utilitix.blacklisted_mob": "This mob is on blacklist",
+  "tooltip.utilitix.current_mob": "Current Mob",
+  "tooltip.utilitix.no_mob": "Shift-rightclick a mob to bind the bell"
+}

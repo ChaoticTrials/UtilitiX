@@ -1,0 +1,12 @@
+{
+  "category": "UtilitiX",
+  "name": "DinkDonk",
+  "url": "https://cdn.betterttv.net/emote/5f898862473f4802fe4703a6/3x.gif",
+  "type": "emojiful:emoji_recipe",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "emojiful"
+    }
+  ]
+}
