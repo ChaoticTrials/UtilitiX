@@ -1,9 +1,11 @@
 package de.melanx.utilitix.item.bells;
 
 import de.melanx.utilitix.UtilitiXConfig;
+import de.melanx.utilitix.registration.ModEnchantments;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import io.github.noeppi_noeppi.libx.mod.registration.ItemBase;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -37,7 +39,7 @@ public abstract class BellBase extends ItemBase {
     @Override
     public void onUsingTick(ItemStack stack, LivingEntity entity, int count) {
         if (count % 4 == 0) {
-            boolean ringed = this.dinkDonk(entity);
+            boolean ringed = this.dinkDonk(entity, stack);
             if (ringed && entity instanceof PlayerEntity) {
                 ((PlayerEntity) entity).addStat(Stats.BELL_RING);
             }
@@ -52,7 +54,8 @@ public abstract class BellBase extends ItemBase {
     @Nonnull
     @Override
     public ItemStack onItemUseFinish(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull LivingEntity entity) {
-        List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, new AxisAlignedBB(entity.getPosX() - UtilitiXConfig.HandBells.glowRadius, entity.getPosY() - UtilitiXConfig.HandBells.glowRadius, entity.getPosZ() - UtilitiXConfig.HandBells.glowRadius, entity.getPosX() + UtilitiXConfig.HandBells.glowRadius, entity.getPosY() + UtilitiXConfig.HandBells.glowRadius, entity.getPosZ() + UtilitiXConfig.HandBells.glowRadius), livingEntity -> this.entityFilter(livingEntity, stack));
+        double range = UtilitiXConfig.HandBells.glowRadius * (1 + EnchantmentHelper.getEnchantmentLevel(ModEnchantments.bellRange, stack) * 0.25D);
+        List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, new AxisAlignedBB(entity.getPosX() - range, entity.getPosY() - range, entity.getPosZ() - range, entity.getPosX() + range, entity.getPosY() + range, entity.getPosZ() + range), livingEntity -> this.entityFilter(livingEntity, stack));
         entities.forEach(e -> {
             e.addPotionEffect(new EffectInstance(Effects.GLOWING, UtilitiXConfig.HandBells.glowTime));
         });
@@ -73,12 +76,13 @@ public abstract class BellBase extends ItemBase {
         return UseAction.BLOCK;
     }
 
-    public boolean dinkDonk(LivingEntity entity) {
+    public boolean dinkDonk(LivingEntity entity, ItemStack stack) {
         World world = entity.getEntityWorld();
         BlockPos pos = entity.getPosition();
 
         if (!world.isRemote && this.notifyNearbyEntities()) {
-            List<LivingEntity> entities = entity.getEntityWorld().getEntitiesWithinAABB(LivingEntity.class, new AxisAlignedBB(entity.getPosX() - UtilitiXConfig.HandBells.notifyRadius, entity.getPosY() - UtilitiXConfig.HandBells.notifyRadius, entity.getPosZ() - UtilitiXConfig.HandBells.notifyRadius, entity.getPosX() + UtilitiXConfig.HandBells.notifyRadius, entity.getPosY() + UtilitiXConfig.HandBells.notifyRadius, entity.getPosZ() + UtilitiXConfig.HandBells.notifyRadius));
+            double range = UtilitiXConfig.HandBells.notifyRadius * (1 + EnchantmentHelper.getEnchantmentLevel(ModEnchantments.bellRange, stack) * 0.25D);
+            List<LivingEntity> entities = entity.getEntityWorld().getEntitiesWithinAABB(LivingEntity.class, new AxisAlignedBB(entity.getPosX() - range, entity.getPosY() - range, entity.getPosZ() - range, entity.getPosX() + range, entity.getPosY() + range, entity.getPosZ() + range));
             for (LivingEntity e : entities) {
                 e.getBrain().setMemory(MemoryModuleType.HEARD_BELL_TIME, world.getGameTime());
             }

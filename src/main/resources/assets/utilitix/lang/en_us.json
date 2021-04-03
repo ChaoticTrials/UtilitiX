@@ -3,6 +3,9 @@
 
   "block.utilitix.weak_redstone_torch": "Weak Redstone Torch",
 
+  "enchantment.utilitix.bell_range": "Bell Range",
+  "enchantment.utilitix.bell_range.desc": "Increases the notify and glow range of UtilitX bells.",
+
   "item.utilitix.hand_bell": "Hand Bell",
   "item.utilitix.mob_bell": "Mob Bell",
   "item.utilitix.tiny_coal": "Tiny Coal",
