@@ -1,19 +1,14 @@
 package de.melanx.utilitix.item.bells;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.UtilitiXConfig;
 import io.github.noeppi_noeppi.libx.mod.ModX;
-import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SpawnEggItem;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
@@ -32,33 +27,9 @@ import java.util.Optional;
 public class MobBell extends BellBase {
 
     private static final IFormattableTextComponent NO_MOB = new TranslationTextComponent("tooltip." + UtilitiX.getInstance().modid + ".no_mob").mergeStyle(TextFormatting.DARK_RED);
-    private static final IFormattableTextComponent BLACKLISTED_MOB = new TranslationTextComponent("tooltip." + UtilitiX.getInstance().modid + ".blacklisted_mob").mergeStyle(TextFormatting.DARK_RED);
 
     public MobBell(ModX mod, Item.Properties properties) {
         super(mod, properties.setISTER(() -> RenderHandBell::new));
-    }
-
-    @Nonnull
-    @Override
-    public ActionResultType itemInteractionForEntity(@Nonnull ItemStack stack, @Nonnull PlayerEntity player, @Nonnull LivingEntity target, @Nonnull Hand hand) {
-        if (target.getEntityWorld().isRemote || !target.isAlive() || !player.isSneaking()) {
-            return super.itemInteractionForEntity(stack, player, target, hand);
-        }
-
-        ResourceLocation entityKey = EntityType.getKey(target.getType());
-        if (entityKey.toString().equals(stack.getOrCreateTag().getString("Entity"))) {
-            return ActionResultType.FAIL;
-        }
-
-        if (UtilitiXConfig.HandBells.blacklist.contains(entityKey)) {
-            player.sendStatusMessage(BLACKLISTED_MOB, true);
-            return ActionResultType.FAIL;
-        }
-
-        stack.getOrCreateTag().putString("Entity", entityKey.toString());
-        player.setHeldItem(hand, stack);
-        player.sendStatusMessage(getCurrentMob(stack, target.getType()), true);
-        return ActionResultType.SUCCESS;
     }
 
     @Override
@@ -86,15 +57,15 @@ public class MobBell extends BellBase {
     }
 
     @Nullable
-    private static IFormattableTextComponent getCurrentMob(ItemStack stack) {
+    public static IFormattableTextComponent getCurrentMob(ItemStack stack) {
         String s = stack.getOrCreateTag().getString("Entity");
         Optional<EntityType<?>> entityType = EntityType.byKey(s);
 
-        return entityType.map(type -> getCurrentMob(stack, type)).orElse(null);
+        return entityType.map(MobBell::getCurrentMob).orElse(null);
     }
 
     @Nonnull
-    private static IFormattableTextComponent getCurrentMob(ItemStack stack, EntityType<?> entityType) {
+    public static IFormattableTextComponent getCurrentMob(EntityType<?> entityType) {
         ITextComponent name = entityType.getName();
         IFormattableTextComponent component = new TranslationTextComponent("tooltip." + UtilitiX.getInstance().modid + ".current_mob");
         component.mergeStyle(entityType.getClassification() == EntityClassification.MONSTER ? TextFormatting.RED : TextFormatting.GOLD);
