@@ -96,8 +96,9 @@ public abstract class BellBase extends ItemBase {
         }
     }
 
-    abstract boolean entityFilter(LivingEntity entity, ItemStack stack);
-    abstract boolean notifyNearbyEntities();
+    protected abstract boolean entityFilter(LivingEntity entity, ItemStack stack);
+
+    protected abstract boolean notifyNearbyEntities();
 
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flag) {

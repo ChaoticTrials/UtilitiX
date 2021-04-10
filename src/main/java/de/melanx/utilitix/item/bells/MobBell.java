@@ -3,6 +3,7 @@ package de.melanx.utilitix.item.bells;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.UtilitiXConfig;
 import io.github.noeppi_noeppi.libx.mod.ModX;
+import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -10,6 +11,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.SpawnEggItem;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -18,10 +20,13 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class MobBell extends BellBase {
@@ -30,7 +35,7 @@ public class MobBell extends BellBase {
     private static final IFormattableTextComponent BLACKLISTED_MOB = new TranslationTextComponent("tooltip." + UtilitiX.getInstance().modid + ".blacklisted_mob").mergeStyle(TextFormatting.DARK_RED);
 
     public MobBell(ModX mod, Item.Properties properties) {
-        super(mod, properties);
+        super(mod, properties.setISTER(() -> RenderHandBell::new));
     }
 
     @Nonnull
@@ -41,7 +46,7 @@ public class MobBell extends BellBase {
         }
 
         ResourceLocation entityKey = EntityType.getKey(target.getType());
-        if (entityKey.toString().equals(stack.getOrCreateTag().getString("entity"))) {
+        if (entityKey.toString().equals(stack.getOrCreateTag().getString("Entity"))) {
             return ActionResultType.FAIL;
         }
 
@@ -50,28 +55,26 @@ public class MobBell extends BellBase {
             return ActionResultType.FAIL;
         }
 
-        stack.getOrCreateTag().putString("entity", entityKey.toString());
+        stack.getOrCreateTag().putString("Entity", entityKey.toString());
         player.setHeldItem(hand, stack);
         player.sendStatusMessage(getCurrentMob(stack, target.getType()), true);
         return ActionResultType.SUCCESS;
     }
 
     @Override
-    boolean entityFilter(LivingEntity entity, ItemStack stack) {
+    protected boolean entityFilter(LivingEntity entity, ItemStack stack) {
         if (!stack.hasTag()) {
             return false;
         }
-
-        if (!stack.getOrCreateTag().contains("entity")) {
+        if (!stack.getOrCreateTag().contains("Entity")) {
             return false;
         }
-
-        String s = stack.getOrCreateTag().getString("entity");
-        return EntityType.getKey(entity.getType()).toString().equals(s);
+        String s = stack.getOrCreateTag().getString("Entity");
+        return EntityType.getKey(entity.getType()).equals(ResourceLocation.tryCreate(s));
     }
 
     @Override
-    boolean notifyNearbyEntities() {
+    protected boolean notifyNearbyEntities() {
         return false;
     }
 
@@ -84,7 +87,7 @@ public class MobBell extends BellBase {
 
     @Nullable
     private static IFormattableTextComponent getCurrentMob(ItemStack stack) {
-        String s = stack.getOrCreateTag().getString("entity");
+        String s = stack.getOrCreateTag().getString("Entity");
         Optional<EntityType<?>> entityType = EntityType.byKey(s);
 
         return entityType.map(type -> getCurrentMob(stack, type)).orElse(null);
@@ -97,5 +100,25 @@ public class MobBell extends BellBase {
         component.mergeStyle(entityType.getClassification() == EntityClassification.MONSTER ? TextFormatting.RED : TextFormatting.GOLD);
 
         return component.appendString(": ").append(name);
+    }
+    
+    public static int getColor(ItemStack stack) {
+        if (stack.getTag() != null && stack.getTag().contains("Entity", Constants.NBT.TAG_STRING)) {
+            ResourceLocation rl = ResourceLocation.tryCreate(stack.getTag().getString("Entity"));
+            EntityType<?> entityType = rl == null ? null : ForgeRegistries.ENTITIES.getValue(rl);
+            SpawnEggItem egg = entityType == null ? null : SpawnEggItem.getEgg(entityType);
+            if (egg != null) {
+                return Objects.requireNonNull(egg).getColor(0);
+            }
+        }
+        return 0xFFFFFF;
+    }
+    
+    public static float[] getFloatColor(ItemStack stack) {
+        int color = getColor(stack);
+        float r = ((color >> 16) & 0xFF) / 255f;
+        float g = ((color >> 8) & 0xFF) / 255f;
+        float b = (color & 0xFF) / 255f;
+        return new float[]{ r, g, b };
     }
 }

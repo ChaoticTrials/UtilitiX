@@ -13,12 +13,12 @@ public class HandBell extends BellBase {
     }
 
     @Override
-    boolean entityFilter(LivingEntity entity, ItemStack stack) {
+    protected boolean entityFilter(LivingEntity entity, ItemStack stack) {
         return entity.isAlive() && entity.getType().isContained(EntityTypeTags.RAIDERS);
     }
 
     @Override
-    boolean notifyNearbyEntities() {
+    protected boolean notifyNearbyEntities() {
         return true;
     }
 }
