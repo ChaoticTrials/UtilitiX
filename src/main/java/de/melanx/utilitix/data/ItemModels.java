@@ -17,6 +17,7 @@ public class ItemModels extends ItemModelProviderBase {
     @Override
     protected void setup() {
         this.manualModel(ModItems.weakRedstoneTorch);
+        this.manualModel(ModItems.mobBell);
         //noinspection ConstantConditions
         this.itemModelFromBlock(ModItems.weakRedstoneTorch.getRegistryName());
     }

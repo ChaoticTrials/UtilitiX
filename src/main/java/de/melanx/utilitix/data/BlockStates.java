@@ -25,14 +25,14 @@ public class BlockStates extends BlockStateProviderBase {
         this.torchWall(ModBlocks.weakRedstoneWallTorch);
     }
 
-    private void torch(Block b) {
+    private void torch(@SuppressWarnings("SameParameterValue") Block b) {
         //noinspection ConstantConditions
         String name = b.getRegistryName().getPath();
         this.manualModel(b);
         this.models().torch(name, new ResourceLocation(UtilitiX.getInstance().modid, "block/" + name));
     }
 
-    private void torchWall(Block b) {
+    private void torchWall(@SuppressWarnings("SameParameterValue") Block b) {
         //noinspection ConstantConditions
         String name = b.getRegistryName().getPath();
         this.manualModel(b);
