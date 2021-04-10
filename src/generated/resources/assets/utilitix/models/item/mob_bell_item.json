@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "utilitix:item/hand_bell"
+    "layer0": "utilitix:item/mob_bell_item"
   }
 }

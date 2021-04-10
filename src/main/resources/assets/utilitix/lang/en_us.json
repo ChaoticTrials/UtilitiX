@@ -8,8 +8,11 @@
 
   "item.utilitix.hand_bell": "Hand Bell",
   "item.utilitix.mob_bell": "Mob Bell",
+  "item.utilitix.quiver": "Quiver",
   "item.utilitix.tiny_coal": "Tiny Coal",
   "item.utilitix.tiny_charcoal": "Tiny Charcoal",
+
+  "screen.utilitix.quiver": "Quiver",
 
   "tooltip.utilitix.blacklisted_mob": "This mob is on blacklist",
   "tooltip.utilitix.current_mob": "Current Mob",

@@ -80,11 +80,13 @@ public abstract class BellBase extends ItemBase {
         World world = entity.getEntityWorld();
         BlockPos pos = entity.getPosition();
 
-        if (!world.isRemote && this.notifyNearbyEntities()) {
-            double range = UtilitiXConfig.HandBells.notifyRadius * (1 + EnchantmentHelper.getEnchantmentLevel(ModEnchantments.bellRange, stack) * 0.25D);
-            List<LivingEntity> entities = entity.getEntityWorld().getEntitiesWithinAABB(LivingEntity.class, new AxisAlignedBB(entity.getPosX() - range, entity.getPosY() - range, entity.getPosZ() - range, entity.getPosX() + range, entity.getPosY() + range, entity.getPosZ() + range));
-            for (LivingEntity e : entities) {
-                e.getBrain().setMemory(MemoryModuleType.HEARD_BELL_TIME, world.getGameTime());
+        if (!world.isRemote) {
+            if (this.notifyNearbyEntities()) {
+                double range = UtilitiXConfig.HandBells.notifyRadius * (1 + EnchantmentHelper.getEnchantmentLevel(ModEnchantments.bellRange, stack) * 0.25D);
+                List<LivingEntity> entities = entity.getEntityWorld().getEntitiesWithinAABB(LivingEntity.class, new AxisAlignedBB(entity.getPosX() - range, entity.getPosY() - range, entity.getPosZ() - range, entity.getPosX() + range, entity.getPosY() + range, entity.getPosZ() + range));
+                for (LivingEntity e : entities) {
+                    e.getBrain().setMemory(MemoryModuleType.HEARD_BELL_TIME, world.getGameTime());
+                }
             }
 
             world.playSound(null, pos, SoundEvents.BLOCK_BELL_USE, SoundCategory.BLOCKS, 2.0F, 1.0F);
