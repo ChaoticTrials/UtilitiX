@@ -6,9 +6,9 @@ import io.github.noeppi_noeppi.libx.data.provider.BlockStateProviderBase;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
-public class BlockStates extends BlockStateProviderBase {
-    
-    public BlockStates(DataGenerator generator, ExistingFileHelper fileHelper) {
+public class BlockStateProvider extends BlockStateProviderBase {
+
+    public BlockStateProvider(DataGenerator generator, ExistingFileHelper fileHelper) {
         super(UtilitiX.getInstance(), generator, fileHelper);
     }
 
