@@ -70,7 +70,7 @@ public class MobBell extends BellBase {
         IFormattableTextComponent component = new TranslationTextComponent("tooltip." + UtilitiX.getInstance().modid + ".current_mob");
         component.mergeStyle(entityType.getClassification() == EntityClassification.MONSTER ? TextFormatting.RED : TextFormatting.GOLD);
 
-        return component.appendString(": ").append(name);
+        return component.appendString(": ").appendSibling(name);
     }
     
     public static int getColor(ItemStack stack) {

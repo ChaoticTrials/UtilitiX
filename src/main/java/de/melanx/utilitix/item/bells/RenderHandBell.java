@@ -3,7 +3,6 @@ package de.melanx.utilitix.item.bells;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import de.melanx.utilitix.Textures;
-import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.registration.ModItems;
 import io.github.noeppi_noeppi.libx.annotation.Model;
 import net.minecraft.block.Blocks;
@@ -19,23 +18,17 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.SpawnEggItem;
 import net.minecraft.tileentity.BellTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.LazyValue;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3f;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
 
 public class RenderHandBell extends ItemStackTileEntityRenderer {
     
@@ -64,7 +57,7 @@ public class RenderHandBell extends ItemStackTileEntityRenderer {
     }
 
     @Override
-    public void func_239207_a_(@Nonnull ItemStack stack, @Nonnull ItemCameraTransforms.TransformType transform, @Nonnull MatrixStack matrixStack, @Nonnull IRenderTypeBuffer buffer, int light, int overlay) {
+    public void render(@Nonnull ItemStack stack, @Nonnull ItemCameraTransforms.TransformType transform, @Nonnull MatrixStack matrixStack, @Nonnull IRenderTypeBuffer buffer, int light, int overlay) {
         Minecraft mc = Minecraft.getInstance();
         IVertexBuilder vertex = buffer.getBuffer(RenderType.getCutout());
         if (transform == ItemCameraTransforms.TransformType.GUI) {
