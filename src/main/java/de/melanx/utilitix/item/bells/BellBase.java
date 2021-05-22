@@ -56,9 +56,7 @@ public abstract class BellBase extends ItemBase {
     public ItemStack onItemUseFinish(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull LivingEntity entity) {
         double range = UtilitiXConfig.HandBells.glowRadius * (1 + EnchantmentHelper.getEnchantmentLevel(ModEnchantments.bellRange, stack) * 0.25D);
         List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, new AxisAlignedBB(entity.getPosX() - range, entity.getPosY() - range, entity.getPosZ() - range, entity.getPosX() + range, entity.getPosY() + range, entity.getPosZ() + range), livingEntity -> this.entityFilter(livingEntity, stack));
-        entities.forEach(e -> {
-            e.addPotionEffect(new EffectInstance(Effects.GLOWING, UtilitiXConfig.HandBells.glowTime));
-        });
+        entities.forEach(e -> e.addPotionEffect(new EffectInstance(Effects.GLOWING, UtilitiXConfig.HandBells.glowTime)));
 
         return super.onItemUseFinish(stack, world, entity);
     }

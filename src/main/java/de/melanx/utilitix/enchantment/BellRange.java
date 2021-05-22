@@ -6,6 +6,7 @@ import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;
 
 public class BellRange extends Enchantment {
+    
     public BellRange() {
         super(Rarity.UNCOMMON, EnchantmentType.create("bell", item -> item instanceof BellBase), new EquipmentSlotType[]{EquipmentSlotType.MAINHAND, EquipmentSlotType.OFFHAND});
     }

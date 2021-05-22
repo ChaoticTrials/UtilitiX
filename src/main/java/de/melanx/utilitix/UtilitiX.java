@@ -1,11 +1,8 @@
 package de.melanx.utilitix;
 
 import de.melanx.utilitix.item.bells.MobBell;
-import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModItems;
 import io.github.noeppi_noeppi.libx.mod.registration.ModXRegistration;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -51,8 +48,7 @@ public class UtilitiX extends ModXRegistration {
 
     @Override
     protected void clientSetup(FMLClientSetupEvent fmlClientSetupEvent) {
-        RenderTypeLookup.setRenderLayer(ModBlocks.weakRedstoneTorch, RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.weakRedstoneWallTorch, RenderType.getCutout());
+        //
     }
 
     @OnlyIn(Dist.CLIENT)

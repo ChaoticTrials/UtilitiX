@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "utilitix:block/weak_redstone_torch_off"
+    },
+    "lit=true": {
+      "model": "utilitix:block/weak_redstone_torch"
+    }
+  }
+}

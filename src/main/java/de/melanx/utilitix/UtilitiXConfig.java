@@ -8,11 +8,12 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 
-@RegisterConfig(value = "common")
+@RegisterConfig("common")
 public class UtilitiXConfig {
 
     @Group("Config values for the two bells, mob bell and hand bell")
     public static class HandBells {
+        
         @Config(value = "Entity blacklist for mob bell", elementType = ResourceLocation.class)
         public static List<ResourceLocation> blacklist = ImmutableList.of();
 
