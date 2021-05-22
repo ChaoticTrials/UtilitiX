@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "utilitix:hand_bell"
+    ]
+  },
+  "criteria": {
+    "has_bell": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:bell"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "utilitix:hand_bell"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_bell",
+      "has_the_recipe"
+    ]
+  ]
+}

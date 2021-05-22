@@ -11,9 +11,9 @@ import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
-public class ItemModels extends ItemModelProviderBase {
-    
-    public ItemModels(DataGenerator generator, ExistingFileHelper helper) {
+public class ItemModelProvider extends ItemModelProviderBase {
+
+    public ItemModelProvider(DataGenerator generator, ExistingFileHelper helper) {
         super(UtilitiX.getInstance(), generator, helper);
     }
 
