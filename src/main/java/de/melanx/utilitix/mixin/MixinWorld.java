@@ -36,7 +36,7 @@ public class MixinWorld {
     public int getNearStrongPower(World world, BlockPos pos) {
         BlockPos posDown = pos.down();
         Block block = world.getBlockState(posDown).getBlock();
-        if (block == ModBlocks.weakRedstoneTorch || block == ModBlocks.weakRedstoneWallTorch) {
+        if (block == ModBlocks.weakRedstoneTorch || block == ModBlocks.weakRedstoneTorch.wallTorch) {
             int power = world.getStrongPower(pos.up(), Direction.UP);
 
             if (power >= 15) {
