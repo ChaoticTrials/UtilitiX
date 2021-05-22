@@ -44,7 +44,7 @@ public class Quiver extends ItemBase implements Registerable {
 
         if (!world.isRemote) {
             AtomicReference<BaseItemStackHandler> handler = new AtomicReference<>(null);
-            handler.set(new BaseItemStackHandler(27,
+            handler.set(new BaseItemStackHandler(9,
                     slot -> {
                         stack.getOrCreateTag().put("Items", handler.get().serializeNBT());
                         player.setHeldItem(hand, stack);

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "utilitix:mob_bell"
+    ]
+  },
+  "criteria": {
+    "has_bell": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "utilitix:hand_bell"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "utilitix:mob_bell"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_bell",
+      "has_the_recipe"
+    ]
+  ]
+}

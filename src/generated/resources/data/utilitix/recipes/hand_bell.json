@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S",
+    "SB"
+  ],
+  "key": {
+    "S": {
+      "tag": "forge:sticks/wooden"
+    },
+    "B": {
+      "item": "minecraft:bell"
+    }
+  },
+  "result": {
+    "item": "utilitix:hand_bell"
+  }
+}
