@@ -54,7 +54,7 @@ public class UtilitiX extends ModXRegistration {
         RenderTypeLookup.setRenderLayer(ModBlocks.weakRedstoneTorch, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.weakRedstoneWallTorch, RenderType.getCutout());
     }
-    
+
     @OnlyIn(Dist.CLIENT)
     private void registerItemColors(ColorHandlerEvent.Item event) {
         event.getItemColors().register((stack, idx) -> idx == 1 ? 0xFF000000 | MobBell.getColor(stack) : 0xFFFFFFFF, ModItems.mobBell);

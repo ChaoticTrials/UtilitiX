@@ -39,7 +39,7 @@ public class Quiver extends ItemBase {
                 handler.get().deserializeNBT(stack.getOrCreateTag().getCompound("Items"));
             }
             player.openContainer(new QuiverContainerProvider(handler.get(), () -> handler.get().onContentsChanged(0)));
-            return ActionResult.func_233538_a_(stack, false);
+            return ActionResult.successOrConsume(stack, false);
         }
 
         return ActionResult.resultPass(stack);
