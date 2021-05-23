@@ -1,17 +1,42 @@
 package de.melanx.utilitix.mixin;
 
+import de.melanx.utilitix.block.ComparatorRedirector;
 import de.melanx.utilitix.registration.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(World.class)
-public class MixinWorld {
+public abstract class MixinWorld {
+    
+    @Inject(
+            method = "Lnet/minecraft/world/World;updateComparatorOutputLevel(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/Block;)V",
+            at = @At("RETURN")
+    )
+    public void updateComparatorOutputLevel(BlockPos pos, Block block, CallbackInfo ci) {
+        if (!(block instanceof ComparatorRedirector)) {
+            BlockState up = ((World) (Object) this).getBlockState(pos.up());
+            if (up.getBlock() instanceof ComparatorRedirector) {
+                ((World) (Object) this).updateComparatorOutputLevel(pos.up(), up.getBlock());
+            }
+            BlockState down = ((World) (Object) this).getBlockState(pos.down());
+            if (down.getBlock() instanceof ComparatorRedirector) {
+                ((World) (Object) this).updateComparatorOutputLevel(pos.down(), down.getBlock());
+            }
+        }
+    }
+    
     @Redirect(
             method = "getRedstonePowerFromNeighbors(Lnet/minecraft/util/math/BlockPos;)I",
             at = @At(
@@ -33,7 +58,8 @@ public class MixinWorld {
         return power;
     }
 
-    public int getNearStrongPower(World world, BlockPos pos) {
+    @Unique
+    private int getNearStrongPower(World world, BlockPos pos) {
         BlockPos posDown = pos.down();
         Block block = world.getBlockState(posDown).getBlock();
         if (block == ModBlocks.weakRedstoneTorch || block == ModBlocks.weakRedstoneTorch.wallTorch) {

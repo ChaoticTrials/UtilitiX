@@ -87,6 +87,40 @@ public class RecipeProvider extends RecipeProviderBase {
                 .key('S', Tags.Items.RODS_WOODEN)
                 .addCriterion("has_redstone", hasItem(Tags.Items.DUSTS_REDSTONE))
                 .build(consumer);
+        
+        ShapedRecipeBuilder.shapedRecipe(ModBlocks.comparatorRedirectorUp)
+                .patternLine("sis")
+                .patternLine("s s")
+                .patternLine("sts")
+                .key('t', Items.REDSTONE_TORCH)
+                .key('s', Tags.Items.COBBLESTONE)
+                .key('i', Tags.Items.INGOTS_IRON)
+                .addCriterion("has_item0", hasItem(Items.REDSTONE_TORCH))
+                .addCriterion("has_item1", hasItem(Tags.Items.COBBLESTONE))
+                .addCriterion("has_item2", hasItem(Tags.Items.INGOTS_IRON))
+                .build(consumer);
+        
+        ShapedRecipeBuilder.shapedRecipe(ModBlocks.comparatorRedirectorDown)
+                .patternLine("sts")
+                .patternLine("s s")
+                .patternLine("sis")
+                .key('t', Items.REDSTONE_TORCH)
+                .key('s', Tags.Items.COBBLESTONE)
+                .key('i', Tags.Items.INGOTS_IRON)
+                .addCriterion("has_item0", hasItem(Items.REDSTONE_TORCH))
+                .addCriterion("has_item1", hasItem(Tags.Items.COBBLESTONE))
+                .addCriterion("has_item2", hasItem(Tags.Items.INGOTS_IRON))
+                .build(consumer);
+        
+        ShapelessRecipeBuilder.shapelessRecipe(ModBlocks.comparatorRedirectorUp)
+                .addIngredient(ModBlocks.comparatorRedirectorDown)
+                .addCriterion("has_item0", hasItem(ModBlocks.comparatorRedirectorDown))
+                .build(consumer, this.loc(ModBlocks.comparatorRedirectorUp, "flip"));
+        
+        ShapelessRecipeBuilder.shapelessRecipe(ModBlocks.comparatorRedirectorDown)
+                .addIngredient(ModBlocks.comparatorRedirectorUp)
+                .addCriterion("has_item0", hasItem(ModBlocks.comparatorRedirectorUp))
+                .build(consumer, this.loc(ModBlocks.comparatorRedirectorDown, "flip"));
     }
     
     private void createBreweryRecipes(Consumer<IFinishedRecipe> consumer) {

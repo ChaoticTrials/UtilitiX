@@ -3,6 +3,8 @@
 
   "block.utilitix.weak_redstone_torch": "Weak Redstone Torch",
   "block.utilitix.advanced_brewery": "Advanced Brewery",
+  "block.utilitix.comparator_redirector_up": "Comparator Redirector: Up",
+  "block.utilitix.comparator_redirector_down": "Comparator Redirector: Down",
 
   "enchantment.utilitix.bell_range": "Bell Range",
   "enchantment.utilitix.bell_range.desc": "Increases the notify and glow range of UtilitX bells.",

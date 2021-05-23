@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "utilitix:comparator_redirector_up"
+    }
+  ],
+  "result": {
+    "item": "utilitix:comparator_redirector_down"
+  }
+}
