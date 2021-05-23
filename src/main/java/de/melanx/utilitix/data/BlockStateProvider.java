@@ -7,7 +7,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class BlockStateProvider extends BlockStateProviderBase {
-    
+
     public BlockStateProvider(DataGenerator generator, ExistingFileHelper fileHelper) {
         super(UtilitiX.getInstance(), generator, fileHelper);
     }
