@@ -4,11 +4,14 @@ import de.melanx.utilitix.item.bells.MobBell;
 import de.melanx.utilitix.registration.ModItems;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Rotations;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -80,4 +83,20 @@ public class EventListener {
 //                    });
 //        }
 //    }
+    
+    @SubscribeEvent
+    public void entityInteract(PlayerInteractEvent.EntityInteractSpecific event) {
+        if (event.getTarget() instanceof ArmorStandEntity && event.getTarget().getPersistentData().getBoolean("UtilitiXArmorStand")) {
+            if (event.getItemStack().getItem() == Items.FLINT && event.getPlayer().isSneaking()) {
+                ArmorStandEntity entity = (ArmorStandEntity) event.getTarget();
+                if (UtilitiXConfig.armorStandPoses.size() >= 2) {
+                    int newIdx = (entity.getPersistentData().getInt("UtilitiXPoseIdx") + 1) % UtilitiXConfig.armorStandPoses.size();
+                    entity.getPersistentData().putInt("UtilitiXPoseIdx", newIdx);
+                    UtilitiXConfig.armorStandPoses.get(newIdx).apply(entity);
+                }
+                event.setCanceled(true);
+                event.setCancellationResult(ActionResultType.SUCCESS);
+            }
+        }
+    }
 }

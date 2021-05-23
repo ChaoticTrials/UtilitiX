@@ -1,10 +1,14 @@
 package de.melanx.utilitix;
 
+import de.melanx.utilitix.config.ArmorStandRotationListMapper;
+import de.melanx.utilitix.config.ArmorStandRotationMapper;
 import de.melanx.utilitix.item.bells.MobBell;
 import de.melanx.utilitix.registration.ModItems;
+import io.github.noeppi_noeppi.libx.config.ConfigManager;
 import io.github.noeppi_noeppi.libx.mod.registration.ModXRegistration;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -32,6 +36,10 @@ public class UtilitiX extends ModXRegistration {
         });
 
         instance = this;
+
+        ConfigManager.registerValueMapper(new ResourceLocation(this.modid, "armor_stand_rotation"), new ArmorStandRotationMapper());
+        ConfigManager.registerValueMapper(new ResourceLocation(this.modid, "armor_stand_rotation_list"), new ArmorStandRotationListMapper());
+        ConfigManager.registerConfig(new ResourceLocation(this.modid, "common"), UtilitiXConfig.class, false);
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerItemColors);

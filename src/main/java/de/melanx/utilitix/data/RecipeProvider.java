@@ -33,6 +33,7 @@ public class RecipeProvider extends RecipeProviderBase {
         this.createTinyCoalRecipe(consumer, Items.COAL, ModItems.tinyCoal);
         this.createTinyCoalRecipe(consumer, Items.CHARCOAL, ModItems.tinyCharcoal);
         this.createBellRecipes(consumer);
+        this.createMiscRecipes(consumer);
         this.createRedstoneRecipes(consumer);
         this.createBreweryRecipes(consumer);
     }
@@ -74,6 +75,19 @@ public class RecipeProvider extends RecipeProviderBase {
                 .key('8', Tags.Items.ENDER_PEARLS)
                 .key('9', Items.ROTTEN_FLESH)
                 .addCriterion("has_bell", hasItem(ModItems.handBell))
+                .build(consumer);
+    }
+    
+    private void createMiscRecipes(Consumer<IFinishedRecipe> consumer) {
+        
+        ShapedRecipeBuilder.shapedRecipe(ModItems.armedStand)
+                .patternLine(" s ")
+                .patternLine(" a ")
+                .patternLine("s s")
+                .key('a', Items.ARMOR_STAND)
+                .key('s', Tags.Items.RODS_WOODEN)
+                .addCriterion("has_item0", hasItem(Items.ARMOR_STAND))
+                .addCriterion("has_item1", hasItem(Tags.Items.RODS_WOODEN))
                 .build(consumer);
     }
 
