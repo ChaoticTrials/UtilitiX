@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#utilitix:potions",
+    "minecraft:glass_bottle",
+    "utilitix:failed_potion"
+  ]
+}

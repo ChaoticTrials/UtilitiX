@@ -6,9 +6,9 @@ import io.github.noeppi_noeppi.libx.data.provider.BlockStateProviderBase;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
-public class BlockStates extends BlockStateProviderBase {
+public class BlockStateProvider extends BlockStateProviderBase {
     
-    public BlockStates(DataGenerator generator, ExistingFileHelper fileHelper) {
+    public BlockStateProvider(DataGenerator generator, ExistingFileHelper fileHelper) {
         super(UtilitiX.getInstance(), generator, fileHelper);
     }
 
@@ -16,5 +16,6 @@ public class BlockStates extends BlockStateProviderBase {
     protected void setup() {
         this.manualState(ModBlocks.weakRedstoneTorch);
         this.manualState(ModBlocks.weakRedstoneTorch.wallTorch);
+        this.manualModel(ModBlocks.advancedBrewery);
     }
 }

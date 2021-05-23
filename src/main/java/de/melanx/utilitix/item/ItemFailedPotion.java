@@ -24,6 +24,7 @@ import java.util.List;
 
 public class ItemFailedPotion extends ItemBase {
 
+    private static final List<Effect> VERY_LONG_POTIONS = ImmutableList.of(Effects.BAD_OMEN, Effects.UNLUCK);
     private static final List<Effect> LONG_POTIONS = ImmutableList.of(Effects.SLOWNESS, Effects.POISON, Effects.HUNGER, Effects.WEAKNESS);
     private static final List<Effect> SHORT_POTIONS = ImmutableList.of(Effects.NAUSEA, Effects.BLINDNESS, Effects.LEVITATION);
     
@@ -39,10 +40,9 @@ public class ItemFailedPotion extends ItemBase {
             CriteriaTriggers.CONSUME_ITEM.trigger((ServerPlayerEntity)player, stack);
         }
         if (!world.isRemote) {
-            living.addPotionEffect(new EffectInstance(Effects.UNLUCK, 20 * 60 * 2));
+            living.addPotionEffect(new EffectInstance(VERY_LONG_POTIONS.get(world.rand.nextInt(VERY_LONG_POTIONS.size())), 20 * 60 * 2));
             living.addPotionEffect(new EffectInstance(LONG_POTIONS.get(world.rand.nextInt(LONG_POTIONS.size())), 20 * 30));
             living.addPotionEffect(new EffectInstance(SHORT_POTIONS.get(world.rand.nextInt(SHORT_POTIONS.size())), 20 * 10));
-
         }
         if (player != null) {
             player.addStat(Stats.ITEM_USED.get(this));

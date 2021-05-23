@@ -1,0 +1,10 @@
+{
+  "type": "utilitix:brewery_serializer",
+  "input": {
+    "item": "minecraft:popped_chorus_fruit"
+  },
+  "action": {
+    "type": "upgrade",
+    "max_level": 3
+  }
+}

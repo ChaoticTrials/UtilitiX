@@ -9,6 +9,5 @@ import net.minecraft.util.ResourceLocation;
 public class ModItemTags {
 
     public static final ITag.INamedTag<Item> POTIONS = ItemTags.makeWrapperTag(new ResourceLocation(UtilitiX.getInstance().modid, "potions").toString());
-    public static final ITag.INamedTag<Item> ALL_POTIONS = ItemTags.makeWrapperTag(new ResourceLocation(UtilitiX.getInstance().modid, "all_potions").toString());
-
+    public static final ITag.INamedTag<Item> BOTTLES = ItemTags.makeWrapperTag(new ResourceLocation(UtilitiX.getInstance().modid, "bottles").toString());
 }

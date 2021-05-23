@@ -2,6 +2,7 @@
   "itemGroup.utilitix": "UtilitiX",
 
   "block.utilitix.weak_redstone_torch": "Weak Redstone Torch",
+  "block.utilitix.advanced_brewery": "Advanced Brewery",
 
   "enchantment.utilitix.bell_range": "Bell Range",
   "enchantment.utilitix.bell_range.desc": "Increases the notify and glow range of UtilitX bells.",
@@ -11,8 +12,13 @@
   "item.utilitix.quiver": "Quiver",
   "item.utilitix.tiny_coal": "Tiny Coal",
   "item.utilitix.tiny_charcoal": "Tiny Charcoal",
+  "item.utilitix.apple_juice": "Apple Juice",
+  "item.utilitix.god_apple_juice": "God Apple Juice",
+  "item.utilitix.merged_potion": "Mixed Potion",
+  "item.utilitix.failed_potion": "Failed Potion",
 
   "screen.utilitix.quiver": "Quiver",
+  "screen.utilitix.advanced_brewery": "Advanced Brewery",
 
   "tooltip.utilitix.blacklisted_mob": "This mob is on blacklist",
   "tooltip.utilitix.current_mob": "Current Mob",

@@ -1,6 +1,8 @@
 package de.melanx.utilitix.data;
 
 import de.melanx.utilitix.UtilitiX;
+import de.melanx.utilitix.data.recipe.BreweryRecipeBuilder;
+import de.melanx.utilitix.recipe.EffectTransformer;
 import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModItems;
 import io.github.noeppi_noeppi.libx.data.provider.recipe.RecipeProviderBase;
@@ -9,7 +11,12 @@ import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.data.ShapedRecipeBuilder;
 import net.minecraft.data.ShapelessRecipeBuilder;
 import net.minecraft.item.Items;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.IItemProvider;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nonnull;
@@ -27,13 +34,16 @@ public class RecipeProvider extends RecipeProviderBase {
         this.createTinyCoalRecipe(consumer, Items.CHARCOAL, ModItems.tinyCharcoal);
         this.createBellRecipes(consumer);
         this.createRedstoneRecipes(consumer);
+        this.createBreweryRecipes(consumer);
     }
 
     private void createTinyCoalRecipe(Consumer<IFinishedRecipe> consumer, IItemProvider coal, IItemProvider tinyCoal) {
+        
         ShapelessRecipeBuilder.shapelessRecipe(tinyCoal, 8)
                 .addIngredient(coal)
                 .addCriterion("has_item", hasItem(coal))
                 .build(consumer, this.loc(tinyCoal, "to_tiny"));
+        
         ShapelessRecipeBuilder.shapelessRecipe(coal)
                 .addIngredient(tinyCoal, 8)
                 .addCriterion("has_item", hasItem(tinyCoal))
@@ -41,13 +51,15 @@ public class RecipeProvider extends RecipeProviderBase {
     }
 
     private void createBellRecipes(Consumer<IFinishedRecipe> consumer) {
+        
         ShapedRecipeBuilder.shapedRecipe(ModItems.handBell)
                 .patternLine(" S")
                 .patternLine("SB")
-                .key('S', ItemTagProvider.WOODEN_STICKS)
+                .key('S', Tags.Items.RODS_WOODEN)
                 .key('B', Items.BELL)
                 .addCriterion("has_bell", hasItem(Items.BELL))
-                .build(consumer, this.loc(ModItems.handBell));
+                .build(consumer);
+        
         ShapedRecipeBuilder.shapedRecipe(ModItems.mobBell)
                 .patternLine("123")
                 .patternLine("456")
@@ -62,17 +74,69 @@ public class RecipeProvider extends RecipeProviderBase {
                 .key('8', Tags.Items.ENDER_PEARLS)
                 .key('9', Items.ROTTEN_FLESH)
                 .addCriterion("has_bell", hasItem(ModItems.handBell))
-                .build(consumer, this.loc(ModItems.mobBell));
+                .build(consumer);
     }
 
     private void createRedstoneRecipes(Consumer<IFinishedRecipe> consumer) {
+        
         ShapedRecipeBuilder.shapedRecipe(ModBlocks.weakRedstoneTorch, 2)
                 .patternLine("R")
                 .patternLine("S")
                 .patternLine("S")
                 .key('R', Tags.Items.DUSTS_REDSTONE)
-                .key('S', ItemTagProvider.WOODEN_STICKS)
+                .key('S', Tags.Items.RODS_WOODEN)
                 .addCriterion("has_redstone", hasItem(Tags.Items.DUSTS_REDSTONE))
-                .build(consumer, this.loc(ModBlocks.weakRedstoneTorch));
+                .build(consumer);
+    }
+    
+    private void createBreweryRecipes(Consumer<IFinishedRecipe> consumer) {
+        
+        ShapedRecipeBuilder.shapedRecipe(ModBlocks.advancedBrewery)
+                .patternLine(" g ")
+                .patternLine("isi")
+                .patternLine("bbb")
+                .key('s', Items.BREWING_STAND)
+                .key('b', Items.SMOOTH_STONE)
+                .key('i', Tags.Items.INGOTS_IRON)
+                .key('g', Tags.Items.INGOTS_GOLD)
+                .addCriterion("has_item0", hasItem(Items.BREWING_STAND))
+                .addCriterion("has_item1", hasItem(Items.SMOOTH_STONE))
+                .addCriterion("has_item2", hasItem(Tags.Items.INGOTS_IRON))
+                .addCriterion("has_item3", hasItem(Tags.Items.INGOTS_GOLD))
+                .build(consumer);
+        
+        BreweryRecipeBuilder.breweryRecipe()
+                .input(Items.GOLDEN_APPLE)
+                .action(new EffectTransformer.Apply(
+                        new TranslationTextComponent("item." + UtilitiX.getInstance().modid + ".apple_juice").mergeStyle(TextFormatting.GREEN),
+                        new EffectInstance(Effects.REGENERATION, 100, 1),
+                        new EffectInstance(Effects.ABSORPTION, 2400, 0)
+                ))
+                .build(consumer, new ResourceLocation(UtilitiX.getInstance().modid, "apple_juice"));
+        
+        BreweryRecipeBuilder.breweryRecipe()
+                .input(Items.ENCHANTED_GOLDEN_APPLE)
+                .action(new EffectTransformer.Apply(
+                        new TranslationTextComponent("item." + UtilitiX.getInstance().modid + ".god_apple_juice").mergeStyle(TextFormatting.GREEN),
+                        new EffectInstance(Effects.REGENERATION, 400, 1),
+                        new EffectInstance(Effects.RESISTANCE, 6000, 0),
+                        new EffectInstance(Effects.FIRE_RESISTANCE, 6000, 0),
+                        new EffectInstance(Effects.ABSORPTION, 2400, 3)
+                ))
+                .build(consumer, new ResourceLocation(UtilitiX.getInstance().modid, "god_apple_juice"));
+        
+        BreweryRecipeBuilder.breweryRecipe()
+                .action(new EffectTransformer.Merge(1))
+                .build(consumer, new ResourceLocation(UtilitiX.getInstance().modid, "merge"));
+        
+        BreweryRecipeBuilder.breweryRecipe()
+                .input(Items.NETHERITE_SCRAP)
+                .action(new EffectTransformer.Clone())
+                .build(consumer, new ResourceLocation(UtilitiX.getInstance().modid, "clone"));
+        
+        BreweryRecipeBuilder.breweryRecipe()
+                .input(Items.POPPED_CHORUS_FRUIT)
+                .action(new EffectTransformer.Upgrade(2))
+                .build(consumer, new ResourceLocation(UtilitiX.getInstance().modid, "upgrade"));
     }
 }
