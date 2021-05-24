@@ -29,4 +29,7 @@ public class UtilitiXConfig {
         @Config("The radius in which entities get notified that you rung")
         public static int notifyRadius = 24;
     }
+
+    @Config("Items in world which have mending collect xp orbs to get repaired")
+    public static boolean betterMending = true;
 }

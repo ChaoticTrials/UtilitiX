@@ -1,6 +1,8 @@
 package de.melanx.utilitix;
 
 import de.melanx.utilitix.item.bells.MobBell;
+import de.melanx.utilitix.module.BetterMending;
+import de.melanx.utilitix.network.UtiliNetwork;
 import de.melanx.utilitix.registration.ModItems;
 import io.github.noeppi_noeppi.libx.mod.registration.ModXRegistration;
 import net.minecraft.item.ItemGroup;
@@ -21,6 +23,7 @@ import javax.annotation.Nonnull;
 public class UtilitiX extends ModXRegistration {
 
     private static UtilitiX instance;
+    private static UtiliNetwork network;
 
     public UtilitiX() {
         super("utilitix", new ItemGroup("utilitix") {
@@ -32,6 +35,7 @@ public class UtilitiX extends ModXRegistration {
         });
 
         instance = this;
+        network = new UtiliNetwork(this);
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerItemColors);
@@ -39,6 +43,7 @@ public class UtilitiX extends ModXRegistration {
         });
 
         MinecraftForge.EVENT_BUS.register(new EventListener());
+        MinecraftForge.EVENT_BUS.register(new BetterMending());
     }
 
     @Override
@@ -58,5 +63,9 @@ public class UtilitiX extends ModXRegistration {
 
     public static UtilitiX getInstance() {
         return instance;
+    }
+
+    public static UtiliNetwork getNetwork() {
+        return network;
     }
 }

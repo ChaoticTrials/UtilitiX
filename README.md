@@ -6,7 +6,7 @@ A lot of items, nice to have
 
 # Planned features
 ## Utility
-- [ ] item with mending collects nearby xp orbs
+- [x] item with mending collects nearby xp orbs
 - [ ] comparators can read states of spawners and conduits
 - [ ] add illusioner in any way because they are fancy
 - [ ] add a way to gild armor to make piglins neutral
