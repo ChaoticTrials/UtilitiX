@@ -332,7 +332,9 @@ public abstract class EffectTransformer {
                 return null;
             } else {
                 EffectInstance old = input.getEffectsMain().get(0);
-                return PotionOutput.simple(create(input.getMain().getItem(), ImmutableList.of(new EffectInstance(old.getPotion(), old.getDuration(), MathHelper.clamp(old.getAmplifier() + 1, 0, this.maxLevel), old.isAmbient(), old.doesShowParticles()))));
+                ItemStack newStack = create(input.getMain().getItem(), ImmutableList.of(new EffectInstance(old.getPotion(), old.getDuration(), MathHelper.clamp(old.getAmplifier() + 1, 0, this.maxLevel), old.isAmbient(), old.doesShowParticles())));
+                newStack.setDisplayName(input.getMain().getDisplayName());
+                return PotionOutput.simple(newStack);
             }
         }
 

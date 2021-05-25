@@ -62,7 +62,7 @@ public class UtiliJei implements IModPlugin {
 
     @Override
     public void registerGuiHandlers(@Nonnull IGuiHandlerRegistration registration) {
-        registration.addRecipeClickArea(ScreenAdvancedBrewery.class, 78, 32, 28, 23, BreweryCategory.ID);
+        registration.addRecipeClickArea(ScreenAdvancedBrewery.class, 98, 17, 7, 26, BreweryCategory.ID);
     }
 
     @Override

@@ -54,7 +54,7 @@ public class ScreenAdvancedBrewery extends ContainerScreen<ContainerAdvancedBrew
             this.blit(matrixStack, this.relX + 60, this.relY + 44, 176, 29, fuelWidth, 4);
         }
         int brewTime = MathHelper.clamp(tile.getBrewTime(), 0, TileAdvancedBrewery.MAX_BREW_TIME);
-        if (brewTime > 0) {
+        if (tile.getFuel() > 0 && brewTime > 0) {
             int textureHeight = MathHelper.clamp(Math.round(28f * (brewTime / (float) TileAdvancedBrewery.MAX_BREW_TIME)), 0, 28);
             if (textureHeight > 0) {
                 this.blit(matrixStack, this.relX + 97, this.relY + 16, 176, 0, 9, textureHeight);
