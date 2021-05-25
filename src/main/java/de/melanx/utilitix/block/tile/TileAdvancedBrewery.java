@@ -20,6 +20,8 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -115,6 +117,7 @@ public class TileAdvancedBrewery extends TileEntityBase implements ITickableTile
                     }
                     this.brewTime = 0;
                     this.fuel -= 1;
+                    this.world.playSound(null, this.pos, SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 1, 1);
                     this.markDispatchable();
                 }
                 this.markDirty();

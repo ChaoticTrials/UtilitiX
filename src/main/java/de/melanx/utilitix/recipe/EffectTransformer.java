@@ -58,7 +58,7 @@ public abstract class EffectTransformer {
         } else if ("merge".equalsIgnoreCase(type)) {
             return new Merge(json.get("fail_multiplier").getAsFloat());
         } else if ("upgrade".equalsIgnoreCase(type)) {
-            return new Upgrade(json.get("max_level").getAsInt());
+            return new Upgrade(Math.max(0, json.get("max_level").getAsInt() - 1));
         } else if ("clone".equalsIgnoreCase(type)) {
             return new Clone();
         } else {
@@ -150,7 +150,7 @@ public abstract class EffectTransformer {
 
         @Override
         public boolean canTransform(PotionInput input) {
-            return ModItemTags.POTIONS.contains(input.getMain().getItem()) && input.testEffectsMain(List::isEmpty);
+            return ModItemTags.POTIONS.contains(input.getMain().getItem()) && input.testEffectsMain(List::isEmpty) && input.getIn1().isEmpty() && input.getIn2().isEmpty();
         }
 
         @Override

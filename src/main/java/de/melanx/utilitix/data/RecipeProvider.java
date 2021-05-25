@@ -89,6 +89,12 @@ public class RecipeProvider extends RecipeProviderBase {
                 .addCriterion("has_item0", hasItem(Items.ARMOR_STAND))
                 .addCriterion("has_item1", hasItem(Tags.Items.RODS_WOODEN))
                 .build(consumer);
+        
+        ShapelessRecipeBuilder.shapelessRecipe(ModItems.glueBall, 4)
+                .addIngredient(Tags.Items.SLIMEBALLS)
+                .addIngredient(Tags.Items.SLIMEBALLS)
+                .addCriterion("has_item", hasItem(Tags.Items.SLIMEBALLS))
+                .build(consumer);
     }
 
     private void createRedstoneRecipes(Consumer<IFinishedRecipe> consumer) {

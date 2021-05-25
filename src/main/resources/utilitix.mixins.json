@@ -8,6 +8,8 @@
   "server": [],
   "mixins": [
     "MixinArmorStandEntity",
+    "MixinPistonBlockStructureHelper",
+    "MixinPistonTileEntity",
     "MixinWorld"
   ]
 }
