@@ -4,6 +4,8 @@ import de.melanx.utilitix.config.ArmorStandRotationListMapper;
 import de.melanx.utilitix.config.ArmorStandRotationMapper;
 import de.melanx.utilitix.item.bells.MobBell;
 import de.melanx.utilitix.network.UtiliNetwork;
+import de.melanx.utilitix.module.BetterMending;
+import de.melanx.utilitix.network.UtiliNetwork;
 import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.slime.SlimeRender;
 import de.melanx.utilitix.slime.SlimyCapability;
@@ -61,6 +63,7 @@ public class UtilitiX extends ModXRegistration {
         });
 
         MinecraftForge.EVENT_BUS.register(new EventListener());
+        MinecraftForge.EVENT_BUS.register(new BetterMending());
         MinecraftForge.EVENT_BUS.addGenericListener(Chunk.class, SlimyCapability::attach);
     }
 
