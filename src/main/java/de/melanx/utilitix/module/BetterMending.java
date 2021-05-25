@@ -3,6 +3,7 @@ package de.melanx.utilitix.module;
 import com.google.common.collect.Streams;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.UtilitiXConfig;
+import de.melanx.utilitix.network.ItemEntityRepairedSerializer;
 import io.github.noeppi_noeppi.libx.util.BoundingBoxUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -11,7 +12,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
@@ -20,6 +20,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -58,9 +59,7 @@ public class BetterMending {
                             orb.remove();
 
                             if (!stack.isDamaged()) {
-                                for (ServerPlayerEntity player : ((ServerWorld) world).getPlayers()) {
-                                    UtilitiX.getNetwork().updateItemEntityDamage(player, item);
-                                }
+                                UtilitiX.getNetwork().instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> item), new ItemEntityRepairedSerializer.ItemEntityRepairedMessage(item.getEntityId()));
                             }
                         } else {
                             double scale = 1 - (vector.length() / 8);

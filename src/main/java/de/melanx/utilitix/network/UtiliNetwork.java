@@ -12,7 +12,7 @@ public class UtiliNetwork extends NetworkX {
 
     @Override
     protected String getProtocolVersion() {
-        return "1";
+        return "2";
     }
 
     @Override
@@ -20,5 +20,6 @@ public class UtiliNetwork extends NetworkX {
         this.register(new StickyChunkRequestSerializer(), () -> StickyChunkRequestHandler::handle, NetworkDirection.PLAY_TO_SERVER);
         
         this.register(new StickyChunkUpdateSerializer(), () -> StickyChunkUpdateHandler::handle, NetworkDirection.PLAY_TO_CLIENT);
+        this.register(new ItemEntityRepairedSerializer(), () -> ItemEntityRepairedHandler::handle, NetworkDirection.PLAY_TO_CLIENT);
     }
 }
