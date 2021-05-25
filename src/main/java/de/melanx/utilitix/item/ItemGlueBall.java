@@ -6,6 +6,7 @@ import io.github.noeppi_noeppi.libx.mod.ModX;
 import io.github.noeppi_noeppi.libx.mod.registration.ItemBase;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.world.chunk.Chunk;
 
 import javax.annotation.Nonnull;
@@ -27,9 +28,10 @@ public class ItemGlueBall extends ItemBase {
             int x = context.getPos().getX() & 0xF;
             int y = context.getPos().getY();
             int z = context.getPos().getZ() & 0xF;
-            if (!glue.get(x, y, z, context.getFace()) && SlimyCapability.canGlue(context.getWorld(), context.getPos(), context.getFace())) {
+            Direction face = context.getPlayer() != null && context.getPlayer().isSneaking() ? context.getFace().getOpposite() : context.getFace();
+            if (!glue.get(x, y, z, face) && SlimyCapability.canGlue(context.getWorld(), context.getPos(), face)) {
                 if (!context.getWorld().isRemote) {
-                    glue.set(x, y, z, context.getFace(), true);
+                    glue.set(x, y, z, face, true);
                     chunk.markDirty();
                     if (context.getPlayer() == null || !context.getPlayer().abilities.isCreativeMode) {
                         context.getItem().shrink(1);
