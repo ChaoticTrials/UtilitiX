@@ -131,11 +131,16 @@ public class EventListener {
             for (Direction dir : Direction.values()) {
                 BlockPos thePos = event.getPos().offset(dir);
                 BlockState state = world.getBlockState(thePos);
-                if ((state.getBlock() == Blocks.MOVING_PISTON || state.getBlock() == Blocks.PISTON_HEAD)
-                        && (state.get(BlockStateProperties.FACING) == dir || state.get(BlockStateProperties.FACING) == dir.getOpposite())) {
+                if (state.getBlock() == Blocks.MOVING_PISTON && (state.get(BlockStateProperties.FACING) == dir || state.get(BlockStateProperties.FACING) == dir.getOpposite())) {
                     // Block has been changed because of a piston move.
                     // Glue logic is handled in the piston til
                     // Skip this here
+                    return ;
+                } else if (state.getBlock() == Blocks.PISTON_HEAD && state.get(BlockStateProperties.SHORT) && (state.get(BlockStateProperties.FACING) == dir || state.get(BlockStateProperties.FACING) == dir.getOpposite())) {
+                    // Block has been changed because of a piston move.
+                    // Glue logic is handled in the piston til
+                    // Skip this here
+                    // This is sometimes buggy but we can't really do anything about this.
                     return ;
                 }
             }
