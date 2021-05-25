@@ -1,6 +1,6 @@
 package de.melanx.utilitix.network;
 
-import de.melanx.utilitix.slime.StickyChunk;
+import de.melanx.utilitix.module.slime.StickyChunk;
 import io.github.noeppi_noeppi.libx.network.PacketSerializer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.ChunkPos;

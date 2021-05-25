@@ -1,7 +1,5 @@
-package de.melanx.utilitix.item;
+package de.melanx.utilitix.module.slime;
 
-import de.melanx.utilitix.slime.SlimyCapability;
-import de.melanx.utilitix.slime.StickyChunk;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import io.github.noeppi_noeppi.libx.mod.registration.ItemBase;
 import net.minecraft.item.ItemUseContext;

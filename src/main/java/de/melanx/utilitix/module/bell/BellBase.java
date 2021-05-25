@@ -1,4 +1,4 @@
-package de.melanx.utilitix.item.bells;
+package de.melanx.utilitix.module.bell;
 
 import de.melanx.utilitix.UtilitiXConfig;
 import de.melanx.utilitix.registration.ModEnchantments;

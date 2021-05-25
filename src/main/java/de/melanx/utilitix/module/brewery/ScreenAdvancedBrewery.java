@@ -1,10 +1,8 @@
-package de.melanx.utilitix.block.screen;
+package de.melanx.utilitix.module.brewery;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.block.container.ContainerAdvancedBrewery;
-import de.melanx.utilitix.block.tile.TileAdvancedBrewery;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;

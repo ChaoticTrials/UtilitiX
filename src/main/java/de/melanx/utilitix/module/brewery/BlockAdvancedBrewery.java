@@ -1,9 +1,5 @@
-package de.melanx.utilitix.block;
+package de.melanx.utilitix.module.brewery;
 
-import de.melanx.utilitix.block.container.ContainerAdvancedBrewery;
-import de.melanx.utilitix.block.screen.ScreenAdvancedBrewery;
-import de.melanx.utilitix.block.tesr.TesrAdvancedBrewery;
-import de.melanx.utilitix.block.tile.TileAdvancedBrewery;
 import io.github.noeppi_noeppi.libx.block.DirectionShape;
 import io.github.noeppi_noeppi.libx.inventory.container.ContainerBase;
 import io.github.noeppi_noeppi.libx.mod.ModX;

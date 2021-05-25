@@ -1,13 +1,12 @@
 package de.melanx.utilitix;
 
-import de.melanx.utilitix.item.bells.MobBell;
+import de.melanx.utilitix.module.bell.ItemMobBell;
+import de.melanx.utilitix.module.slime.SlimyCapability;
+import de.melanx.utilitix.module.slime.StickyChunk;
 import de.melanx.utilitix.network.StickyChunkRequestSerializer;
 import de.melanx.utilitix.registration.ModItems;
-import de.melanx.utilitix.slime.SlimyCapability;
-import de.melanx.utilitix.slime.StickyChunk;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ArmorStandEntity;
@@ -31,7 +30,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ChunkEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -59,7 +57,7 @@ public class EventListener {
 
             stack.getOrCreateTag().putString("Entity", entityKey.toString());
             player.setHeldItem(hand, stack);
-            player.sendStatusMessage(MobBell.getCurrentMob(target.getType()), true);
+            player.sendStatusMessage(ItemMobBell.getCurrentMob(target.getType()), true);
             event.setCancellationResult(ActionResultType.SUCCESS);
             event.setCanceled(true);
         }

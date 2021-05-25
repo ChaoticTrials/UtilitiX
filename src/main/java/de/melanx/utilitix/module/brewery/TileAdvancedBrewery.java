@@ -1,4 +1,4 @@
-package de.melanx.utilitix.block.tile;
+package de.melanx.utilitix.module.brewery;
 
 import de.melanx.utilitix.recipe.BreweryRecipe;
 import de.melanx.utilitix.recipe.PotionOutput;
