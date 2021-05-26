@@ -63,7 +63,6 @@ public class TileLinkedRepeater extends TileEntityBase {
             return ItemLinkedCrystal.getId(this.link);
         } else {
             return null;
-
         }
     }
 }

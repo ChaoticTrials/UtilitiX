@@ -1,5 +1,6 @@
 package de.melanx.utilitix.content.wireless;
 
+import io.github.noeppi_noeppi.libx.util.NBTX;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
@@ -36,6 +37,7 @@ public class WorldAndPos {
     public CompoundNBT serialize() {
         CompoundNBT nbt = new CompoundNBT();
         nbt.putString("W", this.dimension.getLocation().toString());
+        NBTX.putPos(nbt, "P", this.pos);
         nbt.putIntArray("P", new int[]{this.pos.getX(), this.pos.getY(), this.pos.getZ() });
         return nbt;
     }
@@ -43,12 +45,7 @@ public class WorldAndPos {
     @Nullable
     public static WorldAndPos deserialize(CompoundNBT nbt) {
         RegistryKey<World> world = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(nbt.getString("W")));
-        int[] loc = nbt.getIntArray("P");
-        if (loc.length == 3) {
-            BlockPos pos = new BlockPos(loc[0], loc[1], loc[2]);
-            return new WorldAndPos(world, pos);
-        } else {
-            return null;
-        }
+        BlockPos pos = NBTX.getPos(nbt, "P");
+        return pos == null ? null : new WorldAndPos(world, pos);
     }
 }

@@ -50,9 +50,10 @@ public class WirelessStorage extends WorldSavedData {
             ListNBT entries = tag.getList("V", Constants.NBT.TAG_COMPOUND);
             Map<WorldAndPos, Integer> signalMap = new HashMap<>();
             for (int j = 0; j < entries.size(); j++) {
-                WorldAndPos pos = WorldAndPos.deserialize(tag);
+                CompoundNBT cmp = entries.getCompound(j);
+                WorldAndPos pos = WorldAndPos.deserialize(cmp);
                 if (pos != null) {
-                    int strength = tag.getInt("R");
+                    int strength = cmp.getInt("R");
                     signalMap.put(pos, strength);
                 }
             }
