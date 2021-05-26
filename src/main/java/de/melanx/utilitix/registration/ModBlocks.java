@@ -3,9 +3,10 @@ package de.melanx.utilitix.registration;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.block.ComparatorRedirector;
 import de.melanx.utilitix.block.WeakRedstoneTorch;
-import de.melanx.utilitix.module.brewery.BlockAdvancedBrewery;
-import de.melanx.utilitix.module.brewery.ContainerAdvancedBrewery;
-import de.melanx.utilitix.module.brewery.TileAdvancedBrewery;
+import de.melanx.utilitix.content.brewery.BlockAdvancedBrewery;
+import de.melanx.utilitix.content.brewery.ContainerAdvancedBrewery;
+import de.melanx.utilitix.content.brewery.TileAdvancedBrewery;
+import de.melanx.utilitix.content.wireless.BlockLinkedRepeater;
 import io.github.noeppi_noeppi.libx.annotation.RegisterClass;
 import io.github.noeppi_noeppi.libx.mod.registration.BlockBase;
 import io.github.noeppi_noeppi.libx.mod.registration.BlockGUI;
@@ -20,4 +21,5 @@ public class ModBlocks {
     public static final BlockBase comparatorRedirectorUp = new ComparatorRedirector(UtilitiX.getInstance(), Direction.UP, AbstractBlock.Properties.from(Blocks.OBSERVER));
     public static final BlockBase comparatorRedirectorDown = new ComparatorRedirector(UtilitiX.getInstance(), Direction.DOWN, AbstractBlock.Properties.from(Blocks.OBSERVER));
     public static final WeakRedstoneTorch weakRedstoneTorch = new WeakRedstoneTorch(UtilitiX.getInstance(), AbstractBlock.Properties.from(Blocks.REDSTONE_TORCH));
+    public static final BlockBase linkedRepeater = new BlockLinkedRepeater(UtilitiX.getInstance(), AbstractBlock.Properties.from(Blocks.REPEATER));
 }

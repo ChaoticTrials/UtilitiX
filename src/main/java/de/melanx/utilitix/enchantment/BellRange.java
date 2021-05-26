@@ -1,6 +1,6 @@
 package de.melanx.utilitix.enchantment;
 
-import de.melanx.utilitix.module.bell.BellBase;
+import de.melanx.utilitix.content.bell.BellBase;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;

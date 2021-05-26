@@ -1,4 +1,4 @@
-package de.melanx.utilitix.module;
+package de.melanx.utilitix.content;
 
 import com.google.common.collect.Streams;
 import de.melanx.utilitix.UtilitiX;

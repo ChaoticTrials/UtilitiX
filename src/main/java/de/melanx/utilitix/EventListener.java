@@ -1,8 +1,8 @@
 package de.melanx.utilitix;
 
-import de.melanx.utilitix.module.bell.ItemMobBell;
-import de.melanx.utilitix.module.slime.SlimyCapability;
-import de.melanx.utilitix.module.slime.StickyChunk;
+import de.melanx.utilitix.content.bell.ItemMobBell;
+import de.melanx.utilitix.content.slime.SlimyCapability;
+import de.melanx.utilitix.content.slime.StickyChunk;
 import de.melanx.utilitix.network.StickyChunkRequestSerializer;
 import de.melanx.utilitix.registration.ModItems;
 import net.minecraft.block.BlockState;

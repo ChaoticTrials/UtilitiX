@@ -2,10 +2,10 @@ package de.melanx.utilitix;
 
 import de.melanx.utilitix.config.ArmorStandRotationListMapper;
 import de.melanx.utilitix.config.ArmorStandRotationMapper;
-import de.melanx.utilitix.module.BetterMending;
-import de.melanx.utilitix.module.bell.ItemMobBell;
-import de.melanx.utilitix.module.slime.SlimeRender;
-import de.melanx.utilitix.module.slime.SlimyCapability;
+import de.melanx.utilitix.content.BetterMending;
+import de.melanx.utilitix.content.bell.ItemMobBell;
+import de.melanx.utilitix.content.slime.SlimeRender;
+import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.network.UtiliNetwork;
 import de.melanx.utilitix.registration.ModItems;
 import io.github.noeppi_noeppi.libx.config.ConfigManager;

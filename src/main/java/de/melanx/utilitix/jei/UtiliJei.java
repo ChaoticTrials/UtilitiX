@@ -1,7 +1,7 @@
 package de.melanx.utilitix.jei;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.module.brewery.ScreenAdvancedBrewery;
+import de.melanx.utilitix.content.brewery.ScreenAdvancedBrewery;
 import de.melanx.utilitix.recipe.BreweryRecipe;
 import de.melanx.utilitix.recipe.EffectTransformer;
 import de.melanx.utilitix.registration.ModBlocks;

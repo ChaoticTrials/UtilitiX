@@ -1,4 +1,4 @@
-package de.melanx.utilitix.module.brewery;
+package de.melanx.utilitix.content.brewery;
 
 import de.melanx.utilitix.recipe.BreweryRecipe;
 import de.melanx.utilitix.recipe.PotionOutput;

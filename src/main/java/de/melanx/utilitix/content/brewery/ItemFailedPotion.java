@@ -1,4 +1,4 @@
-package de.melanx.utilitix.module.brewery;
+package de.melanx.utilitix.content.brewery;
 
 import com.google.common.collect.ImmutableList;
 import io.github.noeppi_noeppi.libx.mod.ModX;

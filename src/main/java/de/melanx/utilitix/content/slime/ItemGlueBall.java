@@ -1,4 +1,4 @@
-package de.melanx.utilitix.module.slime;
+package de.melanx.utilitix.content.slime;
 
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import io.github.noeppi_noeppi.libx.mod.registration.ItemBase;
