@@ -18,6 +18,7 @@ public class DataCreator {
             BlockTagProvider blockTagProvider = new BlockTagProvider(generator, helper);
             generator.addProvider(new ItemTagProvider(generator, helper, blockTagProvider));
             generator.addProvider(new RecipeProvider(generator));
+            generator.addProvider(new LootTableProvider(generator));
         }
         if (event.includeClient()) {
             generator.addProvider(new BlockStateProvider(generator, helper));
