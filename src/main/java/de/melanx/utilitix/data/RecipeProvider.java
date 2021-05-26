@@ -141,6 +141,27 @@ public class RecipeProvider extends RecipeProviderBase {
                 .addIngredient(ModBlocks.comparatorRedirectorUp)
                 .addCriterion("has_item0", hasItem(ModBlocks.comparatorRedirectorUp))
                 .build(consumer, this.loc(ModBlocks.comparatorRedirectorDown, "flip"));
+        
+        ShapedRecipeBuilder.shapedRecipe(ModItems.linkedCrystal)
+                .patternLine(" r ")
+                .patternLine("rgr")
+                .patternLine(" r ")
+                .key('r', Tags.Items.DUSTS_REDSTONE)
+                .key('g', Tags.Items.GEMS_EMERALD)
+                .addCriterion("has_item0", hasItem(Tags.Items.DUSTS_REDSTONE))
+                .addCriterion("has_item1", hasItem(Tags.Items.GEMS_EMERALD))
+                .build(consumer);
+        
+        ShapedRecipeBuilder.shapedRecipe(ModBlocks.linkedRepeater)
+                .patternLine("r t")
+                .patternLine("sss")
+                .key('r', Tags.Items.DUSTS_REDSTONE)
+                .key('t', Items.REDSTONE_TORCH)
+                .key('s', Tags.Items.STONE)
+                .addCriterion("has_item0", hasItem(Tags.Items.DUSTS_REDSTONE))
+                .addCriterion("has_item1", hasItem(Items.REDSTONE_TORCH))
+                .addCriterion("has_item2", hasItem(Tags.Items.STONE))
+                .build(consumer);
     }
     
     private void createBreweryRecipes(Consumer<IFinishedRecipe> consumer) {

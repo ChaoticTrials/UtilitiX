@@ -1,0 +1,7 @@
+{
+  "parent": "utilitix:block/linked_repeater_base",
+  "textures": {
+    "repeater": "minecraft:block/repeater",
+    "torch": "minecraft:block/redstone_torch_off"
+  }
+}

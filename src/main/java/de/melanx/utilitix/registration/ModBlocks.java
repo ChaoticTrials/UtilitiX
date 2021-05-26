@@ -6,6 +6,7 @@ import de.melanx.utilitix.block.ComparatorRedirector;
 import de.melanx.utilitix.block.WeakRedstoneTorch;
 import de.melanx.utilitix.block.container.ContainerAdvancedBrewery;
 import de.melanx.utilitix.block.tile.TileAdvancedBrewery;
+import de.melanx.utilitix.wireless.BlockLinkedRepeater;
 import io.github.noeppi_noeppi.libx.annotation.RegisterClass;
 import io.github.noeppi_noeppi.libx.mod.registration.BlockBase;
 import io.github.noeppi_noeppi.libx.mod.registration.BlockGUI;
@@ -20,4 +21,5 @@ public class ModBlocks {
     public static final BlockGUI<TileAdvancedBrewery, ContainerAdvancedBrewery> advancedBrewery = new BlockAdvancedBrewery(UtilitiX.getInstance(), AbstractBlock.Properties.from(Blocks.BREWING_STAND));
     public static final BlockBase comparatorRedirectorUp = new ComparatorRedirector(UtilitiX.getInstance(), Direction.UP, AbstractBlock.Properties.from(Blocks.OBSERVER));
     public static final BlockBase comparatorRedirectorDown = new ComparatorRedirector(UtilitiX.getInstance(), Direction.DOWN, AbstractBlock.Properties.from(Blocks.OBSERVER));
+    public static final BlockBase linkedRepeater = new BlockLinkedRepeater(UtilitiX.getInstance(), AbstractBlock.Properties.from(Blocks.REPEATER));
 }
