@@ -1,4 +1,4 @@
-package de.melanx.utilitix.module.brewery;
+package de.melanx.utilitix.content.brewery;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import io.github.noeppi_noeppi.libx.block.tesr.HorizontalRotatedTesr;

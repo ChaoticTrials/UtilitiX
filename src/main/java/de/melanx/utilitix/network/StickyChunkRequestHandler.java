@@ -1,8 +1,8 @@
 package de.melanx.utilitix.network;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.module.slime.SlimyCapability;
-import de.melanx.utilitix.module.slime.StickyChunk;
+import de.melanx.utilitix.content.slime.SlimyCapability;
+import de.melanx.utilitix.content.slime.StickyChunk;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;

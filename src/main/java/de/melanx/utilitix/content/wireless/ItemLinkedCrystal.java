@@ -1,4 +1,4 @@
-package de.melanx.utilitix.wireless;
+package de.melanx.utilitix.content.wireless;
 
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import io.github.noeppi_noeppi.libx.mod.registration.ItemBase;

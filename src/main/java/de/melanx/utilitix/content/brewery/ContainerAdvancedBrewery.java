@@ -1,4 +1,4 @@
-package de.melanx.utilitix.module.brewery;
+package de.melanx.utilitix.content.brewery;
 
 import io.github.noeppi_noeppi.libx.inventory.container.ContainerBase;
 import net.minecraft.entity.player.PlayerEntity;

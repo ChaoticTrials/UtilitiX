@@ -1,4 +1,4 @@
-package de.melanx.utilitix.wireless;
+package de.melanx.utilitix.content.wireless;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.RegistryKey;

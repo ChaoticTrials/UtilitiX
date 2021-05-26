@@ -1,4 +1,4 @@
-package de.melanx.utilitix.module.bell;
+package de.melanx.utilitix.content.bell;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;

@@ -1,4 +1,4 @@
-package de.melanx.utilitix.module.bell;
+package de.melanx.utilitix.content.bell;
 
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.entity.LivingEntity;

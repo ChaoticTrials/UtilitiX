@@ -1,4 +1,4 @@
-package de.melanx.utilitix.module.slime;
+package de.melanx.utilitix.content.slime;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import de.melanx.utilitix.Textures;

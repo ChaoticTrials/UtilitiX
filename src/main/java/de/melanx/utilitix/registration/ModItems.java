@@ -3,11 +3,12 @@ package de.melanx.utilitix.registration;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.item.ItemBurnable;
 import de.melanx.utilitix.item.Quiver;
-import de.melanx.utilitix.module.ArmedStand;
-import de.melanx.utilitix.module.bell.ItemHandBell;
-import de.melanx.utilitix.module.bell.ItemMobBell;
-import de.melanx.utilitix.module.brewery.ItemFailedPotion;
-import de.melanx.utilitix.module.slime.ItemGlueBall;
+import de.melanx.utilitix.content.ArmedStand;
+import de.melanx.utilitix.content.bell.ItemHandBell;
+import de.melanx.utilitix.content.bell.ItemMobBell;
+import de.melanx.utilitix.content.brewery.ItemFailedPotion;
+import de.melanx.utilitix.content.slime.ItemGlueBall;
+import de.melanx.utilitix.content.wireless.ItemLinkedCrystal;
 import io.github.noeppi_noeppi.libx.annotation.RegisterClass;
 import net.minecraft.item.Item;
 

@@ -1,4 +1,4 @@
-package de.melanx.utilitix.wireless;
+package de.melanx.utilitix.content.wireless;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import de.melanx.utilitix.registration.ModItems;

@@ -1,4 +1,4 @@
-package de.melanx.utilitix.module.slime;
+package de.melanx.utilitix.content.slime;
 
 import de.melanx.utilitix.UtilitiX;
 import net.minecraft.block.BlockState;

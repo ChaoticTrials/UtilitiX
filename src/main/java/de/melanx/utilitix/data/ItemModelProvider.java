@@ -2,7 +2,7 @@ package de.melanx.utilitix.data;
 
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.block.WeakRedstoneTorch;
-import de.melanx.utilitix.module.bell.BellBase;
+import de.melanx.utilitix.content.bell.BellBase;
 import de.melanx.utilitix.registration.ModItems;
 import io.github.noeppi_noeppi.libx.data.provider.ItemModelProviderBase;
 import net.minecraft.data.DataGenerator;
