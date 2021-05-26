@@ -1,4 +1,4 @@
-package de.melanx.utilitix.item.bells;
+package de.melanx.utilitix.module.bell;
 
 import de.melanx.utilitix.UtilitiX;
 import io.github.noeppi_noeppi.libx.mod.ModX;
@@ -24,12 +24,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class MobBell extends BellBase {
+public class ItemMobBell extends BellBase {
 
     private static final IFormattableTextComponent NO_MOB = new TranslationTextComponent("tooltip." + UtilitiX.getInstance().modid + ".no_mob").mergeStyle(TextFormatting.DARK_RED);
 
-    public MobBell(ModX mod, Item.Properties properties) {
-        super(mod, properties.setISTER(() -> RenderHandBell::new));
+    public ItemMobBell(ModX mod, Item.Properties properties) {
+        super(mod, properties.setISTER(() -> RenderBell::new));
     }
 
     @Override
@@ -61,7 +61,7 @@ public class MobBell extends BellBase {
         String s = stack.getOrCreateTag().getString("Entity");
         Optional<EntityType<?>> entityType = EntityType.byKey(s);
 
-        return entityType.map(MobBell::getCurrentMob).orElse(null);
+        return entityType.map(ItemMobBell::getCurrentMob).orElse(null);
     }
 
     @Nonnull

@@ -1,7 +1,6 @@
-package de.melanx.utilitix.block.tesr;
+package de.melanx.utilitix.module.brewery;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import de.melanx.utilitix.block.tile.TileAdvancedBrewery;
 import io.github.noeppi_noeppi.libx.block.tesr.HorizontalRotatedTesr;
 import io.github.noeppi_noeppi.libx.render.ClientTickHandler;
 import net.minecraft.client.Minecraft;

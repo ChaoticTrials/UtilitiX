@@ -1,6 +1,5 @@
-package de.melanx.utilitix.block.container;
+package de.melanx.utilitix.module.brewery;
 
-import de.melanx.utilitix.block.tile.TileAdvancedBrewery;
 import io.github.noeppi_noeppi.libx.inventory.container.ContainerBase;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;

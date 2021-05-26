@@ -2,27 +2,22 @@ package de.melanx.utilitix;
 
 import de.melanx.utilitix.config.ArmorStandRotationListMapper;
 import de.melanx.utilitix.config.ArmorStandRotationMapper;
-import de.melanx.utilitix.item.bells.MobBell;
-import de.melanx.utilitix.network.UtiliNetwork;
 import de.melanx.utilitix.module.BetterMending;
+import de.melanx.utilitix.module.bell.ItemMobBell;
+import de.melanx.utilitix.module.slime.SlimeRender;
+import de.melanx.utilitix.module.slime.SlimyCapability;
 import de.melanx.utilitix.network.UtiliNetwork;
 import de.melanx.utilitix.registration.ModItems;
-import de.melanx.utilitix.slime.SlimeRender;
-import de.melanx.utilitix.slime.SlimyCapability;
 import io.github.noeppi_noeppi.libx.config.ConfigManager;
 import io.github.noeppi_noeppi.libx.mod.registration.ModXRegistration;
-import net.minecraft.block.PistonBlockStructureHelper;
-import net.minecraft.client.renderer.tileentity.PistonTileEntityRenderer;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.LockCode;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.PistonEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -79,7 +74,7 @@ public class UtilitiX extends ModXRegistration {
 
     @OnlyIn(Dist.CLIENT)
     private void registerItemColors(ColorHandlerEvent.Item event) {
-        event.getItemColors().register((stack, idx) -> idx == 1 ? 0xFF000000 | MobBell.getColor(stack) : 0xFFFFFFFF, ModItems.mobBell);
+        event.getItemColors().register((stack, idx) -> idx == 1 ? 0xFF000000 | ItemMobBell.getColor(stack) : 0xFFFFFFFF, ModItems.mobBell);
     }
 
     @Nonnull

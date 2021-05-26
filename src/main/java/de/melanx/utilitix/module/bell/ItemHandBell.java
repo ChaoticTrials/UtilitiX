@@ -1,4 +1,4 @@
-package de.melanx.utilitix.item.bells;
+package de.melanx.utilitix.module.bell;
 
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.entity.LivingEntity;
@@ -6,10 +6,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.EntityTypeTags;
 
-public class HandBell extends BellBase {
+public class ItemHandBell extends BellBase {
 
-    public HandBell(ModX mod, Item.Properties properties) {
-        super(mod, properties.setISTER(() -> RenderHandBell::new));
+    public ItemHandBell(ModX mod, Item.Properties properties) {
+        super(mod, properties.setISTER(() -> RenderBell::new));
     }
 
     @Override

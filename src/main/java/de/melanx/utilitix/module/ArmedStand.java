@@ -1,4 +1,4 @@
-package de.melanx.utilitix.item;
+package de.melanx.utilitix.module;
 
 import de.melanx.utilitix.UtilitiXConfig;
 import io.github.noeppi_noeppi.libx.mod.ModX;

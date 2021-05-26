@@ -1,4 +1,4 @@
-package de.melanx.utilitix.slime;
+package de.melanx.utilitix.module.slime;
 
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.network.StickyChunkUpdateSerializer;

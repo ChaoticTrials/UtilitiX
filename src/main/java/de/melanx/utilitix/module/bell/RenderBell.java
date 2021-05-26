@@ -1,4 +1,4 @@
-package de.melanx.utilitix.item.bells;
+package de.melanx.utilitix.module.bell;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -30,8 +30,8 @@ import net.minecraft.util.math.vector.Vector3f;
 
 import javax.annotation.Nonnull;
 
-public class RenderHandBell extends ItemStackTileEntityRenderer {
-    
+public class RenderBell extends ItemStackTileEntityRenderer {
+
     public static final RenderMaterial GRAY_BELL_MATERIAL = new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE, Textures.GRAY_BELL_TEXTURE);
 
     @Model(namespace = "minecraft", value = "item/stick")
@@ -47,7 +47,7 @@ public class RenderHandBell extends ItemStackTileEntityRenderer {
 
     private final ModelRenderer grayscaleModel = new ModelRenderer(32, 32, 0, 0);
 
-    public RenderHandBell() {
+    public RenderBell() {
         this.grayscaleModel.addBox(-3.0F, -6.0F, -3.0F, 6.0F, 7.0F, 6.0F);
         this.grayscaleModel.setRotationPoint(8.0F, 12.0F, 8.0F);
         ModelRenderer modelrenderer = new ModelRenderer(32, 32, 0, 13);
@@ -89,7 +89,7 @@ public class RenderHandBell extends ItemStackTileEntityRenderer {
                 matrixStack.rotate(Vector3f.XP.rotationDegrees(180));
                 matrixStack.translate(-0.475, -1.6, -1);
                 if (stack.getItem() == ModItems.mobBell) {
-                    float[] color = MobBell.getFloatColor(stack);
+                    float[] color = ItemMobBell.getFloatColor(stack);
                     float ringRotation = -(MathHelper.sin(tile.ringingTicks + mc.getRenderPartialTicks() / (float) Math.PI) / (4 + (tile.ringingTicks + Minecraft.getInstance().getRenderPartialTicks()) / 3f));
                     this.grayscaleModel.rotateAngleX = 0;
                     this.grayscaleModel.rotateAngleZ = tile.isRinging ? ringRotation : 0;

@@ -1,4 +1,4 @@
-package de.melanx.utilitix.slime;
+package de.melanx.utilitix.module.slime;
 
 import de.melanx.utilitix.UtilitiX;
 import net.minecraft.block.BlockState;
@@ -10,7 +10,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -18,7 +17,6 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

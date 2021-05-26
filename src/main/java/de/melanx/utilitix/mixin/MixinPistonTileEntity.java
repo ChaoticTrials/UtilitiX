@@ -1,7 +1,7 @@
 package de.melanx.utilitix.mixin;
 
-import de.melanx.utilitix.slime.SlimyCapability;
-import de.melanx.utilitix.slime.StickyChunk;
+import de.melanx.utilitix.module.slime.SlimyCapability;
+import de.melanx.utilitix.module.slime.StickyChunk;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.PistonTileEntity;
