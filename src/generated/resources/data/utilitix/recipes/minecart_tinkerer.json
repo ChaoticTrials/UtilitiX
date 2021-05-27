@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " nm",
+    " in",
+    "i  "
+  ],
+  "key": {
+    "i": {
+      "tag": "forge:ingots/iron"
+    },
+    "n": {
+      "tag": "forge:nuggets/iron"
+    },
+    "m": {
+      "item": "minecraft:minecart"
+    }
+  },
+  "result": {
+    "item": "utilitix:minecart_tinkerer"
+  }
+}

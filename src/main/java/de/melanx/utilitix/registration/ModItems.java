@@ -1,6 +1,7 @@
 package de.melanx.utilitix.registration;
 
 import de.melanx.utilitix.UtilitiX;
+import de.melanx.utilitix.content.rails.ItemMinecartTinkerer;
 import de.melanx.utilitix.item.ItemBurnable;
 import de.melanx.utilitix.item.Quiver;
 import de.melanx.utilitix.content.ArmedStand;
@@ -24,4 +25,5 @@ public class ModItems {
     public static final Item armedStand = new ArmedStand(UtilitiX.getInstance(), new Item.Properties().maxStackSize(16));
     public static final Item glueBall = new ItemGlueBall(UtilitiX.getInstance(), new Item.Properties());
     public static final Item linkedCrystal = new ItemLinkedCrystal(UtilitiX.getInstance(), new Item.Properties().maxStackSize(8));
+    public static final Item minecartTinkerer = new ItemMinecartTinkerer(UtilitiX.getInstance(), new Item.Properties().maxStackSize(1));
 }

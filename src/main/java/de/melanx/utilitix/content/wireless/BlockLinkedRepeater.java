@@ -97,7 +97,9 @@ public class BlockLinkedRepeater extends BlockTE<TileLinkedRepeater> {
     @Override
     public void onReplaced(@Nonnull BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
         if (state.hasTileEntity() && (!state.matchesBlock(newState.getBlock()) || !newState.hasTileEntity())) {
-            ItemStack stack = this.getTile(world, pos).getLink();
+            TileLinkedRepeater tile = this.getTile(world, pos);
+            WirelessStorage.get(world).remove(world, tile.getLinkId(), new WorldAndPos(world.getDimensionKey(), pos));
+            ItemStack stack = tile.getLink();
             if (!stack.isEmpty()) {
                 ItemEntity entity = new ItemEntity(world, pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, stack.copy());
                 world.addEntity(entity);

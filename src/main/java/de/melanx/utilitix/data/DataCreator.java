@@ -16,6 +16,7 @@ public class DataCreator {
 
         if (event.includeServer()) {
             BlockTagProvider blockTagProvider = new BlockTagProvider(generator, helper);
+            generator.addProvider(blockTagProvider);
             generator.addProvider(new ItemTagProvider(generator, helper, blockTagProvider));
             generator.addProvider(new RecipeProvider(generator));
         }

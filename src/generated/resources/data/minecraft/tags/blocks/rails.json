@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "utilitix:highspeed_rail",
+    "utilitix:directional_rail",
+    "utilitix:directional_highspeed_rail",
+    "utilitix:crossing_rail",
+    "utilitix:filter_rail"
+  ]
+}

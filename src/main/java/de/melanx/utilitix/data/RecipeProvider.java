@@ -36,6 +36,7 @@ public class RecipeProvider extends RecipeProviderBase {
         this.createMiscRecipes(consumer);
         this.createRedstoneRecipes(consumer);
         this.createBreweryRecipes(consumer);
+        this.createRailRecipes(consumer);
     }
 
     private void createTinyCoalRecipe(Consumer<IFinishedRecipe> consumer, IItemProvider coal, IItemProvider tinyCoal) {
@@ -213,5 +214,78 @@ public class RecipeProvider extends RecipeProviderBase {
                 .input(Items.POPPED_CHORUS_FRUIT)
                 .action(new EffectTransformer.Upgrade(2))
                 .build(consumer, new ResourceLocation(UtilitiX.getInstance().modid, "upgrade"));
+    }
+    
+    private void createRailRecipes(Consumer<IFinishedRecipe> consumer) {
+        
+        ShapedRecipeBuilder.shapedRecipe(ModBlocks.highspeedRail, 3)
+                .patternLine("e e")
+                .patternLine("ese")
+                .patternLine("ere")
+                .key('e', Tags.Items.GEMS_EMERALD)
+                .key('s', Tags.Items.RODS_WOODEN)
+                .key('r', Tags.Items.DUSTS_REDSTONE)
+                .addCriterion("has_item0", hasItem(Tags.Items.GEMS_EMERALD))
+                .addCriterion("has_item1", hasItem(Tags.Items.RODS_WOODEN))
+                .addCriterion("has_item2", hasItem(Tags.Items.DUSTS_REDSTONE))
+                .build(consumer);
+        
+        ShapedRecipeBuilder.shapedRecipe(ModBlocks.directionalRail, 6)
+                .patternLine("gig")
+                .patternLine("gsg")
+                .patternLine("grg")
+                .key('g', Tags.Items.INGOTS_GOLD)
+                .key('s', Tags.Items.RODS_WOODEN)
+                .key('r', Tags.Items.DUSTS_REDSTONE)
+                .key('i', Tags.Items.NUGGETS_IRON)
+                .addCriterion("has_item0", hasItem(Tags.Items.INGOTS_GOLD))
+                .addCriterion("has_item1", hasItem(Tags.Items.RODS_WOODEN))
+                .addCriterion("has_item2", hasItem(Tags.Items.DUSTS_REDSTONE))
+                .addCriterion("has_item3", hasItem(Tags.Items.NUGGETS_IRON))
+                .build(consumer);
+        
+        ShapedRecipeBuilder.shapedRecipe(ModBlocks.directionalHighspeedRail, 3)
+                .patternLine("eie")
+                .patternLine("ese")
+                .patternLine("ere")
+                .key('e', Tags.Items.GEMS_EMERALD)
+                .key('s', Tags.Items.RODS_WOODEN)
+                .key('r', Tags.Items.DUSTS_REDSTONE)
+                .key('i', Tags.Items.NUGGETS_IRON)
+                .addCriterion("has_item0", hasItem(Tags.Items.GEMS_EMERALD))
+                .addCriterion("has_item1", hasItem(Tags.Items.RODS_WOODEN))
+                .addCriterion("has_item2", hasItem(Tags.Items.DUSTS_REDSTONE))
+                .addCriterion("has_item3", hasItem(Tags.Items.NUGGETS_IRON))
+                .build(consumer);
+        
+        ShapedRecipeBuilder.shapedRecipe(ModBlocks.crossingRail, 4)
+                .patternLine(" r ")
+                .patternLine("rrr")
+                .patternLine(" r ")
+                .key('r', Items.RAIL)
+                .addCriterion("has_item", hasItem(Items.RAIL))
+                .build(consumer);
+        
+        ShapedRecipeBuilder.shapedRecipe(ModBlocks.filterRail, 2)
+                .patternLine("r ")
+                .patternLine("nr")
+                .patternLine("r ")
+                .key('r', Items.RAIL)
+                .key('n', Tags.Items.NUGGETS_IRON)
+                .addCriterion("has_item0", hasItem(Items.RAIL))
+                .addCriterion("has_item1", hasItem(Tags.Items.NUGGETS_IRON))
+                .build(consumer);
+        
+        ShapedRecipeBuilder.shapedRecipe(ModItems.minecartTinkerer)
+                .patternLine(" nm")
+                .patternLine(" in")
+                .patternLine("i  ")
+                .key('i', Tags.Items.INGOTS_IRON)
+                .key('n', Tags.Items.NUGGETS_IRON)
+                .key('m', Items.MINECART)
+                .addCriterion("has_item0", hasItem(Tags.Items.INGOTS_IRON))
+                .addCriterion("has_item1", hasItem(Tags.Items.NUGGETS_IRON))
+                .addCriterion("has_item2", hasItem(Items.MINECART))
+                .build(consumer);
     }
 }

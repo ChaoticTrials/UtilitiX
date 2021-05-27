@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "eie",
+    "ese",
+    "ere"
+  ],
+  "key": {
+    "e": {
+      "tag": "forge:gems/emerald"
+    },
+    "s": {
+      "tag": "forge:rods/wooden"
+    },
+    "r": {
+      "tag": "forge:dusts/redstone"
+    },
+    "i": {
+      "tag": "forge:nuggets/iron"
+    }
+  },
+  "result": {
+    "item": "utilitix:directional_highspeed_rail",
+    "count": 3
+  }
+}

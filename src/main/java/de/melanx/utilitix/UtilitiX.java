@@ -9,6 +9,7 @@ import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.network.UtiliNetwork;
 import de.melanx.utilitix.registration.ModItems;
 import io.github.noeppi_noeppi.libx.config.ConfigManager;
+import io.github.noeppi_noeppi.libx.inventory.container.GenericContainer;
 import io.github.noeppi_noeppi.libx.mod.registration.ModXRegistration;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -63,12 +64,12 @@ public class UtilitiX extends ModXRegistration {
     }
 
     @Override
-    protected void setup(FMLCommonSetupEvent fmlCommonSetupEvent) {
+    protected void setup(FMLCommonSetupEvent event) {
         // 
     }
 
     @Override
-    protected void clientSetup(FMLClientSetupEvent fmlClientSetupEvent) {
+    protected void clientSetup(FMLClientSetupEvent event) {
         //
     }
 

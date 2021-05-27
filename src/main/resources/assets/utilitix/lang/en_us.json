@@ -6,6 +6,11 @@
   "block.utilitix.comparator_redirector_up": "Comparator Redirector: Up",
   "block.utilitix.comparator_redirector_down": "Comparator Redirector: Down",
   "block.utilitix.linked_repeater": "Linked Repeater",
+  "block.utilitix.highspeed_rail": "Highspeed Rail",
+  "block.utilitix.directional_rail": "Directional Rail",
+  "block.utilitix.directional_highspeed_rail": "Directional Highspeed Rai",
+  "block.utilitix.crossing_rail": "Crossing Rail",
+  "block.utilitix.filter_rail": "Filter Rail",
 
   "enchantment.utilitix.bell_range": "Bell Range",
   "enchantment.utilitix.bell_range.desc": "Increases the notify and glow range of UtilitX bells.",
@@ -22,9 +27,11 @@
   "item.utilitix.armed_stand": "Armor Stand with Arms",
   "item.utilitix.glue_ball": "Glue Ball",
   "item.utilitix.linked_crystal": "Linked Redstone Crystal",
+  "item.utilitix.minecart_tinkerer": "Minecart Tinkerer",
 
   "screen.utilitix.quiver": "Quiver",
   "screen.utilitix.advanced_brewery": "Advanced Brewery",
+  "screen.utilitix.minecart_tinkerer": "Minecart Label",
 
   "tooltip.utilitix.blacklisted_mob": "This mob is blacklisted",
   "tooltip.utilitix.current_mob": "Current Mob",
