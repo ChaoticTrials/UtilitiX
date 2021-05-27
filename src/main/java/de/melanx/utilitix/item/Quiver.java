@@ -10,10 +10,12 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -74,7 +76,7 @@ public class Quiver extends ItemBase implements Registerable {
         }
         AtomicReference<BaseItemStackHandler> handler = new AtomicReference<>(null);
         handler.set(new BaseItemStackHandler(
-                27, slot -> stack.getOrCreateTag().put("Items", handler.get().serializeNBT()),
+                9, slot -> stack.getOrCreateTag().put("Items", handler.get().serializeNBT()),
                 (slot, stack1) -> ItemTags.ARROWS.contains(stack1.getItem()))
         );
         handler.get().deserializeNBT(stack.getOrCreateTag().getCompound("Items"));
@@ -92,5 +94,10 @@ public class Quiver extends ItemBase implements Registerable {
             }
         }
         return true;
+    }
+
+    @Override
+    public void fillItemGroup(@Nonnull ItemGroup group, @Nonnull NonNullList<ItemStack> items) {
+        // TODO re-add after item was added
     }
 }
