@@ -1,13 +1,16 @@
 package de.melanx.utilitix.jei;
 
+import com.google.common.collect.ImmutableList;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.content.brewery.ScreenAdvancedBrewery;
 import de.melanx.utilitix.recipe.BreweryRecipe;
 import de.melanx.utilitix.recipe.EffectTransformer;
 import de.melanx.utilitix.registration.ModBlocks;
+import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.registration.ModRecipes;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
@@ -53,6 +56,22 @@ public class UtiliJei implements IModPlugin {
                 .filter(r -> r.getAction() instanceof EffectTransformer.Apply)
                 .collect(Collectors.toList());
         registration.addRecipes(simpleBrewery, BreweryCategory.ID);
+        registration.addIngredientInfo(new ItemStack(ModBlocks.advancedBrewery), VanillaTypes.ITEM, "description.utilitix.advanced_brewery", "description.utilitix.advanced_brewery.brewing", "description.utilitix.advanced_brewery.merging", "description.utilitix.advanced_brewery.upgrading", "description.utilitix.advanced_brewery.cloning");
+        registration.addIngredientInfo(ImmutableList.of(new ItemStack(ModBlocks.comparatorRedirectorUp), new ItemStack(ModBlocks.comparatorRedirectorDown)), VanillaTypes.ITEM, "description.utilitix.comparator_redirector");
+        registration.addIngredientInfo(new ItemStack(ModBlocks.weakRedstoneTorch), VanillaTypes.ITEM, "description.utilitix.weak_redstone_torch");
+        registration.addIngredientInfo(ImmutableList.of(new ItemStack(ModItems.tinyCoal), new ItemStack(ModItems.tinyCharcoal)), VanillaTypes.ITEM, "description.utilitix.tiny_coal");
+        registration.addIngredientInfo(new ItemStack(ModItems.handBell), VanillaTypes.ITEM, "description.utilitix.hand_bell");
+        registration.addIngredientInfo(new ItemStack(ModItems.mobBell), VanillaTypes.ITEM, "description.utilitix.mob_bell");
+        registration.addIngredientInfo(new ItemStack(ModItems.failedPotion), VanillaTypes.ITEM, "description.utilitix.failed_potion");
+        registration.addIngredientInfo(new ItemStack(ModItems.armedStand), VanillaTypes.ITEM, "description.utilitix.armed_stand");
+        registration.addIngredientInfo(new ItemStack(ModItems.glueBall), VanillaTypes.ITEM, "description.utilitix.glue_ball");
+        registration.addIngredientInfo(new ItemStack(ModItems.linkedCrystal), VanillaTypes.ITEM, "description.utilitix.linked_crystal");
+        registration.addIngredientInfo(new ItemStack(ModBlocks.linkedRepeater), VanillaTypes.ITEM, "description.utilitix.linked_repeater");
+        registration.addIngredientInfo(new ItemStack(ModItems.minecartTinkerer), VanillaTypes.ITEM, "description.utilitix.minecart_tinkerer");
+        registration.addIngredientInfo(new ItemStack(ModBlocks.highspeedRail), VanillaTypes.ITEM, "description.utilitix.highspeed_rail");
+        registration.addIngredientInfo(ImmutableList.of(new ItemStack(ModBlocks.directionalRail), new ItemStack(ModBlocks.directionalHighspeedRail)), VanillaTypes.ITEM, "description.utilitix.directional_rail");
+        registration.addIngredientInfo(new ItemStack(ModBlocks.crossingRail), VanillaTypes.ITEM, "description.utilitix.crossing_rail");
+        registration.addIngredientInfo(new ItemStack(ModBlocks.filterRail), VanillaTypes.ITEM, "description.utilitix.filter_rail");
     }
 
     @Override

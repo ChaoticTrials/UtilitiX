@@ -39,5 +39,26 @@
   "tooltip.utilitix.invalid_link": "Not Linked.",
   "tooltip.utilitix.valid_link": "Linked: %s",
   "tooltip.utilitix.signal_strength": "Signal strength: %s",
-  "tooltip.utilitix.link_failed": "You need at least two crystals to link them up."
+  "tooltip.utilitix.link_failed": "You need at least two crystals to link them up.",
+  
+  "description.utilitix.advanced_brewery": "The advanced brewery can modify potions. Just like a regular brewery it requires blaze powder to work. It has four modes: Brewing, Merging, Upgrading and Cloning",
+  "description.utilitix.advanced_brewery.brewing": "In brewing mode, one potion is required in the center potion slot and a special ingredient is required in the input slot. You can view brewing recipes in JEI.",
+  "description.utilitix.advanced_brewery.merging": "In merging mode, two potions on the outer potions slots are merged and a new potion is created that has their effects combined. The center potion slot must contain a glass bottle and the ingredient slot must be empty. The more complex the resulting potion is, the more likely the merge will fail, resulting in a failed potion.",
+  "description.utilitix.advanced_brewery.upgrading": "In upgrading mode, a potion with exactly one effect can be upgraded. The resulting potion will have the amplifier increased by one. This works up to amplifier III. The potion to upgrade goes into the center potion slot and a popped chorus fruit has to be filled into the ingredient slot.",
+  "description.utilitix.advanced_brewery.cloning": "In cloning mode, a potion can be duplicated. For this, place the potion to be duplicated in the center potion slot and two water bottles in the outer potion slots. Then put some netherite scrap into the ingredient slot.",
+  "description.utilitix.comparator_redirector": "If a comparator is placed next to a comparator redirector, it will read the comparator output of the block above or below respectively. By this you can read the filling state of a chest from below it. However you can't chain these.",
+  "description.utilitix.weak_redstone_torch": "The weak redstone torch works exactly like a regular redstone torch with the sole exception that it does not power the block above strongly. So you can still read the signal from that block but only with a repeater or a comparator. This also means that this torch is not affected by torch burnout.",
+  "description.utilitix.tiny_coal": "Tiny coal smelts exactly one item.",
+  "description.utilitix.hand_bell": "A bell for your hand. Ringing it will highlight raiders as with a normal bell. DinkDonk",
+  "description.utilitix.mob_bell": "This special bell can be bound to a mob by shift right-clicking on that mob. Ringing a bound mob bell will highlight mobs of that type.",
+  "description.utilitix.failed_potion": "A failed potion is sometimes the result when merging potions in an advanced brewery. The chance for failed potions increases with complex merges. Upon drinking, you'll be granted some negative effects.",
+  "description.utilitix.armed_stand": "An armor stand with arms. You can cycle through different poses by shift right-clicking it with a flint.",
+  "description.utilitix.glue_ball": "Glue balls can be attached to the sides of solid blocks. These blocks will get sticky and pull adjacent blocks when moved by a piston.",
+  "description.utilitix.linked_crystal": "You can link up to 8 redstone crystals together by right-clicking with them. Then you can put them in linked repeaters to get wireless redstone. This also works across dimensions. Right-clicking a bound crystal will show the current signal strength.",
+  "description.utilitix.linked_repeater": "Linked repeaters are like repeaters with a delay of one tick. However they can take linked redstone crystals to allow for wireless redstone.",
+  "description.utilitix.minecart_tinkerer": "The minecart tinkerer can be used to add labels to minecarts and some types of rails. A label is just an item that identifies a minecart. Left-click a minecart to set a label. To add a label to a rail that supports labels, right click that rail with a minecart tinkerer. An example for such a rail is the filter rail.",
+  "description.utilitix.highspeed_rail": "Works like a powered rail but is much faster.",
+  "description.utilitix.directional_rail": "Minecarts on these rails start moving on their own. Also this rail only lets minecarts pass in one way.",
+  "description.utilitix.crossing_rail": "Let two of your minecart tracks cross without ugly bridges.",
+  "description.utilitix.filter_rail": "A filter rail can filter minecarts based on their label. You can set a label with a minecart tinkerer. Then all minecarts with the same label will go sideways, all other minecarts will go straight."
 }
