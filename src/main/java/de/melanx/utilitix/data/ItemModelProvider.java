@@ -36,7 +36,7 @@ public class ItemModelProvider extends ItemModelProviderBase {
 
     @Override
     protected void defaultBlock(ResourceLocation id, BlockItem item) {
-        if (item.getBlock() == ModBlocks.filterRail) {
+        if (item.getBlock() == ModBlocks.filterRail || item.getBlock() == ModBlocks.reinforcedFilterRail) {
             this.withExistingParent(id.getPath(), GENERATED).texture("layer0", new ResourceLocation(id.getNamespace(), "block/" + id.getPath() + "_right"));
         } else if (item.getBlock() instanceof WeakRedstoneTorch || item.getBlock() instanceof AbstractRailBlock) {
             this.withExistingParent(id.getPath(), GENERATED).texture("layer0", new ResourceLocation(id.getNamespace(), "block/" + id.getPath()));

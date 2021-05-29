@@ -91,8 +91,8 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
 
     @Override
     public void setRecipe(@Nonnull IRecipeLayout layout, @Nonnull BreweryRecipe recipe, @Nonnull IIngredients ii) {
-        layout.getItemStacks().init(0, true, 23, 43);
-        layout.getItemStacks().init(1, false, 23, 2);
+        layout.getItemStacks().init(0, false, 23, 43);
+        layout.getItemStacks().init(1, true, 23, 2);
         layout.getItemStacks().init(2, false, 80, 2);
         layout.getItemStacks().setBackground(2, this.slot);
         layout.getItemStacks().set(ii);

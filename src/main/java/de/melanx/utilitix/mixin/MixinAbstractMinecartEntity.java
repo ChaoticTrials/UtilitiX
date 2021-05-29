@@ -1,6 +1,6 @@
 package de.melanx.utilitix.mixin;
 
-import de.melanx.utilitix.content.rails.ItemMinecartTinkerer;
+import de.melanx.utilitix.content.track.ItemMinecartTinkerer;
 import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;

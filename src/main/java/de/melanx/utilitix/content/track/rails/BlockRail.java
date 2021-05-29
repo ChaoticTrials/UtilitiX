@@ -1,4 +1,4 @@
-package de.melanx.utilitix.content.rails;
+package de.melanx.utilitix.content.track.rails;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -33,12 +33,12 @@ public abstract class BlockRail extends AbstractRailBlock implements Registerabl
     private final boolean hasCorners;
     private final boolean hasSlopes;
 
-    public BlockRail(ModX mod, Properties properties) {
-        this(mod, properties, new net.minecraft.item.Item.Properties());
+    public BlockRail(ModX mod, boolean corners, Properties properties) {
+        this(mod, corners, properties, new net.minecraft.item.Item.Properties());
     }
 
-    public BlockRail(ModX mod, Properties properties, net.minecraft.item.Item.Properties itemProperties) {
-        super(true, properties);
+    public BlockRail(ModX mod, boolean corners, Properties properties, net.minecraft.item.Item.Properties itemProperties) {
+        super(!corners, properties);
         this.mod = mod;
         if (mod.tab != null) {
             itemProperties.group(mod.tab);

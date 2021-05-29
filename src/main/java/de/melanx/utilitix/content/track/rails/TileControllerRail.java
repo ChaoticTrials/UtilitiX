@@ -1,4 +1,4 @@
-package de.melanx.utilitix.content.rails;
+package de.melanx.utilitix.content.track.rails;
 
 import io.github.noeppi_noeppi.libx.mod.registration.TileEntityBase;
 import net.minecraft.block.BlockState;
@@ -8,11 +8,11 @@ import net.minecraft.tileentity.TileEntityType;
 
 import javax.annotation.Nonnull;
 
-public class TileFilterRail extends TileEntityBase {
+public class TileControllerRail extends TileEntityBase {
 
     private ItemStack filterStack = ItemStack.EMPTY;
-    
-    public TileFilterRail(TileEntityType<?> tileEntityTypeIn) {
+
+    public TileControllerRail(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
     }
 

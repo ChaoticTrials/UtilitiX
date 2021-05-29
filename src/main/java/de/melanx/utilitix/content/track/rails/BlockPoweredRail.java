@@ -1,4 +1,4 @@
-package de.melanx.utilitix.content.rails;
+package de.melanx.utilitix.content.track.rails;
 
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.block.BlockState;

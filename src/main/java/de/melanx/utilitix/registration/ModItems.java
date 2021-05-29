@@ -1,7 +1,7 @@
 package de.melanx.utilitix.registration;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.content.rails.ItemMinecartTinkerer;
+import de.melanx.utilitix.content.track.ItemMinecartTinkerer;
 import de.melanx.utilitix.item.ItemBurnable;
 import de.melanx.utilitix.item.Quiver;
 import de.melanx.utilitix.content.ArmedStand;

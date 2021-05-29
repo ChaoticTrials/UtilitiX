@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:redstone_torch",
+    "utilitix:weak_redstone_torch"
+  ]
+}

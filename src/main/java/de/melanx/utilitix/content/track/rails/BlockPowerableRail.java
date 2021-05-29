@@ -1,4 +1,4 @@
-package de.melanx.utilitix.content.rails;
+package de.melanx.utilitix.content.track.rails;
 
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.block.Block;
@@ -25,7 +25,7 @@ public abstract class BlockPowerableRail extends BlockRail {
     }
 
     public BlockPowerableRail(ModX mod, @Nullable ITag<Block> powerables, Properties properties, Item.Properties itemProperties) {
-        super(mod, properties, itemProperties);
+        super(mod, false, properties, itemProperties);
         this.powerables = powerables;
     }
 

@@ -6,6 +6,7 @@ import de.melanx.utilitix.content.brewery.ScreenAdvancedBrewery;
 import de.melanx.utilitix.recipe.BreweryRecipe;
 import de.melanx.utilitix.recipe.EffectTransformer;
 import de.melanx.utilitix.registration.ModBlocks;
+import de.melanx.utilitix.registration.ModEntities;
 import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.registration.ModRecipes;
 import mezz.jei.api.IModPlugin;
@@ -70,8 +71,12 @@ public class UtiliJei implements IModPlugin {
         registration.addIngredientInfo(new ItemStack(ModItems.minecartTinkerer), VanillaTypes.ITEM, "description.utilitix.minecart_tinkerer");
         registration.addIngredientInfo(new ItemStack(ModBlocks.highspeedRail), VanillaTypes.ITEM, "description.utilitix.highspeed_rail");
         registration.addIngredientInfo(ImmutableList.of(new ItemStack(ModBlocks.directionalRail), new ItemStack(ModBlocks.directionalHighspeedRail)), VanillaTypes.ITEM, "description.utilitix.directional_rail");
-        registration.addIngredientInfo(new ItemStack(ModBlocks.crossingRail), VanillaTypes.ITEM, "description.utilitix.crossing_rail");
-        registration.addIngredientInfo(new ItemStack(ModBlocks.filterRail), VanillaTypes.ITEM, "description.utilitix.filter_rail");
+        registration.addIngredientInfo(ImmutableList.of(new ItemStack(ModBlocks.crossingRail), new ItemStack(ModBlocks.reinforcedCrossingRail)), VanillaTypes.ITEM, "description.utilitix.crossing_rail");
+        registration.addIngredientInfo(ImmutableList.of(new ItemStack(ModBlocks.filterRail), new ItemStack(ModBlocks.reinforcedFilterRail)), VanillaTypes.ITEM, "description.utilitix.filter_rail");
+        registration.addIngredientInfo(new ItemStack(ModBlocks.reinforcedRail), VanillaTypes.ITEM, "description.utilitix.reinforced_rail");
+        registration.addIngredientInfo(new ItemStack(ModEntities.enderCart.item()), VanillaTypes.ITEM, "description.utilitix.ender_cart");
+        registration.addIngredientInfo(new ItemStack(ModEntities.pistonCart.item()), VanillaTypes.ITEM, "description.utilitix.piston_cart");
+        registration.addIngredientInfo(ImmutableList.of(new ItemStack(ModBlocks.pistonControllerRail), new ItemStack(ModBlocks.reinforcedPistonControllerRail)), VanillaTypes.ITEM, "description.utilitix.piston_controller_rail");
     }
 
     @Override

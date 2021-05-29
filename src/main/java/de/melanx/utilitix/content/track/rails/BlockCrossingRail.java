@@ -1,4 +1,4 @@
-package de.melanx.utilitix.content.rails;
+package de.melanx.utilitix.content.track.rails;
 
 import de.melanx.utilitix.block.ModProperties;
 import io.github.noeppi_noeppi.libx.mod.ModX;
@@ -10,18 +10,23 @@ import net.minecraft.state.properties.RailShape;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BlockCrossingRail extends BlockRail {
 
-    public BlockCrossingRail(ModX mod, Properties properties) {
-        super(mod, properties);
+    public final boolean reinforced;
+    
+    public BlockCrossingRail(ModX mod, boolean reinforced, Properties properties) {
+        super(mod, false, properties);
+        this.reinforced = reinforced;
     }
 
-    public BlockCrossingRail(ModX mod, Properties properties, Item.Properties itemProperties) {
-        super(mod, properties, itemProperties);
+    public BlockCrossingRail(ModX mod, boolean reinforced, Properties properties, Item.Properties itemProperties) {
+        super(mod, false, properties, itemProperties);
+        this.reinforced = reinforced;
     }
 
     @Nonnull
@@ -44,5 +49,10 @@ public class BlockCrossingRail extends BlockRail {
             }
         }
         return super.getRailDirection(state, world, pos, cart);
+    }
+
+    @Override
+    public float getRailMaxSpeed(BlockState state, World world, BlockPos pos, AbstractMinecartEntity cart) {
+        return this.reinforced ? 0.7f : 0.4f;
     }
 }

@@ -15,6 +15,9 @@
   "enchantment.utilitix.bell_range": "Bell Range",
   "enchantment.utilitix.bell_range.desc": "Increases the notify and glow range of UtilitX bells.",
 
+  "entity.utilitix.ender_cart": "Ender Chest Minecart",
+  "entity.utilitix.piston_cart": "Piston Minecart",
+  
   "item.utilitix.hand_bell": "Hand Bell",
   "item.utilitix.mob_bell": "Mob Bell",
   "item.utilitix.quiver": "Quiver",
@@ -40,6 +43,10 @@
   "tooltip.utilitix.valid_link": "Linked: %s",
   "tooltip.utilitix.signal_strength": "Signal strength: %s",
   "tooltip.utilitix.link_failed": "You need at least two crystals to link them up.",
+  "tooltip.utilitix.piston_cart_mode": "Mode: %s",
+  "tooltip.utilitix.piston_cart_mode_idle": "Idle",
+  "tooltip.utilitix.piston_cart_mode_place": "Place",
+  "tooltip.utilitix.piston_cart_mode_replace": "Replace",
   
   "description.utilitix.advanced_brewery": "The advanced brewery can modify potions. Just like a regular brewery it requires blaze powder to work. It has four modes: Brewing, Merging, Upgrading and Cloning",
   "description.utilitix.advanced_brewery.brewing": "In brewing mode, one potion is required in the center potion slot and a special ingredient is required in the input slot. You can view brewing recipes in JEI.",
@@ -56,9 +63,13 @@
   "description.utilitix.glue_ball": "Glue balls can be attached to the sides of solid blocks. These blocks will get sticky and pull adjacent blocks when moved by a piston.",
   "description.utilitix.linked_crystal": "You can link up to 8 redstone crystals together by right-clicking with them. Then you can put them in linked repeaters to get wireless redstone. This also works across dimensions. Right-clicking a bound crystal will show the current signal strength.",
   "description.utilitix.linked_repeater": "Linked repeaters are like repeaters with a delay of one tick. However they can take linked redstone crystals to allow for wireless redstone.",
-  "description.utilitix.minecart_tinkerer": "The minecart tinkerer can be used to add labels to minecarts and some types of rails. A label is just an item that identifies a minecart. Left-click a minecart to set a label. To add a label to a rail that supports labels, right click that rail with a minecart tinkerer. An example for such a rail is the filter rail.",
-  "description.utilitix.highspeed_rail": "Works like a powered rail but is much faster.",
+  "description.utilitix.minecart_tinkerer": "The minecart tinkerer can be used to add labels to minecarts and some types of rails. A label is just an item that identifies a minecart. Left-click a minecart to set a label. To add a label to a rail that supports labels, shuft right-click that rail with a minecart tinkerer. An example for such a rail is the filter rail. Some other rails such as controller rails also have other options you can toggle. For this just right click the rail instead of shift right-click.",
+  "description.utilitix.highspeed_rail": "Works like a powered rail but is much faster. However they can't make slopes.",
   "description.utilitix.directional_rail": "Minecarts on these rails start moving on their own. Also this rail only lets minecarts pass in one way.",
   "description.utilitix.crossing_rail": "Let two of your minecart tracks cross without ugly bridges.",
-  "description.utilitix.filter_rail": "A filter rail can filter minecarts based on their label. You can set a label with a minecart tinkerer. Then all minecarts with the same label will go sideways, all other minecarts will go straight."
+  "description.utilitix.filter_rail": "A filter rail can filter minecarts based on their label. You can set a label with a minecart tinkerer (shift right-click). Then all minecarts with the same label will go sideways, all other minecarts will go straight.",
+  "description.utilitix.reinforced_rail": "As normal rails almost instantly reset the speed from highspeed rails to the speed of powered rails, you can use reinforced rails to keep that speed in corners. However like highspeed rails, these can't make slopes.",
+  "description.utilitix.ender_cart": "A minecart with an ender chest.",
+  "description.utilitix.piston_cart": "This cart can place and replace rails. It has an inventory where you can put the new rails on the left and take out the replaced rails on the right. You can also add redstone torches that are placed below the track to power the rails if they can be powered.",
+  "description.utilitix.piston_controller_rail": "A rail to control piston minecarts. You can set labels with a minecart tinkerer (shift right-click) and set the mode that should be set to each piston minecart travelling over the block. These rails are not replaced by piston minecarts."
 }

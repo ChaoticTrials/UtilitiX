@@ -7,10 +7,7 @@ import de.melanx.utilitix.block.WeakRedstoneTorch;
 import de.melanx.utilitix.content.brewery.BlockAdvancedBrewery;
 import de.melanx.utilitix.content.brewery.ContainerAdvancedBrewery;
 import de.melanx.utilitix.content.brewery.TileAdvancedBrewery;
-import de.melanx.utilitix.content.rails.BlockCrossingRail;
-import de.melanx.utilitix.content.rails.BlockDirectionalRail;
-import de.melanx.utilitix.content.rails.BlockFilterRail;
-import de.melanx.utilitix.content.rails.BlockPoweredRail;
+import de.melanx.utilitix.content.track.rails.*;
 import de.melanx.utilitix.content.wireless.BlockLinkedRepeater;
 import io.github.noeppi_noeppi.libx.annotation.RegisterClass;
 import io.github.noeppi_noeppi.libx.mod.registration.BlockBase;
@@ -36,6 +33,11 @@ public class ModBlocks {
     public static final Block highspeedRail = new BlockPoweredRail(UtilitiX.getInstance(), 0.7, AbstractBlock.Properties.from(Blocks.POWERED_RAIL)) { @Nonnull @Override public Property<RailShape> getShapeProperty() { return ModProperties.RAIL_SHAPE_FLAT_STRAIGHT; }};
     public static final Block directionalRail = new BlockDirectionalRail(UtilitiX.getInstance(), 0.4, AbstractBlock.Properties.from(Blocks.POWERED_RAIL)) { @Nonnull @Override public Property<RailShape> getShapeProperty() { return BlockStateProperties.RAIL_SHAPE_STRAIGHT; }};
     public static final Block directionalHighspeedRail = new BlockDirectionalRail(UtilitiX.getInstance(), 0.7, AbstractBlock.Properties.from(Blocks.POWERED_RAIL)) { @Nonnull @Override public Property<RailShape> getShapeProperty() { return ModProperties.RAIL_SHAPE_FLAT_STRAIGHT; }};
-    public static final Block crossingRail = new BlockCrossingRail(UtilitiX.getInstance(), AbstractBlock.Properties.from(Blocks.RAIL));
-    public static final Block filterRail = new BlockFilterRail(UtilitiX.getInstance(), AbstractBlock.Properties.from(Blocks.RAIL));
+    public static final Block crossingRail = new BlockCrossingRail(UtilitiX.getInstance(), false, AbstractBlock.Properties.from(Blocks.RAIL));
+    public static final Block filterRail = new BlockFilterRail(UtilitiX.getInstance(), false, AbstractBlock.Properties.from(Blocks.RAIL));
+    public static final Block reinforcedRail = new BlockReinforcedRail(UtilitiX.getInstance(), AbstractBlock.Properties.from(Blocks.RAIL));
+    public static final Block reinforcedCrossingRail = new BlockCrossingRail(UtilitiX.getInstance(), true, AbstractBlock.Properties.from(Blocks.RAIL));
+    public static final Block reinforcedFilterRail = new BlockFilterRail(UtilitiX.getInstance(), true, AbstractBlock.Properties.from(Blocks.RAIL));
+    public static final Block pistonControllerRail = new BlockPistonControllerRail(UtilitiX.getInstance(), false, AbstractBlock.Properties.from(Blocks.ACTIVATOR_RAIL)) { @Nonnull @Override public Property<RailShape> getShapeProperty() { return BlockStateProperties.RAIL_SHAPE_STRAIGHT; }};
+    public static final Block reinforcedPistonControllerRail = new BlockPistonControllerRail(UtilitiX.getInstance(), true, AbstractBlock.Properties.from(Blocks.ACTIVATOR_RAIL)) { @Nonnull @Override public Property<RailShape> getShapeProperty() { return ModProperties.RAIL_SHAPE_FLAT_STRAIGHT; }};
 }
