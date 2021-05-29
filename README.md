@@ -11,7 +11,7 @@ A lot of items, nice to have
 - [ ] add a way to gild armor to make piglins neutral
 - [ ] increase wandering trader time if you trade with him
 - [ ] increase amount of wandering traders in one world
-- [ ] if saplings or seeds would despawn on correct soil, plant them
+- [x] when saplings or seeds would despawn on correct soil, plant them
 - [ ] double doors open at same time
 - [ ] make use of LockableTileEntities
 - [x] ~~[Modlist to Clipboard](https://github.com/noeppi-noeppi/LibX/issues/6)~~
