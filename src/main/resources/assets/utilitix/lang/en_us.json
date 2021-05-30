@@ -53,7 +53,7 @@
   "tooltip.utilitix.piston_cart_mode": "Mode: %s",
   "tooltip.utilitix.piston_cart_mode_idle": "Idle",
   "tooltip.utilitix.piston_cart_mode_place": "Place",
-  "tooltip.utilitix.piston_cart_mode_replace": "Replace",,
+  "tooltip.utilitix.piston_cart_mode_replace": "Replace",
   "tooltip.utilitix.gilded": "Gilded",
   
   "description.utilitix.advanced_brewery": "The advanced brewery can modify potions. Just like a regular brewery it requires blaze powder to work. It has four modes: Brewing, Merging, Upgrading and Cloning",
