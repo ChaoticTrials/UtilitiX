@@ -19,9 +19,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
@@ -50,7 +48,7 @@ import java.util.NoSuchElementException;
 
 public class EntityPistonCart extends EntityCart {
 
-    private static final DataParameter<PistonCartMode> MODE = EntityDataManager.createKey(EntityCart.class, ModSerializers.pistonCartMode);
+    private static final DataParameter<PistonCartMode> MODE = EntityDataManager.createKey(EntityPistonCart.class, ModSerializers.pistonCartMode);
 
     private PistonCartMode mode = PistonCartMode.IDLE;
     private final BaseItemStackHandler railIn;
@@ -207,7 +205,7 @@ public class EntityPistonCart extends EntityCart {
         BlockState oldState = this.world.getBlockState(pos);
         if (replace) {
             RailShape shape = RailShape.NORTH_SOUTH;
-            switch (Direction.fromAngle(this.rotationYaw + 90)) {
+            switch (this.getAdjustedHorizontalFacing()) {
                 case WEST:
                 case EAST:
                     shape = RailShape.EAST_WEST;
@@ -227,7 +225,7 @@ public class EntityPistonCart extends EntityCart {
         } else {
             if (oldState.isAir(this.world, pos) || oldState.getMaterial().isReplaceable()) {
                 RailShape shape = RailShape.NORTH_SOUTH;
-                switch (Direction.fromAngle(this.rotationYaw + 90)) {
+                switch (this.getAdjustedHorizontalFacing()) {
                     case WEST:
                     case EAST:
                         shape = RailShape.EAST_WEST;
@@ -254,8 +252,15 @@ public class EntityPistonCart extends EntityCart {
             if (railBlock instanceof AbstractRailBlock) {
                 //noinspection deprecation
                 if (((AbstractRailBlock) railBlock).getShapeProperty().getAllowedValues().contains(shape)) {
+                    BlockState railState = railBlock.getStateForPlacement(new DirectionalPlaceContext(this.world, pos, this.getAdjustedHorizontalFacing(), railStack.copy(), Direction.UP));
+                    if (railState == null) {
+                        railState = railBlock.getDefaultState();
+                    }
                     //noinspection deprecation
-                    BlockState railState = railBlock.getDefaultState().with(((AbstractRailBlock) railBlock).getShapeProperty(), shape);
+                    railState = railState.with(((AbstractRailBlock) railBlock).getShapeProperty(), shape);
+                    if (!railState.isValidPosition(this.world, pos)) {
+                        return false;
+                    }
                     this.world.setBlockState(pos, railState, 11);
                     this.tryPower(pos);
                     return true;
@@ -329,6 +334,9 @@ public class EntityPistonCart extends EntityCart {
             this.mode = PistonCartMode.valueOf(modeName);
         } catch (IllegalArgumentException | NoSuchElementException e) {
             this.mode = PistonCartMode.IDLE;
+        }
+        if (this.mode != this.dataManager.get(MODE)) {
+            this.dataManager.set(MODE, this.mode);
         }
     }
 

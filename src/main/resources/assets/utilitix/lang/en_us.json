@@ -11,12 +11,18 @@
   "block.utilitix.directional_highspeed_rail": "Directional Highspeed Rail",
   "block.utilitix.crossing_rail": "Crossing Rail",
   "block.utilitix.filter_rail": "Filter Rail",
+  "block.utilitix.reinforced_rail": "Reinforced Rail",
+  "block.utilitix.reinforced_crossing_rail": "Reinforced Crossing Rail",
+  "block.utilitix.reinforced_filter_rail": "Reinforced Filter Rail",
+  "block.utilitix.piston_controller_rail": "Piston Minecart Controller Rail",
+  "block.utilitix.reinforced_piston_controller_rail": "Reinforced Piston Minecart Controller Rail",
 
   "enchantment.utilitix.bell_range": "Bell Range",
   "enchantment.utilitix.bell_range.desc": "Increases the notify and glow range of UtilitX bells.",
 
   "entity.utilitix.ender_cart": "Ender Chest Minecart",
   "entity.utilitix.piston_cart": "Piston Minecart",
+  "entity.utilitix.stonecutter_cart": "Stonecutter Minecart",
   
   "item.utilitix.hand_bell": "Hand Bell",
   "item.utilitix.mob_bell": "Mob Bell",
@@ -71,5 +77,6 @@
   "description.utilitix.reinforced_rail": "As normal rails almost instantly reset the speed from highspeed rails to the speed of powered rails, you can use reinforced rails to keep that speed in corners. However like highspeed rails, these can't make slopes.",
   "description.utilitix.ender_cart": "A minecart with an ender chest.",
   "description.utilitix.piston_cart": "This cart can place and replace rails. It has an inventory where you can put the new rails on the left and take out the replaced rails on the right. You can also add redstone torches that are placed below the track to power the rails if they can be powered.",
-  "description.utilitix.piston_controller_rail": "A rail to control piston minecarts. You can set labels with a minecart tinkerer (shift right-click) and set the mode that should be set to each piston minecart travelling over the block. These rails are not replaced by piston minecarts."
+  "description.utilitix.piston_controller_rail": "A rail to control piston minecarts. You can set labels with a minecart tinkerer (shift right-click) and set the mode that should be set to each piston minecart travelling over the block. These rails are not replaced by piston minecarts.",
+  "description.utilitix.stonecutter_cart": "The stonecutter cart can break blocks. By right clicking, you can change the position of the saw. It will always break the block that the saw is facing. Also it will stop its movement while breaking a block and continue with its old speed when done. However you can't just build static block breakers with this as it will never break a block at the same position two times in a row. The drops of the blocks are always placed on the track so you can pick them up with a hopper minecart."
 }

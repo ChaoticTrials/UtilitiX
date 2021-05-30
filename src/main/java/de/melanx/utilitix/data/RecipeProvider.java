@@ -353,6 +353,7 @@ public class RecipeProvider extends RecipeProviderBase {
     private void createCartRecipes(Consumer<IFinishedRecipe> consumer) {
         this.cart(ModEntities.enderCart.item(), Items.ENDER_CHEST, consumer);
         this.cart(ModEntities.pistonCart.item(), Items.PISTON, consumer);
+        this.cart(ModEntities.stonecutterCart.item(), Items.STONECUTTER, consumer);
     }
     
     private void cart(IItemProvider cart, IItemProvider content, Consumer<IFinishedRecipe> consumer) {
