@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " g ",
+    "gmg",
+    " g "
+  ],
+  "key": {
+    "g": {
+      "tag": "forge:ingots/gold"
+    },
+    "m": {
+      "item": "minecraft:phantom_membrane"
+    }
+  },
+  "result": {
+    "item": "utilitix:gilding_crystal"
+  }
+}

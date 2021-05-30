@@ -2,6 +2,7 @@ package de.melanx.utilitix.jei;
 
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.content.brewery.ScreenAdvancedBrewery;
+import de.melanx.utilitix.content.gildingarmor.GildingArmorRecipe;
 import de.melanx.utilitix.recipe.BreweryRecipe;
 import de.melanx.utilitix.recipe.EffectTransformer;
 import de.melanx.utilitix.registration.ModBlocks;
@@ -13,6 +14,7 @@ import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.item.ItemStack;
@@ -41,7 +43,8 @@ public class UtiliJei implements IModPlugin {
     @Override
     public void registerCategories(@Nonnull IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(
-                new BreweryCategory(registration.getJeiHelpers().getGuiHelper())
+                new BreweryCategory(registration.getJeiHelpers().getGuiHelper()),
+                new GildingCategory(registration.getJeiHelpers().getGuiHelper())
         );
     }
 
@@ -53,11 +56,13 @@ public class UtiliJei implements IModPlugin {
                 .filter(r -> r.getAction() instanceof EffectTransformer.Apply)
                 .collect(Collectors.toList());
         registration.addRecipes(simpleBrewery, BreweryCategory.ID);
+        registration.addRecipes(GildingArmorRecipe.getRecipes(), GildingCategory.ID);
     }
 
     @Override
     public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalyst(new ItemStack(ModBlocks.advancedBrewery), BreweryCategory.ID);
+        registration.addRecipeCatalyst(new ItemStack(Blocks.SMITHING_TABLE), GildingCategory.ID);
     }
 
     @Override

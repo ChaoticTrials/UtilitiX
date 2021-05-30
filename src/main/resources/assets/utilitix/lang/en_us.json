@@ -11,6 +11,7 @@
   "enchantment.utilitix.bell_range.desc": "Increases the notify and glow range of UtilitX bells.",
 
   "item.utilitix.hand_bell": "Hand Bell",
+  "item.utilitix.gilding_crystal": "Gilding Crystal",
   "item.utilitix.mob_bell": "Mob Bell",
   "item.utilitix.quiver": "Quiver",
   "item.utilitix.tiny_coal": "Tiny Coal",
@@ -32,5 +33,8 @@
   "tooltip.utilitix.invalid_link": "Not Linked.",
   "tooltip.utilitix.valid_link": "Linked: %s",
   "tooltip.utilitix.signal_strength": "Signal strength: %s",
-  "tooltip.utilitix.link_failed": "You need at least two crystals to link them up."
+  "tooltip.utilitix.link_failed": "You need at least two crystals to link them up.",
+  "tooltip.utilitix.gilded": "Gilded",
+
+  "jei.utilitix.gilding": "Gilding"
 }

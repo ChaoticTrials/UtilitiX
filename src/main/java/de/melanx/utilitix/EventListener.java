@@ -1,6 +1,7 @@
 package de.melanx.utilitix;
 
 import de.melanx.utilitix.content.bell.ItemMobBell;
+import de.melanx.utilitix.content.gildingarmor.GildingArmorRecipe;
 import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.content.slime.StickyChunk;
 import de.melanx.utilitix.network.StickyChunkRequestSerializer;
@@ -30,6 +31,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ChunkEvent;
@@ -39,6 +41,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class EventListener {
 
     private static final IFormattableTextComponent BLACKLISTED_MOB = new TranslationTextComponent("tooltip." + UtilitiX.getInstance().modid + ".blacklisted_mob").mergeStyle(TextFormatting.DARK_RED);
+    private static final IFormattableTextComponent GILDED = new TranslationTextComponent("tooltip.utilitix.gilded").mergeStyle(TextFormatting.GOLD);
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
@@ -192,6 +195,16 @@ public class EventListener {
                     world.setBlockState(pos.up(), item.getBlock().getDefaultState());
                 }
             }
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @SubscribeEvent
+    public void onRenderTooltip(ItemTooltipEvent event) {
+        ItemStack stack = event.getItemStack();
+
+        if (GildingArmorRecipe.isGilded(stack)) {
+            event.getToolTip().add(2, GILDED);
         }
     }
 }
