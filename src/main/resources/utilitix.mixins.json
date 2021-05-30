@@ -9,6 +9,7 @@
   "mixins": [
     "MixinAbstractMinecartEntity",
     "MixinArmorStandEntity",
+    "MixinPiglinTasks",
     "MixinPistonBlockStructureHelper",
     "MixinPistonTileEntity",
     "MixinWorld"

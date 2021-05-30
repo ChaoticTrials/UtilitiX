@@ -1,6 +1,7 @@
 package de.melanx.utilitix;
 
 import de.melanx.utilitix.content.bell.ItemMobBell;
+import de.melanx.utilitix.content.gildingarmor.GildingArmorRecipe;
 import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.content.slime.StickyChunk;
 import de.melanx.utilitix.network.StickyChunkRequestSerializer;
@@ -13,6 +14,8 @@ import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.DirectionalPlaceContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -28,6 +31,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.entity.item.ItemExpireEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ChunkEvent;
@@ -37,6 +42,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class EventListener {
 
     private static final IFormattableTextComponent BLACKLISTED_MOB = new TranslationTextComponent("tooltip." + UtilitiX.getInstance().modid + ".blacklisted_mob").mergeStyle(TextFormatting.DARK_RED);
+    private static final IFormattableTextComponent GILDED = new TranslationTextComponent("tooltip.utilitix.gilded").mergeStyle(TextFormatting.GOLD);
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
@@ -134,13 +140,13 @@ public class EventListener {
                     // Block has been changed because of a piston move.
                     // Glue logic is handled in the piston til
                     // Skip this here
-                    return ;
+                    return;
                 } else if (state.getBlock() == Blocks.PISTON_HEAD && state.get(BlockStateProperties.SHORT) && (state.get(BlockStateProperties.FACING) == dir || state.get(BlockStateProperties.FACING) == dir.getOpposite())) {
                     // Block has been changed because of a piston move.
                     // Glue logic is handled in the piston til
                     // Skip this here
                     // This is sometimes buggy but we can't really do anything about this.
-                    return ;
+                    return;
                 }
             }
             Chunk chunk = world.getChunkAt(event.getPos());
@@ -163,6 +169,43 @@ public class EventListener {
                     }
                 }
             }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public void onItemDespawn(ItemExpireEvent event) {
+        ItemEntity entity = event.getEntityItem();
+        World world = entity.getEntityWorld();
+        if (!world.isRemote) {
+            BlockPos pos = entity.getPosition();
+            ItemStack stack = entity.getItem();
+            if (stack.getItem() instanceof BlockItem) {
+                BlockItem item = (BlockItem) stack.getItem();
+                if (!UtilitiXConfig.plantsOnDespawn.test(item.getRegistryName())) {
+                    return;
+                }
+
+                DirectionalPlaceContext context = new DirectionalPlaceContext(world, pos, Direction.DOWN, stack, Direction.UP);
+                if (item.tryPlace(context) == ActionResultType.SUCCESS) {
+                    world.setBlockState(pos, item.getBlock().getDefaultState());
+                    return;
+                }
+
+                context = new DirectionalPlaceContext(world, pos.up(), Direction.DOWN, stack, Direction.UP);
+                if (item.tryPlace(context) == ActionResultType.SUCCESS) {
+                    world.setBlockState(pos.up(), item.getBlock().getDefaultState());
+                }
+            }
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @SubscribeEvent
+    public void onRenderTooltip(ItemTooltipEvent event) {
+        ItemStack stack = event.getItemStack();
+
+        if (GildingArmorRecipe.isGilded(stack)) {
+            event.getToolTip().add(2, GILDED);
         }
     }
 }

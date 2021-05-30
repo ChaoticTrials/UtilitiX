@@ -7,15 +7,13 @@ A lot of items, nice to have
 # Planned features
 ## Utility
 - [x] item with mending collects nearby xp orbs
-- [ ] comparators can read states of spawners and conduits
 - [ ] add illusioner in any way because they are fancy
-- [ ] add a way to gild armor to make piglins neutral
+- [x] add a way to gild armor to make piglins neutral (will change in future)
 - [ ] increase wandering trader time if you trade with him
 - [ ] increase amount of wandering traders in one world
-- [ ] if saplings or seeds would despawn on correct soil, plant them
+- [x] when saplings or seeds would despawn on correct soil, plant them
 - [ ] double doors open at same time
 - [ ] make use of LockableTileEntities
-- [ ] move entity when piston moves block below the entity
 - [x] ~~[Modlist to Clipboard](https://github.com/noeppi-noeppi/LibX/issues/6)~~
 
 
@@ -23,15 +21,15 @@ A lot of items, nice to have
 - [ ] 3x3 entity builder
 - [ ] "XP Obelisk" (absorbs XP orbs, has a GUI like Ender IO obelisk had)
 - [ ] Advanced Enchanter (only uses required XP, not levels)
-- [ ] Block der den comparator output von oben drüber / unten drunter als comparator output gibt.
+- [x] Block that reads comparator output from above/below
 - [x] Weak redstone torch (Redstone torch that powers block above weak instead of strong because of torch burnout)
 - [ ] Furnace that smelts items with double speed and half xp if the item doesn't fit in smoker or blast furnace
-- [ ] Advanced Brewery from BedrockCraft
-- [ ] Wireless redstone
+- [x] Advanced Brewery from BedrockCraft
+- [x] Wireless redstone
 
 
 ## Items
 - [x] Tiny (Char)Coal
 - [ ] Quiver (enchantable with infinity to have mending *and* infinity) *waiting for Forge PR getting merged https://github.com/MinecraftForge/MinecraftForge/pull/7715*
-- [ ] Armor stand with arms
+- [x] Armor stand with arms
 - [x] Bell + Stick = Handbell

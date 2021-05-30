@@ -25,6 +25,7 @@
   "entity.utilitix.stonecutter_cart": "Stonecutter Minecart",
   
   "item.utilitix.hand_bell": "Hand Bell",
+  "item.utilitix.gilding_crystal": "Gilding Crystal",
   "item.utilitix.mob_bell": "Mob Bell",
   "item.utilitix.quiver": "Quiver",
   "item.utilitix.tiny_coal": "Tiny Coal",
@@ -52,7 +53,8 @@
   "tooltip.utilitix.piston_cart_mode": "Mode: %s",
   "tooltip.utilitix.piston_cart_mode_idle": "Idle",
   "tooltip.utilitix.piston_cart_mode_place": "Place",
-  "tooltip.utilitix.piston_cart_mode_replace": "Replace",
+  "tooltip.utilitix.piston_cart_mode_replace": "Replace",,
+  "tooltip.utilitix.gilded": "Gilded",
   
   "description.utilitix.advanced_brewery": "The advanced brewery can modify potions. Just like a regular brewery it requires blaze powder to work. It has four modes: Brewing, Merging, Upgrading and Cloning",
   "description.utilitix.advanced_brewery.brewing": "In brewing mode, one potion is required in the center potion slot and a special ingredient is required in the input slot. You can view brewing recipes in JEI.",
@@ -78,5 +80,7 @@
   "description.utilitix.ender_cart": "A minecart with an ender chest.",
   "description.utilitix.piston_cart": "This cart can place and replace rails. It has an inventory where you can put the new rails on the left and take out the replaced rails on the right. You can also add redstone torches that are placed below the track to power the rails if they can be powered.",
   "description.utilitix.piston_controller_rail": "A rail to control piston minecarts. You can set labels with a minecart tinkerer (shift right-click) and set the mode that should be set to each piston minecart travelling over the block. These rails are not replaced by piston minecarts.",
-  "description.utilitix.stonecutter_cart": "The stonecutter cart can break blocks. By right clicking, you can change the position of the saw. It will always break the block that the saw is facing. Also it will stop its movement while breaking a block and continue with its old speed when done. However you can't just build static block breakers with this as it will never break a block at the same position two times in a row. The drops of the blocks are always placed on the track so you can pick them up with a hopper minecart."
+  "description.utilitix.stonecutter_cart": "The stonecutter cart can break blocks. By right clicking, you can change the position of the saw. It will always break the block that the saw is facing. Also it will stop its movement while breaking a block and continue with its old speed when done. However you can't just build static block breakers with this as it will never break a block at the same position two times in a row. The drops of the blocks are always placed on the track so you can pick them up with a hopper minecart.",
+
+  "jei.utilitix.gilding": "Gilding"
 }

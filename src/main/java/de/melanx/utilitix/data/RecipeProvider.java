@@ -93,6 +93,17 @@ public class RecipeProvider extends RecipeProviderBase {
                 .addCriterion("has_item1", hasItem(Tags.Items.RODS_WOODEN))
                 .build(consumer);
 
+        ShapedRecipeBuilder.shapedRecipe(ModItems.gildingCrystal)
+                .patternLine(" g ")
+                .patternLine("gmg")
+                .patternLine(" g ")
+                .key('g', Tags.Items.INGOTS_GOLD)
+                .key('m', Items.PHANTOM_MEMBRANE)
+                .addCriterion("has_item0", hasItem(Tags.Items.INGOTS_GOLD))
+                .addCriterion("has_item1", hasItem(Items.PHANTOM_MEMBRANE))
+                .build(consumer);
+
+        
         ShapelessRecipeBuilder.shapelessRecipe(ModItems.glueBall, 4)
                 .addIngredient(Tags.Items.SLIMEBALLS)
                 .addIngredient(Tags.Items.SLIMEBALLS)
