@@ -95,7 +95,7 @@ public abstract class BlockPowerableRail extends BlockRail {
         if (!(target.getBlock() instanceof BlockPowerableRail)) {
             return false;
         } else {
-            RailShape rail = this.getRailDirection(target, world, pos, null);
+            RailShape rail = target.getBlock() == this ? this.getRailDirection(target, world, pos, null) : RailShape.NORTH_SOUTH;
             if (shape == RailShape.EAST_WEST && (rail == RailShape.NORTH_SOUTH || rail == RailShape.ASCENDING_NORTH || rail == RailShape.ASCENDING_SOUTH)) {
                 return false;
             }
@@ -111,14 +111,16 @@ public abstract class BlockPowerableRail extends BlockRail {
     }
 
     @Override
-    protected void updateState(BlockState state, World world, @Nonnull BlockPos pos, @Nonnull Block block) {
-        boolean powered = state.get(BlockStateProperties.POWERED);
-        boolean shouldBePowered = world.isBlockPowered(pos) || this.findPower(world, pos, state, true, 0) || this.findPower(world, pos, state, false, 0);
-        if (powered != shouldBePowered) {
-            world.setBlockState(pos, state.with(BlockStateProperties.POWERED, shouldBePowered), 3);
-            world.notifyNeighborsOfStateChange(pos.down(), this);
-            if (state.get(this.getShapeProperty()).isAscending()) {
-                world.notifyNeighborsOfStateChange(pos.up(), this);
+    protected void updateState(BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Block block) {
+        if (state.getBlock() == this) {
+            boolean powered = state.get(BlockStateProperties.POWERED);
+            boolean shouldBePowered = world.isBlockPowered(pos) || this.findPower(world, pos, state, true, 0) || this.findPower(world, pos, state, false, 0);
+            if (powered != shouldBePowered) {
+                world.setBlockState(pos, state.with(BlockStateProperties.POWERED, shouldBePowered), 3);
+                world.notifyNeighborsOfStateChange(pos.down(), this);
+                if (state.get(this.getShapeProperty()).isAscending()) {
+                    world.notifyNeighborsOfStateChange(pos.up(), this);
+                }
             }
         }
     }

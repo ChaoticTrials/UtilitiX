@@ -23,6 +23,7 @@
   "entity.utilitix.ender_cart": "Ender Chest Minecart",
   "entity.utilitix.piston_cart": "Piston Minecart",
   "entity.utilitix.stonecutter_cart": "Stonecutter Minecart",
+  "entity.utilitix.anvil_cart": "Anvil Minecart",
   
   "item.utilitix.hand_bell": "Hand Bell",
   "item.utilitix.gilding_crystal": "Gilding Crystal",
@@ -81,6 +82,7 @@
   "description.utilitix.piston_cart": "This cart can place and replace rails. It has an inventory where you can put the new rails on the left and take out the replaced rails on the right. You can also add redstone torches that are placed below the track to power the rails if they can be powered.",
   "description.utilitix.piston_controller_rail": "A rail to control piston minecarts. You can set labels with a minecart tinkerer (shift right-click) and set the mode that should be set to each piston minecart travelling over the block. These rails are not replaced by piston minecarts.",
   "description.utilitix.stonecutter_cart": "The stonecutter cart can break blocks. By right clicking, you can change the position of the saw. It will always break the block that the saw is facing. Also it will stop its movement while breaking a block and continue with its old speed when done. However you can't just build static block breakers with this as it will never break a block at the same position two times in a row. The drops of the blocks are always placed on the track so you can pick them up with a hopper minecart.",
+  "description.utilitix.anvil_cart": "The anvil minecart will take care of entities blocking the track. It will push entities from the track so other minecarts can safely pass. It will also transform roughly a quarter of a heart of damage when pushing entities.",
 
   "jei.utilitix.gilding": "Gilding"
 }

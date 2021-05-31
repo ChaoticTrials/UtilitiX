@@ -11,12 +11,14 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -50,8 +52,8 @@ public class EntityStonecutterCart extends EntityCart {
     private Vector3d storedMotion = null;
     private boolean cartHasMoved = false;
 
-    public EntityStonecutterCart(EntityType<?> type, World worldIn) {
-        super(type, worldIn);
+    public EntityStonecutterCart(EntityType<?> type, World world) {
+        super(type, world);
     }
 
     @Override
@@ -75,6 +77,20 @@ public class EntityStonecutterCart extends EntityCart {
     @Override
     public BlockState getDefaultDisplayTile() {
         return Blocks.STONECUTTER.getDefaultState();
+    }
+
+    @Override
+    public void killMinecart(@Nonnull DamageSource source) {
+        super.killMinecart(source);
+        this.entityDropItem(Items.STONECUTTER);
+    }
+
+    @Override
+    public void onRemovedFromWorld() {
+        super.onRemovedFromWorld();
+        if (this.breakingBlock != null) {
+            this.world.sendBlockBreakProgress(this.getEntityId(), this.breakingBlock, -1);
+        }
     }
 
     @Override

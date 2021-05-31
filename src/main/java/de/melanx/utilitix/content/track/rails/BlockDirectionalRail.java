@@ -1,6 +1,7 @@
 package de.melanx.utilitix.content.track.rails;
 
 import de.melanx.utilitix.block.ModProperties;
+import de.melanx.utilitix.content.track.TrackUtil;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -40,7 +41,7 @@ public abstract class BlockDirectionalRail extends BlockPoweredRail {
         BlockState state = super.getStateForPlacement(context);
         if (state == null) return null;
         Direction direction = context.getPlacementHorizontalFacing();
-        Pair<RailShape, Boolean> properties = RailUtil.getForPlacement(direction);
+        Pair<RailShape, Boolean> properties = TrackUtil.getForPlacement(direction);
         return state.with(this.getShapeProperty(), properties.getLeft())
                 .with(ModProperties.REVERSE, properties.getRight());
     }
@@ -48,7 +49,7 @@ public abstract class BlockDirectionalRail extends BlockPoweredRail {
     @Override
     public void onMinecartPass(BlockState state, World world, BlockPos pos, AbstractMinecartEntity cart) {
         if (state.get(BlockStateProperties.POWERED)) {
-            Direction dir = RailUtil.getFace(state.get(this.getShapeProperty()), state.get(ModProperties.REVERSE));
+            Direction dir = TrackUtil.getFace(state.get(this.getShapeProperty()), state.get(ModProperties.REVERSE));
             Vector3d motion = cart.getMotion();
             boolean movingWrongly = false;
             if (dir.getAxis() == Direction.Axis.X) {
@@ -62,10 +63,10 @@ public abstract class BlockDirectionalRail extends BlockPoweredRail {
                 if (AbstractMinecartEntity.horizontalMag(motion) < ((this.maxRailSpeed / 10) * (this.maxRailSpeed / 10))) {
                     cart.setMotion(dir.getXOffset() * (this.maxRailSpeed / 5), 0, dir.getZOffset() * (this.maxRailSpeed / 5));
                 }
-                RailUtil.accelerateStraight(world, pos, state.get(this.getShapeProperty()), cart, AbstractMinecartEntity.horizontalMag(motion) < (this.maxRailSpeed / 5) ? 1.5 * this.maxRailSpeed : this.maxRailSpeed);
+                TrackUtil.accelerateStraight(world, pos, state.get(this.getShapeProperty()), cart, AbstractMinecartEntity.horizontalMag(motion) < (this.maxRailSpeed / 5) ? 1.5 * this.maxRailSpeed : this.maxRailSpeed);
             }
         } else {
-            RailUtil.slowDownCart(world, cart, this.maxRailSpeed);
+            TrackUtil.slowDownCart(world, cart, this.maxRailSpeed);
         }
     }
 }

@@ -8,6 +8,8 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.IPacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -17,17 +19,18 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
 public class EntityCart extends AbstractMinecartEntity {
 
-    protected EntityCart(EntityType<?> type, World worldIn) {
-        super(type, worldIn);
-    }
-
-    protected EntityCart(EntityType<?> type, World worldIn, double posX, double posY, double posZ) {
-        super(type, worldIn, posX, posY, posZ);
+    private static final Map<EntityType<?>, Item> cartItems = Collections.synchronizedMap(new HashMap<>());
+    
+    protected EntityCart(EntityType<?> type, World world) {
+        super(type, world);
     }
 
     @Nonnull
@@ -35,7 +38,12 @@ public class EntityCart extends AbstractMinecartEntity {
     public Type getMinecartType() {
         return Type.RIDEABLE;
     }
-    
+
+    @Override
+    public ItemStack getCartItem() {
+        return new ItemStack(cartItems.getOrDefault(this.getType(), Items.MINECART));
+    }
+
     @Override
 	public boolean canBeRidden() {
 		return false;
@@ -54,6 +62,7 @@ public class EntityCart extends AbstractMinecartEntity {
 	public static <T extends EntityCart> CartType<T> type(String id, EntityType.IFactory<T> factory, Item.Properties properties) {
         EntityType<T> type = EntityType.Builder.create(factory, EntityClassification.MISC).size(0.98F, 0.7F).trackingRange(8).build(UtilitiX.getInstance().modid + "_" + id);
         ItemBase item = new ItemCart(UtilitiX.getInstance(), type, properties);
+        cartItems.put(type, item);
         return new CartType<T>() {
 
             @Override

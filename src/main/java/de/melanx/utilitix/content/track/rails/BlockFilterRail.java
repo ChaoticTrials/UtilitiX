@@ -2,6 +2,7 @@ package de.melanx.utilitix.content.track.rails;
 
 import de.melanx.utilitix.block.ModProperties;
 import de.melanx.utilitix.content.track.ItemMinecartTinkerer;
+import de.melanx.utilitix.content.track.TrackUtil;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -49,7 +50,7 @@ public class BlockFilterRail extends BlockControllerRail<TileFilterRail> {
         BlockState state = super.getStateForPlacement(context);
         if (state == null) return null;
         Direction direction = context.getPlacementHorizontalFacing();
-        Pair<RailShape, Boolean> properties = RailUtil.getForPlacement(direction);
+        Pair<RailShape, Boolean> properties = TrackUtil.getForPlacement(direction);
         state = state.with(this.getShapeProperty(), properties.getLeft())
                 .with(ModProperties.REVERSE, properties.getRight());
         Vector3d hitVec = context.getHitVec();

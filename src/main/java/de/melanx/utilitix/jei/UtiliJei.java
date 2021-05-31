@@ -83,6 +83,7 @@ public class UtiliJei implements IModPlugin {
         registration.addIngredientInfo(new ItemStack(ModEntities.pistonCart.item()), VanillaTypes.ITEM, "description.utilitix.piston_cart");
         registration.addIngredientInfo(ImmutableList.of(new ItemStack(ModBlocks.pistonControllerRail), new ItemStack(ModBlocks.reinforcedPistonControllerRail)), VanillaTypes.ITEM, "description.utilitix.piston_controller_rail");
         registration.addIngredientInfo(new ItemStack(ModEntities.stonecutterCart.item()), VanillaTypes.ITEM, "description.utilitix.stonecutter_cart");
+        registration.addIngredientInfo(new ItemStack(ModEntities.anvilCart.item()), VanillaTypes.ITEM, "description.utilitix.anvil_cart");
     }
 
     @Override

@@ -17,8 +17,8 @@ import javax.annotation.Nonnull;
 
 public class EntityEnderCart extends EntityCart {
 
-    public EntityEnderCart(EntityType<?> type, World worldIn) {
-        super(type, worldIn);
+    public EntityEnderCart(EntityType<?> type, World world) {
+        super(type, world);
     }
 
     @Nonnull

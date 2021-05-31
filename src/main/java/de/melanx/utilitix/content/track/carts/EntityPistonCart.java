@@ -55,8 +55,8 @@ public class EntityPistonCart extends EntityCart {
     private final BaseItemStackHandler torchIn;
     private final BaseItemStackHandler railOut;
 
-    public EntityPistonCart(EntityType<?> type, World worldIn) {
-        super(type, worldIn);
+    public EntityPistonCart(EntityType<?> type, World world) {
+        super(type, world);
         this.railIn = new BaseItemStackHandler(12);
         this.railIn.setSlotValidator((slot, stack) -> ItemTags.RAILS.contains(stack.getItem()));
         this.railOut = new BaseItemStackHandler(12);

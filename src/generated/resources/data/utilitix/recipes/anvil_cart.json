@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "i",
+    "c"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:anvil"
+    },
+    "c": {
+      "item": "minecraft:minecart"
+    }
+  },
+  "result": {
+    "item": "utilitix:anvil_cart"
+  }
+}

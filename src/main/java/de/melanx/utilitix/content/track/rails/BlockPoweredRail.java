@@ -1,5 +1,6 @@
 package de.melanx.utilitix.content.track.rails;
 
+import de.melanx.utilitix.content.track.TrackUtil;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
@@ -25,9 +26,9 @@ public abstract class BlockPoweredRail extends BlockPowerableRail {
     @Override
     public void onMinecartPass(BlockState state, World world, BlockPos pos, AbstractMinecartEntity cart) {
         if (state.get(BlockStateProperties.POWERED)) {
-            RailUtil.accelerateStraight(world, pos, this.getRailDirection(state, world, pos, cart), cart, this.maxRailSpeed);
+            TrackUtil.accelerateStraight(world, pos, this.getRailDirection(state, world, pos, cart), cart, this.maxRailSpeed);
         } else {
-            RailUtil.slowDownCart(world, cart, this.maxRailSpeed);
+            TrackUtil.slowDownCart(world, cart, this.maxRailSpeed);
         }
     }
 
