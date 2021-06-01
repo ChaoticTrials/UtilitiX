@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "utilitix:block/reinforced_filter_rail_right"
+  }
+}

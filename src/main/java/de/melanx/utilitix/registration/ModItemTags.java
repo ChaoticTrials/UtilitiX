@@ -10,4 +10,5 @@ public class ModItemTags {
 
     public static final ITag.INamedTag<Item> POTIONS = ItemTags.makeWrapperTag(new ResourceLocation(UtilitiX.getInstance().modid, "potions").toString());
     public static final ITag.INamedTag<Item> BOTTLES = ItemTags.makeWrapperTag(new ResourceLocation(UtilitiX.getInstance().modid, "bottles").toString());
+    public static final ITag.INamedTag<Item> RAIL_POWER_SOURCES = ItemTags.makeWrapperTag(new ResourceLocation(UtilitiX.getInstance().modid, "rail_power_sources").toString());
 }

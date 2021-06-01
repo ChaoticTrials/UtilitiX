@@ -1,0 +1,26 @@
+{
+  "variants": {
+    "shape=north_south": {
+      "model": "utilitix:block/reinforced_rail"
+    },
+    "shape=east_west": {
+      "model": "utilitix:block/reinforced_rail",
+      "y": 90
+    },
+    "shape=south_east": {
+      "model": "utilitix:block/reinforced_rail_corner"
+    },
+    "shape=south_west": {
+      "model": "utilitix:block/reinforced_rail_corner",
+      "y": 90
+    },
+    "shape=north_west": {
+      "model": "utilitix:block/reinforced_rail_corner",
+      "y": 180
+    },
+    "shape=north_east": {
+      "model": "utilitix:block/reinforced_rail_corner",
+      "y": 270
+    }
+  }
+}

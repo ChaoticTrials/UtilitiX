@@ -12,12 +12,13 @@ public class UtiliNetwork extends NetworkX {
 
     @Override
     protected String getProtocolVersion() {
-        return "2";
+        return "3";
     }
 
     @Override
     protected void registerPackets() {
         this.register(new StickyChunkRequestSerializer(), () -> StickyChunkRequestHandler::handle, NetworkDirection.PLAY_TO_SERVER);
+        this.register(new PistonCartModeCycleSerializer(), () -> PistonCartModeCycleHandler::handle, NetworkDirection.PLAY_TO_SERVER);
         
         this.register(new StickyChunkUpdateSerializer(), () -> StickyChunkUpdateHandler::handle, NetworkDirection.PLAY_TO_CLIENT);
         this.register(new ItemEntityRepairedSerializer(), () -> ItemEntityRepairedHandler::handle, NetworkDirection.PLAY_TO_CLIENT);

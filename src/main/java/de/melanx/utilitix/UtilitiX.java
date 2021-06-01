@@ -6,10 +6,13 @@ import de.melanx.utilitix.content.BetterMending;
 import de.melanx.utilitix.content.bell.ItemMobBell;
 import de.melanx.utilitix.content.slime.SlimeRender;
 import de.melanx.utilitix.content.slime.SlimyCapability;
+import de.melanx.utilitix.content.track.carts.piston.PistonCartContainer;
+import de.melanx.utilitix.content.track.carts.piston.PistonCartScreen;
 import de.melanx.utilitix.network.UtiliNetwork;
 import de.melanx.utilitix.registration.ModItems;
 import io.github.noeppi_noeppi.libx.config.ConfigManager;
 import io.github.noeppi_noeppi.libx.mod.registration.ModXRegistration;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -63,13 +66,13 @@ public class UtilitiX extends ModXRegistration {
     }
 
     @Override
-    protected void setup(FMLCommonSetupEvent fmlCommonSetupEvent) {
+    protected void setup(FMLCommonSetupEvent event) {
         // 
     }
 
     @Override
-    protected void clientSetup(FMLClientSetupEvent fmlClientSetupEvent) {
-        //
+    protected void clientSetup(FMLClientSetupEvent event) {
+        ScreenManager.registerFactory(PistonCartContainer.TYPE, PistonCartScreen::new);
     }
 
     @OnlyIn(Dist.CLIENT)

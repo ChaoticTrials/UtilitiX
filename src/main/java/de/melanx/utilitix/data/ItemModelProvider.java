@@ -6,6 +6,7 @@ import de.melanx.utilitix.content.bell.BellBase;
 import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModItems;
 import io.github.noeppi_noeppi.libx.data.provider.ItemModelProviderBase;
+import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -20,6 +21,7 @@ public class ItemModelProvider extends ItemModelProviderBase {
 
     @Override
     protected void setup() {
+        this.handheld(ModItems.minecartTinkerer);
         this.manualModel(ModItems.mobBell);
     }
 
@@ -34,7 +36,9 @@ public class ItemModelProvider extends ItemModelProviderBase {
 
     @Override
     protected void defaultBlock(ResourceLocation id, BlockItem item) {
-        if (item.getBlock() instanceof WeakRedstoneTorch) {
+        if (item.getBlock() == ModBlocks.filterRail || item.getBlock() == ModBlocks.reinforcedFilterRail) {
+            this.withExistingParent(id.getPath(), GENERATED).texture("layer0", new ResourceLocation(id.getNamespace(), "block/" + id.getPath() + "_right"));
+        } else if (item.getBlock() instanceof WeakRedstoneTorch || item.getBlock() instanceof AbstractRailBlock) {
             this.withExistingParent(id.getPath(), GENERATED).texture("layer0", new ResourceLocation(id.getNamespace(), "block/" + id.getPath()));
         } else if (item.getBlock() == ModBlocks.linkedRepeater) {
             this.withExistingParent(id.getPath(), GENERATED).texture("layer0", new ResourceLocation(id.getNamespace(), "item/" + id.getPath()));

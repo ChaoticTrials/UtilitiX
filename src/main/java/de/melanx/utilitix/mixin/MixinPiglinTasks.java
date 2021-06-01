@@ -12,7 +12,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PiglinTasks.class)
 public abstract class MixinPiglinTasks {
 
-    @Inject(method = "func_234460_a_(Lnet/minecraft/entity/LivingEntity;)Z", at = @At("RETURN"), cancellable = true)
+    @Inject(
+            method = "func_234460_a_(Lnet/minecraft/entity/LivingEntity;)Z",
+            at = @At("HEAD"),
+            cancellable = true
+    )
     private static void makesPiglinNeutral(LivingEntity player, CallbackInfoReturnable<Boolean> cir) {
         for (ItemStack stack : player.getArmorInventoryList()) {
             if (GildingArmorRecipe.isGilded(stack)) {
