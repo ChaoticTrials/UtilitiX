@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "utilitix:linked_crystal"
+    }
+  ],
+  "result": {
+    "item": "utilitix:linked_crystal"
+  }
+}

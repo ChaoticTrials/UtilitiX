@@ -31,6 +31,8 @@ public class RecipeProvider extends RecipeProviderBase {
 
     @Override
     protected void registerRecipes(@Nonnull Consumer<IFinishedRecipe> consumer) {
+        this.removeNbt(consumer, ModItems.linkedCrystal);
+
         this.createTinyCoalRecipe(consumer, Items.COAL, ModItems.tinyCoal);
         this.createTinyCoalRecipe(consumer, Items.CHARCOAL, ModItems.tinyCharcoal);
         this.createBellRecipes(consumer);
@@ -377,5 +379,12 @@ public class RecipeProvider extends RecipeProviderBase {
                 .addCriterion("has_item0", hasItem(Items.MINECART))
                 .addCriterion("has_item1", hasItem(content))
                 .build(consumer);
+    }
+
+    private void removeNbt(Consumer<IFinishedRecipe> consumer, IItemProvider item) {
+        ShapelessRecipeBuilder.shapelessRecipe(item)
+                .addIngredient(item)
+                .addCriterion("has_item", hasItem(item))
+                .build(consumer, this.loc(item, "remove_nbt"));
     }
 }
