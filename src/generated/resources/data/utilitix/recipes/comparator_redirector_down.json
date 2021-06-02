@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "sts",
+    "s s",
+    "sis"
+  ],
+  "key": {
+    "t": {
+      "item": "minecraft:redstone_torch"
+    },
+    "s": {
+      "tag": "forge:cobblestone"
+    },
+    "i": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "result": {
+    "item": "utilitix:comparator_redirector_down"
+  }
+}

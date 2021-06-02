@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/rail_flat",
+  "textures": {
+    "rail": "utilitix:block/reinforced_piston_controller_rail"
+  }
+}

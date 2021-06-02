@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " r ",
+    "rrr",
+    " r "
+  ],
+  "key": {
+    "r": {
+      "item": "utilitix:reinforced_rail"
+    }
+  },
+  "result": {
+    "item": "utilitix:reinforced_crossing_rail",
+    "count": 4
+  }
+}

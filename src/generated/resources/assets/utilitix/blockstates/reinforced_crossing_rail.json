@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "shape=north_south": {
+      "model": "utilitix:block/reinforced_crossing_rail"
+    },
+    "shape=east_west": {
+      "model": "utilitix:block/reinforced_crossing_rail",
+      "y": 90
+    }
+  }
+}

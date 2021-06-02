@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/template_rail_raised_ne",
+  "textures": {
+    "rail": "utilitix:block/directional_rail"
+  }
+}

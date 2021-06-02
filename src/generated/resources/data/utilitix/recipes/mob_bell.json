@@ -1,0 +1,40 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "123",
+    "456",
+    "789"
+  ],
+  "key": {
+    "1": {
+      "item": "minecraft:spider_eye"
+    },
+    "2": {
+      "item": "minecraft:ghast_tear"
+    },
+    "3": {
+      "tag": "forge:bones"
+    },
+    "4": {
+      "tag": "forge:gunpowder"
+    },
+    "5": {
+      "item": "utilitix:hand_bell"
+    },
+    "6": {
+      "tag": "forge:dusts/glowstone"
+    },
+    "7": {
+      "item": "minecraft:blaze_powder"
+    },
+    "8": {
+      "tag": "forge:ender_pearls"
+    },
+    "9": {
+      "item": "minecraft:rotten_flesh"
+    }
+  },
+  "result": {
+    "item": "utilitix:mob_bell"
+  }
+}

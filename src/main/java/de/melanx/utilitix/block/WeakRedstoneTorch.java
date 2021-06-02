@@ -34,10 +34,10 @@ public class WeakRedstoneTorch extends RedstoneTorchBlock implements Registerabl
     public final RedstoneWallTorchBlock wallTorch;
 
     public WeakRedstoneTorch(ModX mod, Properties properties) {
-        this(mod, properties, new net.minecraft.item.Item.Properties());
+        this(mod, properties, new Item.Properties());
     }
 
-    public WeakRedstoneTorch(ModX mod, Properties properties, net.minecraft.item.Item.Properties itemProperties) {
+    public WeakRedstoneTorch(ModX mod, Properties properties, Item.Properties itemProperties) {
         super(properties);
         this.mod = mod;
         if (mod.tab != null) {

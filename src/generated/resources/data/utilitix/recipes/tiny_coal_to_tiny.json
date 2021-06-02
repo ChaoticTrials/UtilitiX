@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:coal"
+    }
+  ],
+  "result": {
+    "item": "utilitix:tiny_coal",
+    "count": 8
+  }
+}

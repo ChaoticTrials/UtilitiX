@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "utilitix:block/comparator_redirector_up"
+    }
+  }
+}

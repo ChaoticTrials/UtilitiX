@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "side": "utilitix:block/comparator_redirector_side",
+    "bottom": "utilitix:block/comparator_redirector_top",
+    "top": "utilitix:block/comparator_redirector_bottom"
+  }
+}

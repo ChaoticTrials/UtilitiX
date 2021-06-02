@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "utilitix:armed_stand"
+    ]
+  },
+  "criteria": {
+    "has_item0": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:armor_stand"
+          }
+        ]
+      }
+    },
+    "has_item1": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:rods/wooden"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "utilitix:armed_stand"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_item0",
+      "has_item1",
+      "has_the_recipe"
+    ]
+  ]
+}

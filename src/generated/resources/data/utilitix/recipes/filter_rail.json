@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "r ",
+    "nr",
+    "r "
+  ],
+  "key": {
+    "r": {
+      "item": "minecraft:rail"
+    },
+    "n": {
+      "tag": "forge:nuggets/iron"
+    }
+  },
+  "result": {
+    "item": "utilitix:filter_rail",
+    "count": 2
+  }
+}

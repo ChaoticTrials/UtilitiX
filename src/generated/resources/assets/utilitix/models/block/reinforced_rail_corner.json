@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/rail_curved",
+  "textures": {
+    "rail": "utilitix:block/reinforced_rail_corner"
+  }
+}
