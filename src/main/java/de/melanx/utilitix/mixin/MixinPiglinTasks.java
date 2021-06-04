@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinPiglinTasks {
 
     @Inject(
-            method = "func_234460_a_(Lnet/minecraft/entity/LivingEntity;)Z",
+            method = "makesPiglinsNeutral(Lnet/minecraft/entity/LivingEntity;)Z",
             at = @At("HEAD"),
             cancellable = true
     )

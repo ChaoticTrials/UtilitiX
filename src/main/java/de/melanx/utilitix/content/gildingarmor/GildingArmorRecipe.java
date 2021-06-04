@@ -30,7 +30,7 @@ public class GildingArmorRecipe extends SmithingRecipe {
         ItemStack input = inv.getStackInSlot(0);
         ItemStack addition = inv.getStackInSlot(1);
 
-        if (input.getItem() instanceof ArmorItem && !isGilded(input)) {
+        if (input.getItem() instanceof ArmorItem && !isGilded(input) && canGild((ArmorItem) input.getItem())) {
             return addition.getItem() == ModItems.gildingCrystal;
         }
 
@@ -67,13 +67,17 @@ public class GildingArmorRecipe extends SmithingRecipe {
         return stack.hasTag() && stack.getOrCreateTag().getBoolean("Gilded_UtilitiX");
     }
 
+    public static boolean canGild(ArmorItem item) {
+        return !item.makesPiglinsNeutral(new ItemStack(item), null) && item.getArmorMaterial() != ArmorMaterial.GOLD;
+    }
+
     public static Set<SmithingRecipe> getRecipes() {
         Set<SmithingRecipe> recipes = new HashSet<>();
 
         Ingredient gildingItem = Ingredient.fromItems(ModItems.gildingCrystal);
 
         for (Item item : ForgeRegistries.ITEMS.getValues()) {
-            if (item instanceof ArmorItem && ((ArmorItem) item).getArmorMaterial() != ArmorMaterial.GOLD) {
+            if (item instanceof ArmorItem && canGild((ArmorItem) item)) {
                 ResourceLocation id = new ResourceLocation(UtilitiX.getInstance().modid, "gilding." + item.getTranslationKey());
 
                 ItemStack output = new ItemStack(item);
