@@ -1,6 +1,7 @@
 {
   "itemGroup.utilitix": "UtilitiX",
 
+  "block.utilitix.experience_crystal": "Experience Crystal",
   "block.utilitix.weak_redstone_torch": "Weak Redstone Torch",
   "block.utilitix.advanced_brewery": "Advanced Brewery",
   "block.utilitix.comparator_redirector_up": "Comparator Redirector: Up",
@@ -40,6 +41,7 @@
   "item.utilitix.linked_crystal": "Linked Redstone Crystal",
   "item.utilitix.minecart_tinkerer": "Minecart Tinkerer",
 
+  "screen.utilitix.experience_crystal": "Experience Crystal",
   "screen.utilitix.quiver": "Quiver",
   "screen.utilitix.advanced_brewery": "Advanced Brewery",
   "screen.utilitix.minecart_tinkerer": "Minecart Label",
@@ -56,7 +58,13 @@
   "tooltip.utilitix.piston_cart_mode_place": "Place",
   "tooltip.utilitix.piston_cart_mode_replace": "Replace",
   "tooltip.utilitix.gilded": "Gilded",
-  
+  "tooltip.utilitix.experience_crystal.add_1": "Store 1 level",
+  "tooltip.utilitix.experience_crystal.add_10": "Store 10 levels",
+  "tooltip.utilitix.experience_crystal.add_all": "Store all levels",
+  "tooltip.utilitix.experience_crystal.sub_1": "Retrieve 1 level",
+  "tooltip.utilitix.experience_crystal.sub_10": "Retrieve 10 levels",
+  "tooltip.utilitix.experience_crystal.sub_all": "Retrieve all levels",
+
   "description.utilitix.advanced_brewery": "The advanced brewery can modify potions. Just like a regular brewery it requires blaze powder to work. It has four modes: Brewing, Merging, Upgrading and Cloning",
   "description.utilitix.advanced_brewery.brewing": "In brewing mode, one potion is required in the center potion slot and a special ingredient is required in the input slot. You can view brewing recipes in JEI.",
   "description.utilitix.advanced_brewery.merging": "In merging mode, two potions on the outer potions slots are merged and a new potion is created that has their effects combined. The center potion slot must contain a glass bottle and the ingredient slot must be empty. The more complex the resulting potion is, the more likely the merge will fail, resulting in a failed potion.",

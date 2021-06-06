@@ -5,6 +5,7 @@ import de.melanx.utilitix.util.ArmorStandRotation;
 import io.github.noeppi_noeppi.libx.config.Config;
 import io.github.noeppi_noeppi.libx.config.Group;
 import io.github.noeppi_noeppi.libx.config.validator.FloatRange;
+import io.github.noeppi_noeppi.libx.config.validator.IntRange;
 import io.github.noeppi_noeppi.libx.util.ResourceList;
 import net.minecraft.util.ResourceLocation;
 
@@ -61,6 +62,17 @@ public class UtilitiXConfig {
         @Config("The maximum hardness of blocks, the stonecutter cart can mine.")
         @FloatRange(min = 0)
         public static float stonecutterMaxHardness = 5;
+    }
+
+    @Group("Config options for experience crystal")
+    public static class ExperienceCrystal {
+
+        @Config("Should the experience crystal pull xp orbs automatically?")
+        public static boolean pullOrbs = true;
+
+        @Config("Maximum experience which can be stored")
+        @IntRange(min = 0)
+        public static int maxXp = Integer.MAX_VALUE;
     }
 
     @Config("List of items which are allowed to be planted when despawn on correct soil")

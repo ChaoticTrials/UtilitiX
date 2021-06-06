@@ -21,7 +21,7 @@ public class MixinArmorStandEntity {
     private void breakArmorStand(DamageSource source, CallbackInfo ci) {
         if (((ArmorStandEntity) (Object) this).getPersistentData().getBoolean("UtilitiXArmorStand")) {
             Block.spawnAsEntity(((ArmorStandEntity) (Object) this).world, ((ArmorStandEntity) (Object) this).getPosition(), new ItemStack(ModItems.armedStand));
-            ((ArmorStandEntity) (Object) this).func_213816_g(source);
+            ((ArmorStandEntity) (Object) this).handleArmorStandBreak(source);
             ci.cancel();
         }
     }

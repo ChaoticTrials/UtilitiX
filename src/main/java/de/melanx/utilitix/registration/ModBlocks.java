@@ -7,14 +7,19 @@ import de.melanx.utilitix.block.WeakRedstoneTorch;
 import de.melanx.utilitix.content.brewery.BlockAdvancedBrewery;
 import de.melanx.utilitix.content.brewery.ContainerAdvancedBrewery;
 import de.melanx.utilitix.content.brewery.TileAdvancedBrewery;
+import de.melanx.utilitix.content.experiencecrystal.BlockExperienceCrystal;
+import de.melanx.utilitix.content.experiencecrystal.ContainerExperienceCrystal;
+import de.melanx.utilitix.content.experiencecrystal.TileExperienceCrystal;
 import de.melanx.utilitix.content.track.rails.*;
 import de.melanx.utilitix.content.wireless.BlockLinkedRepeater;
 import io.github.noeppi_noeppi.libx.annotation.RegisterClass;
+import io.github.noeppi_noeppi.libx.inventory.container.ContainerBase;
 import io.github.noeppi_noeppi.libx.mod.registration.BlockBase;
 import io.github.noeppi_noeppi.libx.mod.registration.BlockGUI;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.material.Material;
 import net.minecraft.state.Property;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.state.properties.RailShape;
@@ -40,4 +45,5 @@ public class ModBlocks {
     public static final Block reinforcedFilterRail = new BlockFilterRail(UtilitiX.getInstance(), true, AbstractBlock.Properties.from(Blocks.RAIL));
     public static final Block pistonControllerRail = new BlockPistonControllerRail(UtilitiX.getInstance(), false, AbstractBlock.Properties.from(Blocks.ACTIVATOR_RAIL)) { @Nonnull @Override public Property<RailShape> getShapeProperty() { return BlockStateProperties.RAIL_SHAPE_STRAIGHT; }};
     public static final Block reinforcedPistonControllerRail = new BlockPistonControllerRail(UtilitiX.getInstance(), true, AbstractBlock.Properties.from(Blocks.ACTIVATOR_RAIL)) { @Nonnull @Override public Property<RailShape> getShapeProperty() { return ModProperties.RAIL_SHAPE_FLAT_STRAIGHT; }};
+    public static final BlockGUI<TileExperienceCrystal, ContainerExperienceCrystal> experienceCrystal = new BlockExperienceCrystal(UtilitiX.getInstance(), ContainerBase.createContainerType(ContainerExperienceCrystal::new), AbstractBlock.Properties.create(Material.ROCK));
 }
