@@ -7,6 +7,19 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_nbt",
+              "source": "block_entity",
+              "ops": [
+                {
+                  "source": "Xp",
+                  "target": "BlockEntityTag.Xp",
+                  "op": "replace"
+                }
+              ]
+            }
+          ],
           "name": "utilitix:experience_crystal"
         }
       ],

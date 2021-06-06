@@ -1,7 +1,19 @@
 {
   "variants": {
-    "": {
+    "facing=north": {
       "model": "utilitix:block/experience_crystal"
+    },
+    "facing=south": {
+      "model": "utilitix:block/experience_crystal",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "utilitix:block/experience_crystal",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "utilitix:block/experience_crystal",
+      "y": 90
     }
   }
 }

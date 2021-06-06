@@ -111,6 +111,17 @@ public class RecipeProvider extends RecipeProviderBase {
                 .addIngredient(Tags.Items.SLIMEBALLS)
                 .addCriterion("has_item", hasItem(Tags.Items.SLIMEBALLS))
                 .build(consumer);
+
+        ShapedRecipeBuilder.shapedRecipe(ModBlocks.experienceCrystal)
+                .patternLine("geg")
+                .patternLine("exe")
+                .patternLine("ccc")
+                .key('g', Tags.Items.GLASS_LIME)
+                .key('e', Tags.Items.GEMS_EMERALD)
+                .key('x', Items.EXPERIENCE_BOTTLE)
+                .key('c', Items.BLACK_CONCRETE)
+                .addCriterion("has_item", hasItem(Items.EXPERIENCE_BOTTLE))
+                .build(consumer);
     }
 
     private void createRedstoneRecipes(Consumer<IFinishedRecipe> consumer) {

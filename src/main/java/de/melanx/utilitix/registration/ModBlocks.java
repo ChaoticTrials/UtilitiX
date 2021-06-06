@@ -20,10 +20,12 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
 import net.minecraft.state.Property;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.state.properties.RailShape;
 import net.minecraft.util.Direction;
+import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nonnull;
 
@@ -45,5 +47,5 @@ public class ModBlocks {
     public static final Block reinforcedFilterRail = new BlockFilterRail(UtilitiX.getInstance(), true, AbstractBlock.Properties.from(Blocks.RAIL));
     public static final Block pistonControllerRail = new BlockPistonControllerRail(UtilitiX.getInstance(), false, AbstractBlock.Properties.from(Blocks.ACTIVATOR_RAIL)) { @Nonnull @Override public Property<RailShape> getShapeProperty() { return BlockStateProperties.RAIL_SHAPE_STRAIGHT; }};
     public static final Block reinforcedPistonControllerRail = new BlockPistonControllerRail(UtilitiX.getInstance(), true, AbstractBlock.Properties.from(Blocks.ACTIVATOR_RAIL)) { @Nonnull @Override public Property<RailShape> getShapeProperty() { return ModProperties.RAIL_SHAPE_FLAT_STRAIGHT; }};
-    public static final BlockGUI<TileExperienceCrystal, ContainerExperienceCrystal> experienceCrystal = new BlockExperienceCrystal(UtilitiX.getInstance(), ContainerBase.createContainerType(ContainerExperienceCrystal::new), AbstractBlock.Properties.create(Material.ROCK));
+    public static final BlockGUI<TileExperienceCrystal, ContainerExperienceCrystal> experienceCrystal = new BlockExperienceCrystal(UtilitiX.getInstance(), ContainerBase.createContainerType(ContainerExperienceCrystal::new), AbstractBlock.Properties.create(Material.ROCK, MaterialColor.BLACK).hardnessAndResistance(3, 7).harvestTool(ToolType.PICKAXE));
 }

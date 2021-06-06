@@ -1,8 +1,10 @@
 package de.melanx.utilitix.content.experiencecrystal;
 
 import de.melanx.utilitix.registration.ModBlocks;
+import io.github.noeppi_noeppi.libx.block.DirectionShape;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import io.github.noeppi_noeppi.libx.mod.registration.BlockGUI;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
@@ -10,6 +12,9 @@ import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -19,10 +24,11 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class BlockExperienceCrystal extends BlockGUI<TileExperienceCrystal, ContainerExperienceCrystal> {
-    private static final VoxelShape SHAPE = VoxelShapes.or(
+    private static final DirectionShape SHAPE = new DirectionShape(VoxelShapes.or(
             makeCuboidShape(1, 0, 1, 15, 1, 15),
             makeCuboidShape(2, 1, 2, 14, 2, 14),
             makeCuboidShape(3, 2, 3, 13, 6, 13),
@@ -33,7 +39,7 @@ public class BlockExperienceCrystal extends BlockGUI<TileExperienceCrystal, Cont
             makeCuboidShape(4, 6, 4, 8, 12, 8),
             makeCuboidShape(5, 7.5, 9, 7, 13, 11),
             makeCuboidShape(4.5, 5.5, 8.5, 7.5, 7.5, 11.5)
-    );
+    ));
 
     public BlockExperienceCrystal(ModX mod, ContainerType<ContainerExperienceCrystal> containertype, Properties properties) {
         super(mod, TileExperienceCrystal.class, containertype, properties);
@@ -43,24 +49,6 @@ public class BlockExperienceCrystal extends BlockGUI<TileExperienceCrystal, Cont
     public void registerClient(ResourceLocation id, Consumer<Runnable> defer) {
         ScreenManager.registerFactory(ModBlocks.experienceCrystal.container, ScreenExperienceCrystal::new);
         RenderTypeLookup.setRenderLayer(this, RenderType.getTranslucent());
-    }
-
-    @Override
-    public void onReplaced(@Nonnull BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
-        if (!world.isRemote) {
-            while (true) {
-                TileExperienceCrystal tile = this.getTile(world, pos);
-                int xp = Math.min(tile.getXp(), Short.MAX_VALUE);
-                if (xp <= 0) {
-                    break;
-                }
-
-                tile.subtractXp(xp);
-                world.addEntity(new ExperienceOrbEntity(world, pos.getX() + world.rand.nextDouble(), pos.getY() + world.rand.nextDouble(), pos.getZ() + world.rand.nextDouble(), xp));
-            }
-        }
-
-        super.onReplaced(state, world, pos, newState, isMoving);
     }
 
     @SuppressWarnings("deprecation")
@@ -80,10 +68,21 @@ public class BlockExperienceCrystal extends BlockGUI<TileExperienceCrystal, Cont
         }
     }
 
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(@Nonnull BlockItemUseContext context) {
+        return this.getDefaultState().with(BlockStateProperties.HORIZONTAL_FACING, context.getPlacementHorizontalFacing());
+    }
+
+    @Override
+    protected void fillStateContainer(@Nonnull StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(BlockStateProperties.HORIZONTAL_FACING);
+    }
+
     @SuppressWarnings("deprecation")
     @Nonnull
     @Override
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull IBlockReader world, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
-        return SHAPE;
+        return SHAPE.getShape(state.get(BlockStateProperties.HORIZONTAL_FACING));
     }
 }

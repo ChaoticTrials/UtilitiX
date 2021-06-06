@@ -20,7 +20,7 @@ A lot of items, nice to have
 
 ## Tiles/Blocks
 - [ ] 3x3 entity builder
-- [ ] "XP Obelisk" (absorbs XP orbs, has a GUI like Ender IO obelisk had)
+- [x] "XP Obelisk" (absorbs XP orbs, has a GUI like Ender IO obelisk had)
 - [ ] Advanced Enchanter (only uses required XP, not levels)
 - [x] Block that reads comparator output from above/below
 - [x] Weak redstone torch (Redstone torch that powers block above weak instead of strong because of torch burnout)
