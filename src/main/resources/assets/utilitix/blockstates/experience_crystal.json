@@ -1,18 +1,29 @@
 {
   "variants": {
-    "facing=north": {
+    "facing=down": {
+      "model": "utilitix:block/experience_crystal",
+      "x": 180
+    },
+    "facing=up": {
       "model": "utilitix:block/experience_crystal"
+    },
+    "facing=north": {
+      "model": "utilitix:block/experience_crystal",
+      "x": 90
     },
     "facing=south": {
       "model": "utilitix:block/experience_crystal",
+      "x": 90,
       "y": 180
     },
     "facing=west": {
       "model": "utilitix:block/experience_crystal",
+      "x": 90,
       "y": 270
     },
     "facing=east": {
       "model": "utilitix:block/experience_crystal",
+      "x": 90,
       "y": 90
     }
   }

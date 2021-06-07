@@ -1,7 +1,7 @@
 package de.melanx.utilitix.content.experiencecrystal;
 
 import de.melanx.utilitix.registration.ModBlocks;
-import io.github.noeppi_noeppi.libx.block.DirectionShape;
+import de.melanx.utilitix.util.NewDirectionShape;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import io.github.noeppi_noeppi.libx.mod.registration.BlockGUI;
 import net.minecraft.block.Block;
@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class BlockExperienceCrystal extends BlockGUI<TileExperienceCrystal, ContainerExperienceCrystal> {
-    private static final DirectionShape SHAPE = new DirectionShape(VoxelShapes.or(
+    private static final NewDirectionShape SHAPE = new NewDirectionShape(VoxelShapes.or(
             makeCuboidShape(1, 0, 1, 15, 1, 15),
             makeCuboidShape(2, 1, 2, 14, 2, 14),
             makeCuboidShape(3, 2, 3, 13, 6, 13),
@@ -71,18 +71,18 @@ public class BlockExperienceCrystal extends BlockGUI<TileExperienceCrystal, Cont
     @Nullable
     @Override
     public BlockState getStateForPlacement(@Nonnull BlockItemUseContext context) {
-        return this.getDefaultState().with(BlockStateProperties.HORIZONTAL_FACING, context.getPlacementHorizontalFacing());
+        return this.getDefaultState().with(BlockStateProperties.FACING, context.getFace());
     }
 
     @Override
     protected void fillStateContainer(@Nonnull StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(BlockStateProperties.HORIZONTAL_FACING);
+        builder.add(BlockStateProperties.FACING);
     }
 
     @SuppressWarnings("deprecation")
     @Nonnull
     @Override
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull IBlockReader world, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
-        return SHAPE.getShape(state.get(BlockStateProperties.HORIZONTAL_FACING));
+        return SHAPE.getShape(state.get(BlockStateProperties.FACING));
     }
 }

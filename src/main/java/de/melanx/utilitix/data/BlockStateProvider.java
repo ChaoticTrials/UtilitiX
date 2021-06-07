@@ -35,10 +35,10 @@ public class BlockStateProvider extends BlockStateProviderBase {
 
     @Override
     protected void setup() {
+        this.manualState(ModBlocks.experienceCrystal); // TODO 1.17 use LibX
         this.manualState(ModBlocks.weakRedstoneTorch);
         this.manualState(ModBlocks.weakRedstoneTorch.wallTorch);
         this.manualModel(ModBlocks.advancedBrewery);
-        this.manualModel(ModBlocks.experienceCrystal);
     }
 
     @Override
