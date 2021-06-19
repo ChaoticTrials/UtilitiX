@@ -1,6 +1,7 @@
 package de.melanx.utilitix.content.experiencecrystal;
 
 import de.melanx.utilitix.registration.ModBlocks;
+import de.melanx.utilitix.registration.ModFluids;
 import de.melanx.utilitix.util.NewDirectionShape;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import io.github.noeppi_noeppi.libx.mod.registration.BlockGUI;
@@ -22,6 +23,8 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -59,6 +62,7 @@ public class BlockExperienceCrystal extends BlockGUI<TileExperienceCrystal, Cont
             if (!world.isRemote) {
                 int xpValue = ((ExperienceOrbEntity) entity).xpValue;
                 int added = tile.addXp(xpValue);
+                tile.getFluidInventory().fill(new FluidStack(ModFluids.liquidExperience, 20 * added), IFluidHandler.FluidAction.EXECUTE);
                 if (added == xpValue) {
                     entity.remove();
                 } else {

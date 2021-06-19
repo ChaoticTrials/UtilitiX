@@ -12,6 +12,7 @@ import de.melanx.utilitix.item.ItemBurnable;
 import de.melanx.utilitix.item.Quiver;
 import io.github.noeppi_noeppi.libx.annotation.RegisterClass;
 import io.github.noeppi_noeppi.libx.mod.registration.ItemBase;
+import net.minecraft.item.BucketItem;
 import net.minecraft.item.Item;
 
 @RegisterClass
@@ -28,4 +29,5 @@ public class ModItems {
     public static final Item linkedCrystal = new ItemLinkedCrystal(UtilitiX.getInstance(), new Item.Properties().maxStackSize(8));
     public static final Item gildingCrystal = new ItemBase(UtilitiX.getInstance(), new Item.Properties().maxStackSize(16));
     public static final Item minecartTinkerer = new ItemMinecartTinkerer(UtilitiX.getInstance(), new Item.Properties().maxStackSize(1));
+    public static final Item liquidExperienceBucket = new BucketItem(() -> ModFluids.liquidExperience, new Item.Properties().maxStackSize(1).group(UtilitiX.getInstance().tab));
 }

@@ -18,6 +18,7 @@ public class DataCreator {
             BlockTagProvider blockTagProvider = new BlockTagProvider(generator, helper);
             generator.addProvider(blockTagProvider);
             generator.addProvider(new ItemTagProvider(generator, helper, blockTagProvider));
+            generator.addProvider(new FluidTagProvider(generator, helper));
             generator.addProvider(new RecipeProvider(generator));
             generator.addProvider(new LootTableProvider(generator));
         }
