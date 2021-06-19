@@ -28,8 +28,8 @@ import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class BlockExperienceCrystal extends BlockGUI<TileExperienceCrystal, ContainerExperienceCrystal> {
-    private static final NewDirectionShape SHAPE = new NewDirectionShape(VoxelShapes.or(
-            makeCuboidShape(1, 0, 1, 15, 1, 15),
+
+    private static final VoxelShape BASE_SHAPE = VoxelShapes.or(
             makeCuboidShape(2, 1, 2, 14, 2, 14),
             makeCuboidShape(3, 2, 3, 13, 6, 13),
             makeCuboidShape(6, 6, 6, 10, 14, 10),
@@ -39,6 +39,16 @@ public class BlockExperienceCrystal extends BlockGUI<TileExperienceCrystal, Cont
             makeCuboidShape(4, 6, 4, 8, 12, 8),
             makeCuboidShape(5, 7.5, 9, 7, 13, 11),
             makeCuboidShape(4.5, 5.5, 8.5, 7.5, 7.5, 11.5)
+    );
+
+    private static final NewDirectionShape SHAPE = new NewDirectionShape(VoxelShapes.or(
+            BASE_SHAPE,
+            makeCuboidShape(1, 0, 1, 15, 1, 15)
+    ));
+
+    private static final NewDirectionShape COLLISION_SHAPE = new NewDirectionShape(VoxelShapes.or(
+            BASE_SHAPE,
+            makeCuboidShape(1, 0.05, 1, 15, 1, 15)
     ));
 
     public BlockExperienceCrystal(ModX mod, ContainerType<ContainerExperienceCrystal> containertype, Properties properties) {
@@ -79,10 +89,17 @@ public class BlockExperienceCrystal extends BlockGUI<TileExperienceCrystal, Cont
         builder.add(BlockStateProperties.FACING);
     }
 
-    @SuppressWarnings("deprecation")
     @Nonnull
     @Override
+    @SuppressWarnings("deprecation")
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull IBlockReader world, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
         return SHAPE.getShape(state.get(BlockStateProperties.FACING));
+    }
+
+    @Nonnull
+    @Override
+    @SuppressWarnings("deprecation")
+    public VoxelShape getCollisionShape(@Nonnull BlockState state, @Nonnull IBlockReader world, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
+        return COLLISION_SHAPE.getShape(state.get(BlockStateProperties.FACING));
     }
 }
