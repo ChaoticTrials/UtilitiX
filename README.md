@@ -12,7 +12,7 @@ A lot of items, nice to have
 - [ ] increase wandering trader time if you trade with him
 - [ ] increase amount of wandering traders in one world
 - [x] when saplings or seeds would despawn on correct soil, plant them
-- [ ] double doors open at same time
+- [x] double doors open at same time
 - [ ] make use of LockableTileEntities
 - [x] ~~[Modlist to Clipboard](https://github.com/noeppi-noeppi/LibX/issues/6)~~
 - [ ] Ability to stand on tiptoes

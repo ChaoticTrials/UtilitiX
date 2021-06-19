@@ -8,17 +8,21 @@ import de.melanx.utilitix.network.StickyChunkRequestSerializer;
 import de.melanx.utilitix.registration.ModItems;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.DoorBlock;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.DirectionalPlaceContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.state.properties.DoorHingeSide;
+import net.minecraft.state.properties.DoubleBlockHalf;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -36,6 +40,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ChunkEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -196,6 +201,36 @@ public class EventListener {
                     world.setBlockState(pos.up(), item.getBlock().getDefaultState());
                 }
             }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getUseItem() == Event.Result.ALLOW || event.getUseBlock() == Event.Result.DENY) {
+            return;
+        }
+
+        World world = event.getWorld();
+        BlockPos pos = event.getPos();
+        BlockState state = world.getBlockState(pos);
+        if (!(state.getBlock() instanceof DoorBlock) && !BlockTags.DOORS.contains(state.getBlock()) || state.getBlock().material == Material.IRON) {
+            return;
+        }
+
+        Direction facing = state.get(DoorBlock.FACING);
+        DoorHingeSide hinge = state.get(DoorBlock.HINGE);
+        DoubleBlockHalf half = state.get(DoorBlock.HALF);
+        boolean open = state.get(DoorBlock.OPEN);
+
+        BlockPos neighborPos = pos.offset(hinge == DoorHingeSide.LEFT ? facing.rotateY() : facing.rotateYCCW());
+
+        BlockState neighborState = world.getBlockState(neighborPos);
+        if (!(neighborState.getBlock() instanceof DoorBlock) && !BlockTags.DOORS.contains(neighborState.getBlock()) || neighborState.getBlock().material == Material.IRON) {
+            return;
+        }
+
+        if (neighborState.get(DoorBlock.HALF) == half && neighborState.get(DoorBlock.HINGE) != hinge && neighborState.get(DoorBlock.FACING) == facing) {
+            ((DoorBlock) neighborState.getBlock()).openDoor(world, neighborState, neighborPos, !open);
         }
     }
 
