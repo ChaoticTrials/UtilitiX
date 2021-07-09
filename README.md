@@ -27,14 +27,22 @@ A lot of items, nice to have
 - [ ] Furnace that smelts items with double speed and half xp if the item doesn't fit in smoker or blast furnace
 - [x] Advanced Brewery from BedrockCraft
 - [x] Wireless redstone
+- [ ] Cleanstone Walls
 
 
 ## Items
 - [x] Tiny (Char)Coal
-- [ ] Quiver (enchantable with infinity to have mending *and* infinity) *waiting for Forge PR getting merged https://github.com/MinecraftForge/MinecraftForge/pull/7715*
+- [ ] Quiver (enchantable with infinity to have mending *and* infinity) *waiting for Forge PR getting
+  merged https://github.com/MinecraftForge/MinecraftForge/pull/7715*
 - [x] Armor stand with arms
 - [x] Bell + Stick = Handbell
+- [ ] Dia Shears
+- [ ] Wood Cutter
 
 
 ## Misc
 - [x] A lot of minecarts and rails
+- [ ] Shift-rightclick -> no flatten earth
+- [ ] Shift-rightclick -> no water logging
+- [ ] placeable items
+- [ ] (bad) luck affects loot tables
