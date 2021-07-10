@@ -61,7 +61,7 @@ public class UtiliJei implements IModPlugin {
                 .collect(Collectors.toList());
         registration.addRecipes(simpleBrewery, BreweryCategory.ID);
         registration.addRecipes(GildingArmorRecipe.getRecipes(), GildingCategory.ID);
-        
+
         registration.addIngredientInfo(new ItemStack(ModBlocks.advancedBrewery), VanillaTypes.ITEM, "description.utilitix.advanced_brewery", "description.utilitix.advanced_brewery.brewing", "description.utilitix.advanced_brewery.merging", "description.utilitix.advanced_brewery.upgrading", "description.utilitix.advanced_brewery.cloning");
         registration.addIngredientInfo(ImmutableList.of(new ItemStack(ModBlocks.comparatorRedirectorUp), new ItemStack(ModBlocks.comparatorRedirectorDown)), VanillaTypes.ITEM, "description.utilitix.comparator_redirector");
         registration.addIngredientInfo(new ItemStack(ModBlocks.weakRedstoneTorch), VanillaTypes.ITEM, "description.utilitix.weak_redstone_torch");
@@ -84,6 +84,7 @@ public class UtiliJei implements IModPlugin {
         registration.addIngredientInfo(ImmutableList.of(new ItemStack(ModBlocks.pistonControllerRail), new ItemStack(ModBlocks.reinforcedPistonControllerRail)), VanillaTypes.ITEM, "description.utilitix.piston_controller_rail");
         registration.addIngredientInfo(new ItemStack(ModEntities.stonecutterCart.item()), VanillaTypes.ITEM, "description.utilitix.stonecutter_cart");
         registration.addIngredientInfo(new ItemStack(ModEntities.anvilCart.item()), VanillaTypes.ITEM, "description.utilitix.anvil_cart");
+        registration.addIngredientInfo(new ItemStack(ModBlocks.crudeFurnace), VanillaTypes.ITEM, "description.utilitix.crude_furnace");
     }
 
     @Override

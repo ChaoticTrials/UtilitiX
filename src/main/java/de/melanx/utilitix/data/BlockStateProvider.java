@@ -6,6 +6,7 @@ import de.melanx.utilitix.block.ModProperties;
 import de.melanx.utilitix.data.state.RailState;
 import de.melanx.utilitix.registration.ModBlocks;
 import io.github.noeppi_noeppi.libx.data.provider.BlockStateProviderBase;
+import net.minecraft.block.AbstractFurnaceBlock;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
@@ -22,7 +23,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 public class BlockStateProvider extends BlockStateProviderBase {
 
     public static final ResourceLocation LINKED_REPEATER_PARENT = new ResourceLocation(UtilitiX.getInstance().modid, "block/linked_repeater_base");
-    
+
     public static final ResourceLocation TEXTURE_REPEATER_OFF = new ResourceLocation("minecraft", "block/repeater");
     public static final ResourceLocation TEXTURE_REPEATER_ON = new ResourceLocation("minecraft", "block/repeater_on");
 
@@ -82,7 +83,7 @@ public class BlockStateProvider extends BlockStateProviderBase {
                 RailState state = new RailState(shapeProperty, reverseProperty);
                 state.generate(this, builder, id);
             }
-            
+
 //            if (block.getStateContainer().getProperties().contains(BlockStateProperties.RAIL_SHAPE)) {
 //                VariantBlockStateBuilder builder = this.getVariantBuilder(block);
 //                ModelFile modelStraight = this.models().withExistingParent(id.getPath(), STRAIGHT_RAIL_PARENT)
@@ -139,6 +140,27 @@ public class BlockStateProvider extends BlockStateProviderBase {
 //                    builder.partialState().with(BlockStateProperties.RAIL_SHAPE_STRAIGHT, RailShape.ASCENDING_SOUTH).addModels(new ConfiguredModel(modelRaisedSW, 0, 0, false));
 //                }
 //            }
+        } else if (block == ModBlocks.crudeFurnace) {
+            VariantBlockStateBuilder builder = this.getVariantBuilder(block);
+            //noinspection ConstantConditions
+            ModelFile modelOn = this.models().orientable(id.getPath() + "_on",
+                    this.modLoc("block/" + ModBlocks.crudeFurnace.getRegistryName().getPath() + "_side"),
+                    this.modLoc("block/" + ModBlocks.crudeFurnace.getRegistryName().getPath() + "_front_on"),
+                    this.modLoc("block/" + ModBlocks.crudeFurnace.getRegistryName().getPath() + "_top")
+            );
+            ModelFile modelOff = this.models().orientable(id.getPath(),
+                    this.modLoc("block/" + ModBlocks.crudeFurnace.getRegistryName().getPath() + "_side"),
+                    this.modLoc("block/" + ModBlocks.crudeFurnace.getRegistryName().getPath() + "_front"),
+                    this.modLoc("block/" + ModBlocks.crudeFurnace.getRegistryName().getPath() + "_top")
+            );
+            for (Direction dir : BlockStateProperties.HORIZONTAL_FACING.getAllowedValues()) {
+                for (boolean value : AbstractFurnaceBlock.LIT.getAllowedValues()) {
+                    builder.partialState()
+                            .with(BlockStateProperties.HORIZONTAL_FACING, dir)
+                            .with(AbstractFurnaceBlock.LIT, value)
+                            .addModels(new ConfiguredModel(value ? modelOn : modelOff, 0, (int) dir.getOpposite().getHorizontalAngle(), false));
+                }
+            }
         } else {
             super.defaultState(id, block, model);
         }
@@ -146,7 +168,7 @@ public class BlockStateProvider extends BlockStateProviderBase {
 
     @Override
     protected ModelFile defaultModel(ResourceLocation id, Block block) {
-        if (block == ModBlocks.linkedRepeater || block instanceof AbstractRailBlock) {
+        if (block == ModBlocks.linkedRepeater || block instanceof AbstractRailBlock || block == ModBlocks.crudeFurnace) {
             return null;
         } else if (block instanceof ComparatorRedirector) {
             ResourceLocation top = new ResourceLocation(UtilitiX.getInstance().modid, "block/comparator_redirector_top");

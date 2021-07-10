@@ -122,6 +122,16 @@ public class RecipeProvider extends RecipeProviderBase {
                 .key('c', Items.BLACK_CONCRETE)
                 .addCriterion("has_item", hasItem(Items.EXPERIENCE_BOTTLE))
                 .build(consumer);
+
+        ShapedRecipeBuilder.shapedRecipe(ModBlocks.crudeFurnace)
+                .patternLine("C C")
+                .patternLine("SFS")
+                .patternLine("SSS")
+                .key('C', Tags.Items.STONE)
+                .key('S', Tags.Items.COBBLESTONE)
+                .key('F', Items.FURNACE)
+                .addCriterion("has_item", hasItem(Items.FURNACE))
+                .build(consumer);
     }
 
     private void createRedstoneRecipes(Consumer<IFinishedRecipe> consumer) {

@@ -7,6 +7,9 @@ import de.melanx.utilitix.block.WeakRedstoneTorch;
 import de.melanx.utilitix.content.brewery.BlockAdvancedBrewery;
 import de.melanx.utilitix.content.brewery.ContainerAdvancedBrewery;
 import de.melanx.utilitix.content.brewery.TileAdvancedBrewery;
+import de.melanx.utilitix.content.crudefurnace.BlockCrudeFurnace;
+import de.melanx.utilitix.content.crudefurnace.ContainerCrudeFurnace;
+import de.melanx.utilitix.content.crudefurnace.TileCrudeFurnace;
 import de.melanx.utilitix.content.experiencecrystal.BlockExperienceCrystal;
 import de.melanx.utilitix.content.experiencecrystal.ContainerExperienceCrystal;
 import de.melanx.utilitix.content.experiencecrystal.TileExperienceCrystal;
@@ -33,6 +36,7 @@ import javax.annotation.Nonnull;
 public class ModBlocks {
 
     public static final BlockGUI<TileAdvancedBrewery, ContainerAdvancedBrewery> advancedBrewery = new BlockAdvancedBrewery(UtilitiX.getInstance(), AbstractBlock.Properties.from(Blocks.BREWING_STAND));
+    public static final BlockGUI<TileCrudeFurnace, ContainerCrudeFurnace> crudeFurnace = new BlockCrudeFurnace(UtilitiX.getInstance(), ContainerBase.createContainerType(ContainerCrudeFurnace::new), AbstractBlock.Properties.from(Blocks.FURNACE));
     public static final BlockBase comparatorRedirectorUp = new ComparatorRedirector(UtilitiX.getInstance(), Direction.UP, AbstractBlock.Properties.from(Blocks.OBSERVER));
     public static final BlockBase comparatorRedirectorDown = new ComparatorRedirector(UtilitiX.getInstance(), Direction.DOWN, AbstractBlock.Properties.from(Blocks.OBSERVER));
     public static final WeakRedstoneTorch weakRedstoneTorch = new WeakRedstoneTorch(UtilitiX.getInstance(), AbstractBlock.Properties.from(Blocks.REDSTONE_TORCH));

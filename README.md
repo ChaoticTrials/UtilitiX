@@ -24,7 +24,7 @@ A lot of items, nice to have
 - [ ] Advanced Enchanter (only uses required XP, not levels)
 - [x] Block that reads comparator output from above/below
 - [x] Weak redstone torch (Redstone torch that powers block above weak instead of strong because of torch burnout)
-- [ ] Furnace that smelts items with double speed and half xp if the item doesn't fit in smoker or blast furnace
+- [x] Furnace that smelts items with double speed and half xp if the item doesn't fit in smoker or blast furnace
 - [x] Advanced Brewery from BedrockCraft
 - [x] Wireless redstone
 - [ ] Cleanstone Walls

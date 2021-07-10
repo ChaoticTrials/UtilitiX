@@ -224,7 +224,6 @@ public class TileAdvancedBrewery extends TileEntityBase implements ITickableTile
             nbt.putInt("fuel", this.fuel);
         }
         return nbt;
-
     }
 
     @Override
