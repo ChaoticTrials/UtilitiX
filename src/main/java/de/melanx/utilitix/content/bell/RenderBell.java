@@ -8,12 +8,15 @@ import de.melanx.utilitix.registration.ModItems;
 import io.github.noeppi_noeppi.libx.annotation.model.Model;
 import io.github.noeppi_noeppi.libx.util.LazyValue;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
@@ -45,16 +48,12 @@ public class RenderBell extends BlockEntityWithoutLevelRenderer {
     private BlockEntityRenderer<BellBlockEntity> tileRender = null;
 
     // TODO
-//    private final ModelPart grayscaleModel = new ModelPart(32, 32, 0, 0);
+    private final ModelPart grayscaleModel;
 
-    public RenderBell() {
+    public RenderBell(BlockEntityRendererProvider.Context context) {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
-//        this.grayscaleModel.addBox(-3.0F, -6.0F, -3.0F, 6.0F, 7.0F, 6.0F);
-//        this.grayscaleModel.setPos(8.0F, 12.0F, 8.0F);
-//        ModelPart modelPart = new ModelPart(32, 32, 0, 13);
-//        modelPart.addBox(4.0F, 4.0F, 4.0F, 8.0F, 2.0F, 8.0F);
-//        modelPart.setPos(-8.0F, -12.0F, -8.0F);
-//        this.grayscaleModel.addChild(modelPart);
+        ModelPart part = context.bakeLayer(ModelLayers.BELL);
+        this.grayscaleModel = part.getChild("bell_body");
     }
 
     @Override
@@ -81,7 +80,7 @@ public class RenderBell extends BlockEntityWithoutLevelRenderer {
                 }
                 tile.shaking = tile.ticks > 0;
                 if (this.tileRender == null) {
-//                    this.tileRender = BlockEntityRenderDispatcher.instance.getRenderer(tile);
+                    this.tileRender = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(tile);
                 }
                 poseStack.pushPose();
                 poseStack.scale(0.7F, 0.7F, 0.7F);
@@ -92,11 +91,11 @@ public class RenderBell extends BlockEntityWithoutLevelRenderer {
                 if (stack.getItem() == ModItems.mobBell) {
                     float[] color = ItemMobBell.getFloatColor(stack);
                     float ringRotation = -(Mth.sin(tile.ticks + mc.getFrameTime() / (float) Math.PI) / (4 + (tile.ticks + Minecraft.getInstance().getFrameTime()) / 3f));
-//                    this.grayscaleModel.xRot = 0;
-//                    this.grayscaleModel.zRot = tile.shaking ? ringRotation : 0;
+                    this.grayscaleModel.xRot = 0;
+                    this.grayscaleModel.zRot = tile.shaking ? ringRotation : 0;
                     VertexConsumer ivertexconsumer = GRAY_BELL_MATERIAL.buffer(buffer, RenderType::entitySolid);
-//                    this.grayscaleModel.render(poseStack, ivertexconsumer, light, OverlayTexture.NO_OVERLAY,
-//                            color[0], color[1], color[2], 1);
+                    this.grayscaleModel.render(poseStack, ivertexconsumer, light, OverlayTexture.NO_OVERLAY,
+                            color[0], color[1], color[2], 1);
                 } else {
                     this.tileRender.render(tile, mc.getFrameTime(), poseStack, buffer,
                             LightTexture.pack(15, 15), OverlayTexture.NO_OVERLAY);

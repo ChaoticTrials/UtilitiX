@@ -4,6 +4,9 @@ import de.melanx.utilitix.UtilitiXConfig;
 import de.melanx.utilitix.registration.ModEnchantments;
 import io.github.noeppi_noeppi.libx.base.ItemBase;
 import io.github.noeppi_noeppi.libx.mod.ModX;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -40,7 +43,17 @@ public abstract class BellBase extends ItemBase {
 
     @Override
     public void initializeClient(@Nonnull Consumer<IItemRenderProperties> consumer) {
-//        TODO ... ehm... yes, todo
+        consumer.accept(new IItemRenderProperties() {
+            @Override
+            public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+                return new RenderBell(new BlockEntityRendererProvider.Context(
+                        Minecraft.getInstance().getBlockEntityRenderDispatcher(),
+                        Minecraft.getInstance().getBlockRenderer(),
+                        Minecraft.getInstance().getEntityModels(),
+                        Minecraft.getInstance().font
+                ));
+            }
+        });
     }
 
     @Override
