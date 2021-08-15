@@ -38,6 +38,7 @@ public class BlockStateProvider extends BlockStateProviderBase {
     protected void setup() {
         this.manualState(ModBlocks.weakRedstoneTorch);
         this.manualState(ModBlocks.weakRedstoneTorch.wallTorch);
+        this.manualModel(ModBlocks.experienceCrystal);
         this.manualModel(ModBlocks.advancedBrewery);
     }
 

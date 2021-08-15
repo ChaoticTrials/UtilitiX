@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "utilitix:comparator_redirector_down"
+            "items": [
+              "utilitix:comparator_redirector_down"
+            ]
           }
         ]
       }

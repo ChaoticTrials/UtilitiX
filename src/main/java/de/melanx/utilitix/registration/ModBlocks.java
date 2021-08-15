@@ -80,5 +80,5 @@ public class ModBlocks {
             return ModProperties.RAIL_SHAPE_FLAT_STRAIGHT;
         }
     };
-    public static final BlockMenu<TileExperienceCrystal, ContainerMenuExperienceCrystal> experienceCrystal = new BlockExperienceCrystal(UtilitiX.getInstance(), BlockEntityMenu.createMenuType(ContainerMenuExperienceCrystal::new), BlockBehaviour.Properties.of(Material.STONE, MaterialColor.COLOR_BLACK).strength(3, 7)); // TODO add tag for mineable with pickaxe
+    public static final BlockMenu<TileExperienceCrystal, ContainerMenuExperienceCrystal> experienceCrystal = new BlockExperienceCrystal(UtilitiX.getInstance(), BlockEntityMenu.createMenuType(ContainerMenuExperienceCrystal::new), BlockBehaviour.Properties.of(Material.STONE, MaterialColor.COLOR_BLACK).strength(3, 7));
 }

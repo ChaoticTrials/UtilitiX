@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "utilitix:advanced_brewery",
+    "utilitix:crude_furnace",
+    "utilitix:comparator_redirector_up",
+    "utilitix:comparator_redirector_down",
+    "utilitix:weak_redstone_torch_wall",
+    "utilitix:highspeed_rail",
+    "utilitix:directional_rail",
+    "utilitix:directional_highspeed_rail",
+    "utilitix:crossing_rail",
+    "utilitix:filter_rail",
+    "utilitix:reinforced_rail",
+    "utilitix:reinforced_crossing_rail",
+    "utilitix:reinforced_filter_rail",
+    "utilitix:piston_controller_rail",
+    "utilitix:reinforced_piston_controller_rail",
+    "utilitix:experience_crystal"
+  ]
+}

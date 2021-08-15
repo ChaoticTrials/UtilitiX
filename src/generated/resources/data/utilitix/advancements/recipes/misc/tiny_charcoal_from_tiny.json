@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "utilitix:tiny_charcoal"
+            "items": [
+              "utilitix:tiny_charcoal"
+            ]
           }
         ]
       }
