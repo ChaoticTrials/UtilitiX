@@ -63,7 +63,7 @@ public class Cart extends AbstractMinecart {
         EntityType<T> type = EntityType.Builder.of(factory, MobCategory.MISC).sized(0.98F, 0.7F).clientTrackingRange(8).build(UtilitiX.getInstance().modid + "_" + id);
         ItemBase item = new ItemCart(UtilitiX.getInstance(), type, properties);
         cartItems.put(type, item);
-        return new CartType<T>() {
+        return new CartType<>() {
 
             @Override
             public EntityType<T> get() {

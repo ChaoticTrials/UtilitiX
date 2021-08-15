@@ -47,7 +47,6 @@ public class RenderBell extends BlockEntityWithoutLevelRenderer {
     private final LazyValue<BellBlockEntity> tile = new LazyValue<>(() -> new BellBlockEntity(BlockPos.ZERO, null));
     private BlockEntityRenderer<BellBlockEntity> tileRender = null;
 
-    // TODO
     private final ModelPart grayscaleModel;
 
     public RenderBell(BlockEntityRendererProvider.Context context) {

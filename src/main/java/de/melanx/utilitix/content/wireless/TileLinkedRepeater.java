@@ -52,7 +52,6 @@ public class TileLinkedRepeater extends BlockEntityBase {
             }
             BlockState state = this.getBlockState().setValue(BlockStateProperties.EYE, newId != null);
             this.level.setBlock(this.worldPosition, state, 3);
-//            this.clearCache(); FIXME?
             this.level.getBlockTicks().scheduleTick(this.worldPosition, ModBlocks.linkedRepeater, 1, TickPriority.EXTREMELY_HIGH);
         }
         this.setChanged();
