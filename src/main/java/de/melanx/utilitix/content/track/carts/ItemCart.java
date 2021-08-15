@@ -1,129 +1,128 @@
 package de.melanx.utilitix.content.track.carts;
 
+import io.github.noeppi_noeppi.libx.base.ItemBase;
 import io.github.noeppi_noeppi.libx.mod.ModX;
-import io.github.noeppi_noeppi.libx.mod.registration.ItemBase;
 import io.github.noeppi_noeppi.libx.mod.registration.Registerable;
-import net.minecraft.block.AbstractRailBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.DispenserBlock;
-import net.minecraft.dispenser.DefaultDispenseItemBehavior;
-import net.minecraft.dispenser.IBlockSource;
-import net.minecraft.dispenser.IDispenseItemBehavior;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.state.properties.RailShape;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockSource;
+import net.minecraft.core.Direction;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.core.dispenser.DispenseItemBehavior;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseRailBlock;
+import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.RailShape;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
 public class ItemCart extends ItemBase implements Registerable {
 
-    public final EntityType<? extends EntityCart> minecartType;
+    public final EntityType<? extends Cart> minecartType;
 
-    public ItemCart(ModX mod, EntityType<? extends EntityCart> minecartType, Properties properties) {
+    public ItemCart(ModX mod, EntityType<? extends Cart> minecartType, Properties properties) {
         super(mod, properties);
         this.minecartType = minecartType;
     }
 
     @Override
     public void registerCommon(ResourceLocation id, Consumer<Runnable> defer) {
-        defer.accept(() -> DispenserBlock.registerDispenseBehavior(this, this.dispenseBehaviour));
-    }
-    
-    @Nonnull
-    @Override
-    protected String getDefaultTranslationKey() {
-        return this.minecartType.getTranslationKey();
+        defer.accept(() -> DispenserBlock.registerBehavior(this, this.dispenseBehaviour));
     }
 
     @Nonnull
     @Override
-    public ActionResultType onItemUse(@Nonnull ItemUseContext context) {
-        World world = context.getWorld();
-        BlockPos pos = context.getPos();
-        BlockState state = world.getBlockState(pos);
-        if (state.isIn(BlockTags.RAILS)) {
-            ItemStack stack = context.getItem();
-            if (!world.isRemote) {
-                EntityCart cart = this.minecartType.create(world);
+    protected String getOrCreateDescriptionId() {
+        return this.minecartType.getDescriptionId();
+    }
+
+    @Nonnull
+    @Override
+    public InteractionResult useOn(@Nonnull UseOnContext context) {
+        Level level = context.getLevel();
+        BlockPos pos = context.getClickedPos();
+        BlockState state = level.getBlockState(pos);
+        if (state.is(BlockTags.RAILS)) {
+            ItemStack stack = context.getItemInHand();
+            if (!level.isClientSide) {
+                Cart cart = this.minecartType.create(level);
                 if (cart == null) {
-                    return ActionResultType.FAIL;
+                    return InteractionResult.FAIL;
                 }
-                RailShape rail = state.getBlock() instanceof AbstractRailBlock ? ((AbstractRailBlock) state.getBlock()).getRailDirection(state, world, pos, null) : RailShape.NORTH_SOUTH;
-                cart.setPosition(pos.getX() + 0.5, pos.getY() + (rail.isAscending() ? 0.5625 : 0.0625), pos.getZ() + 0.5);
-                cart.setMotion(Vector3d.ZERO);
-                cart.prevPosX = pos.getX() + 0.5;
-                cart.prevPosY = pos.getY() + (rail.isAscending() ? 0.5625 : 0.0625);
-                cart.prevPosZ = pos.getZ() + 0.5;
-                if (stack.hasDisplayName()) {
-                    cart.setCustomName(stack.getDisplayName());
+                RailShape rail = state.getBlock() instanceof BaseRailBlock ? ((BaseRailBlock) state.getBlock()).getRailDirection(state, level, pos, null) : RailShape.NORTH_SOUTH;
+                cart.setPos(pos.getX() + 0.5, pos.getY() + (rail.isAscending() ? 0.5625 : 0.0625), pos.getZ() + 0.5);
+                cart.setDeltaMovement(Vec3.ZERO);
+                cart.xo = pos.getX() + 0.5;
+                cart.yo = pos.getY() + (rail.isAscending() ? 0.5625 : 0.0625);
+                cart.zo = pos.getZ() + 0.5;
+                if (stack.hasCustomHoverName()) {
+                    cart.setCustomName(stack.getHoverName());
                 }
-                world.addEntity(cart);
+                level.addFreshEntity(cart);
             }
             stack.shrink(1);
-            return ActionResultType.successOrConsume(world.isRemote);
+            return InteractionResult.sidedSuccess(level.isClientSide);
         } else {
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         }
     }
-    
-    public final IDispenseItemBehavior dispenseBehaviour = new DefaultDispenseItemBehavior() {
-        
+
+    public final DispenseItemBehavior dispenseBehaviour = new DefaultDispenseItemBehavior() {
+
         private final DefaultDispenseItemBehavior defaultDispense = new DefaultDispenseItemBehavior();
-        
+
         @Nonnull
         @Override
-        public ItemStack dispenseStack(@Nonnull IBlockSource block, @Nonnull ItemStack stack) {
-            Direction dir = block.getBlockState().get(DispenserBlock.FACING);
-            World world = block.getWorld();
-            double x = block.getX() + (dir.getXOffset() * 1.125);
-            double y = Math.floor(block.getY()) + dir.getYOffset();
-            double z = block.getZ() + (dir.getZOffset() * 1.125);
-            BlockPos target = block.getBlockPos().offset(dir);
+        public ItemStack execute(@Nonnull BlockSource source, @Nonnull ItemStack stack) {
+            Direction dir = source.getBlockState().getValue(DispenserBlock.FACING);
+            Level world = source.getLevel();
+            double x = source.x() + (dir.getStepX() * 1.125);
+            double y = Math.floor(source.y()) + dir.getStepY();
+            double z = source.z() + (dir.getStepZ() * 1.125);
+            BlockPos target = source.getPos().relative(dir);
             BlockState targetState = world.getBlockState(target);
-            RailShape rail = targetState.getBlock() instanceof AbstractRailBlock ? ((AbstractRailBlock) targetState.getBlock()).getRailDirection(targetState, world, target, null) : RailShape.NORTH_SOUTH;
+            RailShape rail = targetState.getBlock() instanceof BaseRailBlock ? ((BaseRailBlock) targetState.getBlock()).getRailDirection(targetState, world, target, null) : RailShape.NORTH_SOUTH;
             double yOffset;
-            if (targetState.isIn(BlockTags.RAILS)) {
+            if (targetState.is(BlockTags.RAILS)) {
                 yOffset = rail.isAscending() ? 0.6 : 0.1;
             } else {
-                //noinspection deprecation
-                if (!targetState.isAir() || !world.getBlockState(target.down()).isIn(BlockTags.RAILS)) {
-                    return this.defaultDispense.dispense(block, stack);
+                if (!targetState.isAir() || !world.getBlockState(target.below()).is(BlockTags.RAILS)) {
+                    return this.defaultDispense.dispense(source, stack);
                 }
 
-                BlockState railState = world.getBlockState(target.down());
-                RailShape railDown = railState.getBlock() instanceof AbstractRailBlock ? ((AbstractRailBlock)railState.getBlock()).getRailDirection(railState, world, target.down(), null) : RailShape.NORTH_SOUTH;
+                BlockState railState = world.getBlockState(target.below());
+                RailShape railDown = railState.getBlock() instanceof BaseRailBlock ? ((BaseRailBlock) railState.getBlock()).getRailDirection(railState, world, target.below(), null) : RailShape.NORTH_SOUTH;
                 yOffset = dir != Direction.DOWN && railDown.isAscending() ? -0.4 : -0.9;
             }
 
-            EntityCart cart = ItemCart.this.minecartType.create(world);
+            Cart cart = ItemCart.this.minecartType.create(world);
             if (cart == null) {
-                return this.defaultDispense.dispense(block, stack);
+                return this.defaultDispense.dispense(source, stack);
             }
-            cart.setPosition(x, y + yOffset, z);
-            cart.setMotion(Vector3d.ZERO);
-            cart.prevPosX = x;
-            cart.prevPosY = y + yOffset;
-            cart.prevPosZ = z;
-            if (stack.hasDisplayName()) {
-                cart.setCustomName(stack.getDisplayName());
+            cart.setPos(x, y + yOffset, z);
+            cart.setDeltaMovement(Vec3.ZERO);
+            cart.xo = x;
+            cart.yo = y + yOffset;
+            cart.zo = z;
+            if (stack.hasCustomHoverName()) {
+                cart.setCustomName(stack.getHoverName());
             }
-            world.addEntity(cart);
+            world.addFreshEntity(cart);
             stack.shrink(1);
             return stack;
         }
-        
+
         @Override
-        protected void playDispenseSound(IBlockSource source) {
-            source.getWorld().playEvent(1000, source.getBlockPos(), 0);
+        protected void playSound(BlockSource source) {
+            source.getLevel().levelEvent(1000, source.getPos(), 0);
         }
     };
 }

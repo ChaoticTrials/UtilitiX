@@ -1,6 +1,6 @@
 package de.melanx.utilitix.recipe;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 public class PotionOutput {
 

@@ -1,106 +1,107 @@
 package de.melanx.utilitix.content.bell;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Vector3f;
 import de.melanx.utilitix.Textures;
 import de.melanx.utilitix.registration.ModItems;
-import io.github.noeppi_noeppi.libx.annotation.Model;
-import net.minecraft.block.Blocks;
+import io.github.noeppi_noeppi.libx.annotation.model.Model;
+import io.github.noeppi_noeppi.libx.util.LazyValue;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.client.renderer.model.RenderMaterial;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.tileentity.BellTileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.LazyValue;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BellBlockEntity;
 
 import javax.annotation.Nonnull;
 
-public class RenderBell extends ItemStackTileEntityRenderer {
+public class RenderBell extends BlockEntityWithoutLevelRenderer {
 
-    public static final RenderMaterial GRAY_BELL_MATERIAL = new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE, Textures.GRAY_BELL_TEXTURE);
+    public static final Material GRAY_BELL_MATERIAL = new Material(InventoryMenu.BLOCK_ATLAS, Textures.GRAY_BELL_TEXTURE);
 
     @Model(namespace = "minecraft", value = "item/stick")
-    public static IBakedModel stickModel = null;
+    public static BakedModel stickModel = null;
     @Model("item/hand_bell_item")
-    public static IBakedModel handBellModel = null;
+    public static BakedModel handBellModel = null;
     @Model("item/mob_bell_item")
-    public static IBakedModel mobBellModel = null;
+    public static BakedModel mobBellModel = null;
 
     private final LazyValue<ItemStack> stick = new LazyValue<>(() -> new ItemStack(Items.STICK));
-    private final LazyValue<BellTileEntity> tile = new LazyValue<>(BellTileEntity::new);
-    private TileEntityRenderer<BellTileEntity> tileRender = null;
+    @SuppressWarnings("ConstantConditions")
+    private final LazyValue<BellBlockEntity> tile = new LazyValue<>(() -> new BellBlockEntity(BlockPos.ZERO, null));
+    private BlockEntityRenderer<BellBlockEntity> tileRender = null;
 
-    private final ModelRenderer grayscaleModel = new ModelRenderer(32, 32, 0, 0);
+    // TODO
+//    private final ModelPart grayscaleModel = new ModelPart(32, 32, 0, 0);
 
     public RenderBell() {
-        this.grayscaleModel.addBox(-3.0F, -6.0F, -3.0F, 6.0F, 7.0F, 6.0F);
-        this.grayscaleModel.setRotationPoint(8.0F, 12.0F, 8.0F);
-        ModelRenderer modelrenderer = new ModelRenderer(32, 32, 0, 13);
-        modelrenderer.addBox(4.0F, 4.0F, 4.0F, 8.0F, 2.0F, 8.0F);
-        modelrenderer.setRotationPoint(-8.0F, -12.0F, -8.0F);
-        this.grayscaleModel.addChild(modelrenderer);
+        super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+//        this.grayscaleModel.addBox(-3.0F, -6.0F, -3.0F, 6.0F, 7.0F, 6.0F);
+//        this.grayscaleModel.setPos(8.0F, 12.0F, 8.0F);
+//        ModelPart modelPart = new ModelPart(32, 32, 0, 13);
+//        modelPart.addBox(4.0F, 4.0F, 4.0F, 8.0F, 2.0F, 8.0F);
+//        modelPart.setPos(-8.0F, -12.0F, -8.0F);
+//        this.grayscaleModel.addChild(modelPart);
     }
 
     @Override
-    public void render(@Nonnull ItemStack stack, @Nonnull ItemCameraTransforms.TransformType transform, @Nonnull MatrixStack matrixStack, @Nonnull IRenderTypeBuffer buffer, int light, int overlay) {
+    public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemTransforms.TransformType transform, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource buffer, int light, int overlay) {
         Minecraft mc = Minecraft.getInstance();
-        IVertexBuilder vertex = buffer.getBuffer(RenderType.getCutout());
-        if (transform == ItemCameraTransforms.TransformType.GUI) {
-            mc.getItemRenderer().renderModel(stack.getItem() == ModItems.mobBell ? mobBellModel : handBellModel, stack, light, OverlayTexture.NO_OVERLAY, matrixStack, vertex);
+        VertexConsumer vertex = buffer.getBuffer(RenderType.cutout());
+        if (transform == ItemTransforms.TransformType.GUI) {
+            mc.getItemRenderer().renderModelLists(stack.getItem() == ModItems.mobBell ? mobBellModel : handBellModel, stack, light, OverlayTexture.NO_OVERLAY, poseStack, vertex);
         } else {
-            matrixStack.push();
-            matrixStack.scale(0.7F, 0.7F, 0.7F);
-            matrixStack.translate(0, 0, 0.25F);
-            mc.getItemRenderer().renderModel(stickModel, this.stick.getValue(), light, OverlayTexture.NO_OVERLAY, matrixStack, vertex);
-            matrixStack.pop();
-            if (mc.world != null) {
-                BellTileEntity tile = this.tile.getValue();
-                tile.setWorldAndPos(mc.world, BlockPos.ZERO);
-                tile.cachedBlockState = Blocks.BELL.getDefaultState();
-                tile.ringDirection = Direction.EAST;
-                if (mc.player == null || mc.player.getItemInUseCount() <= 0) {
-                    tile.ringingTicks = 0;
+            poseStack.pushPose();
+            poseStack.scale(0.7F, 0.7F, 0.7F);
+            poseStack.translate(0, 0, 0.25F);
+            mc.getItemRenderer().renderModelLists(stickModel, this.stick.get(), light, OverlayTexture.NO_OVERLAY, poseStack, vertex);
+            poseStack.popPose();
+            if (mc.level != null) {
+                BellBlockEntity tile = this.tile.get();
+                tile.setLevel(mc.level);
+                tile.blockState = Blocks.BELL.defaultBlockState();
+                tile.clickDirection = Direction.EAST;
+                if (mc.player == null || mc.player.getUseItemRemainingTicks() <= 0) {
+                    tile.ticks = 0;
                 } else {
-                    tile.ringingTicks = Math.round(MathHelper.lerp((mc.player.getItemInUseCount() % 10) / 10f, 0, 50));
+                    tile.ticks = Math.round(Mth.lerp((mc.player.getUseItemRemainingTicks() % 10) / 10f, 0, 50));
                 }
-                tile.isRinging = tile.ringingTicks > 0;
+                tile.shaking = tile.ticks > 0;
                 if (this.tileRender == null) {
-                    this.tileRender = TileEntityRendererDispatcher.instance.getRenderer(tile);
+//                    this.tileRender = BlockEntityRenderDispatcher.instance.getRenderer(tile);
                 }
-                matrixStack.push();
-                matrixStack.scale(0.7F, 0.7F, 0.7F);
-                matrixStack.translate(0, 0F, 0.25F);
-                matrixStack.rotate(Vector3f.ZP.rotationDegrees(-45));
-                matrixStack.rotate(Vector3f.XP.rotationDegrees(180));
-                matrixStack.translate(-0.475, -1.6, -1);
+                poseStack.pushPose();
+                poseStack.scale(0.7F, 0.7F, 0.7F);
+                poseStack.translate(0, 0F, 0.25F);
+                poseStack.mulPose(Vector3f.ZP.rotationDegrees(-45));
+                poseStack.mulPose(Vector3f.XP.rotationDegrees(180));
+                poseStack.translate(-0.475, -1.6, -1);
                 if (stack.getItem() == ModItems.mobBell) {
                     float[] color = ItemMobBell.getFloatColor(stack);
-                    float ringRotation = -(MathHelper.sin(tile.ringingTicks + mc.getRenderPartialTicks() / (float) Math.PI) / (4 + (tile.ringingTicks + Minecraft.getInstance().getRenderPartialTicks()) / 3f));
-                    this.grayscaleModel.rotateAngleX = 0;
-                    this.grayscaleModel.rotateAngleZ = tile.isRinging ? ringRotation : 0;
-                    IVertexBuilder ivertexbuilder = GRAY_BELL_MATERIAL.getBuffer(buffer, RenderType::getEntitySolid);
-                    this.grayscaleModel.render(matrixStack, ivertexbuilder, light, OverlayTexture.NO_OVERLAY,
-                            color[0], color[1], color[2], 1);
+                    float ringRotation = -(Mth.sin(tile.ticks + mc.getFrameTime() / (float) Math.PI) / (4 + (tile.ticks + Minecraft.getInstance().getFrameTime()) / 3f));
+//                    this.grayscaleModel.xRot = 0;
+//                    this.grayscaleModel.zRot = tile.shaking ? ringRotation : 0;
+                    VertexConsumer ivertexconsumer = GRAY_BELL_MATERIAL.buffer(buffer, RenderType::entitySolid);
+//                    this.grayscaleModel.render(poseStack, ivertexconsumer, light, OverlayTexture.NO_OVERLAY,
+//                            color[0], color[1], color[2], 1);
                 } else {
-                    this.tileRender.render(tile, mc.getRenderPartialTicks(), matrixStack, buffer,
-                            LightTexture.packLight(15, 15), OverlayTexture.NO_OVERLAY);
+                    this.tileRender.render(tile, mc.getFrameTime(), poseStack, buffer,
+                            LightTexture.pack(15, 15), OverlayTexture.NO_OVERLAY);
                 }
-                matrixStack.pop();
+                poseStack.popPose();
             }
         }
     }

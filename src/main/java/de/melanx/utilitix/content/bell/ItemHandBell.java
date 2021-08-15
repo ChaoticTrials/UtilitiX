@@ -1,20 +1,20 @@
 package de.melanx.utilitix.content.bell;
 
 import io.github.noeppi_noeppi.libx.mod.ModX;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 public class ItemHandBell extends BellBase {
 
     public ItemHandBell(ModX mod, Item.Properties properties) {
-        super(mod, properties.setISTER(() -> RenderBell::new));
+        super(mod, properties);
     }
 
     @Override
     protected boolean entityFilter(LivingEntity entity, ItemStack stack) {
-        return entity.isAlive() && entity.getType().isContained(EntityTypeTags.RAIDERS);
+        return entity.isAlive() && entity.getType().is(EntityTypeTags.RAIDERS);
     }
 
     @Override

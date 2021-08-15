@@ -6,21 +6,20 @@ import com.google.gson.JsonObject;
 import de.melanx.utilitix.registration.ModItemTags;
 import de.melanx.utilitix.registration.ModItems;
 import io.github.noeppi_noeppi.libx.util.Misc;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.potion.PotionUtils;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -43,13 +42,13 @@ public abstract class EffectTransformer {
 
     public abstract JsonObject serialize();
 
-    public abstract void write(PacketBuffer buffer);
+    public abstract void write(FriendlyByteBuf buffer);
 
     public static EffectTransformer deserialize(JsonObject json) {
         String type = json.get("type").getAsString();
         if ("apply".equalsIgnoreCase(type)) {
-            ITextComponent name = json.has("name") ? ITextComponent.Serializer.getComponentFromJson(json.get("name")) : null;
-            ImmutableList.Builder<EffectInstance> effects = ImmutableList.builder();
+            Component name = json.has("name") ? Component.Serializer.fromJson(json.get("name")) : null;
+            ImmutableList.Builder<MobEffectInstance> effects = ImmutableList.builder();
             JsonArray list = json.get("effects").getAsJsonArray();
             for (int i = 0; i < list.size(); i++) {
                 effects.add(deserializeEffect(list.get(i).getAsJsonObject()));
@@ -66,19 +65,19 @@ public abstract class EffectTransformer {
         }
     }
 
-    public static EffectTransformer read(PacketBuffer buffer) {
+    public static EffectTransformer read(FriendlyByteBuf buffer) {
         byte id = buffer.readByte();
         if (id == 0) {
-            ITextComponent name = null;
+            Component name = null;
             if (buffer.readBoolean()) {
-                name = buffer.readTextComponent();
+                name = buffer.readComponent();
             }
-            ImmutableList.Builder<EffectInstance> effects = ImmutableList.builder();
+            ImmutableList.Builder<MobEffectInstance> effects = ImmutableList.builder();
             int size = buffer.readVarInt();
             for (int i = 0; i < size; i++) {
-                CompoundNBT nbt = buffer.readCompoundTag();
+                CompoundTag nbt = buffer.readNbt();
                 if (nbt != null) {
-                    effects.add(EffectInstance.read(nbt));
+                    effects.add(MobEffectInstance.load(nbt));
                 }
             }
             return new Apply(name, effects.build());
@@ -93,16 +92,16 @@ public abstract class EffectTransformer {
         }
     }
 
-    public static ItemStack create(Item item, List<EffectInstance> effects) {
+    public static ItemStack create(Item item, List<MobEffectInstance> effects) {
         ItemStack stack = new ItemStack(item);
-        PotionUtils.appendEffects(stack, effects);
-        stack.getOrCreateTag().putInt("CustomPotionColor", PotionUtils.getPotionColorFromEffectList(effects));
+        PotionUtils.setCustomEffects(stack, effects);
+        stack.getOrCreateTag().putInt("CustomPotionColor", PotionUtils.getColor(effects));
         return stack;
     }
 
-    public static JsonObject serializeEffect(EffectInstance effect) {
+    public static JsonObject serializeEffect(MobEffectInstance effect) {
         JsonObject json = new JsonObject();
-        ResourceLocation id = effect.getPotion().getRegistryName();
+        ResourceLocation id = effect.getEffect().getRegistryName();
         if (id == null) id = Misc.MISSIGNO;
         json.addProperty("effect", id.toString());
         json.addProperty("amplifier", effect.getAmplifier() + 1);
@@ -110,40 +109,40 @@ public abstract class EffectTransformer {
         if (effect.isAmbient()) {
             json.addProperty("ambient", effect.isAmbient());
         }
-        if (!effect.doesShowParticles()) {
-            json.addProperty("particles", effect.doesShowParticles());
+        if (!effect.isVisible()) {
+            json.addProperty("particles", effect.isVisible());
         }
         return json;
     }
 
-    public static EffectInstance deserializeEffect(JsonObject json) {
-        Effect potion = ForgeRegistries.POTIONS.getValue(ResourceLocation.tryCreate(json.get("effect").getAsString()));
+    public static MobEffectInstance deserializeEffect(JsonObject json) {
+        MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(ResourceLocation.tryParse(json.get("effect").getAsString()));
         int amplifier = Math.max(0, json.get("amplifier").getAsInt() - 1);
         int duration = Math.max(1, json.get("duration").getAsInt());
         boolean ambient = json.has("ambient") && json.get("ambient").getAsBoolean();
         boolean particles = !json.has("particles") || json.get("particles").getAsBoolean();
-        return new EffectInstance(potion == null ? Effects.SPEED : potion, duration, amplifier, ambient, particles);
+        return new MobEffectInstance(effect == null ? MobEffects.MOVEMENT_SPEED : effect, duration, amplifier, ambient, particles);
     }
 
     public static class Apply extends EffectTransformer {
 
         @Nullable
-        private final ITextComponent name;
-        private final List<EffectInstance> effects;
+        private final Component name;
+        private final List<MobEffectInstance> effects;
 
-        public Apply(EffectInstance... effects) {
+        public Apply(MobEffectInstance... effects) {
             this(null, effects);
         }
 
-        public Apply(List<EffectInstance> effects) {
+        public Apply(List<MobEffectInstance> effects) {
             this(null, effects);
         }
 
-        public Apply(@Nullable ITextComponent name, EffectInstance... effects) {
+        public Apply(@Nullable Component name, MobEffectInstance... effects) {
             this(name, ImmutableList.copyOf(effects));
         }
 
-        public Apply(@Nullable ITextComponent name, List<EffectInstance> effects) {
+        public Apply(@Nullable Component name, List<MobEffectInstance> effects) {
             this.name = name;
             this.effects = ImmutableList.copyOf(effects);
         }
@@ -157,7 +156,7 @@ public abstract class EffectTransformer {
         public ItemStack output() {
             ItemStack stack = create(Items.POTION, this.effects);
             if (this.name != null) {
-                stack.setDisplayName(this.name.deepCopy());
+                stack.setHoverName(this.name.copy());
             }
             return stack;
         }
@@ -167,7 +166,7 @@ public abstract class EffectTransformer {
         public PotionOutput transform(PotionInput input) {
             ItemStack stack = create(input.getMain().getItem(), this.effects);
             if (this.name != null) {
-                stack.setDisplayName(this.name.deepCopy());
+                stack.setHoverName(this.name.copy());
             }
             return PotionOutput.simple(stack);
         }
@@ -177,10 +176,10 @@ public abstract class EffectTransformer {
             JsonObject json = new JsonObject();
             json.addProperty("type", "apply");
             if (this.name != null) {
-                json.add("name", ITextComponent.Serializer.toJsonTree(this.name));
+                json.add("name", Component.Serializer.toJsonTree(this.name));
             }
             JsonArray list = new JsonArray();
-            for (EffectInstance effect : this.effects) {
+            for (MobEffectInstance effect : this.effects) {
                 list.add(serializeEffect(effect));
             }
             json.add("effects", list);
@@ -188,15 +187,15 @@ public abstract class EffectTransformer {
         }
 
         @Override
-        public void write(PacketBuffer buffer) {
+        public void write(FriendlyByteBuf buffer) {
             buffer.writeByte(0);
             buffer.writeBoolean(this.name != null);
             if (this.name != null) {
-                buffer.writeTextComponent(this.name);
+                buffer.writeComponent(this.name);
             }
             buffer.writeVarInt(this.effects.size());
-            for (EffectInstance effect : this.effects) {
-                buffer.writeCompoundTag(effect.write(new CompoundNBT()));
+            for (MobEffectInstance effect : this.effects) {
+                buffer.writeNbt(effect.save(new CompoundTag()));
             }
         }
     }
@@ -223,15 +222,15 @@ public abstract class EffectTransformer {
         @Nullable
         @Override
         public PotionOutput transform(PotionInput input) {
-            List<EffectInstance> merged = new ArrayList<>();
+            List<MobEffectInstance> merged = new ArrayList<>();
             if (input.getEffects1() != null) {
-                for (EffectInstance effect : input.getEffects1()) {
-                    this.addMergedEffectToList(effect.getPotion(), merged, input.getEffects1(), input.getEffects2());
+                for (MobEffectInstance effect : input.getEffects1()) {
+                    this.addMergedEffectToList(effect.getEffect(), merged, input.getEffects1(), input.getEffects2());
                 }
             }
             if (input.getEffects2() != null) {
-                for (EffectInstance effect : input.getEffects2()) {
-                    this.addMergedEffectToList(effect.getPotion(), merged, input.getEffects1(), input.getEffects2());
+                for (MobEffectInstance effect : input.getEffects2()) {
+                    this.addMergedEffectToList(effect.getEffect(), merged, input.getEffects1(), input.getEffects2());
                 }
             }
             float chance = Math.max(0, merged.size() + 1) * this.failMultiplier;
@@ -239,30 +238,30 @@ public abstract class EffectTransformer {
                 return PotionOutput.simple(new ItemStack(ModItems.failedPotion));
             } else {
                 ItemStack stack = create(input.getIn1().getItem(), merged);
-                stack.setDisplayName(new TranslationTextComponent("item.utilitix.merged_potion").mergeStyle(TextFormatting.GREEN));
+                stack.setHoverName(new TranslatableComponent("item.utilitix.merged_potion").withStyle(ChatFormatting.GREEN));
                 return PotionOutput.simple(stack);
             }
         }
 
-        private void addMergedEffectToList(Effect potion, List<EffectInstance> mergeList, @Nullable List<EffectInstance> list1, @Nullable List<EffectInstance> list2) {
-            for (EffectInstance effect : mergeList) {
-                if (effect.getPotion() == potion)
+        private void addMergedEffectToList(MobEffect potion, List<MobEffectInstance> mergeList, @Nullable List<MobEffectInstance> list1, @Nullable List<MobEffectInstance> list2) {
+            for (MobEffectInstance effect : mergeList) {
+                if (effect.getEffect() == potion)
                     return;
             }
 
-            EffectInstance effect1 = null;
-            EffectInstance effect2 = null;
+            MobEffectInstance effect1 = null;
+            MobEffectInstance effect2 = null;
             if (list1 != null) {
-                for (EffectInstance effect : list1) {
-                    if (effect.getPotion() == potion) {
+                for (MobEffectInstance effect : list1) {
+                    if (effect.getEffect() == potion) {
                         effect1 = effect;
                         break;
                     }
                 }
             }
             if (list2 != null) {
-                for (EffectInstance effect : list2) {
-                    if (effect.getPotion() == potion) {
+                for (MobEffectInstance effect : list2) {
+                    if (effect.getEffect() == potion) {
                         effect2 = effect;
                         break;
                     }
@@ -300,7 +299,7 @@ public abstract class EffectTransformer {
         }
 
         @Override
-        public void write(PacketBuffer buffer) {
+        public void write(FriendlyByteBuf buffer) {
             buffer.writeByte(1);
             buffer.writeFloat(this.failMultiplier);
         }
@@ -331,9 +330,9 @@ public abstract class EffectTransformer {
             if (input.getEffectsMain() == null || input.getEffectsMain().isEmpty()) {
                 return null;
             } else {
-                EffectInstance old = input.getEffectsMain().get(0);
-                ItemStack newStack = create(input.getMain().getItem(), ImmutableList.of(new EffectInstance(old.getPotion(), old.getDuration(), MathHelper.clamp(old.getAmplifier() + 1, 0, this.maxLevel), old.isAmbient(), old.doesShowParticles())));
-                newStack.setDisplayName(input.getMain().getDisplayName());
+                MobEffectInstance old = input.getEffectsMain().get(0);
+                ItemStack newStack = create(input.getMain().getItem(), ImmutableList.of(new MobEffectInstance(old.getEffect(), old.getDuration(), Mth.clamp(old.getAmplifier() + 1, 0, this.maxLevel), old.isAmbient(), old.isVisible())));
+                newStack.setHoverName(input.getMain().getHoverName());
                 return PotionOutput.simple(newStack);
             }
         }
@@ -347,7 +346,7 @@ public abstract class EffectTransformer {
         }
 
         @Override
-        public void write(PacketBuffer buffer) {
+        public void write(FriendlyByteBuf buffer) {
             buffer.writeByte(2);
             buffer.writeVarInt(this.maxLevel);
         }
@@ -381,7 +380,7 @@ public abstract class EffectTransformer {
         }
 
         @Override
-        public void write(PacketBuffer buffer) {
+        public void write(FriendlyByteBuf buffer) {
             buffer.writeByte(3);
         }
     }

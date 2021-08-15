@@ -1,21 +1,21 @@
 package de.melanx.utilitix.content.track.rails;
 
 import de.melanx.utilitix.content.track.ItemMinecartTinkerer;
-import de.melanx.utilitix.content.track.carts.EntityPistonCart;
+import de.melanx.utilitix.content.track.carts.PistonCart;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartMode;
 import de.melanx.utilitix.registration.ModItems;
 import io.github.noeppi_noeppi.libx.mod.ModX;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nonnull;
 
@@ -31,42 +31,42 @@ public abstract class BlockPistonControllerRail extends BlockControllerRail<Tile
 
     @Nonnull
     @Override
-    public ActionResultType onBlockActivated(@Nonnull BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull BlockRayTraceResult hit) {
-        ActionResultType result = super.onBlockActivated(state, world, pos, player, hand, hit);
-        if (result.isSuccessOrConsume()) {
+    public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
+        InteractionResult result = super.use(state, level, pos, player, hand, hit);
+        if (result.consumesAction()) {
             return result;
         } else {
-            ItemStack held = player.getHeldItem(hand);
+            ItemStack held = player.getItemInHand(hand);
             if (!held.isEmpty() && held.getItem() == ModItems.minecartTinkerer) {
-                if (!world.isRemote) {
-                    TilePistonControllerRail tile = this.getTile(world, pos);
+                if (!level.isClientSide) {
+                    TilePistonControllerRail tile = this.getTile(level, pos);
                     int modeIdx = tile.getMode().ordinal();
                     PistonCartMode[] modes = PistonCartMode.values();
                     tile.setMode(modes[(modeIdx + 1) % modes.length]);
-                    player.sendMessage(new TranslationTextComponent("tooltip.utilitix.piston_cart_mode", tile.getMode().name), player.getUniqueID());
+                    player.sendMessage(new TranslatableComponent("tooltip.utilitix.piston_cart_mode", tile.getMode().name), player.getUUID());
                 }
-                return ActionResultType.successOrConsume(world.isRemote);
+                return InteractionResult.sidedSuccess(level.isClientSide);
             } else {
-                return ActionResultType.PASS;
+                return InteractionResult.PASS;
             }
         }
     }
 
     @Override
-    public void onMinecartPass(BlockState state, World world, BlockPos pos, AbstractMinecartEntity cart) {
-        if (!(cart instanceof EntityPistonCart)) {
+    public void onMinecartPass(BlockState state, Level level, BlockPos pos, AbstractMinecart cart) {
+        if (!(cart instanceof PistonCart)) {
             return;
         }
-        TilePistonControllerRail tile = this.getTile(world, pos);
+        TilePistonControllerRail tile = this.getTile(level, pos);
         ItemStack filterThis = tile.getFilterStack();
         if (!filterThis.isEmpty()) {
             ItemStack filterCart = ItemMinecartTinkerer.getLabelStack(cart);
             if (filterCart.isEmpty()) {
                 return;
-            } else if (!ItemStack.areItemsEqual(filterThis, filterCart) || !ItemStack.areItemStackTagsEqual(filterThis, filterCart)) {
+            } else if (!ItemStack.isSame(filterThis, filterCart) || !ItemStack.tagMatches(filterThis, filterCart)) {
                 return;
             }
         }
-        ((EntityPistonCart) cart).setMode(tile.getMode());
+        ((PistonCart) cart).setMode(tile.getMode());
     }
 }

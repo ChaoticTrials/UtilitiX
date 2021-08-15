@@ -1,88 +1,72 @@
 package de.melanx.utilitix.content.crudefurnace;
 
 import de.melanx.utilitix.registration.ModBlocks;
+import io.github.noeppi_noeppi.libx.base.tile.BlockMenu;
 import io.github.noeppi_noeppi.libx.inventory.BaseItemStackHandler;
 import io.github.noeppi_noeppi.libx.mod.ModX;
-import io.github.noeppi_noeppi.libx.mod.registration.BlockGUI;
-import net.minecraft.block.AbstractFurnaceBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.state.StateContainer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
-public class BlockCrudeFurnace extends BlockGUI<TileCrudeFurnace, ContainerCrudeFurnace> {
+public class BlockCrudeFurnace extends BlockMenu<TileCrudeFurnace, ContainerMenuCrudeFurnace> {
 
-    public BlockCrudeFurnace(ModX mod, ContainerType<ContainerCrudeFurnace> container, Properties properties) {
-        super(mod, TileCrudeFurnace.class, container, properties);
-        this.setDefaultState(this.getStateContainer().getBaseState()
-                .with(HorizontalBlock.HORIZONTAL_FACING, Direction.NORTH)
-                .with(AbstractFurnaceBlock.LIT, false));
+    public BlockCrudeFurnace(ModX mod, MenuType<ContainerMenuCrudeFurnace> menu, Properties properties) {
+        super(mod, TileCrudeFurnace.class, menu, properties);
+        this.registerDefaultState(this.getStateDefinition().any()
+                .setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH)
+                .setValue(AbstractFurnaceBlock.LIT, false));
     }
 
     @Override
     public void registerClient(ResourceLocation id, Consumer<Runnable> defer) {
-        ScreenManager.registerFactory(ModBlocks.crudeFurnace.container, ScreenCrudeFurnace::new);
+        MenuScreens.register(ModBlocks.crudeFurnace.menu, ScreenCrudeFurnace::new);
     }
 
     @Override
-    public void onReplaced(@Nonnull BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
-        if (!world.isRemote && !state.matchesBlock(newState.getBlock())) {
-            TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof TileCrudeFurnace) {
-                InventoryHelper.dropInventoryItems(world, pos, ((BaseItemStackHandler) ((TileCrudeFurnace) tile).getInventory()).toIInventory());
-                ((TileCrudeFurnace) tile).grantStoredRecipeExperience(world, Vector3d.copyCentered(pos));
-                world.updateComparatorOutputLevel(pos, this);
-            }
-
-            super.onReplaced(state, world, pos, newState, isMoving);
-        }
-    }
-
-    @Override
-    protected boolean shouldDropInventory(World world, BlockPos pos, BlockState state) {
+    protected boolean shouldDropInventory(Level level, BlockPos pos, BlockState state) {
         return false;
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public boolean hasComparatorInputOverride(@Nonnull BlockState state) {
+    public boolean hasAnalogOutputSignal(@Nonnull BlockState state) {
         return true;
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public int getComparatorInputOverride(@Nonnull BlockState state, @Nonnull World world, @Nonnull BlockPos pos) {
-        TileEntity tile = world.getTileEntity(pos);
+    public int getAnalogOutputSignal(@Nonnull BlockState blockState, @Nonnull Level level, @Nonnull BlockPos pos) {
+        BlockEntity tile = level.getBlockEntity(pos);
         if (tile instanceof TileCrudeFurnace) {
-            return Container.calcRedstoneFromInventory(((BaseItemStackHandler) ((TileCrudeFurnace) tile).getUnrestricted()).toIInventory());
+            return AbstractContainerMenu.getRedstoneSignalFromContainer(((BaseItemStackHandler) ((TileCrudeFurnace) tile).getUnrestricbed()).toVanilla());
         }
 
-        return super.getComparatorInputOverride(state, world, pos);
+        return super.getAnalogOutputSignal(blockState, level, pos);
     }
 
     @Nullable
     @Override
-    public BlockState getStateForPlacement(@Nonnull BlockItemUseContext context) {
-        return this.getDefaultState().with(HorizontalBlock.HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite());
+    public BlockState getStateForPlacement(@Nonnull BlockPlaceContext context) {
+        return this.defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, context.getHorizontalDirection().getOpposite());
     }
 
     @Override
-    protected void fillStateContainer(@Nonnull StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(HorizontalBlock.HORIZONTAL_FACING, AbstractFurnaceBlock.LIT);
+    protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(HorizontalDirectionalBlock.FACING, AbstractFurnaceBlock.LIT);
     }
 }

@@ -5,24 +5,25 @@ import de.melanx.utilitix.recipe.PotionOutput;
 import de.melanx.utilitix.registration.ModItemTags;
 import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.registration.ModRecipes;
+import io.github.noeppi_noeppi.libx.base.tile.BlockEntityBase;
+import io.github.noeppi_noeppi.libx.base.tile.TickableBlock;
+import io.github.noeppi_noeppi.libx.capability.ItemCapabilities;
 import io.github.noeppi_noeppi.libx.crafting.recipe.RecipeHelper;
 import io.github.noeppi_noeppi.libx.inventory.BaseItemStackHandler;
-import io.github.noeppi_noeppi.libx.inventory.ItemStackHandlerWrapper;
 import io.github.noeppi_noeppi.libx.inventory.VanillaWrapper;
-import io.github.noeppi_noeppi.libx.mod.registration.TileEntityBase;
-import net.minecraft.block.BlockState;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -37,7 +38,7 @@ import javax.annotation.Nullable;
 //Potion-Ingredient-Slot L: 2
 //Output-Slot: 3
 //Blaze-Slot: 4
-public class TileAdvancedBrewery extends TileEntityBase implements ITickableTileEntity {
+public class TileAdvancedBrewery extends BlockEntityBase implements TickableBlock {
 
     public static final int MAX_BREW_TIME = 400;
 
@@ -45,37 +46,32 @@ public class TileAdvancedBrewery extends TileEntityBase implements ITickableTile
     private int fuel = 0;
 
     private final BaseItemStackHandler inventory;
-    private final IInventory vanilla;
+    private final Container vanilla;
     private final LazyOptional<IItemHandler> inventoryTop;
     private final LazyOptional<IItemHandler> inventorySide;
     private final LazyOptional<IItemHandler> inventoryBottom;
 
-    public TileAdvancedBrewery(TileEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
-        this.inventory = new BaseItemStackHandler(5, slot -> {
-            this.markDirty();
-            this.markDispatchable();
-        }, this::isItemValid);
-        this.inventory.addSlotLimit(1, 1);
-        this.inventory.addSlotLimit(2, 1);
-        this.inventory.addSlotLimit(3, 1);
-        this.vanilla = new VanillaWrapper(this.inventory, this::markDirty);
-        this.inventoryTop = ItemStackHandlerWrapper.createLazy(this::getInventory, slot -> false, (slot, stack) -> slot == 0 || slot == 3).cast();
-        this.inventorySide = ItemStackHandlerWrapper.createLazy(this::getInventory, slot -> false, (slot, stack) -> slot == 1 || slot == 2 || slot == 4).cast();
-        this.inventoryBottom = ItemStackHandlerWrapper.createLazy(this::getInventory, slot -> slot == 0 || slot == 1 || slot == 2, (slot, stack) -> false).cast();
-    }
-
-    private boolean isItemValid(int slot, ItemStack stack) {
-        if (slot == 0)
-            return this.world != null && RecipeHelper.isItemValidInput(this.world.getRecipeManager(), ModRecipes.BREWERY, stack);
-        if (slot >= 1 && slot <= 3) return ModItemTags.BOTTLES.contains(stack.getItem());
-        if (slot == 4) return stack.getItem() == Items.BLAZE_POWDER;
-        return false;
+    public TileAdvancedBrewery(BlockEntityType<?> blockEntityTypeIn, BlockPos pos, BlockState state) {
+        super(blockEntityTypeIn, pos, state);
+        this.inventory = BaseItemStackHandler.builder(5)
+                .contentsChanged(slot -> {
+                    this.setChanged();
+                    this.markDispatchable();
+                })
+                .validator(stack -> this.level != null && RecipeHelper.isItemValidInput(this.level.getRecipeManager(), ModRecipes.BREWERY, stack), 0)
+                .validator(stack -> ModItemTags.BOTTLES.contains(stack.getItem()), 1, 2, 3)
+                .validator(stack -> stack.getItem() == Items.BLAZE_POWDER, 4)
+                .slotLimit(1, 1, 2, 3)
+                .build();
+        this.vanilla = new VanillaWrapper(this.inventory, this::setChanged);
+        this.inventoryTop = ItemCapabilities.create(this::getInventory, slot -> false, (slot, stack) -> slot == 0 || slot == 3).cast();
+        this.inventorySide = ItemCapabilities.create(this::getInventory, slot -> false, (slot, stack) -> slot == 1 || slot == 2 || slot == 4).cast();
+        this.inventoryBottom = ItemCapabilities.create(this::getInventory, slot -> slot == 0 || slot == 1 || slot == 2, (slot, stack) -> false).cast();
     }
 
     @Override
     public void tick() {
-        if (this.world != null && !this.world.isRemote) {
+        if (this.level != null && !this.level.isClientSide) {
             if (this.fuel <= 0) {
                 ItemStack fuelStack = this.inventory.getStackInSlot(4);
                 if (fuelStack.getItem() == Items.BLAZE_POWDER && !fuelStack.isEmpty()) {
@@ -83,52 +79,52 @@ public class TileAdvancedBrewery extends TileEntityBase implements ITickableTile
                     ItemStack fuelNew = fuelStack.copy();
                     fuelNew.shrink(1);
                     this.inventory.setStackInSlot(4, fuelNew);
-                    this.markDirty();
+                    this.setChanged();
                     this.markDispatchable();
                 }
             }
-            BreweryRecipe recipe = this.world.getRecipeManager().getRecipe(ModRecipes.BREWERY, this.vanilla, this.world).orElse(null);
+            BreweryRecipe recipe = this.level.getRecipeManager().getRecipeFor(ModRecipes.BREWERY, this.vanilla, this.level).orElse(null);
             if ((this.fuel <= 0 || recipe == null) && this.brewTime > 0) {
                 this.brewTime = 0;
-                this.markDirty();
+                this.setChanged();
                 this.markDispatchable();
             } else if (recipe != null && this.fuel >= 0) {
                 if (this.brewTime <= 0) {
                     this.markDispatchable();
                 }
-                this.brewTime = MathHelper.clamp(this.brewTime + 1, 0, MAX_BREW_TIME);
+                this.brewTime = Mth.clamp(this.brewTime + 1, 0, MAX_BREW_TIME);
                 if (this.brewTime >= MAX_BREW_TIME) {
                     PotionOutput output = recipe.getPotionResult(this.vanilla);
                     if (output == null || output.getMain().isEmpty()) {
-                        this.consumeItem(3);
+                        this.consumeIbem(3);
                     } else {
                         this.inventory.setStackInSlot(3, output.getMain());
                     }
-                    this.consumeItem(0);
+                    this.consumeIbem(0);
                     if (output == null || output.getOut1().isEmpty()) {
-                        this.consumeItem(1);
+                        this.consumeIbem(1);
                     } else {
                         this.inventory.setStackInSlot(1, output.getOut1());
                     }
                     if (output == null || output.getOut2().isEmpty()) {
-                        this.consumeItem(2);
+                        this.consumeIbem(2);
                     } else {
                         this.inventory.setStackInSlot(2, output.getOut2());
                     }
                     this.brewTime = 0;
                     this.fuel -= 1;
-                    this.world.playSound(null, this.pos, SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 1, 1);
+                    this.level.playSound(null, this.worldPosition, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1, 1);
                     this.markDispatchable();
                 }
-                this.markDirty();
+                this.setChanged();
             }
         } else {
             if (this.brewTime > 0 && this.brewTime < MAX_BREW_TIME) {
                 this.brewTime += 1;
-                if (this.world != null && this.world.getGameTime() % 4 == 0 && this.brewTime < MAX_BREW_TIME - 30) {
+                if (this.level != null && this.level.getGameTime() % 4 == 0 && this.brewTime < MAX_BREW_TIME - 30) {
                     double xf = 0.5;
                     double zf = 0.15;
-                    Direction dir = this.getBlockState().get(BlockStateProperties.HORIZONTAL_FACING);
+                    Direction dir = this.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
                     if (dir.getAxis() == Direction.Axis.X) {
                         double tmp = xf;
                         xf = zf;
@@ -138,13 +134,13 @@ public class TileAdvancedBrewery extends TileEntityBase implements ITickableTile
                         xf = 1 - xf;
                         zf = 1 - zf;
                     }
-                    this.world.addParticle(ParticleTypes.DRIPPING_WATER, this.pos.getX() + xf, this.pos.getY() + 0.34, this.pos.getZ() + zf, 0, -0.6, 0);
+                    this.level.addParticle(ParticleTypes.DRIPPING_WATER, this.worldPosition.getX() + xf, this.worldPosition.getY() + 0.34, this.worldPosition.getZ() + zf, 0, -0.6, 0);
                 }
             }
         }
     }
 
-    private void consumeItem(int slot) {
+    private void consumeIbem(int slot) {
         ItemStack stack = this.inventory.getStackInSlot(slot);
         if (!stack.isEmpty()) {
             if (stack.hasContainerItem()) {
@@ -161,7 +157,7 @@ public class TileAdvancedBrewery extends TileEntityBase implements ITickableTile
             }
         }
     }
-    
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
@@ -170,9 +166,12 @@ public class TileAdvancedBrewery extends TileEntityBase implements ITickableTile
                 return LazyOptional.of(this::getInventory).cast();
             }
             switch (side) {
-                case DOWN: return this.inventoryBottom.cast();
-                case UP: return this.inventoryTop.cast();
-                default: return this.inventorySide.cast();
+                case DOWN:
+                    return this.inventoryBottom.cast();
+                case UP:
+                    return this.inventoryTop.cast();
+                default:
+                    return this.inventorySide.cast();
             }
         } else {
             return super.getCapability(cap, side);
@@ -183,9 +182,9 @@ public class TileAdvancedBrewery extends TileEntityBase implements ITickableTile
     public IItemHandlerModifiable getInventory() {
         return this.inventory;
     }
-    
+
     @Nonnull
-    public IItemHandlerModifiable getUnrestricted() {
+    public IItemHandlerModifiable getUnrestricbed() {
         return this.inventory.getUnrestricted();
     }
 
@@ -197,9 +196,10 @@ public class TileAdvancedBrewery extends TileEntityBase implements ITickableTile
         return this.fuel;
     }
 
+
     @Override
-    public void read(@Nonnull BlockState state, @Nonnull CompoundNBT nbt) {
-        super.read(state, nbt);
+    public void load(@Nonnull CompoundTag nbt) {
+        super.load(nbt);
         this.inventory.deserializeNBT(nbt.getCompound("Inventory"));
         this.brewTime = nbt.getInt("brewTime");
         this.fuel = nbt.getInt("fuel");
@@ -207,18 +207,18 @@ public class TileAdvancedBrewery extends TileEntityBase implements ITickableTile
 
     @Nonnull
     @Override
-    public CompoundNBT write(CompoundNBT nbt) {
-        nbt.put("Inventory", this.inventory.serializeNBT());
-        nbt.putInt("brewTime", this.brewTime);
-        nbt.putInt("fuel", this.fuel);
-        return super.write(nbt);
+    public CompoundTag save(CompoundTag compound) {
+        compound.put("Inventory", this.inventory.serializeNBT());
+        compound.putInt("brewTime", this.brewTime);
+        compound.putInt("fuel", this.fuel);
+        return super.save(compound);
     }
 
     @Nonnull
     @Override
-    public CompoundNBT getUpdateTag() {
-        CompoundNBT nbt = super.getUpdateTag();
-        if (this.world != null && !this.world.isRemote) {
+    public CompoundTag getUpdateTag() {
+        CompoundTag nbt = super.getUpdateTag();
+        if (this.level != null && !this.level.isClientSide) {
             nbt.put("Inventory", this.inventory.serializeNBT());
             nbt.putInt("brewTime", this.brewTime);
             nbt.putInt("fuel", this.fuel);
@@ -227,9 +227,9 @@ public class TileAdvancedBrewery extends TileEntityBase implements ITickableTile
     }
 
     @Override
-    public void handleUpdateTag(@Nonnull BlockState state, @Nonnull CompoundNBT nbt) {
-        if (this.world != null && this.world.isRemote) {
-            super.handleUpdateTag(state, nbt);
+    public void handleUpdateTag(@Nonnull CompoundTag nbt) {
+        if (this.level != null && this.level.isClientSide) {
+            super.handleUpdateTag(nbt);
             this.inventory.deserializeNBT(nbt.getCompound("Inventory"));
             this.brewTime = nbt.getInt("brewTime");
             this.fuel = nbt.getInt("fuel");

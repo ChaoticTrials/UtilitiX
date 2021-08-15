@@ -1,10 +1,10 @@
 package de.melanx.utilitix.content.crudefurnace;
 
 import io.github.noeppi_noeppi.libx.crafting.recipe.RecipeHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipe;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.RecipeManager;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SmeltingRecipe;
 
 import javax.annotation.Nullable;
 
@@ -16,7 +16,7 @@ public class CrudeFurnaceRecipeHelper {
             return null;
         }
 
-        FurnaceRecipe recipe = rm.getRecipesForType(IRecipeType.SMELTING).stream()
+        SmeltingRecipe recipe = rm.getAllRecipesFor(RecipeType.SMELTING).stream()
                 .filter(r -> r.getIngredients().get(0).test(input))
                 .findFirst().orElse(null);
 
@@ -24,8 +24,8 @@ public class CrudeFurnaceRecipeHelper {
             return null;
         }
 
-        if (RecipeHelper.isItemValidInput(rm, IRecipeType.BLASTING, input)
-                || RecipeHelper.isItemValidInput(rm, IRecipeType.SMOKING, input)) {
+        if (RecipeHelper.isItemValidInput(rm, RecipeType.BLASTING, input)
+                || RecipeHelper.isItemValidInput(rm, RecipeType.SMOKING, input)) {
             // Recipe already has a special type of furnace
             return null;
         } else {
@@ -38,12 +38,12 @@ public class CrudeFurnaceRecipeHelper {
         private final float xp;
         private final int burnTime;
         private final ItemStack output;
-        private final FurnaceRecipe originalRecipe;
+        private final SmeltingRecipe originalRecipe;
 
-        ModifiedRecipe(FurnaceRecipe recipe) {
+        ModifiedRecipe(SmeltingRecipe recipe) {
             this.xp = recipe.getExperience() / 2;
-            this.burnTime = recipe.getCookTime() / 2;
-            this.output = recipe.getRecipeOutput();
+            this.burnTime = recipe.getCookingTime() / 2;
+            this.output = recipe.getResultItem();
             this.originalRecipe = recipe;
         }
 
@@ -59,7 +59,7 @@ public class CrudeFurnaceRecipeHelper {
             return this.output;
         }
 
-        public FurnaceRecipe getOriginalRecipe() {
+        public SmeltingRecipe getOriginalRecipe() {
             return this.originalRecipe;
         }
     }

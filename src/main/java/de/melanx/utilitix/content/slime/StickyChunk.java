@@ -2,9 +2,9 @@ package de.melanx.utilitix.content.slime;
 
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.network.StickyChunkUpdateSerializer;
-import net.minecraft.util.Direction;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -13,7 +13,7 @@ import java.util.Set;
 public class StickyChunk {
 
     @Nullable
-    private Chunk chunk;
+    private LevelChunk chunk;
     private byte[] stickies;
     // For performance
     private Set<Integer> indicesWithGlue = null;
@@ -36,8 +36,8 @@ public class StickyChunk {
             this.stickies[idx] = (byte) (this.stickies[idx] & ~((byte) (1 << dir.ordinal())));
         }
         this.indicesWithGlue = null;
-        if (this.chunk != null && !this.chunk.getWorld().isRemote) {
-            this.chunk.markDirty();
+        if (this.chunk != null && !this.chunk.getLevel().isClientSide) {
+            this.chunk.markUnsaved();
             UtilitiX.getNetwork().instance.send(PacketDistributor.TRACKING_CHUNK.with(() -> this.chunk), new StickyChunkUpdateSerializer.StickyChunkUpdateMessage(this.chunk.getPos(), this));
         }
     }
@@ -51,8 +51,8 @@ public class StickyChunk {
         int idx = ((y & 0xFF) << 8) | ((z & 0xF) << 4) | (x & 0xF);
         this.stickies[idx] = data;
         this.indicesWithGlue = null;
-        if (this.chunk != null && !this.chunk.getWorld().isRemote) {
-            this.chunk.markDirty();
+        if (this.chunk != null && !this.chunk.getLevel().isClientSide) {
+            this.chunk.markUnsaved();
             UtilitiX.getNetwork().instance.send(PacketDistributor.TRACKING_CHUNK.with(() -> this.chunk), new StickyChunkUpdateSerializer.StickyChunkUpdateMessage(this.chunk.getPos(), this));
         }
     }
@@ -61,8 +61,8 @@ public class StickyChunk {
         int idx = ((y & 0xFF) << 8) | ((z & 0xF) << 4) | (x & 0xF);
         this.stickies[idx] = 0;
         this.indicesWithGlue = null;
-        if (this.chunk != null && !this.chunk.getWorld().isRemote) {
-            this.chunk.markDirty();
+        if (this.chunk != null && !this.chunk.getLevel().isClientSide) {
+            this.chunk.markUnsaved();
             UtilitiX.getNetwork().instance.send(PacketDistributor.TRACKING_CHUNK.with(() -> this.chunk), new StickyChunkUpdateSerializer.StickyChunkUpdateMessage(this.chunk.getPos(), this));
         }
     }
@@ -99,7 +99,7 @@ public class StickyChunk {
         this.indicesWithGlue = null;
     }
 
-    public void attach(Chunk chunk) {
+    public void attach(LevelChunk chunk) {
         this.chunk = chunk;
     }
 

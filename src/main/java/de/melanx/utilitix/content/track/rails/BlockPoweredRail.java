@@ -2,12 +2,12 @@ package de.melanx.utilitix.content.track.rails;
 
 import de.melanx.utilitix.content.track.TrackUtil;
 import io.github.noeppi_noeppi.libx.mod.ModX;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
-import net.minecraft.item.Item;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 public abstract class BlockPoweredRail extends BlockPowerableRail {
     
@@ -20,20 +20,20 @@ public abstract class BlockPoweredRail extends BlockPowerableRail {
     public BlockPoweredRail(ModX mod, double maxRailSpeed, Properties properties, Item.Properties itemProperties) {
         super(mod, null, properties, itemProperties);
         this.maxRailSpeed = maxRailSpeed;
-        this.setDefaultState(this.getStateContainer().getBaseState().with(BlockStateProperties.POWERED, false));
+        this.registerDefaultState(this.getStateDefinition().any().setValue(BlockStateProperties.POWERED, false));
     }
-    
+
     @Override
-    public void onMinecartPass(BlockState state, World world, BlockPos pos, AbstractMinecartEntity cart) {
-        if (state.get(BlockStateProperties.POWERED)) {
-            TrackUtil.accelerateStraight(world, pos, this.getRailDirection(state, world, pos, cart), cart, this.maxRailSpeed);
+    public void onMinecartPass(BlockState state, Level level, BlockPos pos, AbstractMinecart cart) {
+        if (state.getValue(BlockStateProperties.POWERED)) {
+            TrackUtil.accelerateStraight(level, pos, this.getRailDirection(state, level, pos, cart), cart, this.maxRailSpeed);
         } else {
-            TrackUtil.slowDownCart(world, cart, this.maxRailSpeed);
+            TrackUtil.slowDownCart(level, cart, this.maxRailSpeed);
         }
     }
 
     @Override
-    public float getRailMaxSpeed(BlockState state, World world, BlockPos pos, AbstractMinecartEntity cart) {
+    public float getRailMaxSpeed(BlockState state, Level level, BlockPos pos, AbstractMinecart cart) {
         return (float) this.maxRailSpeed;
     }
 }

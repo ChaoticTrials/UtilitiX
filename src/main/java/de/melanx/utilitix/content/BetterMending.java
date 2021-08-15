@@ -4,23 +4,23 @@ import com.google.common.collect.Streams;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.UtilitiXConfig;
 import de.melanx.utilitix.network.ItemEntityRepairedSerializer;
-import io.github.noeppi_noeppi.libx.util.BoundingBoxUtils;
+import de.melanx.utilitix.util.BoundingBoxUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.item.ExperienceOrbEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -29,41 +29,42 @@ public class BetterMending {
 
     @SubscribeEvent
     public void pullXP(TickEvent.WorldTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && event.world instanceof ServerWorld) {
-            this.moveExps(event.world, ((ServerWorld) event.world).getEntities());
+        if (event.phase == TickEvent.Phase.END && event.world instanceof ServerLevel) {
+            //noinspection UnstableApiUsage
+            this.moveExps(event.world, Streams.stream(((ServerLevel) event.world).getEntities().getAll()));
         }
     }
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void pullXPClient(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && Minecraft.getInstance().world != null) {
+        if (event.phase == TickEvent.Phase.END && Minecraft.getInstance().level != null) {
             //noinspection UnstableApiUsage
-            this.moveExps(Minecraft.getInstance().world, Streams.stream(Minecraft.getInstance().world.getAllEntities()));
+            this.moveExps(Minecraft.getInstance().level, Streams.stream(Minecraft.getInstance().level.entitiesForRendering()));
         }
     }
 
-    private void moveExps(World world, Stream<Entity> entities) {
+    private void moveExps(Level level, Stream<Entity> entities) {
         if (!UtilitiXConfig.betterMending) return;
         entities.filter(e -> e.getType() == EntityType.ITEM)
                 .map(e -> (ItemEntity) e)
-                .filter(e -> e.getItem().getDamage() > 0 && EnchantmentHelper.getEnchantmentLevel(Enchantments.MENDING, e.getItem()) > 0)
+                .filter(e -> e.getItem().getDamageValue() > 0 && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, e.getItem()) > 0)
                 .forEach(item -> {
-                    List<ExperienceOrbEntity> xps = world.getEntitiesWithinAABB(ExperienceOrbEntity.class, BoundingBoxUtils.expand(item, 7));
-                    for (ExperienceOrbEntity orb : xps) {
-                        Vector3d vector = new Vector3d(item.getPosX() - orb.getPosX(), item.getPosY() + (orb.getEyeHeight() / 2) - orb.getPosY(), item.getPosZ() - orb.getPosZ());
-                        if (vector.lengthSquared() < 0.2 && !world.isRemote) {
+                    List<ExperienceOrb> xps = level.getEntitiesOfClass(ExperienceOrb.class, BoundingBoxUtils.expand(item, 7));
+                    for (ExperienceOrb orb : xps) {
+                        Vec3 vector = new Vec3(item.getX() - orb.getX(), item.getY() + (orb.getEyeHeight() / 2) - orb.getY(), item.getZ() - orb.getZ());
+                        if (vector.lengthSqr() < 0.2 && !level.isClientSide) {
                             ItemStack stack = item.getItem();
-                            int i = Math.min((int) (orb.getXpValue() * stack.getXpRepairRatio()), stack.getDamage());
-                            stack.setDamage(stack.getDamage() - i);
-                            orb.remove();
+                            int i = Math.min((int) (orb.getValue() * stack.getXpRepairRatio()), stack.getDamageValue());
+                            stack.setDamageValue(stack.getDamageValue() - i);
+                            orb.remove(Entity.RemovalReason.KILLED);
 
                             if (!stack.isDamaged()) {
-                                UtilitiX.getNetwork().instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> item), new ItemEntityRepairedSerializer.ItemEntityRepairedMessage(item.getEntityId()));
+                                UtilitiX.getNetwork().instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> item), new ItemEntityRepairedSerializer.ItemEntityRepairedMessage(item.getId()));
                             }
                         } else {
                             double scale = 1 - (vector.length() / 8);
-                            orb.setMotion(orb.getMotion().add(vector.normalize().scale(scale * scale * 0.1)));
+                            orb.setDeltaMovement(orb.getDeltaMovement().add(vector.normalize().scale(scale * scale * 0.1)));
                         }
                     }
                 });

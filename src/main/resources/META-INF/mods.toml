@@ -1,7 +1,7 @@
 modLoader = "javafml"
-loaderVersion = "[34,)"
+loaderVersion = "[37,)"
 license = "Apache License"
-issueTrackerURL = "http://www.github.com/MelanX/UtilitiX/issues/"
+issueTrackerURL = "https://www.github.com/MelanX/UtilitiX/issues/"
 
 [[mods]]
 modId = "utilitix"
@@ -18,21 +18,21 @@ A lot of items, nice to have
 
 [[dependencies.utilitix]]
     modId = "forge"
-    mandatory = true
-    versionRange = "[34,)"
-    ordering = "NONE"
+mandatory = true
+versionRange = "[37,)"
+ordering = "NONE"
     side = "BOTH"
 
 [[dependencies.utilitix]]
     modId = "minecraft"
-    mandatory = true
-    versionRange = "[1.16.3, 1.17)"
-    ordering = "NONE"
+mandatory = true
+versionRange = "[1.17.1, 1.18)"
+ordering = "NONE"
     side = "BOTH"
 
 [[dependencies.utilitix]]
     modId = "libx"
-    mandatory = true
-    versionRange = "[1.16.3-1.0.76,)"
-    ordering = "NONE"
+mandatory = true
+versionRange = "[1.17.1-2.0.7,)"
+ordering = "NONE"
     side = "BOTH"

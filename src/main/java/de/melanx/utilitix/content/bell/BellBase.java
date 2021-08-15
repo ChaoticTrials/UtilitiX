@@ -2,33 +2,35 @@ package de.melanx.utilitix.content.bell;
 
 import de.melanx.utilitix.UtilitiXConfig;
 import de.melanx.utilitix.registration.ModEnchantments;
+import io.github.noeppi_noeppi.libx.base.ItemBase;
 import io.github.noeppi_noeppi.libx.mod.ModX;
-import io.github.noeppi_noeppi.libx.mod.registration.ItemBase;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.UseAction;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraftforge.client.IItemRenderProperties;
 import net.minecraftforge.fml.ModList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class BellBase extends ItemBase {
 
@@ -37,11 +39,16 @@ public abstract class BellBase extends ItemBase {
     }
 
     @Override
+    public void initializeClient(@Nonnull Consumer<IItemRenderProperties> consumer) {
+//        TODO ... ehm... yes, todo
+    }
+
+    @Override
     public void onUsingTick(ItemStack stack, LivingEntity entity, int count) {
         if (count % 4 == 0) {
             boolean ringed = this.dinkDonk(entity, stack);
-            if (ringed && entity instanceof PlayerEntity) {
-                ((PlayerEntity) entity).addStat(Stats.BELL_RING);
+            if (ringed && entity instanceof Player) {
+                ((Player) entity).awardStat(Stats.BELL_RING);
             }
         }
     }
@@ -53,41 +60,41 @@ public abstract class BellBase extends ItemBase {
 
     @Nonnull
     @Override
-    public ItemStack onItemUseFinish(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull LivingEntity entity) {
-        double range = UtilitiXConfig.HandBells.glowRadius * (1 + EnchantmentHelper.getEnchantmentLevel(ModEnchantments.bellRange, stack) * 0.25D);
-        List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, new AxisAlignedBB(entity.getPosX() - range, entity.getPosY() - range, entity.getPosZ() - range, entity.getPosX() + range, entity.getPosY() + range, entity.getPosZ() + range), livingEntity -> this.entityFilter(livingEntity, stack));
-        entities.forEach(e -> e.addPotionEffect(new EffectInstance(Effects.GLOWING, UtilitiXConfig.HandBells.glowTime)));
+    public ItemStack finishUsingItem(@Nonnull ItemStack stack, @Nonnull Level level, @Nonnull LivingEntity entityLiving) {
+        double range = UtilitiXConfig.HandBells.glowRadius * (1 + EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.bellRange, stack) * 0.25D);
+        List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(entityLiving.getX() - range, entityLiving.getY() - range, entityLiving.getZ() - range, entityLiving.getX() + range, entityLiving.getY() + range, entityLiving.getZ() + range), livingEntity -> this.entityFilter(livingEntity, stack));
+        entities.forEach(e -> e.addEffect(new MobEffectInstance(MobEffects.GLOWING, UtilitiXConfig.HandBells.glowTime)));
 
-        return super.onItemUseFinish(stack, world, entity);
+        return super.finishUsingItem(stack, level, entityLiving);
     }
 
     @Nonnull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull PlayerEntity player, @Nonnull Hand hand) {
-        player.setActiveHand(hand);
-        return ActionResult.resultConsume(player.getHeldItem(hand));
+    public InteractionResultHolder<ItemStack> use(@Nonnull Level level, @Nonnull Player player, @Nonnull InteractionHand hand) {
+        player.startUsingItem(hand);
+        return InteractionResultHolder.consume(player.getItemInHand(hand));
     }
 
     @Nonnull
     @Override
-    public UseAction getUseAction(@Nonnull ItemStack stack) {
-        return UseAction.BLOCK;
+    public UseAnim getUseAnimation(@Nonnull ItemStack stack) {
+        return UseAnim.BLOCK;
     }
 
     public boolean dinkDonk(LivingEntity entity, ItemStack stack) {
-        World world = entity.getEntityWorld();
-        BlockPos pos = entity.getPosition();
+        Level level = entity.getCommandSenderWorld();
+        BlockPos pos = entity.blockPosition();
 
-        if (!world.isRemote) {
+        if (!level.isClientSide) {
             if (this.notifyNearbyEntities()) {
-                double range = UtilitiXConfig.HandBells.notifyRadius * (1 + EnchantmentHelper.getEnchantmentLevel(ModEnchantments.bellRange, stack) * 0.25D);
-                List<LivingEntity> entities = entity.getEntityWorld().getEntitiesWithinAABB(LivingEntity.class, new AxisAlignedBB(entity.getPosX() - range, entity.getPosY() - range, entity.getPosZ() - range, entity.getPosX() + range, entity.getPosY() + range, entity.getPosZ() + range));
+                double range = UtilitiXConfig.HandBells.notifyRadius * (1 + EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.bellRange, stack) * 0.25D);
+                List<LivingEntity> entities = entity.getCommandSenderWorld().getEntitiesOfClass(LivingEntity.class, new AABB(entity.getX() - range, entity.getY() - range, entity.getZ() - range, entity.getX() + range, entity.getY() + range, entity.getZ() + range));
                 for (LivingEntity e : entities) {
-                    e.getBrain().setMemory(MemoryModuleType.HEARD_BELL_TIME, world.getGameTime());
+                    e.getBrain().setMemory(MemoryModuleType.HEARD_BELL_TIME, level.getGameTime());
                 }
             }
 
-            world.playSound(null, pos, SoundEvents.BLOCK_BELL_USE, SoundCategory.BLOCKS, 2.0F, 1.0F);
+            level.playSound(null, pos, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 2.0F, 1.0F);
             return true;
         } else {
             return false;
@@ -99,10 +106,10 @@ public abstract class BellBase extends ItemBase {
     protected abstract boolean notifyNearbyEntities();
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flag) {
-        super.addInformation(stack, world, tooltip, flag);
+    public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level level, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flag) {
+        super.appendHoverText(stack, level, tooltip, flag);
         if (ModList.get().isLoaded("emojiful")) {
-            tooltip.add(new StringTextComponent(":DinkDonk:"));
+            tooltip.add(new TextComponent(":DinkDonk:"));
         }
     }
 }

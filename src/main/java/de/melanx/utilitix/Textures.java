@@ -1,7 +1,7 @@
 package de.melanx.utilitix;
 
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraftforge.client.event.TextureStitchEvent;
 
 public class Textures {
@@ -10,7 +10,7 @@ public class Textures {
     public static final ResourceLocation GLUE_OVERLAY_TEXTURE = new ResourceLocation(UtilitiX.getInstance().modid, "special/glue_ball_overlay");
     
     public static void registerTextures(TextureStitchEvent.Pre event) {
-        if (event.getMap().getTextureLocation().equals(PlayerContainer.LOCATION_BLOCKS_TEXTURE)) {
+        if (event.getMap().location().equals(InventoryMenu.BLOCK_ATLAS)) {
             event.addSprite(GRAY_BELL_TEXTURE);
             event.addSprite(GLUE_OVERLAY_TEXTURE);
         }

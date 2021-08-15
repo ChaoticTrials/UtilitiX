@@ -2,8 +2,8 @@ package de.melanx.utilitix.content;
 
 import de.melanx.utilitix.UtilitiXConfig;
 import io.github.noeppi_noeppi.libx.mod.ModX;
-import net.minecraft.entity.item.ArmorStandEntity;
-import net.minecraft.item.ArmorStandItem;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.item.ArmorStandItem;
 
 import javax.annotation.Nonnull;
 import java.util.Random;
@@ -14,20 +14,20 @@ public class ArmedStand extends ArmorStandItem {
     public ArmedStand(ModX mod, Properties properties) {
         super(((Supplier<Properties>)() -> {
             if (mod.tab != null) {
-                properties.group(mod.tab);
+                properties.tab(mod.tab);
             }
             return properties;
         }).get());
     }
 
     @Override
-    public void applyRandomRotations(@Nonnull ArmorStandEntity entity, @Nonnull Random rand) {
-        super.applyRandomRotations(entity, rand);
-        entity.setShowArms(true);
-        entity.getPersistentData().putBoolean("UtilitiXArmorStand", true);
-        entity.getPersistentData().putInt("UtilitiXPoseIdx", 0);
+    public void randomizePose(@Nonnull ArmorStand armorStand, @Nonnull Random rand) {
+        super.randomizePose(armorStand, rand);
+        armorStand.setShowArms(true);
+        armorStand.getPersistentData().putBoolean("UtilitiXArmorStand", true);
+        armorStand.getPersistentData().putInt("UtilitiXPoseIdx", 0);
         if (!UtilitiXConfig.armorStandPoses.isEmpty()) {
-            UtilitiXConfig.armorStandPoses.get(0).apply(entity);
+            UtilitiXConfig.armorStandPoses.get(0).apply(armorStand);
         }
     }
 }

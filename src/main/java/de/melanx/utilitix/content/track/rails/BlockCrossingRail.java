@@ -2,15 +2,15 @@ package de.melanx.utilitix.content.track.rails;
 
 import de.melanx.utilitix.block.ModProperties;
 import io.github.noeppi_noeppi.libx.mod.ModX;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
-import net.minecraft.item.Item;
-import net.minecraft.state.Property;
-import net.minecraft.state.properties.RailShape;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.block.state.properties.RailShape;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,9 +37,9 @@ public class BlockCrossingRail extends BlockRail {
 
     @Nonnull
     @Override
-    public RailShape getRailDirection(@Nonnull BlockState state, @Nonnull IBlockReader world, @Nonnull BlockPos pos, @Nullable AbstractMinecartEntity cart) {
+    public RailShape getRailDirection(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nullable AbstractMinecart cart) {
         if (cart != null) {
-            switch (Direction.fromAngle(cart.rotationYaw + 90)) {
+            switch (Direction.fromYRot(cart.yRot + 90)) {
                 case NORTH:
                 case SOUTH:
                     return RailShape.NORTH_SOUTH;
@@ -48,11 +48,11 @@ public class BlockCrossingRail extends BlockRail {
                     return RailShape.EAST_WEST;
             }
         }
-        return super.getRailDirection(state, world, pos, cart);
+        return super.getRailDirection(state, level, pos, cart);
     }
 
     @Override
-    public float getRailMaxSpeed(BlockState state, World world, BlockPos pos, AbstractMinecartEntity cart) {
+    public float getRailMaxSpeed(BlockState state, Level level, BlockPos pos, AbstractMinecart cart) {
         return this.reinforced ? 0.7f : 0.4f;
     }
 }

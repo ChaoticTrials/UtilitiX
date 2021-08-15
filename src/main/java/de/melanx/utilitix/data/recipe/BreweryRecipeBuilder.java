@@ -3,13 +3,13 @@ package de.melanx.utilitix.data.recipe;
 import com.google.gson.JsonObject;
 import de.melanx.utilitix.recipe.EffectTransformer;
 import de.melanx.utilitix.registration.ModRecipes;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.item.Item;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.ItemLike;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,12 +30,12 @@ public class BreweryRecipeBuilder {
         return new BreweryRecipeBuilder();
     }
 
-    public BreweryRecipeBuilder input(IItemProvider input) {
-        return this.input(Ingredient.fromItems(input));
+    public BreweryRecipeBuilder input(ItemLike input) {
+        return this.input(Ingredient.of(input));
     }
 
-    public BreweryRecipeBuilder input(ITag<Item> input) {
-        return this.input(Ingredient.fromTag(input));
+    public BreweryRecipeBuilder input(Tag<Item> input) {
+        return this.input(Ingredient.of(input));
     }
 
     public BreweryRecipeBuilder input(Ingredient input) {
@@ -54,21 +54,18 @@ public class BreweryRecipeBuilder {
         return this;
     }
 
-    public void build(Consumer<IFinishedRecipe> consumerIn, ResourceLocation id) {
+    public void build(Consumer<FinishedRecipe> consumerIn, ResourceLocation id) {
         if (this.transformer == null) {
             throw new IllegalStateException("Can't build Advanced Brewery Recipe without action.");
         }
-        consumerIn.accept(new FinishedRecipe(new ResourceLocation(id.getNamespace(), "utilitix_brewery/" + id.getPath()), this.input, this.transformer));
+        consumerIn.accept(new Recipe(new ResourceLocation(id.getNamespace(), "utilitix_brewery/" + id.getPath()), this.input, this.transformer));
     }
 
-    private static class FinishedRecipe implements IFinishedRecipe {
+    private record Recipe(ResourceLocation id,
+                          @Nullable Ingredient input,
+                          EffectTransformer transformer) implements FinishedRecipe {
 
-        private final ResourceLocation id;
-        @Nullable
-        private final Ingredient input;
-        private final EffectTransformer transformer;
-
-        private FinishedRecipe(ResourceLocation id, @Nullable Ingredient input, EffectTransformer transformer) {
+        private Recipe(ResourceLocation id, @Nullable Ingredient input, EffectTransformer transformer) {
             this.id = id;
             this.input = input;
             this.transformer = transformer;
@@ -76,33 +73,33 @@ public class BreweryRecipeBuilder {
 
         @Nonnull
         @Override
-        public ResourceLocation getID() {
+        public ResourceLocation getId() {
             return this.id;
         }
 
         @Override
-        public void serialize(@Nonnull JsonObject json) {
+        public void serializeRecipeData(@Nonnull JsonObject json) {
             if (this.input != null) {
-                json.add("input", this.input.serialize());
+                json.add("input", this.input.toJson());
             }
             json.add("action", this.transformer.serialize());
         }
 
         @Nonnull
         @Override
-        public IRecipeSerializer<?> getSerializer() {
+        public RecipeSerializer<?> getType() {
             return ModRecipes.BREWERY_SERIALIZER;
         }
 
         @Nullable
         @Override
-        public JsonObject getAdvancementJson() {
+        public JsonObject serializeAdvancement() {
             return null;
         }
 
         @Nullable
         @Override
-        public ResourceLocation getAdvancementID() {
+        public ResourceLocation getAdvancementId() {
             return null;
         }
     }

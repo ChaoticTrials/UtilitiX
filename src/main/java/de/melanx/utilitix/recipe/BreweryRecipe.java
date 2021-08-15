@@ -1,30 +1,24 @@
 package de.melanx.utilitix.recipe;
 
-import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
-import de.melanx.utilitix.registration.ModItemTags;
 import de.melanx.utilitix.registration.ModRecipes;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.PotionUtils;
-import net.minecraft.potion.Potions;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Optional;
 
-public class BreweryRecipe implements IRecipe<IInventory> {
+@SuppressWarnings("ClassCanBeRecord")
+public class BreweryRecipe implements Recipe<Container> {
 
     private final ResourceLocation id;
     @Nullable
@@ -38,40 +32,40 @@ public class BreweryRecipe implements IRecipe<IInventory> {
     }
 
     @Override
-    public boolean matches(@Nonnull IInventory inv, @Nonnull World world) {
-        if (inv.getSizeInventory() == 5) {
-            ItemStack mainInput = inv.getStackInSlot(0);
+    public boolean matches(@Nonnull Container inv, @Nonnull Level level) {
+        if (inv.getContainerSize() == 5) {
+            ItemStack mainInput = inv.getItem(0);
             if (this.input == null && !mainInput.isEmpty() || this.input != null && !this.input.test(mainInput)) {
                 return false;
             }
-            return this.transformer.canTransform(new PotionInput(inv.getStackInSlot(3), inv.getStackInSlot(1), inv.getStackInSlot(2)));
+            return this.transformer.canTransform(new PotionInput(inv.getItem(3), inv.getItem(1), inv.getItem(2)));
         }
         return false;
     }
 
     @Nullable
-    public PotionOutput getPotionResult(@Nonnull IInventory inv) {
-        if (inv.getSizeInventory() == 5) {
-            return this.transformer.transform(new PotionInput(inv.getStackInSlot(3), inv.getStackInSlot(1), inv.getStackInSlot(2)));
+    public PotionOutput getPotionResult(@Nonnull Container inv) {
+        if (inv.getContainerSize() == 5) {
+            return this.transformer.transform(new PotionInput(inv.getItem(3), inv.getItem(1), inv.getItem(2)));
         }
         return null;
     }
-    
+
     @Nonnull
     @Override
-    public ItemStack getCraftingResult(@Nonnull IInventory inv) {
+    public ItemStack assemble(@Nonnull Container inv) {
         PotionOutput output = this.getPotionResult(inv);
-        return output == null ? inv.getStackInSlot(3).copy() : output.getMain();
+        return output == null ? inv.getItem(3).copy() : output.getMain();
     }
 
     @Override
-    public boolean canFit(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
     @Nonnull
     @Override
-    public ItemStack getRecipeOutput() {
+    public ItemStack getResultItem() {
         return this.transformer.output();
     }
 
@@ -86,7 +80,7 @@ public class BreweryRecipe implements IRecipe<IInventory> {
     }
 
     @Override
-    public boolean isDynamic() {
+    public boolean isSpecial() {
         return true;
     }
 
@@ -102,24 +96,24 @@ public class BreweryRecipe implements IRecipe<IInventory> {
 
     @Nonnull
     @Override
-    public IRecipeType<?> getType() {
+    public RecipeType<?> getType() {
         return ModRecipes.BREWERY;
     }
 
     @Nonnull
     @Override
-    public IRecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         return ModRecipes.BREWERY_SERIALIZER;
     }
 
-    public static class Serializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<BreweryRecipe> {
+    public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<BreweryRecipe> {
 
         @Nonnull
         @Override
-        public BreweryRecipe read(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
+        public BreweryRecipe fromJson(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
             Ingredient input = null;
             if (json.has("input")) {
-                input = Ingredient.deserialize(json.getAsJsonObject("input"));
+                input = Ingredient.fromJson(json.getAsJsonObject("input"));
             }
             EffectTransformer transformer = EffectTransformer.deserialize(json.getAsJsonObject("action"));
             return new BreweryRecipe(recipeId, input, transformer);
@@ -127,20 +121,20 @@ public class BreweryRecipe implements IRecipe<IInventory> {
 
         @Nullable
         @Override
-        public BreweryRecipe read(@Nonnull ResourceLocation recipeId, @Nonnull PacketBuffer buffer) {
+        public BreweryRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
             Ingredient input = null;
             if (buffer.readBoolean()) {
-                input = Ingredient.read(buffer);
+                input = Ingredient.fromNetwork(buffer);
             }
             EffectTransformer transformer = EffectTransformer.read(buffer);
             return new BreweryRecipe(recipeId, input, transformer);
         }
 
         @Override
-        public void write(@Nonnull PacketBuffer buffer, @Nonnull BreweryRecipe recipe) {
+        public void toNetwork(@Nonnull FriendlyByteBuf buffer, @Nonnull BreweryRecipe recipe) {
             buffer.writeBoolean(recipe.input != null);
             if (recipe.input != null) {
-                recipe.input.write(buffer);
+                recipe.input.toNetwork(buffer);
             }
             recipe.transformer.write(buffer);
         }

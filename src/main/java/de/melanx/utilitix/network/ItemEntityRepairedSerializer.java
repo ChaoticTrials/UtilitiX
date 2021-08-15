@@ -1,7 +1,7 @@
 package de.melanx.utilitix.network;
 
 import io.github.noeppi_noeppi.libx.network.PacketSerializer;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class ItemEntityRepairedSerializer implements PacketSerializer<ItemEntityRepairedSerializer.ItemEntityRepairedMessage> {
 
@@ -11,21 +11,16 @@ public class ItemEntityRepairedSerializer implements PacketSerializer<ItemEntity
     }
 
     @Override
-    public void encode(ItemEntityRepairedMessage msg, PacketBuffer buffer) {
+    public void encode(ItemEntityRepairedMessage msg, FriendlyByteBuf buffer) {
         buffer.writeInt(msg.id);
     }
 
     @Override
-    public ItemEntityRepairedMessage decode(PacketBuffer buffer) {
+    public ItemEntityRepairedMessage decode(FriendlyByteBuf buffer) {
         return new ItemEntityRepairedMessage(buffer.readInt());
     }
 
-    public static class ItemEntityRepairedMessage {
-
-        public final int id;
-
-        public ItemEntityRepairedMessage(int id) {
-            this.id = id;
-        }
+    public record ItemEntityRepairedMessage(int id) {
+        // record
     }
 }

@@ -4,19 +4,19 @@ import de.melanx.utilitix.block.ModProperties;
 import de.melanx.utilitix.content.track.ItemMinecartTinkerer;
 import de.melanx.utilitix.content.track.TrackUtil;
 import io.github.noeppi_noeppi.libx.mod.ModX;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.Property;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.RailShape;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.block.state.properties.RailShape;
+import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -37,42 +37,42 @@ public class BlockFilterRail extends BlockControllerRail<TileFilterRail> {
     public Property<RailShape> getShapeProperty() {
         return ModProperties.RAIL_SHAPE_FLAT_STRAIGHT;
     }
-    
+
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        super.fillStateContainer(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(ModProperties.REVERSE);
         builder.add(ModProperties.RAIL_SIDE);
     }
-    
+
     @Override
-    public BlockState getStateForPlacement(@Nonnull BlockItemUseContext context) {
+    public BlockState getStateForPlacement(@Nonnull BlockPlaceContext context) {
         BlockState state = super.getStateForPlacement(context);
         if (state == null) return null;
-        Direction direction = context.getPlacementHorizontalFacing();
+        Direction direction = context.getHorizontalDirection();
         Pair<RailShape, Boolean> properties = TrackUtil.getForPlacement(direction);
-        state = state.with(this.getShapeProperty(), properties.getLeft())
-                .with(ModProperties.REVERSE, properties.getRight());
-        Vector3d hitVec = context.getHitVec();
-        double xd = hitVec.x - context.getPos().getX();
-        double zd = hitVec.z - context.getPos().getZ();
-        boolean side = (direction.getXOffset() >= 0 || !(zd < 0.5)) && (direction.getXOffset() <= 0 || !(zd > 0.5)) && (direction.getZOffset() >= 0 || !(xd > 0.5)) && (direction.getZOffset() <= 0 || !(xd < 0.5));
-        return state.with(ModProperties.RAIL_SIDE, !side);
+        state = state.setValue(this.getShapeProperty(), properties.getLeft())
+                .setValue(ModProperties.REVERSE, properties.getRight());
+        Vec3 hitVec = context.getClickLocation();
+        double xd = hitVec.x - context.getClickedPos().getX();
+        double zd = hitVec.z - context.getClickedPos().getZ();
+        boolean side = (direction.getStepX() >= 0 || !(zd < 0.5)) && (direction.getStepX() <= 0 || !(zd > 0.5)) && (direction.getStepZ() >= 0 || !(xd > 0.5)) && (direction.getStepZ() <= 0 || !(xd < 0.5));
+        return state.setValue(ModProperties.RAIL_SIDE, !side);
     }
 
     @Nonnull
     @Override
-    public RailShape getRailDirection(@Nonnull BlockState state, @Nonnull IBlockReader world, @Nonnull BlockPos pos, @Nullable AbstractMinecartEntity cart) {
-        RailShape baseShape = state.get(this.getShapeProperty());
+    public RailShape getRailDirection(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nullable AbstractMinecart cart) {
+        RailShape baseShape = state.getValue(this.getShapeProperty());
         ItemStack filterCart = cart == null ? ItemStack.EMPTY : ItemMinecartTinkerer.getLabelStack(cart);
         if (filterCart.isEmpty()) return baseShape;
-        ItemStack filterThis = this.getTile(world, pos).getFilterStack();
+        ItemStack filterThis = this.getTile(level, pos).getFilterStack();
         if (filterThis.isEmpty()) return baseShape;
-        if (!ItemStack.areItemsEqual(filterThis, filterCart) || !ItemStack.areItemStackTagsEqual(filterThis, filterCart)) {
+        if (!ItemStack.isSame(filterThis, filterCart) || !ItemStack.tagMatches(filterThis, filterCart)) {
             return baseShape;
         }
-        boolean reverse = state.get(ModProperties.REVERSE);
-        boolean side = state.get(ModProperties.RAIL_SIDE);
+        boolean reverse = state.getValue(ModProperties.REVERSE);
+        boolean side = state.getValue(ModProperties.RAIL_SIDE);
         if (baseShape == RailShape.NORTH_SOUTH) {
             if (reverse && side) {
                 return RailShape.NORTH_WEST;

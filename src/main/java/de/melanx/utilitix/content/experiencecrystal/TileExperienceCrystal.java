@@ -1,58 +1,58 @@
 package de.melanx.utilitix.content.experiencecrystal;
 
 import de.melanx.utilitix.UtilitiXConfig;
-import io.github.noeppi_noeppi.libx.mod.registration.TileEntityBase;
-import io.github.noeppi_noeppi.libx.util.BoundingBoxUtils;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.item.ExperienceOrbEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import de.melanx.utilitix.util.BoundingBoxUtils;
+import io.github.noeppi_noeppi.libx.base.tile.BlockEntityBase;
+import io.github.noeppi_noeppi.libx.base.tile.TickableBlock;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class TileExperienceCrystal extends TileEntityBase implements ITickableTileEntity {
+public class TileExperienceCrystal extends BlockEntityBase implements TickableBlock {
 
     private int xp;
 
-    public TileExperienceCrystal(TileEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
+    public TileExperienceCrystal(BlockEntityType<?> blockEntityTypeIn, BlockPos pos, BlockState state) {
+        super(blockEntityTypeIn, pos, state);
     }
 
     @Override
     public void tick() {
-        if (this.world != null && this.pos != null) {
-            this.moveExps(this.world, this.pos);
+        if (this.level != null) {
+            this.moveExps(this.level, this.worldPosition);
         }
     }
 
     @Override
-    public void read(@Nonnull BlockState state, @Nonnull CompoundNBT nbt) {
-        super.read(state, nbt);
+    public void load(@Nonnull CompoundTag nbt) {
+        super.load(nbt);
         this.xp = nbt.getInt("Xp");
     }
 
     @Nonnull
     @Override
-    public CompoundNBT write(@Nonnull CompoundNBT nbt) {
-        nbt.putInt("Xp", this.xp);
-        return super.write(nbt);
+    public CompoundTag save(@Nonnull CompoundTag compound) {
+        compound.putInt("Xp", this.xp);
+        return super.save(compound);
     }
 
     @Override
-    public void handleUpdateTag(BlockState state, CompoundNBT nbt) {
-        super.handleUpdateTag(state, nbt);
+    public void handleUpdateTag(CompoundTag nbt) {
+        super.handleUpdateTag(nbt);
         this.xp = nbt.getInt("Xp");
     }
 
     @Nonnull
     @Override
-    public CompoundNBT getUpdateTag() {
-        CompoundNBT nbt = super.getUpdateTag();
+    public CompoundTag getUpdateTag() {
+        CompoundTag nbt = super.getUpdateTag();
         nbt.putInt("Xp", this.xp);
         return nbt;
     }
@@ -64,7 +64,7 @@ public class TileExperienceCrystal extends TileEntityBase implements ITickableTi
     public int addXp(int xp) {
         int add = Math.min(Math.max(0, xp), UtilitiXConfig.ExperienceCrystal.maxXp - this.xp);
         this.xp += add;
-        this.markDirty();
+        this.setChanged();
         this.markDispatchable();
 
         return add;
@@ -73,19 +73,19 @@ public class TileExperienceCrystal extends TileEntityBase implements ITickableTi
     public int subtractXp(int xp) {
         int remove = Math.max(0, Math.min(xp, this.xp));
         this.xp -= remove;
-        this.markDirty();
+        this.setChanged();
         this.markDispatchable();
 
         return remove;
     }
 
-    private void moveExps(World world, BlockPos pos) {
+    private void moveExps(Level level, BlockPos pos) {
         if (!UtilitiXConfig.ExperienceCrystal.pullOrbs || this.xp >= UtilitiXConfig.ExperienceCrystal.maxXp) return;
-        List<ExperienceOrbEntity> xps = world.getEntitiesWithinAABB(ExperienceOrbEntity.class, BoundingBoxUtils.expand(new Vector3d(pos.getX(), pos.getY(), pos.getZ()), 7));
-        for (ExperienceOrbEntity orb : xps) {
-            Vector3d vector = new Vector3d(pos.getX() - orb.getPosX() + 0.5, pos.getY() + (orb.getEyeHeight() / 2) - orb.getPosY(), pos.getZ() - orb.getPosZ() + 0.5);
+        List<ExperienceOrb> xps = level.getEntitiesOfClass(ExperienceOrb.class, BoundingBoxUtils.expand(new Vec3(pos.getX(), pos.getY(), pos.getZ()), 7));
+        for (ExperienceOrb orb : xps) {
+            Vec3 vector = new Vec3(pos.getX() - orb.getX() + 0.5, pos.getY() + (orb.getEyeHeight() / 2) - orb.getY(), pos.getZ() - orb.getZ() + 0.5);
             double scale = 1 - (vector.length() / 8);
-            orb.setMotion(orb.getMotion().add(vector.normalize().scale(scale * scale * 0.1)));
+            orb.setDeltaMovement(orb.getDeltaMovement().add(vector.normalize().scale(scale * scale * 0.1)));
         }
     }
 }

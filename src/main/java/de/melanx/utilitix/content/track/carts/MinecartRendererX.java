@@ -1,66 +1,67 @@
 package de.melanx.utilitix.content.track.carts;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 
-public class MinecartRendererX<T extends EntityCart> extends MinecartRenderer<T> {
+public class MinecartRendererX<T extends Cart> extends MinecartRenderer<T> {
 
-    public MinecartRendererX(EntityRendererManager renderManagerIn) {
-        super(renderManagerIn);
+    public MinecartRendererX(EntityRendererProvider.Context context, ModelLayerLocation layerLocation) {
+        super(context, layerLocation);
     }
 
     @Override
-    protected void renderBlockState(@Nonnull T entity, float partialTicks, @Nonnull BlockState state, @Nonnull MatrixStack matrixStack, @Nonnull IRenderTypeBuffer buffer, int light) {
-        if (entity instanceof EntityStonecutterCart) {
-            matrixStack.push();
-            Direction dirCorrected = Direction.fromAngle(entity.rotationYaw);
-            if (entity.isInReverse || dirCorrected.getAxisDirection() == Direction.AxisDirection.POSITIVE) {
+    protected void renderMinecartContents(@Nonnull T entity, float partialTicks, @Nonnull BlockState state, @Nonnull PoseStack matrixStack, @Nonnull MultiBufferSource buffer, int packedLight) {
+        if (entity instanceof StonecutterCart) {
+            matrixStack.pushPose();
+            Direction dirCorrected = Direction.fromYRot(entity.yRot);
+            if (entity.flipped || dirCorrected.getAxisDirection() == Direction.AxisDirection.POSITIVE) {
                 matrixStack.translate(0.5, 0.5, 0.5);
-                matrixStack.rotate(Vector3f.YP.rotationDegrees((entity.isInReverse ? 180 : 0) + (dirCorrected.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 180 : 0)));
+                matrixStack.mulPose(Vector3f.YP.rotationDegrees((entity.flipped ? 180 : 0) + (dirCorrected.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 180 : 0)));
                 matrixStack.translate(-0.5, -0.5, -0.5);
             }
-            switch (((EntityStonecutterCart) entity).getMode()) {
-                case LEFT:
+            switch (((StonecutterCart) entity).getMode()) {
+                case LEFT -> {
                     matrixStack.translate(0.5, 0.65, 0.5);
-                    matrixStack.rotate(Vector3f.YP.rotationDegrees(90));
-                    matrixStack.rotate(Vector3f.XP.rotationDegrees(90));
+                    matrixStack.mulPose(Vector3f.YP.rotationDegrees(90));
+                    matrixStack.mulPose(Vector3f.XP.rotationDegrees(90));
                     matrixStack.translate(-0.5, -0.1, -0.5);
-                    break;
-                case RIGHT:
+                }
+                case RIGHT -> {
                     matrixStack.translate(0.5, 0.65, 0.5);
-                    matrixStack.rotate(Vector3f.YP.rotationDegrees(90));
-                    matrixStack.rotate(Vector3f.XP.rotationDegrees(-90));
+                    matrixStack.mulPose(Vector3f.YP.rotationDegrees(90));
+                    matrixStack.mulPose(Vector3f.XP.rotationDegrees(-90));
                     matrixStack.translate(-0.5, -0.1, -0.5);
-                    break;
-                case TOP_LEFT:
+                }
+                case TOP_LEFT -> {
                     matrixStack.translate(0.5, 0.55, 0.5);
-                    matrixStack.rotate(Vector3f.YP.rotationDegrees(90));
-                    matrixStack.rotate(Vector3f.XP.rotationDegrees(55));
+                    matrixStack.mulPose(Vector3f.YP.rotationDegrees(90));
+                    matrixStack.mulPose(Vector3f.XP.rotationDegrees(55));
                     matrixStack.translate(-0.5, -0.15, -0.5);
-                    break;
-                case TOP_RIGHT:
+                }
+                case TOP_RIGHT -> {
                     matrixStack.translate(0.5, 0.55, 0.5);
-                    matrixStack.rotate(Vector3f.YP.rotationDegrees(90));
-                    matrixStack.rotate(Vector3f.XP.rotationDegrees(-55));
+                    matrixStack.mulPose(Vector3f.YP.rotationDegrees(90));
+                    matrixStack.mulPose(Vector3f.XP.rotationDegrees(-55));
                     matrixStack.translate(-0.5, -0.15, -0.5);
-                    break;
-                case FRONT:
+                }
+                case FRONT -> {
                     matrixStack.translate(0.5, 0.65, 0.5);
-                    matrixStack.rotate(Vector3f.XP.rotationDegrees(90));
+                    matrixStack.mulPose(Vector3f.XP.rotationDegrees(90));
                     matrixStack.translate(-0.5, 0.2, -0.5);
-                    break;
+                }
             }
-            super.renderBlockState(entity, partialTicks, state, matrixStack, buffer, light);
-            matrixStack.pop();
+            super.renderMinecartContents(entity, partialTicks, state, matrixStack, buffer, packedLight);
+            matrixStack.popPose();
         } else {
-            super.renderBlockState(entity, partialTicks, state, matrixStack, buffer, light);
+            super.renderMinecartContents(entity, partialTicks, state, matrixStack, buffer, packedLight);
         }
     }
 }

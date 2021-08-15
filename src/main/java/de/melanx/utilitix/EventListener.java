@@ -6,33 +6,33 @@ import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.content.slime.StickyChunk;
 import de.melanx.utilitix.network.StickyChunkRequestSerializer;
 import de.melanx.utilitix.registration.ModItems;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.DoorBlock;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ArmorStandEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.DirectionalPlaceContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.state.properties.DoorHingeSide;
-import net.minecraft.state.properties.DoubleBlockHalf;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.DirectionalPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoorHingeSide;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
@@ -46,31 +46,30 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class EventListener {
 
-    private static final IFormattableTextComponent BLACKLISTED_MOB = new TranslationTextComponent("tooltip." + UtilitiX.getInstance().modid + ".blacklisted_mob").mergeStyle(TextFormatting.DARK_RED);
-    private static final IFormattableTextComponent GILDED = new TranslationTextComponent("tooltip.utilitix.gilded").mergeStyle(TextFormatting.GOLD);
+    private static final MutableComponent BLACKLISTED_MOB = new TranslatableComponent("tooltip." + UtilitiX.getInstance().modid + ".blacklisted_mob").withStyle(ChatFormatting.DARK_RED);
+    private static final MutableComponent GILDED = new TranslatableComponent("tooltip.utilitix.gilded").withStyle(ChatFormatting.GOLD);
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        PlayerEntity player = event.getPlayer();
+        Player player = event.getPlayer();
 
-        if (player.isSneaking() && player.getHeldItem(event.getHand()).getItem() == ModItems.mobBell && event.getTarget() instanceof LivingEntity) {
-            LivingEntity target = (LivingEntity) event.getTarget();
-            Hand hand = event.getHand();
-            ItemStack stack = player.getHeldItem(hand);
+        if (player.isShiftKeyDown() && player.getItemInHand(event.getHand()).getItem() == ModItems.mobBell && event.getTarget() instanceof LivingEntity target) {
+            InteractionHand hand = event.getHand();
+            ItemStack stack = player.getItemInHand(hand);
             ResourceLocation entityKey = EntityType.getKey(target.getType());
             if (entityKey.toString().equals(stack.getOrCreateTag().getString("Entity"))) {
                 return;
             }
 
-            if (UtilitiXConfig.HandBells.blacklist.contains(entityKey)) {
-                player.sendStatusMessage(BLACKLISTED_MOB, true);
+            if (!UtilitiXConfig.HandBells.mobBellEntities.test(entityKey)) {
+                player.displayClientMessage(BLACKLISTED_MOB, true);
                 return;
             }
 
             stack.getOrCreateTag().putString("Entity", entityKey.toString());
-            player.setHeldItem(hand, stack);
-            player.sendStatusMessage(ItemMobBell.getCurrentMob(target.getType()), true);
-            event.setCancellationResult(ActionResultType.SUCCESS);
+            player.setItemInHand(hand, stack);
+            player.displayClientMessage(ItemMobBell.getCurrentMob(target.getType()), true);
+            event.setCancellationResult(InteractionResult.SUCCESS);
             event.setCanceled(true);
         }
     }
@@ -112,16 +111,16 @@ public class EventListener {
 
     @SubscribeEvent
     public void entityInteract(PlayerInteractEvent.EntityInteractSpecific event) {
-        if (event.getTarget() instanceof ArmorStandEntity && event.getTarget().getPersistentData().getBoolean("UtilitiXArmorStand")) {
-            if (event.getItemStack().getItem() == Items.FLINT && event.getPlayer().isSneaking()) {
-                ArmorStandEntity entity = (ArmorStandEntity) event.getTarget();
+        if (event.getTarget() instanceof ArmorStand && event.getTarget().getPersistentData().getBoolean("UtilitiXArmorStand")) {
+            if (event.getItemStack().getItem() == Items.FLINT && event.getPlayer().isShiftKeyDown()) {
+                ArmorStand entity = (ArmorStand) event.getTarget();
                 if (UtilitiXConfig.armorStandPoses.size() >= 2) {
                     int newIdx = (entity.getPersistentData().getInt("UtilitiXPoseIdx") + 1) % UtilitiXConfig.armorStandPoses.size();
                     entity.getPersistentData().putInt("UtilitiXPoseIdx", newIdx);
                     UtilitiXConfig.armorStandPoses.get(newIdx).apply(entity);
                 }
                 event.setCanceled(true);
-                event.setCancellationResult(ActionResultType.SUCCESS);
+                event.setCancellationResult(InteractionResult.SUCCESS);
             }
         }
     }
@@ -129,24 +128,23 @@ public class EventListener {
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void loadChunk(ChunkEvent.Load event) {
-        if (event.getWorld().isRemote()) {
+        if (event.getWorld().isClientSide()) {
             UtilitiX.getNetwork().instance.sendToServer(new StickyChunkRequestSerializer.StickyChunkRequestMessage(event.getChunk().getPos()));
         }
     }
 
     @SubscribeEvent
     public void neighbourChange(BlockEvent.NeighborNotifyEvent event) {
-        if (!event.getWorld().isRemote() && event.getWorld() instanceof World) {
-            World world = (World) event.getWorld();
+        if (!event.getWorld().isClientSide() && event.getWorld() instanceof Level level) {
             for (Direction dir : Direction.values()) {
-                BlockPos thePos = event.getPos().offset(dir);
-                BlockState state = world.getBlockState(thePos);
-                if (state.getBlock() == Blocks.MOVING_PISTON && (state.get(BlockStateProperties.FACING) == dir || state.get(BlockStateProperties.FACING) == dir.getOpposite())) {
+                BlockPos thePos = event.getPos().relative(dir);
+                BlockState state = level.getBlockState(thePos);
+                if (state.getBlock() == Blocks.MOVING_PISTON && (state.getValue(BlockStateProperties.FACING) == dir || state.getValue(BlockStateProperties.FACING) == dir.getOpposite())) {
                     // Block has been changed because of a piston move.
                     // Glue logic is handled in the piston til
                     // Skip this here
                     return;
-                } else if (state.getBlock() == Blocks.PISTON_HEAD && state.get(BlockStateProperties.SHORT) && (state.get(BlockStateProperties.FACING) == dir || state.get(BlockStateProperties.FACING) == dir.getOpposite())) {
+                } else if (state.getBlock() == Blocks.PISTON_HEAD && state.getValue(BlockStateProperties.SHORT) && (state.getValue(BlockStateProperties.FACING) == dir || state.getValue(BlockStateProperties.FACING) == dir.getOpposite())) {
                     // Block has been changed because of a piston move.
                     // Glue logic is handled in the piston til
                     // Skip this here
@@ -154,7 +152,7 @@ public class EventListener {
                     return;
                 }
             }
-            Chunk chunk = world.getChunkAt(event.getPos());
+            LevelChunk chunk = level.getChunkAt(event.getPos());
             //noinspection ConstantConditions
             StickyChunk glue = chunk.getCapability(SlimyCapability.STICKY_CHUNK).orElse(null);
             //noinspection ConstantConditions
@@ -163,14 +161,14 @@ public class EventListener {
                 int y = event.getPos().getY();
                 int z = event.getPos().getZ() & 0xF;
                 for (Direction dir : Direction.values()) {
-                    if (glue.get(x, y, z, dir) && !SlimyCapability.canGlue(world, event.getPos(), dir)) {
+                    if (glue.get(x, y, z, dir) && !SlimyCapability.canGlue(level, event.getPos(), dir)) {
                         glue.set(x, y, z, dir, false);
-                        chunk.markDirty();
-                        chunk.markDirty();
-                        BlockPos targetPos = event.getPos().offset(dir);
-                        ItemEntity ie = new ItemEntity(world, targetPos.getX() + 0.5, targetPos.getY() + 0.5, targetPos.getZ() + 0.5, new ItemStack(ModItems.glueBall));
-                        ie.setPickupDelay(20);
-                        world.addEntity(ie);
+                        chunk.markUnsaved();
+                        chunk.markUnsaved();
+                        BlockPos targetPos = event.getPos().relative(dir);
+                        ItemEntity ie = new ItemEntity(level, targetPos.getX() + 0.5, targetPos.getY() + 0.5, targetPos.getZ() + 0.5, new ItemStack(ModItems.glueBall));
+                        ie.setPickUpDelay(20);
+                        level.addFreshEntity(ie);
                     }
                 }
             }
@@ -180,25 +178,24 @@ public class EventListener {
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onItemDespawn(ItemExpireEvent event) {
         ItemEntity entity = event.getEntityItem();
-        World world = entity.getEntityWorld();
-        if (!world.isRemote) {
-            BlockPos pos = entity.getPosition();
+        Level level = entity.getCommandSenderWorld();
+        if (!level.isClientSide) {
+            BlockPos pos = entity.blockPosition();
             ItemStack stack = entity.getItem();
-            if (stack.getItem() instanceof BlockItem) {
-                BlockItem item = (BlockItem) stack.getItem();
+            if (stack.getItem() instanceof BlockItem item) {
                 if (!UtilitiXConfig.plantsOnDespawn.test(item.getRegistryName())) {
                     return;
                 }
 
-                DirectionalPlaceContext context = new DirectionalPlaceContext(world, pos, Direction.DOWN, stack, Direction.UP);
-                if (item.tryPlace(context) == ActionResultType.SUCCESS) {
-                    world.setBlockState(pos, item.getBlock().getDefaultState());
+                DirectionalPlaceContext context = new DirectionalPlaceContext(level, pos, Direction.DOWN, stack, Direction.UP);
+                if (item.place(context) == InteractionResult.SUCCESS) {
+                    level.setBlockAndUpdate(pos, item.getBlock().defaultBlockState());
                     return;
                 }
 
-                context = new DirectionalPlaceContext(world, pos.up(), Direction.DOWN, stack, Direction.UP);
-                if (item.tryPlace(context) == ActionResultType.SUCCESS) {
-                    world.setBlockState(pos.up(), item.getBlock().getDefaultState());
+                context = new DirectionalPlaceContext(level, pos.above(), Direction.DOWN, stack, Direction.UP);
+                if (item.place(context) == InteractionResult.SUCCESS) {
+                    level.setBlockAndUpdate(pos.above(), item.getBlock().defaultBlockState());
                 }
             }
         }
@@ -210,27 +207,27 @@ public class EventListener {
             return;
         }
 
-        World world = event.getWorld();
+        Level level = event.getWorld();
         BlockPos pos = event.getPos();
-        BlockState state = world.getBlockState(pos);
-        if (!(state.getBlock() instanceof DoorBlock) && !BlockTags.DOORS.contains(state.getBlock()) || state.getBlock().material == Material.IRON) {
+        BlockState state = level.getBlockState(pos);
+        if (!(state.getBlock() instanceof DoorBlock) && !BlockTags.DOORS.contains(state.getBlock()) || state.getBlock().material == Material.METAL) {
             return;
         }
 
-        Direction facing = state.get(DoorBlock.FACING);
-        DoorHingeSide hinge = state.get(DoorBlock.HINGE);
-        DoubleBlockHalf half = state.get(DoorBlock.HALF);
-        boolean open = state.get(DoorBlock.OPEN);
+        Direction facing = state.getValue(DoorBlock.FACING);
+        DoorHingeSide hinge = state.getValue(DoorBlock.HINGE);
+        DoubleBlockHalf half = state.getValue(DoorBlock.HALF);
+        boolean open = state.getValue(DoorBlock.OPEN);
 
-        BlockPos neighborPos = pos.offset(hinge == DoorHingeSide.LEFT ? facing.rotateY() : facing.rotateYCCW());
+        BlockPos neighborPos = pos.relative(hinge == DoorHingeSide.LEFT ? facing.getClockWise() : facing.getCounterClockWise());
 
-        BlockState neighborState = world.getBlockState(neighborPos);
-        if (!(neighborState.getBlock() instanceof DoorBlock) && !BlockTags.DOORS.contains(neighborState.getBlock()) || neighborState.getBlock().material == Material.IRON) {
+        BlockState neighborState = level.getBlockState(neighborPos);
+        if (!(neighborState.getBlock() instanceof DoorBlock) && !BlockTags.DOORS.contains(neighborState.getBlock()) || neighborState.getBlock().material == Material.METAL) {
             return;
         }
 
-        if (neighborState.get(DoorBlock.HALF) == half && neighborState.get(DoorBlock.HINGE) != hinge && neighborState.get(DoorBlock.FACING) == facing) {
-            ((DoorBlock) neighborState.getBlock()).openDoor(world, neighborState, neighborPos, !open);
+        if (neighborState.getValue(DoorBlock.HALF) == half && neighborState.getValue(DoorBlock.HINGE) != hinge && neighborState.getValue(DoorBlock.FACING) == facing) {
+            ((DoorBlock) neighborState.getBlock()).setOpen(event.getPlayer(), level, neighborState, neighborPos, !open);
         }
     }
 

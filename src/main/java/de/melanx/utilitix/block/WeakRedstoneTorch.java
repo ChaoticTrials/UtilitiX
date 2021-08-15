@@ -4,20 +4,20 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import io.github.noeppi_noeppi.libx.mod.registration.Registerable;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.RedstoneTorchBlock;
-import net.minecraft.block.RedstoneWallTorchBlock;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.WallOrFloorItem;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.StandingAndWallBlockItem;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.RedstoneTorchBlock;
+import net.minecraft.world.level.block.RedstoneWallTorchBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -41,31 +41,31 @@ public class WeakRedstoneTorch extends RedstoneTorchBlock implements Registerabl
         super(properties);
         this.mod = mod;
         if (mod.tab != null) {
-            itemProperties.group(mod.tab);
+            itemProperties.tab(mod.tab);
         }
         this.wallTorch = new Wall(properties);
-        this.item = new WallOrFloorItem(this, this.wallTorch, itemProperties);
+        this.item = new StandingAndWallBlockItem(this, this.wallTorch, itemProperties);
     }
 
     @Override
-    public Set<Object> getAdditionalRegisters() {
+    public Set<Object> getAdditionalRegisters(ResourceLocation id) {
         return ImmutableSet.of(this.item);
     }
 
     @Override
-    public Map<String, Object> getNamedAdditionalRegisters() {
+    public Map<String, Object> getNamedAdditionalRegisters(ResourceLocation id) {
         return ImmutableMap.of("wall", this.wallTorch);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     public void registerClient(ResourceLocation id, Consumer<Runnable> defer) {
-        RenderTypeLookup.setRenderLayer(this, RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(this.wallTorch, RenderType.getCutout());
+        ItemBlockRenderTypes.setRenderLayer(this, RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(this.wallTorch, RenderType.cutout());
     }
 
     @Override
-    public void animateTick(@Nonnull BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Random rand) {
+    public void animateTick(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Random rand) {
         // stop redstone particles
     }
 
@@ -79,12 +79,12 @@ public class WeakRedstoneTorch extends RedstoneTorchBlock implements Registerabl
         }
 
         @Override
-        public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
+        public ItemStack getPickBlock(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
             return new ItemStack(WeakRedstoneTorch.this.item);
         }
-        
+
         @Override
-        public void animateTick(@Nonnull BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Random rand) {
+        public void animateTick(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Random random) {
             // stop redstone particles
         }
     }

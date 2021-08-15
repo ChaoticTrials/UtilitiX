@@ -1,22 +1,22 @@
 package de.melanx.utilitix.content.wireless;
 
 import io.github.noeppi_noeppi.libx.util.NBTX;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class WorldAndPos {
 
-    public final RegistryKey<World> dimension;
+    public final ResourceKey<Level> dimension;
     public final BlockPos pos;
 
-    public WorldAndPos(RegistryKey<World> dimension, BlockPos pos) {
+    public WorldAndPos(ResourceKey<Level> dimension, BlockPos pos) {
         this.dimension = dimension;
         this.pos = pos;
     }
@@ -34,17 +34,17 @@ public class WorldAndPos {
         return Objects.hash(this.dimension, this.pos);
     }
 
-    public CompoundNBT serialize() {
-        CompoundNBT nbt = new CompoundNBT();
-        nbt.putString("W", this.dimension.getLocation().toString());
+    public CompoundTag serialize() {
+        CompoundTag nbt = new CompoundTag();
+        nbt.putString("W", this.dimension.location().toString());
         NBTX.putPos(nbt, "P", this.pos);
-        nbt.putIntArray("P", new int[]{this.pos.getX(), this.pos.getY(), this.pos.getZ() });
+        nbt.putIntArray("P", new int[]{this.pos.getX(), this.pos.getY(), this.pos.getZ()});
         return nbt;
     }
-    
+
     @Nullable
-    public static WorldAndPos deserialize(CompoundNBT nbt) {
-        RegistryKey<World> world = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(nbt.getString("W")));
+    public static WorldAndPos deserialize(CompoundTag nbt) {
+        ResourceKey<Level> world = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(nbt.getString("W")));
         BlockPos pos = NBTX.getPos(nbt, "P");
         return pos == null ? null : new WorldAndPos(world, pos);
     }

@@ -2,10 +2,11 @@ package de.melanx.utilitix.util;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.minecraft.entity.item.ArmorStandEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.Rotations;
+import net.minecraft.core.Rotations;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.decoration.ArmorStand;
 
+@SuppressWarnings("ClassCanBeRecord")
 public class ArmorStandRotation {
 
     public final Rotations head;
@@ -26,15 +27,15 @@ public class ArmorStandRotation {
 
     public static ArmorStandRotation defaultRotation() {
         return new ArmorStandRotation(
-                ArmorStandEntity.DEFAULT_HEAD_ROTATION,
-                ArmorStandEntity.DEFAULT_BODY_ROTATION,
-                ArmorStandEntity.DEFAULT_LEFTARM_ROTATION,
-                ArmorStandEntity.DEFAULT_RIGHTARM_ROTATION,
-                ArmorStandEntity.DEFAULT_LEFTLEG_ROTATION,
-                ArmorStandEntity.DEFAULT_RIGHTLEG_ROTATION
+                ArmorStand.DEFAULT_HEAD_POSE,
+                ArmorStand.DEFAULT_BODY_POSE,
+                ArmorStand.DEFAULT_LEFT_ARM_POSE,
+                ArmorStand.DEFAULT_RIGHT_ARM_POSE,
+                ArmorStand.DEFAULT_LEFT_LEG_POSE,
+                ArmorStand.DEFAULT_RIGHT_LEG_POSE
         );
     }
-    
+
     public static ArmorStandRotation create(
             float headX, float headY, float headZ,
             float bodyX, float bodyY, float bodyZ,
@@ -52,8 +53,8 @@ public class ArmorStandRotation {
                 new Rotations(rightLegX, rightLegY, rightLegZ)
         );
     }
-    
-    public void write(PacketBuffer buffer) {
+
+    public void write(FriendlyByteBuf buffer) {
         buffer.writeFloat(this.head.getX());
         buffer.writeFloat(this.head.getY());
         buffer.writeFloat(this.head.getZ());
@@ -93,16 +94,16 @@ public class ArmorStandRotation {
         return array;
     }
 
-    public void apply(ArmorStandEntity entity) {
-        entity.setHeadRotation(this.head);
-        entity.setBodyRotation(this.body);
-        entity.setLeftArmRotation(this.leftArm);
-        entity.setRightArmRotation(this.rightArm);
-        entity.setLeftLegRotation(this.leftLeg);
-        entity.setRightLegRotation(this.rightLeg);
+    public void apply(ArmorStand entity) {
+        entity.setHeadPose(this.head);
+        entity.setBodyPose(this.body);
+        entity.setLeftArmPose(this.leftArm);
+        entity.setRightArmPose(this.rightArm);
+        entity.setLeftLegPose(this.leftLeg);
+        entity.setRightLegPose(this.rightLeg);
     }
 
-    public static ArmorStandRotation read(PacketBuffer buffer) {
+    public static ArmorStandRotation read(FriendlyByteBuf buffer) {
         return new ArmorStandRotation(
                 new Rotations(buffer.readFloat(), buffer.readFloat(), buffer.readFloat()),
                 new Rotations(buffer.readFloat(), buffer.readFloat(), buffer.readFloat()),

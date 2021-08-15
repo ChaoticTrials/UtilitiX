@@ -1,18 +1,18 @@
 package de.melanx.utilitix.content.wireless;
 
+import io.github.noeppi_noeppi.libx.base.ItemBase;
 import io.github.noeppi_noeppi.libx.mod.ModX;
-import io.github.noeppi_noeppi.libx.mod.registration.ItemBase;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,40 +27,40 @@ public class ItemLinkedCrystal extends ItemBase {
 
     @Nonnull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull PlayerEntity player, @Nonnull Hand hand) {
-        ItemStack held = player.getHeldItem(hand);
+    public InteractionResultHolder<ItemStack> use(@Nonnull Level level, @Nonnull Player player, @Nonnull InteractionHand hand) {
+        ItemStack held = player.getItemInHand(hand);
         UUID uid = getId(held);
         if (uid != null) {
-            if (!world.isRemote) {
-                WirelessStorage storage = WirelessStorage.get(world);
+            if (!level.isClientSide) {
+                WirelessStorage storage = WirelessStorage.get(level);
                 int strength = storage.getStrength(uid);
-                player.sendMessage(new TranslationTextComponent("tooltip.utilitix.signal_strength", new StringTextComponent(Integer.toString(strength)).mergeStyle(TextFormatting.RED)), player.getUniqueID());
+                player.sendMessage(new TranslatableComponent("tooltip.utilitix.signal_strength", new TextComponent(Integer.toString(strength)).withStyle(ChatFormatting.RED)), player.getUUID());
             }
-            return ActionResult.successOrConsume(held, world.isRemote);
+            return InteractionResultHolder.sidedSuccess(held, level.isClientSide);
         } else if (held.getCount() < 2) {
-            if (world.isRemote) {
-                player.sendStatusMessage(new TranslationTextComponent("tooltip.utilitix.link_failed"), true);
+            if (level.isClientSide) {
+                player.displayClientMessage(new TranslatableComponent("tooltip.utilitix.link_failed"), true);
             }
-            return new ActionResult<>(ActionResultType.FAIL, held);
+            return new InteractionResultHolder<>(InteractionResult.FAIL, held);
         } else {
-            if (!world.isRemote) {
+            if (!level.isClientSide) {
                 ItemStack stack = held.copy();
-                stack.getOrCreateTag().putUniqueId("redstone_id", UUID.randomUUID());
-                player.dropItem(stack, false);
+                stack.getOrCreateTag().putUUID("redstone_id", UUID.randomUUID());
+                player.drop(stack, false);
             }
-            player.setHeldItem(hand, ItemStack.EMPTY);
-            return ActionResult.successOrConsume(ItemStack.EMPTY, world.isRemote);
+            player.setItemInHand(hand, ItemStack.EMPTY);
+            return InteractionResultHolder.sidedSuccess(ItemStack.EMPTY, level.isClientSide);
         }
     }
-    
+
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flag) {
-        super.addInformation(stack, worldIn, tooltip, flag);
+    public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level level, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flag) {
+        super.appendHoverText(stack, level, tooltip, flag);
         UUID uid = getId(stack);
         if (uid == null) {
-            tooltip.add(new TranslationTextComponent("tooltip.utilitix.invalid_link").mergeStyle(TextFormatting.RED));
+            tooltip.add(new TranslatableComponent("tooltip.utilitix.invalid_link").withStyle(ChatFormatting.RED));
         } else {
-            tooltip.add(new TranslationTextComponent("tooltip.utilitix.valid_link", new StringTextComponent(uid.toString()).mergeStyle(TextFormatting.GREEN)).mergeStyle(TextFormatting.RED));
+            tooltip.add(new TranslatableComponent("tooltip.utilitix.valid_link", new TextComponent(uid.toString()).withStyle(ChatFormatting.GREEN)).withStyle(ChatFormatting.RED));
         }
     }
     
@@ -70,7 +70,7 @@ public class ItemLinkedCrystal extends ItemBase {
             return null;
         } else {
             try {
-                return stack.getOrCreateTag().getUniqueId("redstone_id");
+                return stack.getOrCreateTag().getUUID("redstone_id");
             } catch (Exception e) {
                 return null;
             }

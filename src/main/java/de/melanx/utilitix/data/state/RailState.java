@@ -1,9 +1,9 @@
 package de.melanx.utilitix.data.state;
 
 import io.github.noeppi_noeppi.libx.data.provider.BlockStateProviderBase;
-import net.minecraft.state.Property;
-import net.minecraft.state.properties.RailShape;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
@@ -57,7 +57,7 @@ public class RailState {
         if (modelCorner != null && this.reverseProperty != null) {
             throw new IllegalStateException("Can't use corner rail models together with reverse properties.");
         }
-        for (RailShape shape : this.shapeProperty.getAllowedValues()) {
+        for (RailShape shape : this.shapeProperty.getPossibleValues()) {
             switch (shape) {
                 case NORTH_SOUTH:
                     if (this.reverseProperty == null) {
@@ -134,7 +134,7 @@ public class RailState {
     private ModelFile createModel(BlockStateProviderBase provider, ResourceLocation id, ResourceLocation parent, String modelId, String textureId, RailShape... shapes) {
         boolean needsModel = false;
         for (RailShape shape : shapes) {
-            if (this.shapeProperty.getAllowedValues().contains(shape)) {
+            if (this.shapeProperty.getPossibleValues().contains(shape)) {
                 needsModel = true;
                 break;
             }

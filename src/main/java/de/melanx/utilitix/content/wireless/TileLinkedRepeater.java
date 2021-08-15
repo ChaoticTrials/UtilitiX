@@ -2,37 +2,38 @@ package de.melanx.utilitix.content.wireless;
 
 import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModItems;
-import io.github.noeppi_noeppi.libx.mod.registration.TileEntityBase;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.world.TickPriority;
+import io.github.noeppi_noeppi.libx.base.tile.BlockEntityBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.TickPriority;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class TileLinkedRepeater extends TileEntityBase {
+public class TileLinkedRepeater extends BlockEntityBase {
 
     private ItemStack link = ItemStack.EMPTY;
-    
-    public TileLinkedRepeater(TileEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
+
+    public TileLinkedRepeater(BlockEntityType<?> blockEntityTypeIn, BlockPos pos, BlockState state) {
+        super(blockEntityTypeIn, pos, state);
     }
 
     @Override
-    public void read(@Nonnull BlockState state, @Nonnull CompoundNBT nbt) {
-        super.read(state, nbt);
-        this.link = ItemStack.read(nbt.getCompound("Link"));
+    public void load(@Nonnull CompoundTag nbt) {
+        super.load(nbt);
+        this.link = ItemStack.of(nbt.getCompound("Link"));
     }
 
     @Nonnull
     @Override
-    public CompoundNBT write(@Nonnull CompoundNBT nbt) {
-        nbt.put("Link", this.link.serializeNBT());
-        return super.write(nbt);
+    public CompoundTag save(@Nonnull CompoundTag compound) {
+        compound.put("Link", this.link.serializeNBT());
+        return super.save(compound);
     }
 
     public ItemStack getLink() {
@@ -43,18 +44,18 @@ public class TileLinkedRepeater extends TileEntityBase {
         UUID oldId = this.getLinkId();
         this.link = link.copy();
         UUID newId = this.getLinkId();
-        if (oldId != newId && this.world != null && this.pos != null && !this.world.isRemote) {
-            WirelessStorage storage = WirelessStorage.get(this.world);
-            storage.remove(this.world, oldId, new WorldAndPos(this.world.getDimensionKey(), this.pos));
+        if (oldId != newId && this.level != null && !this.level.isClientSide) {
+            WirelessStorage storage = WirelessStorage.get(this.level);
+            storage.remove(this.level, oldId, new WorldAndPos(this.level.dimension(), this.worldPosition));
             if (newId != null) {
-                storage.update(this.world, newId, new WorldAndPos(this.world.getDimensionKey(), this.pos), BlockLinkedRepeater.inputStrength(this.world, this.getBlockState(), this.pos));
+                storage.update(this.level, newId, new WorldAndPos(this.level.dimension(), this.worldPosition), BlockLinkedRepeater.inputStrength(this.level, this.getBlockState(), this.worldPosition));
             }
-            BlockState state = this.getBlockState().with(BlockStateProperties.EYE, newId != null);
-            this.world.setBlockState(this.pos, state, 3);
-            this.updateContainingBlockInfo();
-            this.world.getPendingBlockTicks().scheduleTick(this.pos, ModBlocks.linkedRepeater, 1, TickPriority.EXTREMELY_HIGH);
+            BlockState state = this.getBlockState().setValue(BlockStateProperties.EYE, newId != null);
+            this.level.setBlock(this.worldPosition, state, 3);
+//            this.clearCache(); FIXME?
+            this.level.getBlockTicks().scheduleTick(this.worldPosition, ModBlocks.linkedRepeater, 1, TickPriority.EXTREMELY_HIGH);
         }
-        this.markDirty();
+        this.setChanged();
     }
     
     @Nullable

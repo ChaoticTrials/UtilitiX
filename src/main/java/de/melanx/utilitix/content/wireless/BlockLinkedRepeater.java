@@ -1,31 +1,33 @@
 package de.melanx.utilitix.content.wireless;
 
 import de.melanx.utilitix.registration.ModItems;
+import io.github.noeppi_noeppi.libx.base.tile.BlockBE;
 import io.github.noeppi_noeppi.libx.mod.ModX;
-import io.github.noeppi_noeppi.libx.mod.registration.BlockTE;
-import net.minecraft.block.*;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.TickPriority;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.TickPriority;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DiodeBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,9 +35,9 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class BlockLinkedRepeater extends BlockTE<TileLinkedRepeater> {
+public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
 
-    public static final VoxelShape SHAPE = Block.makeCuboidShape(0, 0, 0, 16, 2, 16);
+    public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 2, 16);
 
     public BlockLinkedRepeater(ModX mod, Properties properties) {
         this(mod, properties, new Item.Properties());
@@ -43,183 +45,183 @@ public class BlockLinkedRepeater extends BlockTE<TileLinkedRepeater> {
 
     public BlockLinkedRepeater(ModX mod, Properties properties, Item.Properties itemProperties) {
         super(mod, TileLinkedRepeater.class, properties, itemProperties);
-        this.setDefaultState(this.getStateContainer().getBaseState()
-                .with(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
-                .with(BlockStateProperties.EYE, false)
-                .with(BlockStateProperties.POWER_0_15, 0)
+        this.registerDefaultState(this.getStateDefinition().any()
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
+                .setValue(BlockStateProperties.EYE, false)
+                .setValue(BlockStateProperties.POWER, 0)
         );
     }
 
     @Override
     public void registerClient(ResourceLocation id, Consumer<Runnable> defer) {
-        ClientRegistry.bindTileEntityRenderer(this.getTileType(), TesrLinkedRepeater::new);
+//        ClientRegistry.bindTileEntityRenderer(this.getBlockEntityType(), BesrLinkedRepeater::new); TODO
     }
 
     @Override
-    protected void fillStateContainer(@Nonnull StateContainer.Builder<Block, BlockState> builder) {
-        super.fillStateContainer(builder);
-        builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.EYE, BlockStateProperties.POWER_0_15);
+    protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.EYE, BlockStateProperties.POWER);
     }
 
     @Nullable
     @Override
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return this.getDefaultState()
-                .with(BlockStateProperties.HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite())
-                .with(BlockStateProperties.EYE, false)
-                .with(BlockStateProperties.POWER_0_15, 0);
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return this.defaultBlockState()
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite())
+                .setValue(BlockStateProperties.EYE, false)
+                .setValue(BlockStateProperties.POWER, 0);
     }
 
     @Nonnull
     @Override
     @SuppressWarnings("deprecation")
-    public ActionResultType onBlockActivated(@Nonnull BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull BlockRayTraceResult hit) {
-        if (!world.isRemote) {
-            TileLinkedRepeater tile = this.getTile(world, pos);
+    public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
+        if (!level.isClientSide) {
+            TileLinkedRepeater tile = this.getBlockEntity(level, pos);
             ItemStack link = tile.getLink();
             if (!link.isEmpty()) {
-                ItemEntity entity = new ItemEntity(world, pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, link.copy());
-                world.addEntity(entity);
+                ItemEntity entity = new ItemEntity(level, pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, link.copy());
+                level.addFreshEntity(entity);
                 tile.setLink(ItemStack.EMPTY);
             } else {
-                ItemStack held = player.getHeldItem(hand);
+                ItemStack held = player.getItemInHand(hand);
                 if (!held.isEmpty() && held.getItem() == ModItems.linkedCrystal && ItemLinkedCrystal.getId(held) != null) {
                     tile.setLink(held.split(1));
-                    player.setHeldItem(hand, held);
+                    player.setItemInHand(hand, held);
                 } else {
-                    return ActionResultType.FAIL;
+                    return InteractionResult.FAIL;
                 }
             }
         }
-        return ActionResultType.successOrConsume(world.isRemote);
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override
-    public void onReplaced(@Nonnull BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
-        if (state.hasTileEntity() && (!state.matchesBlock(newState.getBlock()) || !newState.hasTileEntity())) {
-            TileLinkedRepeater tile = this.getTile(world, pos);
-            WirelessStorage.get(world).remove(world, tile.getLinkId(), new WorldAndPos(world.getDimensionKey(), pos));
+    public void onRemove(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
+        if (state.hasBlockEntity() && (!state.is(newState.getBlock()) || !newState.hasBlockEntity())) {
+            TileLinkedRepeater tile = this.getBlockEntity(level, pos);
+            WirelessStorage.get(level).remove(level, tile.getLinkId(), new WorldAndPos(level.dimension(), pos));
             ItemStack stack = tile.getLink();
             if (!stack.isEmpty()) {
-                ItemEntity entity = new ItemEntity(world, pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, stack.copy());
-                world.addEntity(entity);
+                ItemEntity entity = new ItemEntity(level, pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, stack.copy());
+                level.addFreshEntity(entity);
             }
         }
-        super.onReplaced(state, world, pos, newState, isMoving);
-        this.notifyNeighbors(world, pos, state);
+        super.onRemove(state, level, pos, newState, isMoving);
+        this.notifyNeighbors(level, pos, state);
     }
 
     @Override
-    protected boolean shouldDropInventory(World world, BlockPos pos, BlockState state) {
+    protected boolean shouldDropInventory(Level level, BlockPos pos, BlockState state) {
         return false;
     }
 
     @Nonnull
     @Override
     @SuppressWarnings("deprecation")
-    public VoxelShape getShape(@Nonnull BlockState state, @Nonnull IBlockReader world, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
+    public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
         return SHAPE;
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public boolean isValidPosition(@Nonnull BlockState state, @Nonnull IWorldReader world, BlockPos pos) {
-        return hasSolidSideOnTop(world, pos.down());
+    public boolean canSurvive(@Nonnull BlockState state, @Nonnull LevelReader level, BlockPos pos) {
+        return canSupportRigidBlock(level, pos.below());
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public int getStrongPower(BlockState state, @Nonnull IBlockReader world, @Nonnull BlockPos pos, @Nonnull Direction side) {
-        return state.getWeakPower(world, pos, side);
+    public int getDirectSignal(BlockState blockState, @Nonnull BlockGetter blockAccess, @Nonnull BlockPos pos, @Nonnull Direction side) {
+        return blockState.getSignal(blockAccess, pos, side);
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public int getWeakPower(BlockState state, @Nonnull IBlockReader world, @Nonnull BlockPos pos, @Nonnull Direction side) {
-        return state.get(BlockStateProperties.HORIZONTAL_FACING) == side ? state.get(BlockStateProperties.POWER_0_15) : 0;
+    public int getSignal(BlockState blockState, @Nonnull BlockGetter blockAccess, @Nonnull BlockPos pos, @Nonnull Direction side) {
+        return blockState.getValue(BlockStateProperties.HORIZONTAL_FACING) == side ? blockState.getValue(BlockStateProperties.POWER) : 0;
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public void neighborChanged(BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockPos fromPos, boolean isMoving) {
-        if (state.isValidPosition(world, pos)) {
-            this.updateState(world, pos, state);
+    public void neighborChanged(BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockPos fromPos, boolean isMoving) {
+        if (state.canSurvive(level, pos)) {
+            this.updateState(level, pos, state);
         } else {
-            world.removeBlock(pos, false);
+            level.removeBlock(pos, false);
             for (Direction direction : Direction.values()) {
-                world.notifyNeighborsOfStateChange(pos.offset(direction), this);
+                level.updateNeighborsAt(pos.relative(direction), this);
             }
         }
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public boolean canProvidePower(@Nonnull BlockState state) {
+    public boolean isSignalSource(@Nonnull BlockState state) {
         return true;
     }
 
-    @Override
-    public boolean canConnectRedstone(BlockState state, IBlockReader world, BlockPos pos, @Nullable Direction side) {
-        return this.canProvidePower(state) && side != null && side.getAxis() == state.get(BlockStateProperties.HORIZONTAL_FACING).getAxis();
+    //    @Override FIXME
+    public boolean canConnectRedstone(BlockState state, BlockGetter level, BlockPos pos, @Nullable Direction side) {
+        return this.isSignalSource(state) && side != null && side.getAxis() == state.getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis();
     }
 
     @Override
-    public void onBlockPlacedBy(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull BlockState state, LivingEntity living, @Nonnull ItemStack stack) {
-        if (inputStrength(world, state, pos) != state.get(BlockStateProperties.POWER_0_15)) {
-            world.getPendingBlockTicks().scheduleTick(pos, this, 1);
+    public void setPlacedBy(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, LivingEntity placer, @Nonnull ItemStack stack) {
+        if (inputStrength(level, state, pos) != state.getValue(BlockStateProperties.POWER)) {
+            level.getBlockTicks().scheduleTick(pos, this, 1);
         }
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public void onBlockAdded(@Nonnull BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull BlockState oldState, boolean isMoving) {
-        this.notifyNeighbors(world, pos, state);
+    public void onPlace(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState oldState, boolean isMoving) {
+        this.notifyNeighbors(level, pos, state);
     }
 
-    private void updateState(World world, BlockPos pos, BlockState state) {
-        if (!world.getPendingBlockTicks().isTickPending(pos, this)) {
+    private void updateState(Level level, BlockPos pos, BlockState state) {
+        if (!level.getBlockTicks().willTickThisTick(pos, this)) {
             TickPriority priority = TickPriority.HIGH;
-            Block targetBlock = world.getBlockState(pos.offset(state.get(BlockStateProperties.HORIZONTAL_FACING))).getBlock();
-            if (targetBlock instanceof RedstoneDiodeBlock || targetBlock instanceof BlockLinkedRepeater) {
+            Block targetBlock = level.getBlockState(pos.relative(state.getValue(BlockStateProperties.HORIZONTAL_FACING))).getBlock();
+            if (targetBlock instanceof DiodeBlock || targetBlock instanceof BlockLinkedRepeater) {
                 priority = TickPriority.EXTREMELY_HIGH;
             }
-            world.getPendingBlockTicks().scheduleTick(pos, this, 1, priority);
+            level.getBlockTicks().scheduleTick(pos, this, 1, priority);
         }
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public void tick(@Nonnull BlockState state, @Nonnull ServerWorld world, @Nonnull BlockPos pos, @Nonnull Random rand) {
-        UUID uid = this.getTile(world, pos).getLinkId();
-        int input = inputStrength(world, state, pos);
+    public void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull Random rand) {
+        UUID uid = this.getBlockEntity(level, pos).getLinkId();
+        int input = inputStrength(level, state, pos);
         if (uid != null) {
-            WirelessStorage storage = WirelessStorage.get(world);
-            storage.update(world, uid, new WorldAndPos(world.getDimensionKey(), pos), input);
+            WirelessStorage storage = WirelessStorage.get(level);
+            storage.update(level, uid, new WorldAndPos(level.dimension(), pos), input);
             input = storage.getStrength(uid);
         }
-        if (input != state.get(BlockStateProperties.POWER_0_15)) {
-            world.setBlockState(pos, state.with(BlockStateProperties.POWER_0_15, input), 2);
+        if (input != state.getValue(BlockStateProperties.POWER)) {
+            level.setBlock(pos, state.setValue(BlockStateProperties.POWER, input), 2);
         }
     }
 
-    private void notifyNeighbors(World world, BlockPos pos, BlockState state) {
-        Direction face = state.get(BlockStateProperties.HORIZONTAL_FACING);
-        BlockPos target = pos.offset(face.getOpposite());
-        if (net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(world, pos, world.getBlockState(pos), java.util.EnumSet.of(face.getOpposite()), false).isCanceled())
+    private void notifyNeighbors(Level level, BlockPos pos, BlockState state) {
+        Direction face = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
+        BlockPos target = pos.relative(face.getOpposite());
+        if (net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(level, pos, level.getBlockState(pos), java.util.EnumSet.of(face.getOpposite()), false).isCanceled())
             return;
-        world.neighborChanged(target, this, pos);
-        world.notifyNeighborsOfStateExcept(target, this, face);
+        level.neighborChanged(target, this, pos);
+        level.updateNeighborsAtExceptFromFacing(target, this, face);
     }
 
-    public static int inputStrength(World world, BlockState state, BlockPos pos) {
-        Direction face = state.get(BlockStateProperties.HORIZONTAL_FACING);
-        BlockPos targetPos = pos.offset(face);
-        int i = world.getRedstonePower(targetPos, face);
+    public static int inputStrength(Level level, BlockState state, BlockPos pos) {
+        Direction face = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
+        BlockPos targetPos = pos.relative(face);
+        int i = level.getSignal(targetPos, face);
         if (i >= 15) {
             return i;
         } else {
-            BlockState targetState = world.getBlockState(targetPos);
-            return Math.max(i, targetState.matchesBlock(Blocks.REDSTONE_WIRE) ? targetState.get(BlockStateProperties.POWER_0_15) : 0);
+            BlockState targetState = level.getBlockState(targetPos);
+            return Math.max(i, targetState.is(Blocks.REDSTONE_WIRE) ? targetState.getValue(BlockStateProperties.POWER) : 0);
         }
     }
 }

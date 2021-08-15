@@ -1,61 +1,61 @@
 package de.melanx.utilitix.content.brewery;
 
 import com.google.common.collect.ImmutableList;
+import io.github.noeppi_noeppi.libx.base.ItemBase;
 import io.github.noeppi_noeppi.libx.mod.ModX;
-import io.github.noeppi_noeppi.libx.mod.registration.ItemBase;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.UseAction;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.DrinkHelper;
-import net.minecraft.util.Hand;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
 public class ItemFailedPotion extends ItemBase {
 
-    private static final List<Effect> VERY_LONG_POTIONS = ImmutableList.of(Effects.BAD_OMEN, Effects.UNLUCK);
-    private static final List<Effect> LONG_POTIONS = ImmutableList.of(Effects.SLOWNESS, Effects.POISON, Effects.HUNGER, Effects.WEAKNESS);
-    private static final List<Effect> SHORT_POTIONS = ImmutableList.of(Effects.NAUSEA, Effects.BLINDNESS, Effects.LEVITATION);
-    
+    private static final List<MobEffect> VERY_LONG_POTIONS = ImmutableList.of(MobEffects.BAD_OMEN, MobEffects.UNLUCK);
+    private static final List<MobEffect> LONG_POTIONS = ImmutableList.of(MobEffects.MOVEMENT_SLOWDOWN, MobEffects.POISON, MobEffects.HUNGER, MobEffects.WEAKNESS);
+    private static final List<MobEffect> SHORT_POTIONS = ImmutableList.of(MobEffects.CONFUSION, MobEffects.BLINDNESS, MobEffects.LEVITATION);
+
     public ItemFailedPotion(ModX mod, Properties properties) {
         super(mod, properties);
     }
 
     @Nonnull
     @Override
-    public ItemStack onItemUseFinish(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull LivingEntity living) {
-        PlayerEntity player = living instanceof PlayerEntity ? (PlayerEntity)living : null;
-        if (player instanceof ServerPlayerEntity) {
-            CriteriaTriggers.CONSUME_ITEM.trigger((ServerPlayerEntity)player, stack);
+    public ItemStack finishUsingItem(@Nonnull ItemStack stack, @Nonnull Level level, @Nonnull LivingEntity entityLiving) {
+        Player player = entityLiving instanceof Player ? (Player) entityLiving : null;
+        if (player instanceof ServerPlayer) {
+            CriteriaTriggers.CONSUME_ITEM.trigger((ServerPlayer) player, stack);
         }
-        if (!world.isRemote) {
-            living.addPotionEffect(new EffectInstance(VERY_LONG_POTIONS.get(world.rand.nextInt(VERY_LONG_POTIONS.size())), 20 * 60 * 2));
-            living.addPotionEffect(new EffectInstance(LONG_POTIONS.get(world.rand.nextInt(LONG_POTIONS.size())), 20 * 30));
-            living.addPotionEffect(new EffectInstance(SHORT_POTIONS.get(world.rand.nextInt(SHORT_POTIONS.size())), 20 * 10));
+        if (!level.isClientSide) {
+            entityLiving.addEffect(new MobEffectInstance(VERY_LONG_POTIONS.get(level.random.nextInt(VERY_LONG_POTIONS.size())), 20 * 60 * 2));
+            entityLiving.addEffect(new MobEffectInstance(LONG_POTIONS.get(level.random.nextInt(LONG_POTIONS.size())), 20 * 30));
+            entityLiving.addEffect(new MobEffectInstance(SHORT_POTIONS.get(level.random.nextInt(SHORT_POTIONS.size())), 20 * 10));
         }
         if (player != null) {
-            player.addStat(Stats.ITEM_USED.get(this));
-            if (!player.abilities.isCreativeMode) {
+            player.awardStat(Stats.ITEM_USED.get(this));
+            if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }
         }
-        if (player == null || !player.abilities.isCreativeMode) {
+        if (player == null || !player.getAbilities().instabuild) {
             if (stack.isEmpty()) {
                 return new ItemStack(Items.GLASS_BOTTLE);
             }
             if (player != null) {
-                player.inventory.addItemStackToInventory(new ItemStack(Items.GLASS_BOTTLE));
+                player.getInventory().add(new ItemStack(Items.GLASS_BOTTLE));
             }
         }
         return stack;
@@ -65,21 +65,21 @@ public class ItemFailedPotion extends ItemBase {
     public int getUseDuration(@Nonnull ItemStack stack) {
         return 32;
     }
-    
+
     @Nonnull
     @Override
-    public UseAction getUseAction(@Nonnull ItemStack stack) {
-        return UseAction.DRINK;
+    public UseAnim getUseAnimation(@Nonnull ItemStack stack) {
+        return UseAnim.DRINK;
     }
-    
+
     @Nonnull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull PlayerEntity player, @Nonnull Hand hand) {
-        return DrinkHelper.startDrinking(world, player, hand);
+    public InteractionResultHolder<ItemStack> use(@Nonnull Level level, @Nonnull Player player, @Nonnull InteractionHand hand) {
+        return ItemUtils.startUsingInstantly(level, player, hand);
     }
 
     @Override
-    public boolean hasEffect(@Nonnull ItemStack stack) {
+    public boolean isFoil(@Nonnull ItemStack stack) {
         return true;
     }
 }

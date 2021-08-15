@@ -2,19 +2,19 @@ package de.melanx.utilitix.content.bell;
 
 import de.melanx.utilitix.UtilitiX;
 import io.github.noeppi_noeppi.libx.mod.ModX;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.SpawnEggItem;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -26,10 +26,10 @@ import java.util.Optional;
 
 public class ItemMobBell extends BellBase {
 
-    private static final IFormattableTextComponent NO_MOB = new TranslationTextComponent("tooltip." + UtilitiX.getInstance().modid + ".no_mob").mergeStyle(TextFormatting.DARK_RED);
+    private static final MutableComponent NO_MOB = new TranslatableComponent("tooltip." + UtilitiX.getInstance().modid + ".no_mob").withStyle(ChatFormatting.DARK_RED);
 
     public ItemMobBell(ModX mod, Item.Properties properties) {
-        super(mod, properties.setISTER(() -> RenderBell::new));
+        super(mod, properties);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ItemMobBell extends BellBase {
             return false;
         }
         String s = stack.getOrCreateTag().getString("Entity");
-        return EntityType.getKey(entity.getType()).equals(ResourceLocation.tryCreate(s));
+        return EntityType.getKey(entity.getType()).equals(ResourceLocation.tryParse(s));
     }
 
     @Override
@@ -50,34 +50,34 @@ public class ItemMobBell extends BellBase {
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flag) {
-        super.addInformation(stack, world, tooltip, flag);
-        IFormattableTextComponent component = getCurrentMob(stack);
+    public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level level, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flag) {
+        super.appendHoverText(stack, level, tooltip, flag);
+        MutableComponent component = getCurrentMob(stack);
         tooltip.add(component != null ? component : NO_MOB);
     }
 
     @Nullable
-    public static IFormattableTextComponent getCurrentMob(ItemStack stack) {
+    public static MutableComponent getCurrentMob(ItemStack stack) {
         String s = stack.getOrCreateTag().getString("Entity");
-        Optional<EntityType<?>> entityType = EntityType.byKey(s);
+        Optional<EntityType<?>> entityType = EntityType.byString(s);
 
         return entityType.map(ItemMobBell::getCurrentMob).orElse(null);
     }
 
     @Nonnull
-    public static IFormattableTextComponent getCurrentMob(EntityType<?> entityType) {
-        ITextComponent name = entityType.getName();
-        IFormattableTextComponent component = new TranslationTextComponent("tooltip." + UtilitiX.getInstance().modid + ".current_mob");
-        component.mergeStyle(entityType.getClassification() == EntityClassification.MONSTER ? TextFormatting.RED : TextFormatting.GOLD);
+    public static MutableComponent getCurrentMob(EntityType<?> entityType) {
+        Component name = entityType.getDescription();
+        MutableComponent component = new TranslatableComponent("tooltip." + UtilitiX.getInstance().modid + ".current_mob");
+        component.withStyle(entityType.getCategory() == MobCategory.MONSTER ? ChatFormatting.RED : ChatFormatting.GOLD);
 
-        return component.appendString(": ").appendSibling(name);
+        return component.append(": ").append(name);
     }
     
     public static int getColor(ItemStack stack) {
         if (stack.getTag() != null && stack.getTag().contains("Entity", Constants.NBT.TAG_STRING)) {
-            ResourceLocation rl = ResourceLocation.tryCreate(stack.getTag().getString("Entity"));
+            ResourceLocation rl = ResourceLocation.tryParse(stack.getTag().getString("Entity"));
             EntityType<?> entityType = rl == null ? null : ForgeRegistries.ENTITIES.getValue(rl);
-            SpawnEggItem egg = entityType == null ? null : SpawnEggItem.getEgg(entityType);
+            SpawnEggItem egg = entityType == null ? null : SpawnEggItem.byId(entityType);
             if (egg != null) {
                 return Objects.requireNonNull(egg).getColor(0);
             }

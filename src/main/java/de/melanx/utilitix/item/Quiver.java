@@ -1,24 +1,24 @@
 package de.melanx.utilitix.item;
 
 import de.melanx.utilitix.UtilitiX;
+import io.github.noeppi_noeppi.libx.base.ItemBase;
 import io.github.noeppi_noeppi.libx.inventory.BaseItemStackHandler;
-import io.github.noeppi_noeppi.libx.inventory.container.GenericContainer;
+import io.github.noeppi_noeppi.libx.menu.GenericMenu;
 import io.github.noeppi_noeppi.libx.mod.ModX;
-import io.github.noeppi_noeppi.libx.mod.registration.ItemBase;
 import io.github.noeppi_noeppi.libx.mod.registration.Registerable;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
@@ -27,46 +27,47 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class Quiver extends ItemBase implements Registerable {
-    
+
     public static final ResourceLocation SLOT_VALIDATOR = new ResourceLocation(UtilitiX.getInstance().modid, "quiver_arrows");
-    
+
     public Quiver(ModX mod, Properties properties) {
         super(mod, properties);
     }
 
     @Override
     public void registerCommon(ResourceLocation id, Consumer<Runnable> defer) {
-        GenericContainer.registerSlotValidator(SLOT_VALIDATOR, (slot, stack) -> ItemTags.ARROWS.contains(stack.getItem()));
+        GenericMenu.registerSlotValidator(SLOT_VALIDATOR, (slot, stack) -> ItemTags.ARROWS.contains(stack.getItem()));
     }
-    
+
     @Nonnull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull PlayerEntity player, @Nonnull Hand hand) {
-        ItemStack stack = player.getHeldItem(hand);
+    public InteractionResultHolder<ItemStack> use(@Nonnull Level level, @Nonnull Player player, @Nonnull InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
 
-        if (!world.isRemote) {
+        if (!level.isClientSide) {
             AtomicReference<BaseItemStackHandler> handler = new AtomicReference<>(null);
-            handler.set(new BaseItemStackHandler(9,
-                    slot -> {
+            handler.set(BaseItemStackHandler.builder(9)
+                    .contentsChanged(slot -> {
                         stack.getOrCreateTag().put("Items", handler.get().serializeNBT());
-                        player.setHeldItem(hand, stack);
-                    },
-                    (slot, stack1) -> ItemTags.ARROWS.contains(stack1.getItem())));
+                        player.setItemInHand(hand, stack);
+                    })
+                    .validator(stack1 -> ItemTags.ARROWS.contains(stack1.getItem()), 0, 1, 2, 3, 4, 5, 6, 7, 8)
+                    .build());
             if (stack.getOrCreateTag().contains("Items")) {
                 handler.get().deserializeNBT(stack.getOrCreateTag().getCompound("Items"));
             }
-            if (player instanceof ServerPlayerEntity) {
-                GenericContainer.open((ServerPlayerEntity) player, handler.get(), new TranslationTextComponent("screen." + UtilitiX.getInstance().modid + ".quiver"), SLOT_VALIDATOR);
+            if (player instanceof ServerPlayer) {
+                GenericMenu.open((ServerPlayer) player, handler.get(), new TranslatableComponent("screen." + UtilitiX.getInstance().modid + ".quiver"), SLOT_VALIDATOR);
             }
-            return ActionResult.successOrConsume(stack, false);
+            return InteractionResultHolder.sidedSuccess(stack, false);
         }
 
-        return ActionResult.resultPass(stack);
+        return InteractionResultHolder.pass(stack);
     }
 
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        return enchantment == Enchantments.INFINITY;
+        return enchantment == Enchantments.INFINITY_ARROWS;
     }
 
     @Nullable
@@ -75,9 +76,10 @@ public class Quiver extends ItemBase implements Registerable {
             return null;
         }
         AtomicReference<BaseItemStackHandler> handler = new AtomicReference<>(null);
-        handler.set(new BaseItemStackHandler(
-                9, slot -> stack.getOrCreateTag().put("Items", handler.get().serializeNBT()),
-                (slot, stack1) -> ItemTags.ARROWS.contains(stack1.getItem()))
+        handler.set(BaseItemStackHandler.builder(9)
+                .contentsChanged(slot -> stack.getOrCreateTag().put("Items", handler.get().serializeNBT()))
+                .validator(stack1 -> ItemTags.ARROWS.contains(stack1.getItem()))
+                .build()
         );
         handler.get().deserializeNBT(stack.getOrCreateTag().getCompound("Items"));
         return handler.get();
@@ -97,7 +99,7 @@ public class Quiver extends ItemBase implements Registerable {
     }
 
     @Override
-    public void fillItemGroup(@Nonnull ItemGroup group, @Nonnull NonNullList<ItemStack> items) {
+    public void fillItemCategory(@Nonnull CreativeModeTab group, @Nonnull NonNullList<ItemStack> items) {
         // TODO re-add after item was added
     }
 }

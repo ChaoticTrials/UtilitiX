@@ -7,7 +7,6 @@ import io.github.noeppi_noeppi.libx.config.Group;
 import io.github.noeppi_noeppi.libx.config.validator.FloatRange;
 import io.github.noeppi_noeppi.libx.config.validator.IntRange;
 import io.github.noeppi_noeppi.libx.util.ResourceList;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 
@@ -16,8 +15,8 @@ public class UtilitiXConfig {
     @Group("Config values for the two bells, mob bell and hand bell")
     public static class HandBells {
 
-        @Config(value = "Entity blacklist for mob bell", elementType = ResourceLocation.class)
-        public static List<ResourceLocation> blacklist = ImmutableList.of();
+        @Config("Entity blacklist for mob bell")
+        public static ResourceList mobBellEntities = ResourceList.BLACKLIST;
 
         @Config("The time in ticks how long you have to ring the hand bell to let the mobs glow")
         public static int ringTime = 40;
@@ -32,15 +31,10 @@ public class UtilitiXConfig {
         public static int notifyRadius = 24;
     }
 
-    @Config(
-            value = {
-                    "A list of armor stand rotations for armor stands with arms.",
-                    "You can cycle through these with a piece of flint."
-            },
-            mapper = "utilitix:armor_stand_rotation_list",
-            elementType = ArmorStandRotation.class
-    )
-    @SuppressWarnings("configElement")
+    @Config({
+            "A list of armor stand rotations for armor stands with arms.",
+            "You can cycle through these with a piece of flint."
+    })
     public static List<ArmorStandRotation> armorStandPoses = ImmutableList.of(
             ArmorStandRotation.defaultRotation(),
             ArmorStandRotation.create(3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -10.0f, 0.0f, -10.0f, -15.0f, 0.0f, 10.0f, 25.0f, 0.0f, -1.0f, -25.0f, 0.0f, 1.0f),
@@ -55,10 +49,10 @@ public class UtilitiXConfig {
 
     @Config("Items in world which have mending collect xp orbs to get repaired")
     public static boolean betterMending = true;
-    
+
     @Group("Config options for rails and minecarts")
     public static class Track {
-        
+
         @Config("The maximum hardness of blocks, the stonecutter cart can mine.")
         @FloatRange(min = 0)
         public static float stonecutterMaxHardness = 5;

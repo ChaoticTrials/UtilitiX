@@ -4,7 +4,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 
 @Mod.EventBusSubscriber(modid = "utilitix", bus = Mod.EventBusSubscriber.Bus.MOD)
 public class DataCreator {
@@ -15,9 +15,7 @@ public class DataCreator {
         ExistingFileHelper helper = event.getExistingFileHelper();
 
         if (event.includeServer()) {
-            BlockTagProvider blockTagProvider = new BlockTagProvider(generator, helper);
-            generator.addProvider(blockTagProvider);
-            generator.addProvider(new ItemTagProvider(generator, helper, blockTagProvider));
+            generator.addProvider(new ModTagProvider(generator, helper));
             generator.addProvider(new RecipeProvider(generator));
             generator.addProvider(new LootTableProvider(generator));
         }

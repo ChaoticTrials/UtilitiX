@@ -1,7 +1,7 @@
 package de.melanx.utilitix.network;
 
 import io.github.noeppi_noeppi.libx.network.PacketSerializer;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class PistonCartModeCycleSerializer implements PacketSerializer<PistonCartModeCycleSerializer.PistonCartModeCycleMessage> {
 
@@ -11,21 +11,16 @@ public class PistonCartModeCycleSerializer implements PacketSerializer<PistonCar
     }
 
     @Override
-    public void encode(PistonCartModeCycleMessage msg, PacketBuffer buffer) {
+    public void encode(PistonCartModeCycleMessage msg, FriendlyByteBuf buffer) {
         buffer.writeInt(msg.id);
     }
 
     @Override
-    public PistonCartModeCycleMessage decode(PacketBuffer buffer) {
+    public PistonCartModeCycleMessage decode(FriendlyByteBuf buffer) {
         return new PistonCartModeCycleMessage(buffer.readInt());
     }
 
-    public static class PistonCartModeCycleMessage {
-
-        public final int id;
-
-        public PistonCartModeCycleMessage(int id) {
-            this.id = id;
-        }
+    public record PistonCartModeCycleMessage(int id) {
+        // record
     }
 }

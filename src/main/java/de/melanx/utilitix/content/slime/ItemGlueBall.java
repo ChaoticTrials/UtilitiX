@@ -1,13 +1,13 @@
 package de.melanx.utilitix.content.slime;
 
+import io.github.noeppi_noeppi.libx.base.ItemBase;
 import io.github.noeppi_noeppi.libx.mod.ModX;
-import io.github.noeppi_noeppi.libx.mod.registration.ItemBase;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 import javax.annotation.Nonnull;
 
@@ -19,28 +19,28 @@ public class ItemGlueBall extends ItemBase {
 
     @Nonnull
     @Override
-    public ActionResultType onItemUse(@Nonnull ItemUseContext context) {
-        Chunk chunk = context.getWorld().getChunkAt(context.getPos());
+    public InteractionResult useOn(@Nonnull UseOnContext context) {
+        LevelChunk chunk = context.getLevel().getChunkAt(context.getClickedPos());
         //noinspection ConstantConditions
         StickyChunk glue = chunk.getCapability(SlimyCapability.STICKY_CHUNK).orElse(null);
         //noinspection ConstantConditions
         if (glue != null) {
-            int x = context.getPos().getX() & 0xF;
-            int y = context.getPos().getY();
-            int z = context.getPos().getZ() & 0xF;
-            Direction face = context.getPlayer() != null && context.getPlayer().isSneaking() ? context.getFace().getOpposite() : context.getFace();
-            if (!glue.get(x, y, z, face) && SlimyCapability.canGlue(context.getWorld(), context.getPos(), face)) {
-                if (!context.getWorld().isRemote) {
+            int x = context.getClickedPos().getX() & 0xF;
+            int y = context.getClickedPos().getY();
+            int z = context.getClickedPos().getZ() & 0xF;
+            Direction face = context.getPlayer() != null && context.getPlayer().isShiftKeyDown() ? context.getClickedFace().getOpposite() : context.getClickedFace();
+            if (!glue.get(x, y, z, face) && SlimyCapability.canGlue(context.getLevel(), context.getClickedPos(), face)) {
+                if (!context.getLevel().isClientSide) {
                     glue.set(x, y, z, face, true);
-                    chunk.markDirty();
-                    if (context.getPlayer() == null || !context.getPlayer().abilities.isCreativeMode) {
-                        context.getItem().shrink(1);
+                    chunk.markUnsaved();
+                    if (context.getPlayer() == null || !context.getPlayer().getAbilities().instabuild) {
+                        context.getItemInHand().shrink(1);
                     }
-                    ((ServerWorld) context.getWorld()).spawnParticle(ParticleTypes.ITEM_SLIME, context.getPos().getX() + 0.5 + (0.55 * face.getXOffset()), context.getPos().getY() + 0.5 + (0.55 * face.getYOffset()), context.getPos().getZ() + 0.5 + (0.55 * face.getZOffset()), 10, 0, 0, 0, 0.1);
+                    ((ServerLevel) context.getLevel()).sendParticles(ParticleTypes.ITEM_SLIME, context.getClickedPos().getX() + 0.5 + (0.55 * face.getStepX()), context.getClickedPos().getY() + 0.5 + (0.55 * face.getStepY()), context.getClickedPos().getZ() + 0.5 + (0.55 * face.getStepZ()), 10, 0, 0, 0, 0.1);
                 }
-                return ActionResultType.successOrConsume(context.getWorld().isRemote);
+                return InteractionResult.sidedSuccess(context.getLevel().isClientSide);
             }
         }
-        return super.onItemUse(context);
+        return super.useOn(context);
     }
 }

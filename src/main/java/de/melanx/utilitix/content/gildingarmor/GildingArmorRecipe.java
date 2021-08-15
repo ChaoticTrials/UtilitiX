@@ -3,32 +3,32 @@ package de.melanx.utilitix.content.gildingarmor;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.registration.ModRecipes;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArmorMaterial;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.SmithingRecipe;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.UpgradeRecipe;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
 
-public class GildingArmorRecipe extends SmithingRecipe {
+public class GildingArmorRecipe extends UpgradeRecipe {
 
     public GildingArmorRecipe(ResourceLocation id) {
         super(id, Ingredient.EMPTY, Ingredient.EMPTY, ItemStack.EMPTY);
     }
 
     @Override
-    public boolean matches(@Nonnull IInventory inv, @Nonnull World world) {
-        ItemStack input = inv.getStackInSlot(0);
-        ItemStack addition = inv.getStackInSlot(1);
+    public boolean matches(@Nonnull Container inv, @Nonnull Level level) {
+        ItemStack input = inv.getItem(0);
+        ItemStack addition = inv.getItem(1);
 
         if (input.getItem() instanceof ArmorItem && !isGilded(input) && canGild((ArmorItem) input.getItem())) {
             return addition.getItem() == ModItems.gildingCrystal;
@@ -39,8 +39,8 @@ public class GildingArmorRecipe extends SmithingRecipe {
 
     @Nonnull
     @Override
-    public ItemStack getCraftingResult(@Nonnull IInventory inv) {
-        ItemStack stack = inv.getStackInSlot(0).copy();
+    public ItemStack assemble(@Nonnull Container inv) {
+        ItemStack stack = inv.getItem(0).copy();
         stack.getOrCreateTag().putBoolean("Gilded_UtilitiX", true);
 
         return stack;
@@ -48,18 +48,18 @@ public class GildingArmorRecipe extends SmithingRecipe {
 
     @Nonnull
     @Override
-    public ItemStack getRecipeOutput() {
+    public ItemStack getResultItem() {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public boolean isValidAdditionItem(@Nonnull ItemStack addition) {
+    public boolean isAdditionIngredient(@Nonnull ItemStack addition) {
         return addition.getItem() == ModItems.gildingCrystal;
     }
 
     @Nonnull
     @Override
-    public IRecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         return ModRecipes.GILDING_SERIALIZER;
     }
 
@@ -68,22 +68,22 @@ public class GildingArmorRecipe extends SmithingRecipe {
     }
 
     public static boolean canGild(ArmorItem item) {
-        return !item.makesPiglinsNeutral(new ItemStack(item), null) && item.getArmorMaterial() != ArmorMaterial.GOLD;
+        return !item.makesPiglinsNeutral(new ItemStack(item), null) && item.getMaterial() != ArmorMaterials.GOLD;
     }
 
-    public static Set<SmithingRecipe> getRecipes() {
-        Set<SmithingRecipe> recipes = new HashSet<>();
+    public static Set<UpgradeRecipe> getRecipes() {
+        Set<UpgradeRecipe> recipes = new HashSet<>();
 
-        Ingredient gildingItem = Ingredient.fromItems(ModItems.gildingCrystal);
+        Ingredient gildingItem = Ingredient.of(ModItems.gildingCrystal);
 
         for (Item item : ForgeRegistries.ITEMS.getValues()) {
             if (item instanceof ArmorItem && canGild((ArmorItem) item)) {
-                ResourceLocation id = new ResourceLocation(UtilitiX.getInstance().modid, "gilding." + item.getTranslationKey());
+                ResourceLocation id = new ResourceLocation(UtilitiX.getInstance().modid, "gilding." + item.getDescriptionId());
 
                 ItemStack output = new ItemStack(item);
                 output.getOrCreateTag().putBoolean("Gilded_UtilitiX", true);
 
-                SmithingRecipe recipe = new SmithingRecipe(id, Ingredient.fromItems(item), gildingItem, output);
+                UpgradeRecipe recipe = new UpgradeRecipe(id, Ingredient.of(item), gildingItem, output);
 
                 recipes.add(recipe);
             }

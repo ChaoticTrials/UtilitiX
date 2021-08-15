@@ -2,13 +2,13 @@ package de.melanx.utilitix.content.wireless;
 
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.registration.ModBlocks;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.world.TickPriority;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.DimensionSavedDataManager;
-import net.minecraft.world.storage.WorldSavedData;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.TickPriority;
+import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
@@ -17,14 +17,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class WirelessStorage extends WorldSavedData {
+public class WirelessStorage extends SavedData {
 
     public static final String ID = UtilitiX.getInstance().modid + "_wireless";
 
-    public static WirelessStorage get(World world) {
-        if (!world.isRemote) {
-            DimensionSavedDataManager storage = ((ServerWorld) world).getServer().getOverworld().getSavedData();
-            return storage.getOrCreate(WirelessStorage::new, ID);
+    public static WirelessStorage get(Level level) {
+        if (!level.isClientSide) {
+            DimensionDataStorage storage = ((ServerLevel) level).getServer().overworld().getDataStorage();
+            return storage.computeIfAbsent(nbt -> new WirelessStorage().load(nbt), WirelessStorage::new, ID);
         } else {
             return new WirelessStorage();
         }
@@ -32,25 +32,17 @@ public class WirelessStorage extends WorldSavedData {
 
     private final Map<UUID, Map<WorldAndPos, Integer>> signals = new HashMap<>();
 
-    public WirelessStorage() {
-        this(ID);
-    }
-
-    public WirelessStorage(String name) {
-        super(name);
-    }
-
-    @Override
-    public void read(@Nonnull CompoundNBT nbt) {
+    @Nonnull
+    public WirelessStorage load(@Nonnull CompoundTag nbt) {
         this.signals.clear();
-        ListNBT list = nbt.getList("Signals", Constants.NBT.TAG_COMPOUND);
+        ListTag list = nbt.getList("Signals", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
-            CompoundNBT tag = list.getCompound(i);
-            UUID uid = tag.getUniqueId("K");
-            ListNBT entries = tag.getList("V", Constants.NBT.TAG_COMPOUND);
+            CompoundTag tag = list.getCompound(i);
+            UUID uid = tag.getUUID("K");
+            ListTag entries = tag.getList("V", Constants.NBT.TAG_COMPOUND);
             Map<WorldAndPos, Integer> signalMap = new HashMap<>();
             for (int j = 0; j < entries.size(); j++) {
-                CompoundNBT cmp = entries.getCompound(j);
+                CompoundTag cmp = entries.getCompound(j);
                 WorldAndPos pos = WorldAndPos.deserialize(cmp);
                 if (pos != null) {
                     int strength = cmp.getInt("R");
@@ -59,26 +51,28 @@ public class WirelessStorage extends WorldSavedData {
             }
             this.signals.put(uid, signalMap);
         }
+
+        return this;
     }
 
     @Nonnull
     @Override
-    public CompoundNBT write(@Nonnull CompoundNBT nbt) {
-        ListNBT list = new ListNBT();
+    public CompoundTag save(@Nonnull CompoundTag compound) {
+        ListTag list = new ListTag();
         for (Map.Entry<UUID, Map<WorldAndPos, Integer>> entry : this.signals.entrySet()) {
-            CompoundNBT tag = new CompoundNBT();
-            tag.putUniqueId("K", entry.getKey());
-            ListNBT entries = new ListNBT();
+            CompoundTag tag = new CompoundTag();
+            tag.putUUID("K", entry.getKey());
+            ListTag entries = new ListTag();
             for (Map.Entry<WorldAndPos, Integer> signal : entry.getValue().entrySet()) {
-                CompoundNBT cmp = signal.getKey().serialize();
+                CompoundTag cmp = signal.getKey().serialize();
                 cmp.putInt("R", signal.getValue());
                 entries.add(cmp);
             }
             tag.put("V", entries);
             list.add(tag);
         }
-        nbt.put("Signals", list);
-        return nbt;
+        compound.put("Signals", list);
+        return compound;
     }
 
     public int getStrength(UUID uid) {
@@ -89,51 +83,51 @@ public class WirelessStorage extends WorldSavedData {
         }
     }
 
-    public void update(World world, UUID uid, WorldAndPos pos, int strength) {
+    public void update(Level level, UUID uid, WorldAndPos pos, int strength) {
         if (!this.signals.containsKey(uid)) {
             this.signals.put(uid, new HashMap<>());
-            this.markDirty();
+            this.setDirty();
         }
         Map<WorldAndPos, Integer> uidMap = this.signals.get(uid);
         if (!uidMap.containsKey(pos) || uidMap.get(pos) != strength) {
             uidMap.put(pos, strength);
-            if (world instanceof ServerWorld) {
+            if (level instanceof ServerLevel) {
                 for (WorldAndPos targetPos : uidMap.keySet()) {
                     if (!pos.equals(targetPos)) {
-                        ServerWorld targetWorld = ((ServerWorld) world).getServer().getWorld(targetPos.dimension);
-                        if (targetWorld != null) {
-                            targetWorld.getPendingBlockTicks().scheduleTick(targetPos.pos, ModBlocks.linkedRepeater, 1, TickPriority.HIGH);
+                        ServerLevel targetLevel = ((ServerLevel) level).getServer().getLevel(targetPos.dimension);
+                        if (targetLevel != null) {
+                            targetLevel.getBlockTicks().scheduleTick(targetPos.pos, ModBlocks.linkedRepeater, 1, TickPriority.HIGH);
                         }
                     }
                 }
             }
-            this.markDirty();
+            this.setDirty();
         }
     }
 
-    public void remove(World world, @Nullable UUID uid, WorldAndPos pos) {
+    public void remove(Level level, @Nullable UUID uid, WorldAndPos pos) {
         if (uid != null) {
             if (this.signals.containsKey(uid)) {
                 if (this.signals.get(uid).remove(pos) != null) {
-                    if (world instanceof ServerWorld) {
+                    if (level instanceof ServerLevel) {
                         for (WorldAndPos targetPos : this.signals.get(uid).keySet()) {
                             if (!pos.equals(targetPos)) {
-                                ServerWorld targetWorld = ((ServerWorld) world).getServer().getWorld(targetPos.dimension);
-                                if (targetWorld != null) {
-                                    targetWorld.getPendingBlockTicks().scheduleTick(targetPos.pos, ModBlocks.linkedRepeater, 1, TickPriority.HIGH);
+                                ServerLevel targetLevel = ((ServerLevel) level).getServer().getLevel(targetPos.dimension);
+                                if (targetLevel != null) {
+                                    targetLevel.getBlockTicks().scheduleTick(targetPos.pos, ModBlocks.linkedRepeater, 1, TickPriority.HIGH);
                                 }
                             }
                         }
                     }
-                    this.markDirty();
+                    this.setDirty();
                 }
                 if (this.signals.get(uid).isEmpty()) {
                     this.signals.remove(uid);
-                    this.markDirty();
+                    this.setDirty();
                 }
             }
         } else {
-            this.signals.keySet().forEach(x -> this.remove(world, x, pos));
+            this.signals.keySet().forEach(x -> this.remove(level, x, pos));
         }
     }
 }

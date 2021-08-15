@@ -1,55 +1,54 @@
 package de.melanx.utilitix.content.crudefurnace;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nonnull;
 
-public class ScreenCrudeFurnace extends ContainerScreen<ContainerCrudeFurnace> {
+public class ScreenCrudeFurnace extends AbstractContainerScreen<ContainerMenuCrudeFurnace> {
 
     private static final ResourceLocation GUI = new ResourceLocation("minecraft", "textures/gui/container/furnace.png");
 
     public int relX;
     public int relY;
 
-    public ScreenCrudeFurnace(ContainerCrudeFurnace container, PlayerInventory inv, ITextComponent title) {
-        super(container, inv, title);
+    public ScreenCrudeFurnace(ContainerMenuCrudeFurnace menu, Inventory inv, Component title) {
+        super(menu, inv, title);
+        MinecraftForge.EVENT_BUS.addListener(this::onGuiInit);
+    }
 
+    private void onGuiInit(GuiScreenEvent.InitGuiEvent event) {
+        this.relX = (event.getGui().width - this.imageWidth) / 2;
+        this.relY = (event.getGui().height - this.imageHeight) / 2;
     }
 
     @Override
-    public void init(@Nonnull Minecraft mc, int x, int y) {
-        super.init(mc, x, y);
-        this.relX = (x - this.xSize) / 2;
-        this.relY = (y - this.ySize) / 2;
+    public void render(@Nonnull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(matrixStack);
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.renderTooltip(matrixStack, mouseX, mouseY);
     }
 
     @Override
-    public void render(@Nonnull MatrixStack ms, int x, int y, float partialTicks) {
-        this.renderBackground(ms);
-        super.render(ms, x, y, partialTicks);
-        this.renderHoveredTooltip(ms, x, y);
-    }
+    protected void renderBg(@Nonnull PoseStack poseStack, float partialTicks, int mouseX, int mouseY) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, GUI);
+        this.blit(poseStack, this.relX, this.relY, 0, 0, this.imageWidth, this.imageHeight);
 
-    @Override
-    protected void drawGuiContainerBackgroundLayer(@Nonnull MatrixStack ms, float partialTicks, int x, int y) {
-        //noinspection deprecation
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        //noinspection ConstantConditions
-        this.minecraft.getTextureManager().bindTexture(GUI);
-        this.blit(ms, this.relX, this.relY, 0, 0, this.xSize, this.ySize);
-
-        if (this.container.tile.isBurning()) {
-            int i = this.container.tile.getScaledBurnTime();
-            this.blit(ms, this.relX + 56, this.relY + 48 - i, 176, 12 - i, 14, i + 1);
+        if (this.menu.getBlockEntity().isBurning()) {
+            int i = this.menu.getBlockEntity().getScaledBurnTime();
+            this.blit(poseStack, this.relX + 56, this.relY + 48 - i, 176, 12 - i, 14, i + 1);
         }
 
-        int i = this.container.tile.getCookProgressionScaled();
-        this.blit(ms, this.relX + 79, this.relY + 34, 176, 14, i + 1, 16);
+        int i = this.menu.getBlockEntity().getCookProgressionScaled();
+        this.blit(poseStack, this.relX + 79, this.relY + 34, 176, 14, i + 1, 16);
     }
 }

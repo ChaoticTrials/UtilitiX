@@ -3,7 +3,7 @@ package de.melanx.utilitix.config;
 import com.google.gson.JsonObject;
 import de.melanx.utilitix.util.ArmorStandRotation;
 import io.github.noeppi_noeppi.libx.config.ValueMapper;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class ArmorStandRotationMapper implements ValueMapper<ArmorStandRotation, JsonObject> {
 
@@ -18,22 +18,22 @@ public class ArmorStandRotationMapper implements ValueMapper<ArmorStandRotation,
     }
 
     @Override
-    public ArmorStandRotation fromJSON(JsonObject json, Class<?> elementType) {
+    public ArmorStandRotation fromJson(JsonObject json) {
         return ArmorStandRotation.deserialize(json);
     }
 
     @Override
-    public JsonObject toJSON(ArmorStandRotation value, Class<?> elementType) {
+    public JsonObject toJson(ArmorStandRotation value) {
         return value.serialize();
     }
 
     @Override
-    public ArmorStandRotation read(PacketBuffer buffer, Class<?> elementType) {
+    public ArmorStandRotation fromNetwork(FriendlyByteBuf buffer) {
         return ArmorStandRotation.read(buffer);
     }
 
     @Override
-    public void write(ArmorStandRotation value, PacketBuffer buffer, Class<?> elementType) {
+    public void toNetwork(ArmorStandRotation value, FriendlyByteBuf buffer) {
         value.write(buffer);
     }
 }
