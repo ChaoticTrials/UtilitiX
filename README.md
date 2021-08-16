@@ -4,6 +4,9 @@ A lot of items, nice to have
 [![CurseForge](http://cf.way2muchnoise.eu/full_463703_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/utilitix)
 [![Curseforge](http://cf.way2muchnoise.eu/versions/For%20MC_463703_all.svg)](https://www.curseforge.com/minecraft/mc-mods/utilitix)
 
+[![Modrinth](https://modrinth-utils.vercel.app/api/badge/versions?id=MMMWYsjm&logo=true)](https://modrinth.com/mod/utilitix)
+[![Modrinth](https://modrinth-utils.vercel.app/api/badge/downloads?id=MMMWYsjm&logo=true)](https://modrinth.com/mod/utilitix)
+
 # Planned features
 ## Utility
 - [x] item with mending collects nearby xp orbs
