@@ -83,6 +83,8 @@ public class TileCrudeFurnace extends TileEntityBase implements ITickableTileEnt
 
                 if (this.fuelTime > 0) {
                     this.burnTime++;
+                    this.fuelTime--;
+                    this.markDispatchable();
                 }
 
                 if (!result.isEmpty() && this.burnTime >= this.recipe.getBurnTime() && this.inventory.getUnrestricted().insertItem(2, result, true).isEmpty()) {
@@ -104,11 +106,6 @@ public class TileCrudeFurnace extends TileEntityBase implements ITickableTileEnt
 
             if (this.fuelTime <= 0 && this.burnTime != 0) {
                 this.burnTime = 0;
-                this.markDispatchable();
-            }
-
-            if (this.fuelTime > 0) {
-                this.fuelTime--;
                 this.markDispatchable();
             }
 
