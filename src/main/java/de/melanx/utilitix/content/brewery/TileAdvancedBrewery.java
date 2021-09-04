@@ -56,7 +56,7 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickableBloc
         this.inventory = BaseItemStackHandler.builder(5)
                 .contentsChanged(slot -> {
                     this.setChanged();
-                    this.markDispatchable();
+                    this.setDispatchable();
                 })
                 .validator(stack -> this.level != null && RecipeHelper.isItemValidInput(this.level.getRecipeManager(), ModRecipes.BREWERY, stack), 0)
                 .validator(stack -> ModItemTags.BOTTLES.contains(stack.getItem()), 1, 2, 3)
@@ -80,17 +80,17 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickableBloc
                     fuelNew.shrink(1);
                     this.inventory.setStackInSlot(4, fuelNew);
                     this.setChanged();
-                    this.markDispatchable();
+                    this.setDispatchable();
                 }
             }
             BreweryRecipe recipe = this.level.getRecipeManager().getRecipeFor(ModRecipes.BREWERY, this.vanilla, this.level).orElse(null);
             if ((this.fuel <= 0 || recipe == null) && this.brewTime > 0) {
                 this.brewTime = 0;
                 this.setChanged();
-                this.markDispatchable();
+                this.setDispatchable();
             } else if (recipe != null && this.fuel >= 0) {
                 if (this.brewTime <= 0) {
-                    this.markDispatchable();
+                    this.setDispatchable();
                 }
                 this.brewTime = Mth.clamp(this.brewTime + 1, 0, MAX_BREW_TIME);
                 if (this.brewTime >= MAX_BREW_TIME) {
@@ -114,7 +114,7 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickableBloc
                     this.brewTime = 0;
                     this.fuel -= 1;
                     this.level.playSound(null, this.worldPosition, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1, 1);
-                    this.markDispatchable();
+                    this.setDispatchable();
                 }
                 this.setChanged();
             }

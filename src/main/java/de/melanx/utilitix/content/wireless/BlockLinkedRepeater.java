@@ -3,6 +3,7 @@ package de.melanx.utilitix.content.wireless;
 import de.melanx.utilitix.registration.ModItems;
 import io.github.noeppi_noeppi.libx.base.tile.BlockBE;
 import io.github.noeppi_noeppi.libx.mod.ModX;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -54,7 +55,7 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
 
     @Override
     public void registerClient(ResourceLocation id, Consumer<Runnable> defer) {
-//        ClientRegistry.bindTileEntityRenderer(this.getBlockEntityType(), BesrLinkedRepeater::new); TODO
+        BlockEntityRenderers.register(this.getBlockEntityType(), context -> new BesrLinkedRepeater());
     }
 
     @Override
@@ -158,11 +159,6 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
     @SuppressWarnings("deprecation")
     public boolean isSignalSource(@Nonnull BlockState state) {
         return true;
-    }
-
-    //    @Override FIXME
-    public boolean canConnectRedstone(BlockState state, BlockGetter level, BlockPos pos, @Nullable Direction side) {
-        return this.isSignalSource(state) && side != null && side.getAxis() == state.getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis();
     }
 
     @Override

@@ -55,7 +55,7 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickableBlock {
                 .validator(stack -> this.level != null && CrudeFurnaceRecipeHelper.getResult(this.level.getRecipeManager(), stack) != null, 1)
                 .contentsChanged(() -> {
                     this.setChanged();
-                    this.markDispatchable();
+                    this.setDispatchable();
                     this.update = true;
                 })
                 .build();
@@ -97,7 +97,7 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickableBlock {
                     this.inventory.getUnrestricted().insertItem(2, result.copy(), false);
                     this.setRecipeUsed(this.recipe.getOriginalRecipe());
                     this.update = true;
-                    this.markDispatchable();
+                    this.setDispatchable();
                 }
             }
 
@@ -105,17 +105,17 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickableBlock {
                 this.fuelTime = ForgeHooks.getBurnTime(this.inventory.getStackInSlot(0), RecipeType.SMELTING) / 2;
                 this.maxFuelTime = this.fuelTime;
                 this.inventory.getUnrestricted().extractItem(0, 1, false);
-                this.markDispatchable();
+                this.setDispatchable();
             }
 
             if (this.fuelTime <= 0 && this.burnTime != 0) {
                 this.burnTime = 0;
-                this.markDispatchable();
+                this.setDispatchable();
             }
 
             if (this.fuelTime > 0) {
                 this.fuelTime--;
-                this.markDispatchable();
+                this.setDispatchable();
             }
 
             if (isBurning != this.isBurning()) {
@@ -166,7 +166,7 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickableBlock {
     }
 
     @Nonnull
-    public IItemHandlerModifiable getUnrestricbed() {
+    public IItemHandlerModifiable getUnrestricted() {
         return this.inventory.getUnrestricted();
     }
 

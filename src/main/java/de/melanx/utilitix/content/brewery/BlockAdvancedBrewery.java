@@ -5,6 +5,7 @@ import io.github.noeppi_noeppi.libx.block.RotationShape;
 import io.github.noeppi_noeppi.libx.menu.BlockEntityMenu;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -37,7 +38,7 @@ public class BlockAdvancedBrewery extends BlockMenu<TileAdvancedBrewery, Contain
 
     @Override
     public void registerClient(ResourceLocation id, Consumer<Runnable> defer) {
-//        ClientRegistry.bindTileEntityRenderer(this.getBlockEntityType(), BesrAdvancedBrewery::new); TODO
+        BlockEntityRenderers.register(this.getBlockEntityType(), context -> new BesrAdvancedBrewery());
         MenuScreens.register(this.menu, ScreenAdvancedBrewery::new);
     }
 

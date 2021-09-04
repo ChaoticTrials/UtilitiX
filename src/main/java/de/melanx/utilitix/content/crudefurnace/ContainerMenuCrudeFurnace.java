@@ -18,8 +18,8 @@ public class ContainerMenuCrudeFurnace extends BlockEntityMenu<TileCrudeFurnace>
     public ContainerMenuCrudeFurnace(@Nullable MenuType<?> type, int windowId, Level level, BlockPos pos, Inventory playerContainer, Player player) {
         super(type, windowId, level, pos, playerContainer, player, 2, 3);
 
-        this.addSlot(new SlotItemHandler(this.blockEntity.getUnrestricbed(), 0, 56, 53));
-        this.addSlot(new SlotItemHandler(this.blockEntity.getUnrestricbed(), 1, 56, 17));
+        this.addSlot(new SlotItemHandler(this.blockEntity.getUnrestricted(), 0, 56, 53));
+        this.addSlot(new SlotItemHandler(this.blockEntity.getUnrestricted(), 1, 56, 17));
         this.addSlot(new OutputSlot(player, this.blockEntity, 2, 116, 35));
 
         this.layoutPlayerInventorySlots(8, 84);
@@ -32,7 +32,7 @@ public class ContainerMenuCrudeFurnace extends BlockEntityMenu<TileCrudeFurnace>
         private int removeCount;
 
         public OutputSlot(Player player, TileCrudeFurnace tile, int index, int xPosition, int yPosition) {
-            super(tile.getUnrestricbed(), index, xPosition, yPosition);
+            super(tile.getUnrestricted(), index, xPosition, yPosition);
             this.player = player;
             this.tile = tile;
         }

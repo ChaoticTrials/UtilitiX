@@ -53,7 +53,7 @@ public class BlockCrudeFurnace extends BlockMenu<TileCrudeFurnace, ContainerMenu
     public int getAnalogOutputSignal(@Nonnull BlockState blockState, @Nonnull Level level, @Nonnull BlockPos pos) {
         BlockEntity tile = level.getBlockEntity(pos);
         if (tile instanceof TileCrudeFurnace) {
-            return AbstractContainerMenu.getRedstoneSignalFromContainer(((BaseItemStackHandler) ((TileCrudeFurnace) tile).getUnrestricbed()).toVanilla());
+            return AbstractContainerMenu.getRedstoneSignalFromContainer(((BaseItemStackHandler) ((TileCrudeFurnace) tile).getUnrestricted()).toVanilla());
         }
 
         return super.getAnalogOutputSignal(blockState, level, pos);

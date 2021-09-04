@@ -65,7 +65,7 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickableBl
         int add = Math.min(Math.max(0, xp), UtilitiXConfig.ExperienceCrystal.maxXp - this.xp);
         this.xp += add;
         this.setChanged();
-        this.markDispatchable();
+        this.setDispatchable();
 
         return add;
     }
@@ -74,7 +74,7 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickableBl
         int remove = Math.max(0, Math.min(xp, this.xp));
         this.xp -= remove;
         this.setChanged();
-        this.markDispatchable();
+        this.setDispatchable();
 
         return remove;
     }
