@@ -18,8 +18,8 @@ public class ContainerMenuCrudeFurnace extends BlockEntityMenu<TileCrudeFurnace>
     public ContainerMenuCrudeFurnace(@Nullable MenuType<?> type, int windowId, Level level, BlockPos pos, Inventory playerContainer, Player player) {
         super(type, windowId, level, pos, playerContainer, player, 2, 3);
 
-        this.addSlot(new SlotItemHandler(this.blockEntity.getUnrestricted(), 0, 56, 53));
-        this.addSlot(new SlotItemHandler(this.blockEntity.getUnrestricted(), 1, 56, 17));
+        this.addSlot(new SlotItemHandler(this.blockEntity.getInventory(), 0, 56, 53));
+        this.addSlot(new SlotItemHandler(this.blockEntity.getInventory(), 1, 56, 17));
         this.addSlot(new OutputSlot(player, this.blockEntity, 2, 116, 35));
 
         this.layoutPlayerInventorySlots(8, 84);
@@ -41,7 +41,6 @@ public class ContainerMenuCrudeFurnace extends BlockEntityMenu<TileCrudeFurnace>
         public void onTake(@Nonnull Player player, @Nonnull ItemStack stack) {
             this.checkTakeAchievements(stack);
             super.onTake(player, stack);
-//            return stack; TODO skateTHINK
         }
 
         @Nonnull

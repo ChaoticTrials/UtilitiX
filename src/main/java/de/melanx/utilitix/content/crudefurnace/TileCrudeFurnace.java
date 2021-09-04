@@ -53,6 +53,7 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickableBlock {
         this.inventory = BaseItemStackHandler.builder(5)
                 .validator(stack -> ForgeHooks.getBurnTime(stack, RecipeType.SMELTING) > 0, 0)
                 .validator(stack -> this.level != null && CrudeFurnaceRecipeHelper.getResult(this.level.getRecipeManager(), stack) != null, 1)
+                .output(2)
                 .contentsChanged(() -> {
                     this.setChanged();
                     this.setDispatchable();
@@ -80,7 +81,7 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickableBlock {
         if (this.level != null && !this.level.isClientSide) {
             boolean isBurning = this.isBurning();
             if (!this.initDone) {
-                this.update = true;
+                this.updateRecipe();
                 this.initDone = true;
             }
 
@@ -89,6 +90,8 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickableBlock {
 
                 if (this.fuelTime > 0) {
                     this.burnTime++;
+                    this.fuelTime--;
+                    this.setDispatchable();
                 }
 
                 if (!result.isEmpty() && this.burnTime >= this.recipe.getBurnTime() && this.inventory.getUnrestricted().insertItem(2, result, true).isEmpty()) {
@@ -96,7 +99,7 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickableBlock {
                     this.inventory.getUnrestricted().extractItem(1, 1, false);
                     this.inventory.getUnrestricted().insertItem(2, result.copy(), false);
                     this.setRecipeUsed(this.recipe.getOriginalRecipe());
-                    this.update = true;
+                    this.updateRecipe();
                     this.setDispatchable();
                 }
             }
@@ -113,11 +116,6 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickableBlock {
                 this.setDispatchable();
             }
 
-            if (this.fuelTime > 0) {
-                this.fuelTime--;
-                this.setDispatchable();
-            }
-
             if (isBurning != this.isBurning()) {
                 this.level.setBlockAndUpdate(this.worldPosition, this.getBlockState().setValue(AbstractFurnaceBlock.LIT, this.isBurning()));
             }
@@ -126,7 +124,7 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickableBlock {
         }
 
         if (this.update) {
-            this.updabeRecipe();
+            this.updateRecipe();
             this.update = false;
         }
     }
@@ -211,7 +209,7 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickableBlock {
         }
     }
 
-    private void updabeRecipe() {
+    private void updateRecipe() {
         if (this.level != null) {
             this.recipe = CrudeFurnaceRecipeHelper.getResult(this.level.getRecipeManager(), this.inventory.getStackInSlot(1));
         }
