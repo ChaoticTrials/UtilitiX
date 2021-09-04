@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableSet;
 import de.melanx.utilitix.UtilitiX;
 import io.github.noeppi_noeppi.libx.base.ItemBase;
 import io.github.noeppi_noeppi.libx.mod.registration.Registerable;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -83,7 +85,7 @@ public class Cart extends AbstractMinecart {
             @Override
             @OnlyIn(Dist.CLIENT)
             public void registerClient(ResourceLocation id, Consumer<Runnable> defer) {
-//                TODO RenderingRegistry.registerEntityRenderingHandler(type, MinecartRendererX::new);
+                EntityRenderers.register(type, context -> new MinecartRendererX<>(context, ModelLayers.MINECART));
             }
         };
     }
