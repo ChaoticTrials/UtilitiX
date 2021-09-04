@@ -74,13 +74,7 @@ public class TrackUtil {
                 double horizontal = Mth.sqrt((float) horizontalSquared);
                 xd = xd / horizontal;
                 zd = zd / horizontal;
-                double scale = 1 / horizontal;
-                if (scale > 1) {
-                    scale = 1;
-                }
 
-//                xd *= (scale * 0.05 * (1 - cart.pushthrough)); FIXME
-//                zd *= (scale * 0.05 * (1 - cart.pushthrough));
                 if (other instanceof AbstractMinecart otherCart) {
                     Vec3 diffVecN = new Vec3(otherCart.getX() - cart.getX(), 0, otherCart.getZ() - cart.getZ()).normalize();
                     Vec3 cartRot = new Vec3(Math.cos(Math.toRadians(cart.yRot)), 0.0D, Math.sin(Math.toRadians(cart.yRot))).normalize();
