@@ -7,11 +7,11 @@
   "client": [],
   "server": [],
   "mixins": [
-    "MixinAbstractMinecartEntity",
-    "MixinArmorStandEntity",
-    "MixinPiglinTasks",
-    "MixinPistonBlockStructureHelper",
-    "MixinPistonTileEntity",
-    "MixinWorld"
+    "MixinAbstractMinecart",
+    "MixinArmorStand",
+    "MixinLevel",
+    "MixinPiglinAi",
+    "MixinPistonMovingBlockEntity",
+    "MixinPistonStructureResolver"
   ]
 }

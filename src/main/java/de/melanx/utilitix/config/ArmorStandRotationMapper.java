@@ -2,7 +2,9 @@ package de.melanx.utilitix.config;
 
 import com.google.gson.JsonObject;
 import de.melanx.utilitix.util.ArmorStandRotation;
+import io.github.noeppi_noeppi.libx.config.ValidatorInfo;
 import io.github.noeppi_noeppi.libx.config.ValueMapper;
+import io.github.noeppi_noeppi.libx.config.gui.ConfigEditor;
 import net.minecraft.network.FriendlyByteBuf;
 
 public class ArmorStandRotationMapper implements ValueMapper<ArmorStandRotation, JsonObject> {
@@ -35,5 +37,10 @@ public class ArmorStandRotationMapper implements ValueMapper<ArmorStandRotation,
     @Override
     public void toNetwork(ArmorStandRotation value, FriendlyByteBuf buffer) {
         value.write(buffer);
+    }
+
+    @Override
+    public ConfigEditor<ArmorStandRotation> createEditor(ValidatorInfo<?> validator) {
+        return ConfigEditor.unsupported(ArmorStandRotation.defaultRotation());
     }
 }
