@@ -58,20 +58,7 @@ public class MixinPistonMovingBlockEntity {
     )
     private static void afterSetBlockState(Level level, BlockPos pos, BlockState state, PistonMovingBlockEntity blockEntity, CallbackInfo ci) {
         //noinspection ConstantConditions
-        if (level != null && pos != null && ((MixinPistonMovingBlockEntity) (Object) blockEntity).glueData != null) {
-            LevelChunk chunk = level.getChunkAt(pos);
-            //noinspection ConstantConditions
-            StickyChunk glue = chunk.getCapability(SlimyCapability.STICKY_CHUNK).orElse(null);
-            //noinspection ConstantConditions
-            if (glue != null) {
-                int x = pos.getX() & 0xF;
-                int y = pos.getY();
-                int z = pos.getZ() & 0xF;
-                //noinspection ConstantConditions
-                glue.setData(x, y, z, ((MixinPistonMovingBlockEntity) (Object) blockEntity).glueData);
-                chunk.markUnsaved();
-            }
-        }
+        afterSetBlockState(level, pos, ((MixinPistonMovingBlockEntity) (Object) blockEntity));
     }
 
     @Inject(
@@ -84,24 +71,11 @@ public class MixinPistonMovingBlockEntity {
                     shift = At.Shift.AFTER
             )
     )
-    public void afterSetBlockState2(CallbackInfo ci) {
-        PistonMovingBlockEntity tile = ((PistonMovingBlockEntity) (Object) this);
-        Level level = tile.getLevel();
-        BlockPos pos = tile.getBlockPos();
-        //noinspection ConstantConditions
-        if (level != null && pos != null && this.glueData != null) {
-            LevelChunk chunk = level.getChunkAt(pos);
-            //noinspection ConstantConditions
-            StickyChunk glue = chunk.getCapability(SlimyCapability.STICKY_CHUNK).orElse(null);
-            //noinspection ConstantConditions
-            if (glue != null) {
-                int x = pos.getX() & 0xF;
-                int y = pos.getY();
-                int z = pos.getZ() & 0xF;
-                glue.setData(x, y, z, this.glueData);
-                chunk.markUnsaved();
-            }
-        }
+    public void afterSetBlockState(CallbackInfo ci) {
+        PistonMovingBlockEntity blockEntity = ((PistonMovingBlockEntity) (Object) this);
+        Level level = blockEntity.getLevel();
+        BlockPos pos = blockEntity.getBlockPos();
+        afterSetBlockState(level, pos, this);
     }
 
     @Inject(
@@ -121,6 +95,22 @@ public class MixinPistonMovingBlockEntity {
     public void write(CompoundTag nbt, CallbackInfoReturnable<CompoundTag> cir) {
         if (this.glueData != null) {
             nbt.putByte("utilitix_glue_data", this.glueData);
+        }
+    }
+
+    private static void afterSetBlockState(Level level, BlockPos pos, MixinPistonMovingBlockEntity blockEntity) {
+        if (level != null && pos != null && blockEntity.glueData != null) {
+            LevelChunk chunk = level.getChunkAt(pos);
+            //noinspection ConstantConditions
+            StickyChunk glue = chunk.getCapability(SlimyCapability.STICKY_CHUNK).orElse(null);
+            //noinspection ConstantConditions
+            if (glue != null) {
+                int x = pos.getX() & 0xF;
+                int y = pos.getY();
+                int z = pos.getZ() & 0xF;
+                glue.setData(x, y, z, blockEntity.glueData);
+                chunk.markUnsaved();
+            }
         }
     }
 }
