@@ -69,7 +69,7 @@ public class SlimyCapability {
 
         @Override
         public Tag serializeNBT() {
-            return new ByteArrayTag((byte[]) this.value.get());
+            return new ByteArrayTag(((StickyChunk) this.value.get()).getStickies());
         }
 
         @Override
