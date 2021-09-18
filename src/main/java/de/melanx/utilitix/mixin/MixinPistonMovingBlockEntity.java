@@ -2,6 +2,7 @@ package de.melanx.utilitix.mixin;
 
 import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.content.slime.StickyChunk;
+import de.melanx.utilitix.util.MixinUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -47,9 +48,7 @@ public class MixinPistonMovingBlockEntity {
     }
 
     @Inject(
-            method = {
-                    "tick"
-            },
+            method = "tick",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z",
@@ -58,13 +57,11 @@ public class MixinPistonMovingBlockEntity {
     )
     private static void afterSetBlockState(Level level, BlockPos pos, BlockState state, PistonMovingBlockEntity blockEntity, CallbackInfo ci) {
         //noinspection ConstantConditions
-        afterSetBlockState(level, pos, ((MixinPistonMovingBlockEntity) (Object) blockEntity));
+        MixinUtil.afterSetBlockState(level, pos, ((MixinPistonMovingBlockEntity) (Object) blockEntity).glueData);
     }
 
     @Inject(
-            method = {
-                    "finalTick"
-            },
+            method = "finalTick",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z",
@@ -75,7 +72,7 @@ public class MixinPistonMovingBlockEntity {
         PistonMovingBlockEntity blockEntity = ((PistonMovingBlockEntity) (Object) this);
         Level level = blockEntity.getLevel();
         BlockPos pos = blockEntity.getBlockPos();
-        afterSetBlockState(level, pos, this);
+        MixinUtil.afterSetBlockState(level, pos, this.glueData);
     }
 
     @Inject(
@@ -95,22 +92,6 @@ public class MixinPistonMovingBlockEntity {
     public void write(CompoundTag nbt, CallbackInfoReturnable<CompoundTag> cir) {
         if (this.glueData != null) {
             nbt.putByte("utilitix_glue_data", this.glueData);
-        }
-    }
-
-    private static void afterSetBlockState(Level level, BlockPos pos, MixinPistonMovingBlockEntity blockEntity) {
-        if (level != null && pos != null && blockEntity.glueData != null) {
-            LevelChunk chunk = level.getChunkAt(pos);
-            //noinspection ConstantConditions
-            StickyChunk glue = chunk.getCapability(SlimyCapability.STICKY_CHUNK).orElse(null);
-            //noinspection ConstantConditions
-            if (glue != null) {
-                int x = pos.getX() & 0xF;
-                int y = pos.getY();
-                int z = pos.getZ() & 0xF;
-                glue.setData(x, y, z, blockEntity.glueData);
-                chunk.markUnsaved();
-            }
         }
     }
 }
