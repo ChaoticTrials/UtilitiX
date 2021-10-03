@@ -120,6 +120,7 @@ public class PistonCart extends Cart {
         if (player instanceof ServerPlayer) {
             MenuProvider containerProvider = new MenuProvider() {
 
+                @Nonnull
                 @Override
                 public Component getDisplayName() {
                     return PistonCart.this.getDisplayName();

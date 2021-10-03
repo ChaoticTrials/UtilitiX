@@ -38,6 +38,7 @@ public class AnvilCart extends Cart {
 
     @Override
     public void tick() {
+        //noinspection ConstantConditions
         AABB collisionBox = this.getCollisionHandler() != null ? this.getCollisionHandler().getMinecartCollisionBox(this) : this.getBoundingBox().inflate(0.2, 0, 0.2);
         if (this.canBeRidden() && getHorizontalDistanceSqr(this.getDeltaMovement()) > 0.1 * 0.1) {
             for (Entity entity : this.level.getEntities(this, collisionBox, EntitySelector.pushableBy(this))) {
