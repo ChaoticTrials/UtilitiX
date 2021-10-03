@@ -30,7 +30,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import javax.annotation.Nonnull;
 
 @Mod("utilitix")
-public class UtilitiX extends ModXRegistration {
+public final class UtilitiX extends ModXRegistration {
 
     private static UtilitiX instance;
     private static UtiliNetwork network;
