@@ -22,7 +22,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
+import java.awt.Color;
 
 public class ScreenExperienceCrystal extends AbstractContainerScreen<ContainerMenuExperienceCrystal> {
 
@@ -105,7 +105,7 @@ public class ScreenExperienceCrystal extends AbstractContainerScreen<ContainerMe
             Button pressed = this.getHoveredButton((int) mouseX, (int) mouseY);
             if (pressed != null) {
                 Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
-                UtilitiX.getNetwork().instance.sendToServer(new ClickScreenButtonHandler.Message(this.menu.getPos(), pressed));
+                UtilitiX.getNetwork().channel.sendToServer(new ClickScreenButtonHandler.Message(this.menu.getPos(), pressed));
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);

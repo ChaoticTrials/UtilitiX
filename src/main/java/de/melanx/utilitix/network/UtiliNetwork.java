@@ -11,8 +11,8 @@ public class UtiliNetwork extends NetworkX {
     }
 
     @Override
-    protected String getProtocolVersion() {
-        return "4";
+    protected Protocol getProtocol() {
+        return Protocol.of("5");
     }
 
     @Override

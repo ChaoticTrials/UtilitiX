@@ -16,7 +16,7 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
+import java.awt.Color;
 
 public class PistonCartScreen extends AbstractContainerScreen<PistonCartContainerMenu> {
 
@@ -73,7 +73,7 @@ public class PistonCartScreen extends AbstractContainerScreen<PistonCartContaine
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
             if (mouseX >= this.relX + 65 && mouseX <= this.relX + 111 && mouseY >= this.relY + 18 && mouseY <= this.relY + 34 && this.menu.entity != null) {
-                UtilitiX.getNetwork().instance.sendToServer(new PistonCartModeCycleSerializer.PistonCartModeCycleMessage(this.menu.entity.getId()));
+                UtilitiX.getNetwork().channel.sendToServer(new PistonCartModeCycleSerializer.PistonCartModeCycleMessage(this.menu.entity.getId()));
                 Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
                 return true;
             }

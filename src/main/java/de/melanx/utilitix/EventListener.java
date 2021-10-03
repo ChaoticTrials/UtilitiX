@@ -132,7 +132,7 @@ public class EventListener {
     @OnlyIn(Dist.CLIENT)
     public void loadChunk(ChunkEvent.Load event) {
         if (event.getWorld().isClientSide()) {
-            UtilitiX.getNetwork().instance.sendToServer(new StickyChunkRequestSerializer.StickyChunkRequestMessage(event.getChunk().getPos()));
+            UtilitiX.getNetwork().channel.sendToServer(new StickyChunkRequestSerializer.StickyChunkRequestMessage(event.getChunk().getPos()));
         }
     }
 

@@ -60,7 +60,7 @@ public class BetterMending {
                             orb.remove(Entity.RemovalReason.KILLED);
 
                             if (!stack.isDamaged()) {
-                                UtilitiX.getNetwork().instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> item), new ItemEntityRepairedSerializer.ItemEntityRepairedMessage(item.getId()));
+                                UtilitiX.getNetwork().channel.send(PacketDistributor.TRACKING_ENTITY.with(() -> item), new ItemEntityRepairedSerializer.ItemEntityRepairedMessage(item.getId()));
                             }
                         } else {
                             double scale = 1 - (vector.length() / 8);

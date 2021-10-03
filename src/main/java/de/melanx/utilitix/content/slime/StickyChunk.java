@@ -38,7 +38,7 @@ public class StickyChunk {
         this.indicesWithGlue = null;
         if (this.chunk != null && !this.chunk.getLevel().isClientSide) {
             this.chunk.markUnsaved();
-            UtilitiX.getNetwork().instance.send(PacketDistributor.TRACKING_CHUNK.with(() -> this.chunk), new StickyChunkUpdateSerializer.StickyChunkUpdateMessage(this.chunk.getPos(), this));
+            UtilitiX.getNetwork().channel.send(PacketDistributor.TRACKING_CHUNK.with(() -> this.chunk), new StickyChunkUpdateSerializer.StickyChunkUpdateMessage(this.chunk.getPos(), this));
         }
     }
 
@@ -53,7 +53,7 @@ public class StickyChunk {
         this.indicesWithGlue = null;
         if (this.chunk != null && !this.chunk.getLevel().isClientSide) {
             this.chunk.markUnsaved();
-            UtilitiX.getNetwork().instance.send(PacketDistributor.TRACKING_CHUNK.with(() -> this.chunk), new StickyChunkUpdateSerializer.StickyChunkUpdateMessage(this.chunk.getPos(), this));
+            UtilitiX.getNetwork().channel.send(PacketDistributor.TRACKING_CHUNK.with(() -> this.chunk), new StickyChunkUpdateSerializer.StickyChunkUpdateMessage(this.chunk.getPos(), this));
         }
     }
 
@@ -63,7 +63,7 @@ public class StickyChunk {
         this.indicesWithGlue = null;
         if (this.chunk != null && !this.chunk.getLevel().isClientSide) {
             this.chunk.markUnsaved();
-            UtilitiX.getNetwork().instance.send(PacketDistributor.TRACKING_CHUNK.with(() -> this.chunk), new StickyChunkUpdateSerializer.StickyChunkUpdateMessage(this.chunk.getPos(), this));
+            UtilitiX.getNetwork().channel.send(PacketDistributor.TRACKING_CHUNK.with(() -> this.chunk), new StickyChunkUpdateSerializer.StickyChunkUpdateMessage(this.chunk.getPos(), this));
         }
     }
 

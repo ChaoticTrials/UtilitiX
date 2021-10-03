@@ -19,7 +19,7 @@ A lot of items, nice to have
 [[dependencies.utilitix]]
     modId = "forge"
     mandatory = true
-    versionRange = "[37.0.59,)"
+    versionRange = "[37.0.75,)"
     ordering = "NONE"
     side = "BOTH"
 
@@ -33,6 +33,6 @@ A lot of items, nice to have
 [[dependencies.utilitix]]
     modId = "libx"
     mandatory = true
-    versionRange = "[1.17.1-2.0.14,)"
+    versionRange = "[1.17.1-2.1.2,)"
     ordering = "NONE"
     side = "BOTH"

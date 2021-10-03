@@ -23,7 +23,7 @@ public class StickyChunkRequestHandler {
                 //noinspection ConstantConditions
                 if (chunk != null && chunk.loaded) {
                     LazyOptional<StickyChunk> cap = chunk.getCapability(SlimyCapability.STICKY_CHUNK);
-                    cap.ifPresent(value -> UtilitiX.getNetwork().instance.send(PacketDistributor.PLAYER.with(() -> sender), new StickyChunkUpdateSerializer.StickyChunkUpdateMessage(msg.pos(), value)));
+                    cap.ifPresent(value -> UtilitiX.getNetwork().channel.send(PacketDistributor.PLAYER.with(() -> sender), new StickyChunkUpdateSerializer.StickyChunkUpdateMessage(msg.pos(), value)));
                 }
             }
         });
