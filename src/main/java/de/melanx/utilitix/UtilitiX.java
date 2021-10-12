@@ -47,8 +47,6 @@ public final class UtilitiX extends ModXRegistration {
         instance = this;
         network = new UtiliNetwork(this);
 
-        this.addRegistrationHandler(SlimyCapability::register);
-
         ConfigManager.registerValueMapper("utilitix", new ArmorStandRotationMapper());
         ConfigManager.registerConfig(new ResourceLocation(this.modid, "common"), UtilitiXConfig.class, false);
 
@@ -58,6 +56,8 @@ public final class UtilitiX extends ModXRegistration {
 
             MinecraftForge.EVENT_BUS.addListener(SlimeRender::renderWorld);
         });
+
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(SlimyCapability::registerCapability);
 
         MinecraftForge.EVENT_BUS.register(new EventListener());
         MinecraftForge.EVENT_BUS.register(new BetterMending());

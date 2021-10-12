@@ -10,10 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -25,11 +22,12 @@ public class SlimyCapability {
 
     public static final ResourceLocation KEY = new ResourceLocation(UtilitiX.getInstance().modid, "sticky_chunk");
 
-    @CapabilityInject(StickyChunk.class)
     public static Capability<StickyChunk> STICKY_CHUNK;
 
-    public static void register() {
-        CapabilityManager.INSTANCE.register(StickyChunk.class);
+    public static void registerCapability(RegisterCapabilitiesEvent event) {
+        event.register(StickyChunk.class);
+        STICKY_CHUNK = CapabilityManager.get(new CapabilityToken<>() {
+        });
     }
 
     public static void attach(AttachCapabilitiesEvent<LevelChunk> event) {

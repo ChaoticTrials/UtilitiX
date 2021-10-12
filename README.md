@@ -40,7 +40,7 @@ A lot of items, nice to have
 - [x] Armor stand with arms
 - [x] Bell + Stick = Handbell
 - [ ] Dia Shears
-- [ ] Wood Cutter
+- [x] ~~Wood Cutter~~ done by too many mods
 
 
 ## Misc
@@ -48,4 +48,5 @@ A lot of items, nice to have
 - [ ] Shift-rightclick -> no flatten earth
 - [ ] Shift-rightclick -> no water logging
 - [ ] placeable items
-- [ ] (bad) luck affects loot tables
+- [x] ~~(bad) luck affects loot tables~~ that's already implemented in vanilla, loot tables are just not using this
+  feature
