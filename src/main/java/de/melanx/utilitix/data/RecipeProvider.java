@@ -6,7 +6,9 @@ import de.melanx.utilitix.recipe.EffectTransformer;
 import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModEntities;
 import de.melanx.utilitix.registration.ModItems;
+import io.github.noeppi_noeppi.libx.annotation.data.Datagen;
 import io.github.noeppi_noeppi.libx.data.provider.recipe.RecipeProviderBase;
+import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.ChatFormatting;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -22,10 +24,11 @@ import net.minecraftforge.common.Tags;
 
 import java.util.function.Consumer;
 
+@Datagen
 public class RecipeProvider extends RecipeProviderBase {
 
-    public RecipeProvider(DataGenerator generator) {
-        super(UtilitiX.getInstance(), generator);
+    public RecipeProvider(ModX mod, DataGenerator generator) {
+        super(mod, generator);
     }
 
     @Override
@@ -40,6 +43,7 @@ public class RecipeProvider extends RecipeProviderBase {
         this.createBreweryRecipes(this.consumer());
         this.createRailRecipes(this.consumer());
         this.createCartRecipes(this.consumer());
+        this.createShearsRecipes(this.consumer());
     }
 
     private void createTinyCoalRecipe(Consumer<FinishedRecipe> consumer, ItemLike coal, ItemLike tinyCoal) {
@@ -388,6 +392,15 @@ public class RecipeProvider extends RecipeProviderBase {
         this.cart(ModEntities.pistonCart.item(), Items.PISTON, consumer);
         this.cart(ModEntities.stonecutterCart.item(), Items.STONECUTTER, consumer);
         this.cart(ModEntities.anvilCart.item(), Items.ANVIL, consumer);
+    }
+
+    private void createShearsRecipes(Consumer<FinishedRecipe> consumer) {
+        ShapedRecipeBuilder.shaped(ModItems.diamondShears)
+                .pattern(" I")
+                .pattern("I ")
+                .define('I', Tags.Items.GEMS_DIAMOND)
+                .unlockedBy("has_item", has(Tags.Items.GEMS_DIAMOND))
+                .save(consumer);
     }
 
     private void cart(ItemLike cart, ItemLike content, Consumer<FinishedRecipe> consumer) {

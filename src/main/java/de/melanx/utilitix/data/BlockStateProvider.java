@@ -5,7 +5,9 @@ import de.melanx.utilitix.block.ComparatorRedirector;
 import de.melanx.utilitix.block.ModProperties;
 import de.melanx.utilitix.data.state.RailState;
 import de.melanx.utilitix.registration.ModBlocks;
+import io.github.noeppi_noeppi.libx.annotation.data.Datagen;
 import io.github.noeppi_noeppi.libx.data.provider.BlockStateProviderBase;
+import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.core.Direction;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
@@ -20,6 +22,7 @@ import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
+@Datagen
 public class BlockStateProvider extends BlockStateProviderBase {
 
     public static final ResourceLocation LINKED_REPEATER_PARENT = new ResourceLocation(UtilitiX.getInstance().modid, "block/linked_repeater_base");
@@ -30,8 +33,8 @@ public class BlockStateProvider extends BlockStateProviderBase {
     public static final ResourceLocation TEXTURE_TORCH_OFF = new ResourceLocation("minecraft", "block/redstone_torch_off");
     public static final ResourceLocation TEXTURE_TORCH_ON = new ResourceLocation("minecraft", "block/redstone_torch");
 
-    public BlockStateProvider(DataGenerator generator, ExistingFileHelper fileHelper) {
-        super(UtilitiX.getInstance(), generator, fileHelper);
+    public BlockStateProvider(ModX mod, DataGenerator generator, ExistingFileHelper helper) {
+        super(mod, generator, helper);
     }
 
     @Override

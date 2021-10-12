@@ -13,6 +13,7 @@ import de.melanx.utilitix.item.Quiver;
 import io.github.noeppi_noeppi.libx.annotation.registration.RegisterClass;
 import io.github.noeppi_noeppi.libx.base.ItemBase;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ShearsItem;
 
 @RegisterClass
 public class ModItems {
@@ -28,4 +29,6 @@ public class ModItems {
     public static final Item linkedCrystal = new ItemLinkedCrystal(UtilitiX.getInstance(), new Item.Properties().stacksTo(8));
     public static final Item gildingCrystal = new ItemBase(UtilitiX.getInstance(), new Item.Properties().stacksTo(16));
     public static final Item minecartTinkerer = new ItemMinecartTinkerer(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
+    @SuppressWarnings("ConstantConditions")
+    public static final Item diamondShears = new ShearsItem(new Item.Properties().stacksTo(1).durability(1666).tab(UtilitiX.getInstance().tab));
 }

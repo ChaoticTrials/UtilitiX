@@ -39,7 +39,7 @@ A lot of items, nice to have
   merged https://github.com/MinecraftForge/MinecraftForge/pull/7715*
 - [x] Armor stand with arms
 - [x] Bell + Stick = Handbell
-- [ ] Dia Shears
+- [x] Dia Shears
 - [x] ~~Wood Cutter~~ done by too many mods
 
 
