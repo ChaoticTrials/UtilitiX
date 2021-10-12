@@ -37,6 +37,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -46,6 +47,9 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
+
+import java.util.Set;
 
 public class EventListener {
 
@@ -167,7 +171,6 @@ public class EventListener {
                     if (glue.get(x, y, z, dir) && !SlimyCapability.canGlue(level, event.getPos(), dir)) {
                         glue.set(x, y, z, dir, false);
                         chunk.markUnsaved();
-                        chunk.markUnsaved();
                         BlockPos targetPos = event.getPos().relative(dir);
                         ItemEntity ie = new ItemEntity(level, targetPos.getX() + 0.5, targetPos.getY() + 0.5, targetPos.getZ() + 0.5, new ItemStack(ModItems.glueBall));
                         ie.setPickUpDelay(20);
@@ -257,6 +260,23 @@ public class EventListener {
             float maxHealth = creeper.getMaxHealth();
 
             explosion.radius = explosion.radius * (health / maxHealth);
+        }
+    }
+
+    private static final Set<ResourceLocation> AIOTBOTANIA_FLATTEN_ALLOWED = Set.of(
+            new ResourceLocation("aiotbotania", "livingwood_aiot"),
+            new ResourceLocation("aiotbotania", "livingrock_aiot"),
+            new ResourceLocation("aiotbotania", "manasteel_aiot"),
+            new ResourceLocation("aiotbotania", "elementium_aiot"),
+            new ResourceLocation("aiotbotania", "terra_aiot"),
+            new ResourceLocation("aiotbotania", "alfsteel_aiot")
+    );
+
+    @SubscribeEvent
+    public void onBlockToolInteraction(BlockEvent.BlockToolInteractEvent event) {
+        if (event.getToolAction() == ToolActions.SHOVEL_FLATTEN && event.getPlayer().isCrouching()
+                && (!ModList.get().isLoaded("aiotbotania") || !AIOTBOTANIA_FLATTEN_ALLOWED.contains(event.getHeldItemStack().getItem().getRegistryName()))) {
+            event.setCanceled(true);
         }
     }
 }
