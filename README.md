@@ -10,7 +10,7 @@ A lot of items, nice to have
 # Planned features
 ## Utility
 - [x] item with mending collects nearby xp orbs
-- [ ] add illusioner in any way because they are fancy
+- [x] add illusioner in any way because they are fancy
 - [x] add a way to gild armor to make piglins neutral (will change in future)
 - [ ] increase wandering trader time if you trade with him
 - [ ] increase amount of wandering traders in one world

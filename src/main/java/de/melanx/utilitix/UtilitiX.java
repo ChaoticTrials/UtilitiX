@@ -14,6 +14,8 @@ import io.github.noeppi_noeppi.libx.mod.registration.ModXRegistration;
 import io.github.noeppi_noeppi.libx.mod.registration.RegistrationBuilder;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -62,6 +64,8 @@ public final class UtilitiX extends ModXRegistration {
         MinecraftForge.EVENT_BUS.register(new EventListener());
         MinecraftForge.EVENT_BUS.register(new BetterMending());
         MinecraftForge.EVENT_BUS.addGenericListener(LevelChunk.class, SlimyCapability::attach);
+
+        Raid.RaiderType.create("utilitix_illusioner", EntityType.ILLUSIONER, new int[]{0, 5, 0, 2, 0, 2, 0, 3});
     }
 
     @Override
