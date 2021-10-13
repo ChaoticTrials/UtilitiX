@@ -27,6 +27,7 @@ public class ModTagProvider extends CommonTagsProviderBase {
     @Override
     public void setup() {
         this.block(ModBlockTags.RAIL_POWER_SOURCES).add(Blocks.REDSTONE_TORCH, Blocks.REDSTONE_WALL_TORCH, ModBlocks.weakRedstoneTorch, ModBlocks.weakRedstoneTorch.wallTorch);
+        this.block(BlockTags.WALLS).add(ModBlocks.stoneWall);
 
         this.item(ModItemTags.BOTTLES).addTag(ModItemTags.POTIONS);
         this.item(ModItemTags.POTIONS).add(Items.POTION, Items.SPLASH_POTION, Items.LINGERING_POTION);
@@ -35,6 +36,7 @@ public class ModTagProvider extends CommonTagsProviderBase {
         this.item(Tags.Items.SHEARS).add(ModItems.diamondShears);
 
         this.copyBlock(BlockTags.RAILS, ItemTags.RAILS);
+        this.copyBlock(BlockTags.WALLS, ItemTags.WALLS);
     }
 
     @Override

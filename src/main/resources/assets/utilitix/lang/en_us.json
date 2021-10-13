@@ -18,6 +18,7 @@
   "block.utilitix.piston_controller_rail": "Piston Minecart Controller Rail",
   "block.utilitix.reinforced_piston_controller_rail": "Reinforced Piston Minecart Controller Rail",
   "block.utilitix.crude_furnace": "Crude Furnace",
+  "block.utilitix.stone_wall": "Stone Wall",
 
   "enchantment.utilitix.bell_range": "Bell Range",
   "enchantment.utilitix.bell_range.desc": "Increases the notify and glow range of UtilitX bells.",

@@ -193,15 +193,19 @@ public class EventListener {
                     return;
                 }
 
-                DirectionalPlaceContext context = new DirectionalPlaceContext(level, pos, Direction.DOWN, stack, Direction.UP);
-                if (item.place(context) == InteractionResult.SUCCESS) {
-                    level.setBlockAndUpdate(pos, item.getBlock().defaultBlockState());
-                    return;
-                }
+                try {
+                    DirectionalPlaceContext context = new DirectionalPlaceContext(level, pos, Direction.DOWN, stack, Direction.UP);
+                    if (item.place(context) == InteractionResult.SUCCESS) {
+                        level.setBlockAndUpdate(pos, item.getBlock().defaultBlockState());
+                        return;
+                    }
 
-                context = new DirectionalPlaceContext(level, pos.above(), Direction.DOWN, stack, Direction.UP);
-                if (item.place(context) == InteractionResult.SUCCESS) {
-                    level.setBlockAndUpdate(pos.above(), item.getBlock().defaultBlockState());
+                    context = new DirectionalPlaceContext(level, pos.above(), Direction.DOWN, stack, Direction.UP);
+                    if (item.place(context) == InteractionResult.SUCCESS) {
+                        level.setBlockAndUpdate(pos.above(), item.getBlock().defaultBlockState());
+                    }
+                } catch (NullPointerException e) {
+                    UtilitiX.getInstance().logger.warn("Tried to place {} but was prevented.", item);
                 }
             }
         }

@@ -1,6 +1,6 @@
 modLoader = "javafml"
 loaderVersion = "[37,)"
-license = "Apache License"
+license = "Apache License 2.0"
 issueTrackerURL = "https://www.github.com/MelanX/UtilitiX/issues/"
 
 [[mods]]
@@ -33,6 +33,6 @@ A lot of items, nice to have
 [[dependencies.utilitix]]
     modId = "libx"
     mandatory = true
-    versionRange = "[1.17.1-2.1.2,)"
+    versionRange = "[1.17.1-2.1.8,)"
     ordering = "NONE"
     side = "BOTH"

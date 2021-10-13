@@ -44,6 +44,8 @@ public class ItemModelProvider extends ItemModelProviderBase {
             this.withExistingParent(id.getPath(), GENERATED).texture("layer0", new ResourceLocation(id.getNamespace(), "block/" + id.getPath()));
         } else if (item.getBlock() == ModBlocks.linkedRepeater) {
             this.withExistingParent(id.getPath(), GENERATED).texture("layer0", new ResourceLocation(id.getNamespace(), "item/" + id.getPath()));
+        } else if (item.getBlock() == ModBlocks.stoneWall) {
+            this.withExistingParent(id.getPath(), WALL_PARENT).texture("wall", new ResourceLocation("block/stone"));
         } else {
             super.defaultBlock(id, item);
         }

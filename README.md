@@ -30,7 +30,7 @@ A lot of items, nice to have
 - [x] Furnace that smelts items with double speed and half xp if the item doesn't fit in smoker or blast furnace
 - [x] Advanced Brewery from BedrockCraft
 - [x] Wireless redstone
-- [ ] Cleanstone Walls
+- [x] Cleanstone Walls
 
 
 ## Items

@@ -30,5 +30,5 @@ public class ModItems {
     public static final Item gildingCrystal = new ItemBase(UtilitiX.getInstance(), new Item.Properties().stacksTo(16));
     public static final Item minecartTinkerer = new ItemMinecartTinkerer(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
     @SuppressWarnings("ConstantConditions")
-    public static final Item diamondShears = new ShearsItem(new Item.Properties().stacksTo(1).durability(1666).tab(UtilitiX.getInstance().tab));
+    public static final Item diamondShears = new ShearsItem(new Item.Properties().stacksTo(1).durability(1486).tab(UtilitiX.getInstance().tab));
 }

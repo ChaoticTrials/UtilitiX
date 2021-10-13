@@ -8,24 +8,29 @@ import de.melanx.utilitix.registration.ModEntities;
 import de.melanx.utilitix.registration.ModItems;
 import io.github.noeppi_noeppi.libx.annotation.data.Datagen;
 import io.github.noeppi_noeppi.libx.data.provider.recipe.RecipeProviderBase;
+import io.github.noeppi_noeppi.libx.data.provider.recipe.crafting.CraftingExtension;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.recipes.SingleItemRecipeBuilder;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.Tags;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 @Datagen
-public class RecipeProvider extends RecipeProviderBase {
+public class RecipeProvider extends RecipeProviderBase implements CraftingExtension {
 
     public RecipeProvider(ModX mod, DataGenerator generator) {
         super(mod, generator);
@@ -44,6 +49,7 @@ public class RecipeProvider extends RecipeProviderBase {
         this.createRailRecipes(this.consumer());
         this.createCartRecipes(this.consumer());
         this.createShearsRecipes(this.consumer());
+        this.wall(ModBlocks.stoneWall, Ingredient.of(Items.STONE));
     }
 
     private void createTinyCoalRecipe(Consumer<FinishedRecipe> consumer, ItemLike coal, ItemLike tinyCoal) {
@@ -412,6 +418,17 @@ public class RecipeProvider extends RecipeProviderBase {
                 .unlockedBy("has_item0", has(Items.MINECART))
                 .unlockedBy("has_item1", has(content))
                 .save(consumer);
+    }
+
+    private void wall(ItemLike wall, Ingredient ingredient) {
+        this.shaped(wall, "XXX", "XXX", 'X', ingredient);
+        SingleItemRecipeBuilder cuttingRecipe = SingleItemRecipeBuilder.stonecutting(ingredient, wall);
+        List<CriterionTriggerInstance> triggerInstances = this.criteria(ingredient);
+        for (int i = 0; i < triggerInstances.size(); i++) {
+            cuttingRecipe.unlockedBy("criterion" + i, triggerInstances.get(i));
+        }
+        //noinspection ConstantConditions
+        cuttingRecipe.save(this.consumer(), new ResourceLocation(wall.asItem().getRegistryName().getNamespace(), wall.asItem().getRegistryName().getPath() + "_stone_cutter"));
     }
 
     private void removeNbt(Consumer<FinishedRecipe> consumer, ItemLike item) {

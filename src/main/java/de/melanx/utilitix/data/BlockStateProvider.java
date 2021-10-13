@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.RailShape;
@@ -21,6 +22,8 @@ import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
+
+import java.util.function.Supplier;
 
 @Datagen
 public class BlockStateProvider extends BlockStateProviderBase {
@@ -46,7 +49,7 @@ public class BlockStateProvider extends BlockStateProviderBase {
     }
 
     @Override
-    protected void defaultState(ResourceLocation id, Block block, ModelFile model) {
+    protected void defaultState(ResourceLocation id, Block block, Supplier<ModelFile> model) {
         if (block == ModBlocks.linkedRepeater) {
             VariantBlockStateBuilder builder = this.getVariantBuilder(block);
             ModelFile modelOn = this.models().withExistingParent(id.getPath() + "_on", LINKED_REPEATER_PARENT)
@@ -164,6 +167,8 @@ public class BlockStateProvider extends BlockStateProviderBase {
                             .addModels(new ConfiguredModel(value ? modelOn : modelOff, 0, (int) dir.getOpposite().toYRot(), false));
                 }
             }
+        } else if (block == ModBlocks.stoneWall) {
+            this.wallBlock((WallBlock) block, this.mcLoc("block/stone"));
         } else {
             super.defaultState(id, block, model);
         }

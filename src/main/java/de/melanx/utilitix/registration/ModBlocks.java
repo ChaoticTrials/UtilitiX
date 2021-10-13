@@ -3,6 +3,7 @@ package de.melanx.utilitix.registration;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.block.ComparatorRedirector;
 import de.melanx.utilitix.block.ModProperties;
+import de.melanx.utilitix.block.StoneWallBlock;
 import de.melanx.utilitix.block.WeakRedstoneTorch;
 import de.melanx.utilitix.content.brewery.BlockAdvancedBrewery;
 import de.melanx.utilitix.content.brewery.ContainerMenuAdvancedBrewery;
@@ -20,6 +21,8 @@ import io.github.noeppi_noeppi.libx.base.BlockBase;
 import io.github.noeppi_noeppi.libx.base.tile.BlockMenu;
 import io.github.noeppi_noeppi.libx.menu.BlockEntityMenu;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -81,4 +84,5 @@ public class ModBlocks {
         }
     };
     public static final BlockMenu<TileExperienceCrystal, ContainerMenuExperienceCrystal> experienceCrystal = new BlockExperienceCrystal(UtilitiX.getInstance(), BlockEntityMenu.createMenuType(ContainerMenuExperienceCrystal::new), BlockBehaviour.Properties.of(Material.STONE, MaterialColor.COLOR_BLACK).strength(3, 7));
+    public static final Block stoneWall = new StoneWallBlock(BlockBehaviour.Properties.copy(Blocks.STONE), new Item.Properties().tab(CreativeModeTab.TAB_BUILDING_BLOCKS));
 }
