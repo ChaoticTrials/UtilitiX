@@ -42,23 +42,24 @@ public class ScreenExperienceCrystal extends AbstractContainerScreen<ContainerMe
     }
 
     @Override
-    public void render(@Nonnull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(poseStack);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, GUI);
-        this.blit(matrixStack, this.relX, this.relY, 0, 0, this.imageWidth, this.imageHeight);
+        this.blit(poseStack, this.relX, this.relY, 0, 0, this.imageWidth, this.imageHeight);
 
         Button hoveredButton = this.getHoveredButton(mouseX, mouseY);
         for (Button button : Button.values()) {
-            this.renderButton(matrixStack, button, hoveredButton == button);
+            this.renderButton(poseStack, button, hoveredButton == button);
         }
 
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.renderTooltip(matrixStack, mouseX, mouseY);
+        super.render(poseStack, mouseX, mouseY, partialTicks);
+        this.renderTooltip(poseStack, mouseX, mouseY);
 
         for (Button button : Button.values()) {
             if (hoveredButton == button) {
-                this.renderTooltip(matrixStack, button.component, mouseX, mouseY);
+                this.renderTooltip(poseStack, button.component, mouseX, mouseY);
             }
         }
     }
