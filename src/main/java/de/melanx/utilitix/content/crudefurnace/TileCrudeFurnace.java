@@ -15,9 +15,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -196,7 +196,7 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickableBlock {
         for (Object2IntMap.Entry<ResourceLocation> entry : this.recipes.object2IntEntrySet()) {
             level.getRecipeManager().byKey(entry.getKey()).ifPresent((recipe) -> {
                 list.add(recipe);
-                splitAndSpawnExperience(level, pos, entry.getIntValue(), ((AbstractCookingRecipe) recipe).getExperience());
+                splitAndSpawnExperience(level, pos, entry.getIntValue(), (new CrudeFurnaceRecipeHelper.ModifiedRecipe((SmeltingRecipe) recipe)).getXp());
             });
         }
 
