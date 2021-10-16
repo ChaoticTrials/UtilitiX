@@ -38,7 +38,7 @@ public final class UtilitiX extends ModXRegistration {
     private static UtiliNetwork network;
 
     public UtilitiX() {
-        super("utilitix", new CreativeModeTab("utilitix") {
+        super(new CreativeModeTab("utilitix") {
             @Nonnull
             @Override
             public ItemStack makeIcon() {

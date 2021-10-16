@@ -165,6 +165,11 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
     }
 
     @Override
+    public boolean canConnectRedstone(BlockState state, BlockGetter level, BlockPos pos, @Nullable Direction direction) {
+        return this.isSignalSource(state) && direction != null && direction.getAxis() == state.getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis();
+    }
+
+    @Override
     public void setPlacedBy(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, LivingEntity placer, @Nonnull ItemStack stack) {
         if (inputStrength(level, state, pos) != state.getValue(BlockStateProperties.POWER)) {
             level.getBlockTicks().scheduleTick(pos, this, 1);
