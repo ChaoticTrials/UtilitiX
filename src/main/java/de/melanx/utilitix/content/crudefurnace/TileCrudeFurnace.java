@@ -172,6 +172,10 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickableBlock {
         return this.inventory.getUnrestricted();
     }
 
+    public CrudeFurnaceRecipeHelper.ModifiedRecipe getRecipe() {
+        return this.recipe;
+    }
+
     public void setRecipeUsed(@Nullable Recipe<?> recipe) {
         if (recipe != null) {
             ResourceLocation id = recipe.getId();
@@ -199,9 +203,9 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickableBlock {
         return list;
     }
 
-    private static void splitAndSpawnExperience(Level level, Vec3 pos, int crafbedAmount, float experience) {
-        int i = Mth.floor((float) crafbedAmount * experience);
-        float f = Mth.frac((float) crafbedAmount * experience);
+    private static void splitAndSpawnExperience(Level level, Vec3 pos, int craftedAmount, float experience) {
+        int i = Mth.floor((float) craftedAmount * experience);
+        float f = Mth.frac((float) craftedAmount * experience);
         if (f != 0.0F && Math.random() < (double) f) {
             ++i;
         }
