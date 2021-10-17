@@ -97,5 +97,8 @@
   "description.utilitix.anvil_cart": "The anvil minecart will take care of entities blocking the track. It will push entities from the track so other minecarts can safely pass. It will also transform roughly a quarter of a heart of damage when pushing entities.",
   "description.utilitix.crude_furnace": "This furnace smelts everything a normal furnace can smelt if the Smoker and Blast Furnace cannot smelt this item. It is twice as fast as the normal furnace recipe but only provides the half experience.",
 
-  "jei.utilitix.gilding": "Gilding"
+  "jei.utilitix.gilding": "Gilding",
+
+  "jade.utilitix.experience_crystal.level": "Level: ",
+  "jade.utilitix.experience_crystal.xp": "XP points: "
 }
