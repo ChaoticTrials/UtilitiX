@@ -28,7 +28,9 @@ import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
@@ -188,7 +190,7 @@ public class EventListener {
         if (!level.isClientSide) {
             BlockPos pos = entity.blockPosition();
             ItemStack stack = entity.getItem();
-            if (stack.getItem() instanceof BlockItem item) {
+            if (stack.getItem() instanceof BlockItem item && (item.getBlock() instanceof CropBlock || item.getBlock() instanceof SaplingBlock)) {
                 if (!UtilitiXConfig.plantsOnDespawn.test(item.getRegistryName())) {
                     return;
                 }
