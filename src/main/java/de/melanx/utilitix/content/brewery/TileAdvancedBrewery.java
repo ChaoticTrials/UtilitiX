@@ -96,18 +96,18 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickableBloc
                 if (this.brewTime >= MAX_BREW_TIME) {
                     PotionOutput output = recipe.getPotionResult(this.vanilla);
                     if (output == null || output.getMain().isEmpty()) {
-                        this.consumeIbem(3);
+                        this.consumeItem(3);
                     } else {
                         this.inventory.setStackInSlot(3, output.getMain());
                     }
-                    this.consumeIbem(0);
+                    this.consumeItem(0);
                     if (output == null || output.getOut1().isEmpty()) {
-                        this.consumeIbem(1);
+                        this.consumeItem(1);
                     } else {
                         this.inventory.setStackInSlot(1, output.getOut1());
                     }
                     if (output == null || output.getOut2().isEmpty()) {
-                        this.consumeIbem(2);
+                        this.consumeItem(2);
                     } else {
                         this.inventory.setStackInSlot(2, output.getOut2());
                     }
@@ -140,7 +140,7 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickableBloc
         }
     }
 
-    private void consumeIbem(int slot) {
+    private void consumeItem(int slot) {
         ItemStack stack = this.inventory.getStackInSlot(slot);
         if (!stack.isEmpty()) {
             if (stack.hasContainerItem()) {
@@ -165,14 +165,11 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickableBloc
             if (side == null) {
                 return LazyOptional.of(this::getInventory).cast();
             }
-            switch (side) {
-                case DOWN:
-                    return this.inventoryBottom.cast();
-                case UP:
-                    return this.inventoryTop.cast();
-                default:
-                    return this.inventorySide.cast();
-            }
+            return switch (side) {
+                case DOWN -> this.inventoryBottom.cast();
+                case UP -> this.inventoryTop.cast();
+                default -> this.inventorySide.cast();
+            };
         } else {
             return super.getCapability(cap, side);
         }
@@ -184,7 +181,7 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickableBloc
     }
 
     @Nonnull
-    public IItemHandlerModifiable getUnrestricbed() {
+    public IItemHandlerModifiable getUnrestricted() {
         return this.inventory.getUnrestricted();
     }
 

@@ -15,11 +15,11 @@ public class ContainerMenuAdvancedBrewery extends BlockEntityMenu<TileAdvancedBr
     public ContainerMenuAdvancedBrewery(@Nullable MenuType type, int windowId, Level level, BlockPos pos, Inventory playerContainer, Player player) {
         super(type, windowId, level, pos, playerContainer, player, 5, 5);
 
-        this.addSlot(new SlotItemHandler(this.blockEntity.getUnrestricbed(), 3, 79, 58));
-        this.addSlot(new SlotItemHandler(this.blockEntity.getUnrestricbed(), 1, 56, 51));
-        this.addSlot(new SlotItemHandler(this.blockEntity.getUnrestricbed(), 2, 102, 51));
-        this.addSlot(new SlotItemHandler(this.blockEntity.getUnrestricbed(), 0, 79, 17));
-        this.addSlot(new SlotItemHandler(this.blockEntity.getUnrestricbed(), 4, 17, 17));
+        this.addSlot(new SlotItemHandler(this.blockEntity.getUnrestricted(), 3, 79, 58));
+        this.addSlot(new SlotItemHandler(this.blockEntity.getUnrestricted(), 1, 56, 51));
+        this.addSlot(new SlotItemHandler(this.blockEntity.getUnrestricted(), 2, 102, 51));
+        this.addSlot(new SlotItemHandler(this.blockEntity.getUnrestricted(), 0, 79, 17));
+        this.addSlot(new SlotItemHandler(this.blockEntity.getUnrestricted(), 4, 17, 17));
 
         this.layoutPlayerInventorySlots(8, 84);
     }
