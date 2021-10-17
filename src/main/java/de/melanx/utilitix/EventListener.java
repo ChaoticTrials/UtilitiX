@@ -6,9 +6,7 @@ import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.content.slime.StickyChunk;
 import de.melanx.utilitix.network.StickyChunkRequestSerializer;
 import de.melanx.utilitix.registration.ModItems;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.DoorBlock;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -186,19 +184,21 @@ public class EventListener {
             ItemStack stack = entity.getItem();
             if (stack.getItem() instanceof BlockItem) {
                 BlockItem item = (BlockItem) stack.getItem();
-                if (!UtilitiXConfig.plantsOnDespawn.test(item.getRegistryName())) {
-                    return;
-                }
+                if (item.getBlock() instanceof CropsBlock || item.getBlock() instanceof SaplingBlock) {
+                    if (!UtilitiXConfig.plantsOnDespawn.test(item.getRegistryName())) {
+                        return;
+                    }
 
-                DirectionalPlaceContext context = new DirectionalPlaceContext(world, pos, Direction.DOWN, stack, Direction.UP);
-                if (item.tryPlace(context) == ActionResultType.SUCCESS) {
-                    world.setBlockState(pos, item.getBlock().getDefaultState());
-                    return;
-                }
+                    DirectionalPlaceContext context = new DirectionalPlaceContext(world, pos, Direction.DOWN, stack, Direction.UP);
+                    if (item.tryPlace(context) == ActionResultType.SUCCESS) {
+                        world.setBlockState(pos, item.getBlock().getDefaultState());
+                        return;
+                    }
 
-                context = new DirectionalPlaceContext(world, pos.up(), Direction.DOWN, stack, Direction.UP);
-                if (item.tryPlace(context) == ActionResultType.SUCCESS) {
-                    world.setBlockState(pos.up(), item.getBlock().getDefaultState());
+                    context = new DirectionalPlaceContext(world, pos.up(), Direction.DOWN, stack, Direction.UP);
+                    if (item.tryPlace(context) == ActionResultType.SUCCESS) {
+                        world.setBlockState(pos.up(), item.getBlock().getDefaultState());
+                    }
                 }
             }
         }
