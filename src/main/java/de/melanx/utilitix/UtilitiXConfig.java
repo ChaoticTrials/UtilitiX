@@ -71,4 +71,7 @@ public class UtilitiXConfig {
 
     @Config("List of items which are allowed to be planted when despawn on correct soil")
     public static ResourceList plantsOnDespawn = ResourceList.BLACKLIST;
+
+    @Config
+    public static boolean crouchNoWaterlog = true;
 }

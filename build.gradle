@@ -3,7 +3,9 @@ buildscript {
 }
 
 apply from: 'https://raw.githubusercontent.com/noeppi-noeppi/ModUtils/v2/mod.gradle'
+
 apply plugin: 'io.github.noeppi_noeppi.tools.modgradle.cursedep'
+apply plugin: 'io.github.noeppi_noeppi.tools.modgradle.coremods'
 
 repositories {
     maven {
@@ -13,6 +15,10 @@ repositories {
     maven {
         name = "LibX"
         url = "https://maven.melanx.de/"
+    }
+    maven {
+        name = "MinecraftUtilities"
+        url = 'https://noeppi-noeppi.github.io/MinecraftUtilities/maven'
     }
 }
 
@@ -25,4 +31,6 @@ dependencies {
 
     implementation curse.mod(324717, 3468298) // Jade
 //    runtimeOnly fg.deobf("de.melanx.recipeprinter:recipeprinter-1.16.3:2.0.4")
+
+    coremods 'io.github.noeppi_noeppi.misc:CoreModTypes:5.0.1-2'
 }

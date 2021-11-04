@@ -46,7 +46,7 @@ A lot of items, nice to have
 ## Misc
 - [x] A lot of minecarts and rails
 - [x] Shift-rightclick -> no flatten earth
-- [ ] Shift-rightclick -> no water logging
+- [x] Shift-rightclick -> no water logging
 - [ ] placeable items
 - [x] ~~(bad) luck affects loot tables~~ that's already implemented in vanilla, loot tables are just not using this
   feature
