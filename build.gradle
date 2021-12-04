@@ -1,10 +1,9 @@
 buildscript {
-    apply from: 'https://raw.githubusercontent.com/noeppi-noeppi/ModUtils/v2/buildscript.gradle', to: buildscript
+    apply from: 'https://noeppi-noeppi.github.io/ModUtils/v3/buildscript.gradle', to: buildscript
 }
 
-apply from: 'https://raw.githubusercontent.com/noeppi-noeppi/ModUtils/v2/mod.gradle'
+apply from: 'https://noeppi-noeppi.github.io/ModUtils/v3/mod.gradle'
 
-apply plugin: 'io.github.noeppi_noeppi.tools.modgradle.cursedep'
 apply plugin: 'io.github.noeppi_noeppi.tools.modgradle.coremods'
 
 repositories {
@@ -20,16 +19,20 @@ repositories {
         name = "MinecraftUtilities"
         url = 'https://noeppi-noeppi.github.io/MinecraftUtilities/maven'
     }
+    maven {
+        name= "CurseForge Maven"
+        url = "https://cursemaven.com/"
+    }
 }
 
 dependencies {
-    annotationProcessor fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.17.1-2.1.12")
+    annotationProcessor fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.18-3.0.0")
 
-    implementation fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.17.1-2.1.12")
-    compileOnly fg.deobf("mezz.jei:jei-1.17.1:8.1.0.19:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.17.1:8.1.0.19")
+    implementation fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.18-3.0.0")
+//    compileOnly fg.deobf("mezz.jei:jei-1.17.1:8.1.0.19:api")
+//    runtimeOnly fg.deobf("mezz.jei:jei-1.17.1:8.1.0.19")
 
-    implementation curse.mod(324717, 3468298) // Jade
+    implementation fg.deobf("curse.maven:jade-324717:3544015")
 //    runtimeOnly fg.deobf("de.melanx.recipeprinter:recipeprinter-1.16.3:2.0.4")
 
     coremods 'io.github.noeppi_noeppi.misc:CoreModTypes:5.0.1-2'

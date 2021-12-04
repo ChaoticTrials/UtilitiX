@@ -37,6 +37,7 @@ public class WorldAndPos {
     public CompoundTag serialize() {
         CompoundTag nbt = new CompoundTag();
         nbt.putString("W", this.dimension.location().toString());
+        //noinspection UnstableApiUsage
         NBTX.putPos(nbt, "P", this.pos);
         nbt.putIntArray("P", new int[]{this.pos.getX(), this.pos.getY(), this.pos.getZ()});
         return nbt;
@@ -45,6 +46,7 @@ public class WorldAndPos {
     @Nullable
     public static WorldAndPos deserialize(CompoundTag nbt) {
         ResourceKey<Level> world = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(nbt.getString("W")));
+        //noinspection UnstableApiUsage
         BlockPos pos = NBTX.getPos(nbt, "P");
         return pos == null ? null : new WorldAndPos(world, pos);
     }

@@ -32,7 +32,7 @@ public class ItemGlueBall extends ItemBase {
             if (!glue.get(x, y, z, face) && SlimyCapability.canGlue(context.getLevel(), context.getClickedPos(), face)) {
                 if (!context.getLevel().isClientSide) {
                     glue.set(x, y, z, face, true);
-                    chunk.markUnsaved();
+                    chunk.setUnsaved(true);
                     if (context.getPlayer() == null || !context.getPlayer().getAbilities().instabuild) {
                         context.getItemInHand().shrink(1);
                     }

@@ -16,7 +16,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -36,9 +36,9 @@ public class ScreenExperienceCrystal extends AbstractContainerScreen<ContainerMe
         MinecraftForge.EVENT_BUS.addListener(this::onGuiInit);
     }
 
-    private void onGuiInit(GuiScreenEvent.InitGuiEvent event) {
-        this.relX = (event.getGui().width - this.imageWidth) / 2;
-        this.relY = (event.getGui().height - this.imageHeight) / 2;
+    private void onGuiInit(ScreenEvent.InitScreenEvent event) {
+        this.relX = (event.getScreen().width - this.imageWidth) / 2;
+        this.relY = (event.getScreen().height - this.imageHeight) / 2;
     }
 
     @Override

@@ -5,17 +5,16 @@ import de.melanx.utilitix.content.slime.StickyChunk;
 import de.melanx.utilitix.util.MixinUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.common.util.Constants;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PistonMovingBlockEntity.class)
 public class MixinPistonMovingBlockEntity {
@@ -42,7 +41,7 @@ public class MixinPistonMovingBlockEntity {
                 //noinspection ConstantConditions
                 ((MixinPistonMovingBlockEntity) (Object) blockEntity).glueData = glue.getData(x, y, z);
                 glue.clearData(x, y, z);
-                chunk.markUnsaved();
+                chunk.setUnsaved(true);
             }
         }
     }
@@ -80,16 +79,16 @@ public class MixinPistonMovingBlockEntity {
             at = @At("RETURN")
     )
     public void read(CompoundTag nbt, CallbackInfo ci) {
-        if (nbt.contains("utilitix_glue_data", Constants.NBT.TAG_ANY_NUMERIC)) {
+        if (nbt.contains("utilitix_glue_data", Tag.TAG_ANY_NUMERIC)) {
             this.glueData = nbt.getByte("utilitix_glue_data");
         }
     }
 
     @Inject(
-            method = "save",
+            method = "saveAdditional",
             at = @At("HEAD")
     )
-    public void write(CompoundTag nbt, CallbackInfoReturnable<CompoundTag> cir) {
+    public void write(CompoundTag nbt, CallbackInfo ci) {
         if (this.glueData != null) {
             nbt.putByte("utilitix_glue_data", this.glueData);
         }

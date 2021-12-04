@@ -4,7 +4,7 @@ import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.network.StickyChunkUpdateSerializer;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -37,7 +37,7 @@ public class StickyChunk {
         }
         this.indicesWithGlue = null;
         if (this.chunk != null && !this.chunk.getLevel().isClientSide) {
-            this.chunk.markUnsaved();
+            this.chunk.setUnsaved(true);
             UtilitiX.getNetwork().channel.send(PacketDistributor.TRACKING_CHUNK.with(() -> this.chunk), new StickyChunkUpdateSerializer.StickyChunkUpdateMessage(this.chunk.getPos(), this));
         }
     }
@@ -52,7 +52,7 @@ public class StickyChunk {
         this.stickies[idx] = data;
         this.indicesWithGlue = null;
         if (this.chunk != null && !this.chunk.getLevel().isClientSide) {
-            this.chunk.markUnsaved();
+            this.chunk.setUnsaved(true);
             UtilitiX.getNetwork().channel.send(PacketDistributor.TRACKING_CHUNK.with(() -> this.chunk), new StickyChunkUpdateSerializer.StickyChunkUpdateMessage(this.chunk.getPos(), this));
         }
     }
@@ -62,7 +62,7 @@ public class StickyChunk {
         this.stickies[idx] = 0;
         this.indicesWithGlue = null;
         if (this.chunk != null && !this.chunk.getLevel().isClientSide) {
-            this.chunk.markUnsaved();
+            this.chunk.setUnsaved(true);
             UtilitiX.getNetwork().channel.send(PacketDistributor.TRACKING_CHUNK.with(() -> this.chunk), new StickyChunkUpdateSerializer.StickyChunkUpdateMessage(this.chunk.getPos(), this));
         }
     }

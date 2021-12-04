@@ -43,13 +43,9 @@ public abstract class BlockPowerableRail extends BlockRail {
         boolean lookDown = true;
         RailShape rail = state.getValue(((BlockPowerableRail) state.getBlock()).getShapeProperty());
         switch (rail) {
-            case NORTH_SOUTH:
-                searchPos = searchPos.relative(searchForward ? Direction.SOUTH : Direction.NORTH);
-                break;
-            case EAST_WEST:
-                searchPos = searchPos.relative(searchForward ? Direction.EAST : Direction.WEST);
-                break;
-            case ASCENDING_EAST:
+            case NORTH_SOUTH -> searchPos = searchPos.relative(searchForward ? Direction.SOUTH : Direction.NORTH);
+            case EAST_WEST -> searchPos = searchPos.relative(searchForward ? Direction.EAST : Direction.WEST);
+            case ASCENDING_EAST -> {
                 if (searchForward) {
                     searchPos = searchPos.west();
                 } else {
@@ -57,8 +53,8 @@ public abstract class BlockPowerableRail extends BlockRail {
                     lookDown = false;
                 }
                 rail = RailShape.EAST_WEST;
-                break;
-            case ASCENDING_WEST:
+            }
+            case ASCENDING_WEST -> {
                 if (searchForward) {
                     searchPos = searchPos.west().above();
                     lookDown = false;
@@ -66,8 +62,8 @@ public abstract class BlockPowerableRail extends BlockRail {
                     searchPos = searchPos.east();
                 }
                 rail = RailShape.EAST_WEST;
-                break;
-            case ASCENDING_NORTH:
+            }
+            case ASCENDING_NORTH -> {
                 if (searchForward) {
                     searchPos = searchPos.south();
                 } else {
@@ -75,8 +71,8 @@ public abstract class BlockPowerableRail extends BlockRail {
                     lookDown = false;
                 }
                 rail = RailShape.NORTH_SOUTH;
-                break;
-            case ASCENDING_SOUTH:
+            }
+            case ASCENDING_SOUTH -> {
                 if (searchForward) {
                     searchPos = searchPos.south().above();
                     lookDown = false;
@@ -84,7 +80,7 @@ public abstract class BlockPowerableRail extends BlockRail {
                     searchPos = searchPos.north();
                 }
                 rail = RailShape.NORTH_SOUTH;
-                break;
+            }
         }
 
         return this.canPower(level, searchPos, searchForward, recursionCount, rail) || (lookDown && this.canMakeSlopes(level.getBlockState(searchPos), level, searchPos) && this.canPower(level, searchPos.below(), searchForward, recursionCount, rail));

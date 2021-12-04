@@ -2,7 +2,6 @@ package de.melanx.utilitix.util;
 
 import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.content.slime.StickyChunk;
-import de.melanx.utilitix.mixin.MixinPistonMovingBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -20,7 +19,7 @@ public class MixinUtil {
                 int y = pos.getY();
                 int z = pos.getZ() & 0xF;
                 glue.setData(x, y, z, glueData);
-                chunk.markUnsaved();
+                chunk.setUnsaved(true);
             }
         }
     }

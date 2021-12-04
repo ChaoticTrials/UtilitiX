@@ -4,7 +4,7 @@ import de.melanx.utilitix.content.track.carts.PistonCart;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartMode;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 

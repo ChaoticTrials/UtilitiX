@@ -7,7 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fmllegacy.hooks.BasicEventHooks;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
@@ -63,11 +63,11 @@ public class ContainerMenuCrudeFurnace extends BlockEntityMenu<TileCrudeFurnace>
         protected void checkTakeAchievements(ItemStack stack) {
             stack.onCraftedBy(this.player.level, this.player, this.removeCount);
             if (!this.player.level.isClientSide) {
-                (this.tile).unlockRecipes(this.player);
+                this.tile.unlockRecipes(this.player);
             }
 
             this.removeCount = 0;
-            BasicEventHooks.firePlayerSmeltedEvent(this.player, stack);
+            ForgeEventFactory.firePlayerSmeltedEvent(this.player, stack);
         }
     }
 }

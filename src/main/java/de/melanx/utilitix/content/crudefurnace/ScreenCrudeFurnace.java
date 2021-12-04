@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nonnull;
@@ -24,9 +24,9 @@ public class ScreenCrudeFurnace extends AbstractContainerScreen<ContainerMenuCru
         MinecraftForge.EVENT_BUS.addListener(this::onGuiInit);
     }
 
-    private void onGuiInit(GuiScreenEvent.InitGuiEvent event) {
-        this.relX = (event.getGui().width - this.imageWidth) / 2;
-        this.relY = (event.getGui().height - this.imageHeight) / 2;
+    private void onGuiInit(ScreenEvent.InitScreenEvent event) {
+        this.relX = (event.getScreen().width - this.imageWidth) / 2;
+        this.relY = (event.getScreen().height - this.imageHeight) / 2;
     }
 
     @Override

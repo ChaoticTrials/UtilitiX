@@ -3,6 +3,7 @@ package de.melanx.utilitix.content.bell;
 import de.melanx.utilitix.UtilitiX;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -15,7 +16,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
@@ -74,7 +74,7 @@ public class ItemMobBell extends BellBase {
     }
     
     public static int getColor(ItemStack stack) {
-        if (stack.getTag() != null && stack.getTag().contains("Entity", Constants.NBT.TAG_STRING)) {
+        if (stack.getTag() != null && stack.getTag().contains("Entity", Tag.TAG_STRING)) {
             ResourceLocation rl = ResourceLocation.tryParse(stack.getTag().getString("Entity"));
             EntityType<?> entityType = rl == null ? null : ForgeRegistries.ENTITIES.getValue(rl);
             SpawnEggItem egg = entityType == null ? null : SpawnEggItem.byId(entityType);
@@ -82,6 +82,7 @@ public class ItemMobBell extends BellBase {
                 return Objects.requireNonNull(egg).getColor(0);
             }
         }
+
         return 0xFFFFFF;
     }
     

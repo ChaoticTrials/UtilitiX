@@ -17,18 +17,19 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.RenderLevelLastEvent;
 
 public class SlimeRender {
-    
-    public static void renderWorld(RenderWorldLastEvent event) {
+
+    public static void renderWorld(RenderLevelLastEvent event) {
         if (Minecraft.getInstance().level != null) {
             Minecraft.getInstance().getProfiler().push("utilitix_glue");
             Minecraft.getInstance().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS); // TODO check
             TextureAtlasSprite slime = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(Textures.GLUE_OVERLAY_TEXTURE);
             if (slime != null) {
+                PoseStack poseStack = event.getPoseStack();
                 int size = Minecraft.getInstance().level.getChunkSource().storage.chunks.length();
-                Frustum clip = new Frustum(event.getMatrixStack().last().pose(), event.getProjectionMatrix());
+                Frustum clip = new Frustum(poseStack.last().pose(), event.getProjectionMatrix());
                 Vec3 projection = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
                 clip.prepare(projection.x, projection.y, projection.z);
                 Minecraft.getInstance().getProfiler().push("render_chunks");
@@ -41,10 +42,10 @@ public class SlimeRender {
                             StickyChunk data = chunk.getCapability(SlimyCapability.STICKY_CHUNK).orElse(null);
                             //noinspection ConstantConditions
                             if (data != null) {
-                                event.getMatrixStack().pushPose();
-                                RenderHelperLevel.loadProjection(event.getMatrixStack(), pos.getMinBlockX(), 0, pos.getMinBlockZ());
-                                renderChunk(event.getMatrixStack(), Minecraft.getInstance().renderBuffers().bufferSource(), pos, chunk, data, slime);
-                                event.getMatrixStack().popPose();
+                                poseStack.pushPose();
+                                RenderHelperLevel.loadProjection(poseStack, pos.getMinBlockX(), 0, pos.getMinBlockZ());
+                                renderChunk(poseStack, Minecraft.getInstance().renderBuffers().bufferSource(), pos, chunk, data, slime);
+                                poseStack.popPose();
                             }
                         }
                     }

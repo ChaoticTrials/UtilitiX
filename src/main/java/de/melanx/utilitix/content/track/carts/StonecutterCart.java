@@ -7,6 +7,7 @@ import io.github.noeppi_noeppi.libx.util.NBTX;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -26,7 +27,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -212,10 +212,12 @@ public class StonecutterCart extends Cart {
         if (this.mode != this.entityData.get(MODE)) {
             this.entityData.set(MODE, this.mode);
         }
+        //noinspection UnstableApiUsage
         this.breakingBlock = NBTX.getPos(compound, "BreakPos");
+        //noinspection UnstableApiUsage
         this.lastSuccess = NBTX.getPos(compound, "LastSuccessfulBreak");
         this.breakProgress = compound.getInt("BreakProgress");
-        if (compound.contains("StoredMotion", Constants.NBT.TAG_COMPOUND)) {
+        if (compound.contains("StoredMotion", Tag.TAG_COMPOUND)) {
             CompoundTag motionNbt = compound.getCompound("StoredMotion");
             this.storedMotion = new Vec3(motionNbt.getDouble("X"), motionNbt.getDouble("Y"), motionNbt.getDouble("Z"));
         } else {
@@ -231,11 +233,13 @@ public class StonecutterCart extends Cart {
         if (this.breakingBlock == null) {
             compound.remove("BreakPos");
         } else {
+            //noinspection UnstableApiUsage
             NBTX.putPos(compound, "BreakPos", this.breakingBlock);
         }
         if (this.lastSuccess == null) {
             compound.remove("LastSuccessfulBreak");
         } else {
+            //noinspection UnstableApiUsage
             NBTX.putPos(compound, "LastSuccessfulBreak", this.lastSuccess);
         }
         compound.putInt("BreakProgress", this.breakProgress);

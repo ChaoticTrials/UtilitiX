@@ -19,7 +19,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.TickPriority;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DiodeBlock;
@@ -29,6 +28,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.ticks.TickPriority;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -172,7 +172,7 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
     @Override
     public void setPlacedBy(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, LivingEntity placer, @Nonnull ItemStack stack) {
         if (inputStrength(level, state, pos) != state.getValue(BlockStateProperties.POWER)) {
-            level.getBlockTicks().scheduleTick(pos, this, 1);
+            level.scheduleTick(pos, this, 1);
         }
     }
 
@@ -189,7 +189,7 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
             if (targetBlock instanceof DiodeBlock || targetBlock instanceof BlockLinkedRepeater) {
                 priority = TickPriority.EXTREMELY_HIGH;
             }
-            level.getBlockTicks().scheduleTick(pos, this, 1, priority);
+            level.scheduleTick(pos, this, 1, priority);
         }
     }
 

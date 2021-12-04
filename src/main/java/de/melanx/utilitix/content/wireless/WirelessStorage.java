@@ -4,12 +4,12 @@ import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.registration.ModBlocks;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.TickPriority;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.world.ticks.TickPriority;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,11 +35,11 @@ public class WirelessStorage extends SavedData {
     @Nonnull
     public WirelessStorage load(@Nonnull CompoundTag nbt) {
         this.signals.clear();
-        ListTag list = nbt.getList("Signals", Constants.NBT.TAG_COMPOUND);
+        ListTag list = nbt.getList("Signals", Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
             CompoundTag tag = list.getCompound(i);
             UUID uid = tag.getUUID("K");
-            ListTag entries = tag.getList("V", Constants.NBT.TAG_COMPOUND);
+            ListTag entries = tag.getList("V", Tag.TAG_COMPOUND);
             Map<WorldAndPos, Integer> signalMap = new HashMap<>();
             for (int j = 0; j < entries.size(); j++) {
                 CompoundTag cmp = entries.getCompound(j);
@@ -96,7 +96,7 @@ public class WirelessStorage extends SavedData {
                     if (!pos.equals(targetPos)) {
                         ServerLevel targetLevel = ((ServerLevel) level).getServer().getLevel(targetPos.dimension);
                         if (targetLevel != null) {
-                            targetLevel.getBlockTicks().scheduleTick(targetPos.pos, ModBlocks.linkedRepeater, 1, TickPriority.HIGH);
+                            targetLevel.scheduleTick(targetPos.pos, ModBlocks.linkedRepeater, 1, TickPriority.HIGH);
                         }
                     }
                 }
@@ -114,7 +114,7 @@ public class WirelessStorage extends SavedData {
                             if (!pos.equals(targetPos)) {
                                 ServerLevel targetLevel = ((ServerLevel) level).getServer().getLevel(targetPos.dimension);
                                 if (targetLevel != null) {
-                                    targetLevel.getBlockTicks().scheduleTick(targetPos.pos, ModBlocks.linkedRepeater, 1, TickPriority.HIGH);
+                                    targetLevel.scheduleTick(targetPos.pos, ModBlocks.linkedRepeater, 1, TickPriority.HIGH);
                                 }
                             }
                         }

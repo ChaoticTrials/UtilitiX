@@ -6,10 +6,10 @@ import io.github.noeppi_noeppi.libx.base.tile.BlockEntityBase;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.TickPriority;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.ticks.TickPriority;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,7 +52,7 @@ public class TileLinkedRepeater extends BlockEntityBase {
             }
             BlockState state = this.getBlockState().setValue(BlockStateProperties.EYE, newId != null);
             this.level.setBlock(this.worldPosition, state, 3);
-            this.level.getBlockTicks().scheduleTick(this.worldPosition, ModBlocks.linkedRepeater, 1, TickPriority.EXTREMELY_HIGH);
+            this.level.scheduleTick(this.worldPosition, ModBlocks.linkedRepeater, 1, TickPriority.EXTREMELY_HIGH);
         }
         this.setChanged();
     }

@@ -20,7 +20,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -30,7 +30,6 @@ public class BetterMending {
     @SubscribeEvent
     public void pullXP(TickEvent.WorldTickEvent event) {
         if (event.phase == TickEvent.Phase.END && event.world instanceof ServerLevel) {
-            //noinspection UnstableApiUsage
             this.moveExps(event.world, Streams.stream(((ServerLevel) event.world).getEntities().getAll()));
         }
     }
@@ -39,7 +38,6 @@ public class BetterMending {
     @OnlyIn(Dist.CLIENT)
     public void pullXPClient(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END && Minecraft.getInstance().level != null) {
-            //noinspection UnstableApiUsage
             this.moveExps(Minecraft.getInstance().level, Streams.stream(Minecraft.getInstance().level.entitiesForRendering()));
         }
     }

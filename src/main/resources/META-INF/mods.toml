@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[37,)"
+loaderVersion = "[38,)"
 license = "Apache License 2.0"
 issueTrackerURL = "https://www.github.com/MelanX/UtilitiX/issues/"
 
@@ -9,8 +9,7 @@ version = "${file.jarVersion}"
 displayName = "UtilitiX"
 updateJSONURL = "https://assets.melanx.de/updates/utilitix.json"
 displayURL = "www.curseforge.com/members/melanx/"
-#logoFile="utilitix.png"
-credits = ""
+credits = "Thanks to noeppi_noeppi who put a lot of work in this mod, too"
 authors = "MelanX, noeppi_noeppi"
 description = '''
 A lot of items, nice to have
@@ -19,20 +18,20 @@ A lot of items, nice to have
 [[dependencies.utilitix]]
     modId = "forge"
     mandatory = true
-    versionRange = "[37.0.95,)"
+    versionRange = "[38.0.14,)"
     ordering = "NONE"
     side = "BOTH"
 
 [[dependencies.utilitix]]
     modId = "minecraft"
     mandatory = true
-    versionRange = "[1.17.1, 1.18)"
+    versionRange = "[1.18, 1.19)"
     ordering = "NONE"
     side = "BOTH"
 
 [[dependencies.utilitix]]
     modId = "libx"
     mandatory = true
-    versionRange = "[1.17.1-2.1.12,)"
+    versionRange = "[1.18-3.0.0,)"
     ordering = "NONE"
     side = "BOTH"

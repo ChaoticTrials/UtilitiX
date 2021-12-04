@@ -10,7 +10,7 @@ public class Textures {
     public static final ResourceLocation GLUE_OVERLAY_TEXTURE = new ResourceLocation(UtilitiX.getInstance().modid, "special/glue_ball_overlay");
     
     public static void registerTextures(TextureStitchEvent.Pre event) {
-        if (event.getMap().location().equals(InventoryMenu.BLOCK_ATLAS)) {
+        if (event.getAtlas().location().equals(InventoryMenu.BLOCK_ATLAS)) {
             event.addSprite(GRAY_BELL_TEXTURE);
             event.addSprite(GLUE_OVERLAY_TEXTURE);
         }

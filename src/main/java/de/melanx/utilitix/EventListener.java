@@ -172,7 +172,7 @@ public class EventListener {
                 for (Direction dir : Direction.values()) {
                     if (glue.get(x, y, z, dir) && !SlimyCapability.canGlue(level, event.getPos(), dir)) {
                         glue.set(x, y, z, dir, false);
-                        chunk.markUnsaved();
+                        chunk.setUnsaved(true);
                         BlockPos targetPos = event.getPos().relative(dir);
                         ItemEntity ie = new ItemEntity(level, targetPos.getX() + 0.5, targetPos.getY() + 0.5, targetPos.getZ() + 0.5, new ItemStack(ModItems.glueBall));
                         ie.setPickUpDelay(20);

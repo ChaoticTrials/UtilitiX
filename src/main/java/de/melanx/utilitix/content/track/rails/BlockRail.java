@@ -76,73 +76,43 @@ public abstract class BlockRail extends BaseRailBlock implements Registerable {
     public BlockState rotate(@Nonnull BlockState state, @Nonnull Rotation rotation) {
         switch (rotation) {
             case CLOCKWISE_180:
-                switch (state.getValue(this.getShapeProperty())) {
-                    case ASCENDING_EAST:
-                        return state.setValue(this.getShapeProperty(), RailShape.ASCENDING_WEST);
-                    case ASCENDING_WEST:
-                        return state.setValue(this.getShapeProperty(), RailShape.ASCENDING_EAST);
-                    case ASCENDING_NORTH:
-                        return state.setValue(this.getShapeProperty(), RailShape.ASCENDING_SOUTH);
-                    case ASCENDING_SOUTH:
-                        return state.setValue(this.getShapeProperty(), RailShape.ASCENDING_NORTH);
-                    case SOUTH_EAST:
-                        return state.setValue(this.getShapeProperty(), RailShape.NORTH_WEST);
-                    case SOUTH_WEST:
-                        return state.setValue(this.getShapeProperty(), RailShape.NORTH_EAST);
-                    case NORTH_WEST:
-                        return state.setValue(this.getShapeProperty(), RailShape.SOUTH_EAST);
-                    case NORTH_EAST:
-                        return state.setValue(this.getShapeProperty(), RailShape.SOUTH_WEST);
-                    case NORTH_SOUTH: //Forge fix: MC-196102
-                    case EAST_WEST:
-                        return state;
-                }
+                return switch (state.getValue(this.getShapeProperty())) {
+                    case ASCENDING_EAST -> state.setValue(this.getShapeProperty(), RailShape.ASCENDING_WEST);
+                    case ASCENDING_WEST -> state.setValue(this.getShapeProperty(), RailShape.ASCENDING_EAST);
+                    case ASCENDING_NORTH -> state.setValue(this.getShapeProperty(), RailShape.ASCENDING_SOUTH);
+                    case ASCENDING_SOUTH -> state.setValue(this.getShapeProperty(), RailShape.ASCENDING_NORTH);
+                    case SOUTH_EAST -> state.setValue(this.getShapeProperty(), RailShape.NORTH_WEST);
+                    case SOUTH_WEST -> state.setValue(this.getShapeProperty(), RailShape.NORTH_EAST);
+                    case NORTH_WEST -> state.setValue(this.getShapeProperty(), RailShape.SOUTH_EAST);
+                    case NORTH_EAST -> state.setValue(this.getShapeProperty(), RailShape.SOUTH_WEST);
+                    case NORTH_SOUTH, EAST_WEST -> state; //Forge fix: MC-196102
+                };
             case COUNTERCLOCKWISE_90:
-                switch (state.getValue(this.getShapeProperty())) {
-                    case NORTH_SOUTH:
-                        return state.setValue(this.getShapeProperty(), RailShape.EAST_WEST);
-                    case EAST_WEST:
-                        return state.setValue(this.getShapeProperty(), RailShape.NORTH_SOUTH);
-                    case ASCENDING_EAST:
-                        return state.setValue(this.getShapeProperty(), RailShape.ASCENDING_NORTH);
-                    case ASCENDING_WEST:
-                        return state.setValue(this.getShapeProperty(), RailShape.ASCENDING_SOUTH);
-                    case ASCENDING_NORTH:
-                        return state.setValue(this.getShapeProperty(), RailShape.ASCENDING_WEST);
-                    case ASCENDING_SOUTH:
-                        return state.setValue(this.getShapeProperty(), RailShape.ASCENDING_EAST);
-                    case SOUTH_EAST:
-                        return state.setValue(this.getShapeProperty(), RailShape.NORTH_EAST);
-                    case SOUTH_WEST:
-                        return state.setValue(this.getShapeProperty(), RailShape.SOUTH_EAST);
-                    case NORTH_WEST:
-                        return state.setValue(this.getShapeProperty(), RailShape.SOUTH_WEST);
-                    case NORTH_EAST:
-                        return state.setValue(this.getShapeProperty(), RailShape.NORTH_WEST);
-                }
+                return switch (state.getValue(this.getShapeProperty())) {
+                    case NORTH_SOUTH -> state.setValue(this.getShapeProperty(), RailShape.EAST_WEST);
+                    case EAST_WEST -> state.setValue(this.getShapeProperty(), RailShape.NORTH_SOUTH);
+                    case ASCENDING_EAST -> state.setValue(this.getShapeProperty(), RailShape.ASCENDING_NORTH);
+                    case ASCENDING_WEST -> state.setValue(this.getShapeProperty(), RailShape.ASCENDING_SOUTH);
+                    case ASCENDING_NORTH -> state.setValue(this.getShapeProperty(), RailShape.ASCENDING_WEST);
+                    case ASCENDING_SOUTH -> state.setValue(this.getShapeProperty(), RailShape.ASCENDING_EAST);
+                    case SOUTH_EAST -> state.setValue(this.getShapeProperty(), RailShape.NORTH_EAST);
+                    case SOUTH_WEST -> state.setValue(this.getShapeProperty(), RailShape.SOUTH_EAST);
+                    case NORTH_WEST -> state.setValue(this.getShapeProperty(), RailShape.SOUTH_WEST);
+                    case NORTH_EAST -> state.setValue(this.getShapeProperty(), RailShape.NORTH_WEST);
+                };
             case CLOCKWISE_90:
-                switch (state.getValue(this.getShapeProperty())) {
-                    case NORTH_SOUTH:
-                        return state.setValue(this.getShapeProperty(), RailShape.EAST_WEST);
-                    case EAST_WEST:
-                        return state.setValue(this.getShapeProperty(), RailShape.NORTH_SOUTH);
-                    case ASCENDING_EAST:
-                        return state.setValue(this.getShapeProperty(), RailShape.ASCENDING_SOUTH);
-                    case ASCENDING_WEST:
-                        return state.setValue(this.getShapeProperty(), RailShape.ASCENDING_NORTH);
-                    case ASCENDING_NORTH:
-                        return state.setValue(this.getShapeProperty(), RailShape.ASCENDING_EAST);
-                    case ASCENDING_SOUTH:
-                        return state.setValue(this.getShapeProperty(), RailShape.ASCENDING_WEST);
-                    case SOUTH_EAST:
-                        return state.setValue(this.getShapeProperty(), RailShape.SOUTH_WEST);
-                    case SOUTH_WEST:
-                        return state.setValue(this.getShapeProperty(), RailShape.NORTH_WEST);
-                    case NORTH_WEST:
-                        return state.setValue(this.getShapeProperty(), RailShape.NORTH_EAST);
-                    case NORTH_EAST:
-                        return state.setValue(this.getShapeProperty(), RailShape.SOUTH_EAST);
-                }
+                return switch (state.getValue(this.getShapeProperty())) {
+                    case NORTH_SOUTH -> state.setValue(this.getShapeProperty(), RailShape.EAST_WEST);
+                    case EAST_WEST -> state.setValue(this.getShapeProperty(), RailShape.NORTH_SOUTH);
+                    case ASCENDING_EAST -> state.setValue(this.getShapeProperty(), RailShape.ASCENDING_SOUTH);
+                    case ASCENDING_WEST -> state.setValue(this.getShapeProperty(), RailShape.ASCENDING_NORTH);
+                    case ASCENDING_NORTH -> state.setValue(this.getShapeProperty(), RailShape.ASCENDING_EAST);
+                    case ASCENDING_SOUTH -> state.setValue(this.getShapeProperty(), RailShape.ASCENDING_WEST);
+                    case SOUTH_EAST -> state.setValue(this.getShapeProperty(), RailShape.SOUTH_WEST);
+                    case SOUTH_WEST -> state.setValue(this.getShapeProperty(), RailShape.NORTH_WEST);
+                    case NORTH_WEST -> state.setValue(this.getShapeProperty(), RailShape.NORTH_EAST);
+                    case NORTH_EAST -> state.setValue(this.getShapeProperty(), RailShape.SOUTH_EAST);
+                };
             default:
                 return state;
         }
@@ -155,24 +125,17 @@ public abstract class BlockRail extends BaseRailBlock implements Registerable {
         RailShape railshape = state.getValue(this.getShapeProperty());
         switch (mirror) {
             case LEFT_RIGHT:
-                switch (railshape) {
-                    case ASCENDING_NORTH:
-                        return state.setValue(this.getShapeProperty(), RailShape.ASCENDING_SOUTH);
-                    case ASCENDING_SOUTH:
-                        return state.setValue(this.getShapeProperty(), RailShape.ASCENDING_NORTH);
-                    case SOUTH_EAST:
-                        return state.setValue(this.getShapeProperty(), RailShape.NORTH_EAST);
-                    case SOUTH_WEST:
-                        return state.setValue(this.getShapeProperty(), RailShape.NORTH_WEST);
-                    case NORTH_WEST:
-                        return state.setValue(this.getShapeProperty(), RailShape.SOUTH_WEST);
-                    case NORTH_EAST:
-                        return state.setValue(this.getShapeProperty(), RailShape.SOUTH_EAST);
-                    default:
-                        return super.mirror(state, mirror);
-                }
+                return switch (railshape) {
+                    case ASCENDING_NORTH -> state.setValue(this.getShapeProperty(), RailShape.ASCENDING_SOUTH);
+                    case ASCENDING_SOUTH -> state.setValue(this.getShapeProperty(), RailShape.ASCENDING_NORTH);
+                    case SOUTH_EAST -> state.setValue(this.getShapeProperty(), RailShape.NORTH_EAST);
+                    case SOUTH_WEST -> state.setValue(this.getShapeProperty(), RailShape.NORTH_WEST);
+                    case NORTH_WEST -> state.setValue(this.getShapeProperty(), RailShape.SOUTH_WEST);
+                    case NORTH_EAST -> state.setValue(this.getShapeProperty(), RailShape.SOUTH_EAST);
+                    default -> super.mirror(state, mirror);
+                };
             case FRONT_BACK:
-                switch(railshape) {
+                switch (railshape) {
                     case ASCENDING_EAST:
                         return state.setValue(this.getShapeProperty(), RailShape.ASCENDING_WEST);
                     case ASCENDING_WEST:
