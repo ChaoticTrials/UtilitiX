@@ -29,8 +29,8 @@ dependencies {
     annotationProcessor fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.18-3.0.0")
 
     implementation fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.18-3.0.0")
-//    compileOnly fg.deobf("mezz.jei:jei-1.17.1:8.1.0.19:api")
-//    runtimeOnly fg.deobf("mezz.jei:jei-1.17.1:8.1.0.19")
+    compileOnly fg.deobf("mezz.jei:jei-1.18:9.0.0.40:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.18:9.0.0.40")
 
     implementation fg.deobf("curse.maven:jade-324717:3544015")
 //    runtimeOnly fg.deobf("de.melanx.recipeprinter:recipeprinter-1.16.3:2.0.4")
