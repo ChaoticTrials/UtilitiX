@@ -1,7 +1,7 @@
 package de.melanx.utilitix.content.crudefurnace;
 
 import de.melanx.utilitix.registration.ModBlocks;
-import io.github.noeppi_noeppi.libx.base.tile.BlockMenu;
+import io.github.noeppi_noeppi.libx.base.tile.MenuBlockBE;
 import io.github.noeppi_noeppi.libx.inventory.BaseItemStackHandler;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
-public class BlockCrudeFurnace extends BlockMenu<TileCrudeFurnace, ContainerMenuCrudeFurnace> {
+public class BlockCrudeFurnace extends MenuBlockBE<TileCrudeFurnace, ContainerMenuCrudeFurnace> {
 
     public BlockCrudeFurnace(ModX mod, MenuType<ContainerMenuCrudeFurnace> menu, Properties properties) {
         super(mod, TileCrudeFurnace.class, menu, properties);

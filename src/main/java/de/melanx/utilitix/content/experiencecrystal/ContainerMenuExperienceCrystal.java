@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 
 public class ContainerMenuExperienceCrystal extends BlockEntityMenu<TileExperienceCrystal> {
 
-    public ContainerMenuExperienceCrystal(@Nullable MenuType<?> type, int windowId, Level level, BlockPos pos, Inventory playerContainer, Player player) {
+    public ContainerMenuExperienceCrystal(@Nullable MenuType<? extends BlockEntityMenu<?>> type, int windowId, Level level, BlockPos pos, Inventory playerContainer, Player player) {
         super(type, windowId, level, pos, playerContainer, player, 0, 0);
         this.layoutPlayerInventorySlots(8, 94);
     }

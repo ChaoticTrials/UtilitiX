@@ -1,7 +1,7 @@
 package de.melanx.utilitix.content.experiencecrystal;
 
 import de.melanx.utilitix.registration.ModBlocks;
-import io.github.noeppi_noeppi.libx.base.tile.BlockMenu;
+import io.github.noeppi_noeppi.libx.base.tile.MenuBlockBE;
 import io.github.noeppi_noeppi.libx.block.DirectionShape;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
-public class BlockExperienceCrystal extends BlockMenu<TileExperienceCrystal, ContainerMenuExperienceCrystal> {
+public class BlockExperienceCrystal extends MenuBlockBE<TileExperienceCrystal, ContainerMenuExperienceCrystal> {
 
     private static final VoxelShape BASE_SHAPE = Shapes.or(
             box(2, 1, 2, 14, 2, 14),

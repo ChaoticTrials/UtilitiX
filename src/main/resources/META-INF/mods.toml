@@ -32,6 +32,6 @@ A lot of items, nice to have
 [[dependencies.utilitix]]
     modId = "libx"
     mandatory = true
-    versionRange = "[1.18-3.0.0,)"
+    versionRange = "[1.18-3.0.1,)"
     ordering = "NONE"
     side = "BOTH"

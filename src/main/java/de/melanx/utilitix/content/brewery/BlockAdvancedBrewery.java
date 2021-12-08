@@ -1,6 +1,6 @@
 package de.melanx.utilitix.content.brewery;
 
-import io.github.noeppi_noeppi.libx.base.tile.BlockMenu;
+import io.github.noeppi_noeppi.libx.base.tile.MenuBlockBE;
 import io.github.noeppi_noeppi.libx.block.RotationShape;
 import io.github.noeppi_noeppi.libx.menu.BlockEntityMenu;
 import io.github.noeppi_noeppi.libx.mod.ModX;
@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
-public class BlockAdvancedBrewery extends BlockMenu<TileAdvancedBrewery, ContainerMenuAdvancedBrewery> {
+public class BlockAdvancedBrewery extends MenuBlockBE<TileAdvancedBrewery, ContainerMenuAdvancedBrewery> {
 
     public static final RotationShape SHAPE = new RotationShape(box(1, 0, 1, 15, 12, 13));
 

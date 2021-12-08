@@ -18,7 +18,7 @@ import de.melanx.utilitix.content.track.rails.*;
 import de.melanx.utilitix.content.wireless.BlockLinkedRepeater;
 import io.github.noeppi_noeppi.libx.annotation.registration.RegisterClass;
 import io.github.noeppi_noeppi.libx.base.BlockBase;
-import io.github.noeppi_noeppi.libx.base.tile.BlockMenu;
+import io.github.noeppi_noeppi.libx.base.tile.MenuBlockBE;
 import io.github.noeppi_noeppi.libx.menu.BlockEntityMenu;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.CreativeModeTab;
@@ -37,8 +37,8 @@ import javax.annotation.Nonnull;
 @RegisterClass(priority = 1)
 public class ModBlocks {
 
-    public static final BlockMenu<TileAdvancedBrewery, ContainerMenuAdvancedBrewery> advancedBrewery = new BlockAdvancedBrewery(UtilitiX.getInstance(), BlockBehaviour.Properties.copy(Blocks.BREWING_STAND));
-    public static final BlockMenu<TileCrudeFurnace, ContainerMenuCrudeFurnace> crudeFurnace = new BlockCrudeFurnace(UtilitiX.getInstance(), BlockEntityMenu.createMenuType(ContainerMenuCrudeFurnace::new), BlockBehaviour.Properties.copy(Blocks.FURNACE));
+    public static final MenuBlockBE<TileAdvancedBrewery, ContainerMenuAdvancedBrewery> advancedBrewery = new BlockAdvancedBrewery(UtilitiX.getInstance(), BlockBehaviour.Properties.copy(Blocks.BREWING_STAND));
+    public static final MenuBlockBE<TileCrudeFurnace, ContainerMenuCrudeFurnace> crudeFurnace = new BlockCrudeFurnace(UtilitiX.getInstance(), BlockEntityMenu.createMenuType(ContainerMenuCrudeFurnace::new), BlockBehaviour.Properties.copy(Blocks.FURNACE));
     public static final BlockBase comparatorRedirectorUp = new ComparatorRedirector(UtilitiX.getInstance(), Direction.UP, BlockBehaviour.Properties.copy(Blocks.OBSERVER));
     public static final BlockBase comparatorRedirectorDown = new ComparatorRedirector(UtilitiX.getInstance(), Direction.DOWN, BlockBehaviour.Properties.copy(Blocks.OBSERVER));
     public static final WeakRedstoneTorch weakRedstoneTorch = new WeakRedstoneTorch(UtilitiX.getInstance(), BlockBehaviour.Properties.copy(Blocks.REDSTONE_TORCH));
@@ -83,6 +83,6 @@ public class ModBlocks {
             return ModProperties.RAIL_SHAPE_FLAT_STRAIGHT;
         }
     };
-    public static final BlockMenu<TileExperienceCrystal, ContainerMenuExperienceCrystal> experienceCrystal = new BlockExperienceCrystal(UtilitiX.getInstance(), BlockEntityMenu.createMenuType(ContainerMenuExperienceCrystal::new), BlockBehaviour.Properties.of(Material.STONE, MaterialColor.COLOR_BLACK).strength(3, 7));
+    public static final MenuBlockBE<TileExperienceCrystal, ContainerMenuExperienceCrystal> experienceCrystal = new BlockExperienceCrystal(UtilitiX.getInstance(), BlockEntityMenu.createMenuType(ContainerMenuExperienceCrystal::new), BlockBehaviour.Properties.of(Material.STONE, MaterialColor.COLOR_BLACK).strength(3, 7));
     public static final Block stoneWall = new StoneWallBlock(BlockBehaviour.Properties.copy(Blocks.STONE), new Item.Properties().tab(CreativeModeTab.TAB_BUILDING_BLOCKS));
 }

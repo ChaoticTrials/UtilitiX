@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 
 public class ContainerMenuCrudeFurnace extends BlockEntityMenu<TileCrudeFurnace> {
 
-    public ContainerMenuCrudeFurnace(@Nullable MenuType<?> type, int windowId, Level level, BlockPos pos, Inventory playerContainer, Player player) {
+    public ContainerMenuCrudeFurnace(@Nullable MenuType<? extends BlockEntityMenu<?>> type, int windowId, Level level, BlockPos pos, Inventory playerContainer, Player player) {
         super(type, windowId, level, pos, playerContainer, player, 2, 3);
 
         this.addSlot(new SlotItemHandler(this.blockEntity.getInventory(), 0, 56, 53));
