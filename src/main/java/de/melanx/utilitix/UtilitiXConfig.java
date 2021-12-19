@@ -72,6 +72,11 @@ public class UtilitiXConfig {
     @Config("List of items which are allowed to be planted when despawn on correct soil")
     public static ResourceList plantsOnDespawn = ResourceList.BLACKLIST;
 
-    @Config
+    @Config("Prevents waterlogging when holding the sneak key")
     public static boolean crouchNoWaterlog = true;
+
+    @Config({"The time in ticks which will be added to the despawn delay of a wandering trader on each trade",
+            "This way, the wandering trader remains in the world longer."})
+    @IntRange(min = 0)
+    public static int wanderingTraderExtraTime = 400;
 }

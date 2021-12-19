@@ -12,7 +12,7 @@ A lot of items, nice to have
 - [x] item with mending collects nearby xp orbs
 - [x] add illusioner in any way because they are fancy
 - [x] add a way to gild armor to make piglins neutral (will change in future)
-- [ ] increase wandering trader time if you trade with him
+- [x] increase wandering trader time if you trade with him
 - [ ] increase amount of wandering traders in one world
 - [x] when saplings or seeds would despawn on correct soil, plant them
 - [x] double doors open at same time

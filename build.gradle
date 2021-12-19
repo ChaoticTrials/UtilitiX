@@ -20,7 +20,7 @@ repositories {
         url = 'https://noeppi-noeppi.github.io/MinecraftUtilities/maven'
     }
     maven {
-        name= "CurseForge Maven"
+        name = "CurseForge Maven"
         url = "https://cursemaven.com/"
     }
 }
