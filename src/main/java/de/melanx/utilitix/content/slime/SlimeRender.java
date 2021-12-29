@@ -24,7 +24,7 @@ public class SlimeRender {
     public static void renderWorld(RenderLevelLastEvent event) {
         if (Minecraft.getInstance().level != null) {
             Minecraft.getInstance().getProfiler().push("utilitix_glue");
-            Minecraft.getInstance().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS); // TODO check
+            Minecraft.getInstance().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS);
             TextureAtlasSprite slime = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(Textures.GLUE_OVERLAY_TEXTURE);
             if (slime != null) {
                 PoseStack poseStack = event.getPoseStack();

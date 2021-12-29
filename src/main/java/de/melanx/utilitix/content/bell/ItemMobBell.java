@@ -1,6 +1,7 @@
 package de.melanx.utilitix.content.bell;
 
 import de.melanx.utilitix.UtilitiX;
+import de.melanx.utilitix.util.MobUtil;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.Tag;
@@ -25,8 +26,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class ItemMobBell extends BellBase {
-
-    private static final MutableComponent NO_MOB = new TranslatableComponent("tooltip." + UtilitiX.getInstance().modid + ".no_mob").withStyle(ChatFormatting.DARK_RED);
 
     public ItemMobBell(ModX mod, Item.Properties properties) {
         super(mod, properties);
@@ -53,12 +52,12 @@ public class ItemMobBell extends BellBase {
     public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level level, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flag) {
         super.appendHoverText(stack, level, tooltip, flag);
         MutableComponent component = getCurrentMob(stack);
-        tooltip.add(component != null ? component : NO_MOB);
+        tooltip.add(component != null ? component : MobUtil.NO_MOB);
     }
 
     @Nullable
     public static MutableComponent getCurrentMob(ItemStack stack) {
-        String s = stack.getOrCreateTag().getString("Entity");
+        String s = stack.getOrCreateTag().getString(MobUtil.ENTITY_TYPE_TAG);
         Optional<EntityType<?>> entityType = EntityType.byString(s);
 
         return entityType.map(ItemMobBell::getCurrentMob).orElse(null);
@@ -74,8 +73,8 @@ public class ItemMobBell extends BellBase {
     }
     
     public static int getColor(ItemStack stack) {
-        if (stack.getTag() != null && stack.getTag().contains("Entity", Tag.TAG_STRING)) {
-            ResourceLocation rl = ResourceLocation.tryParse(stack.getTag().getString("Entity"));
+        if (stack.getTag() != null && stack.getTag().contains(MobUtil.ENTITY_TYPE_TAG, Tag.TAG_STRING)) {
+            ResourceLocation rl = ResourceLocation.tryParse(stack.getTag().getString(MobUtil.ENTITY_TYPE_TAG));
             EntityType<?> entityType = rl == null ? null : ForgeRegistries.ENTITIES.getValue(rl);
             SpawnEggItem egg = entityType == null ? null : SpawnEggItem.byId(entityType);
             if (egg != null) {

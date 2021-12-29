@@ -15,8 +15,8 @@ public class UtilitiXConfig {
     @Group("Config values for the two bells, mob bell and hand bell")
     public static class HandBells {
 
-        @Config("Entity blacklist for mob bell")
-        public static ResourceList mobBellEntities = ResourceList.BLACKLIST;
+        @Config("Entity denylist for mob bell")
+        public static ResourceList mobBellEntities = ResourceList.DENY_LIST;
 
         @Config("The time in ticks how long you have to ring the hand bell to let the mobs glow")
         public static int ringTime = 40;
@@ -70,7 +70,7 @@ public class UtilitiXConfig {
     }
 
     @Config("List of items which are allowed to be planted when despawn on correct soil")
-    public static ResourceList plantsOnDespawn = ResourceList.BLACKLIST;
+    public static ResourceList plantsOnDespawn = ResourceList.DENY_LIST;
 
     @Config("Prevents waterlogging when holding the sneak key")
     public static boolean crouchNoWaterlog = true;
@@ -79,4 +79,7 @@ public class UtilitiXConfig {
             "This way, the wandering trader remains in the world longer."})
     @IntRange(min = 0)
     public static int wanderingTraderExtraTime = 400;
+
+    @Config("Entity denylist for mob yoinker")
+    public static ResourceList mobYoinkerEntities = ResourceList.DENY_LIST;
 }

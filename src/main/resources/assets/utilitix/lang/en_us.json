@@ -43,6 +43,7 @@
   "item.utilitix.linked_crystal": "Linked Redstone Crystal",
   "item.utilitix.minecart_tinkerer": "Minecart Tinkerer",
   "item.utilitix.diamond_shears": "Diamond Shears",
+  "item.utilitix.mob_yoinker": "Mob Yoinker",
 
   "screen.utilitix.experience_crystal": "Experience Crystal",
   "screen.utilitix.quiver": "Quiver",
@@ -52,7 +53,7 @@
 
   "tooltip.utilitix.blacklisted_mob": "This mob is blacklisted",
   "tooltip.utilitix.current_mob": "Current Mob",
-  "tooltip.utilitix.no_mob": "Shift-rightclick a mob to bind the bell",
+  "tooltip.utilitix.no_mob": "Shift-rightclick a mob to bind it",
   "tooltip.utilitix.invalid_link": "Not Linked",
   "tooltip.utilitix.valid_link": "Linked: %s",
   "tooltip.utilitix.signal_strength": "Signal strength: %s",
