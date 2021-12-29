@@ -29,11 +29,9 @@ public class TileLinkedRepeater extends BlockEntityBase {
         this.link = ItemStack.of(nbt.getCompound("Link"));
     }
 
-    @Nonnull
     @Override
-    public CompoundTag save(@Nonnull CompoundTag compound) {
+    public void saveAdditional(@Nonnull CompoundTag compound) {
         compound.put("Link", this.link.serializeNBT());
-        return super.save(compound);
     }
 
     public ItemStack getLink() {

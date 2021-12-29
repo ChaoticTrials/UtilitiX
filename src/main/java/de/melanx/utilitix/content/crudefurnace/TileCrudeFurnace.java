@@ -238,9 +238,8 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickableBlock {
         }
     }
 
-    @Nonnull
     @Override
-    public CompoundTag save(@Nonnull CompoundTag compound) {
+    public void saveAdditional(@Nonnull CompoundTag compound) {
         compound.put("Inventory", this.inventory.serializeNBT());
         compound.putInt("burnTime", this.burnTime);
         compound.putInt("fuelTime", this.fuelTime);
@@ -249,7 +248,6 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickableBlock {
         CompoundTag recipes = new CompoundTag();
         this.recipes.forEach((id, xp) -> recipes.putInt(id.toString(), xp));
         compound.put("RecipesUsed", recipes);
-        return super.save(compound);
     }
 
     @Nonnull

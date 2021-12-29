@@ -36,11 +36,9 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickableBl
         this.xp = nbt.getInt("Xp");
     }
 
-    @Nonnull
     @Override
-    public CompoundTag save(@Nonnull CompoundTag compound) {
+    public void saveAdditional(@Nonnull CompoundTag compound) {
         compound.putInt("Xp", this.xp);
-        return super.save(compound);
     }
 
     @Override

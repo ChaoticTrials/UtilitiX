@@ -202,13 +202,11 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickableBloc
         this.fuel = nbt.getInt("fuel");
     }
 
-    @Nonnull
     @Override
-    public CompoundTag save(CompoundTag compound) {
+    public void saveAdditional(CompoundTag compound) {
         compound.put("Inventory", this.inventory.serializeNBT());
         compound.putInt("brewTime", this.brewTime);
         compound.putInt("fuel", this.fuel);
-        return super.save(compound);
     }
 
     @Nonnull
