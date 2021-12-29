@@ -1,17 +1,23 @@
 package de.melanx.utilitix.util;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.content.bell.ItemMobBell;
 import io.github.noeppi_noeppi.libx.util.ResourceList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class MobUtil {
 
@@ -38,7 +44,24 @@ public class MobUtil {
             nbt.put(MobUtil.ENTITY_DATA_TAG, entity.saveWithoutId(new CompoundTag()));
         }
         player.setItemInHand(hand, stack);
-        player.displayClientMessage(ItemMobBell.getCurrentMob(entity.getType()), true);
+        player.displayClientMessage(MobUtil.getCurrentMob(entity.getType()), true);
         return true;
+    }
+
+    @Nullable
+    public static MutableComponent getCurrentMob(ItemStack stack) {
+        String s = stack.getOrCreateTag().getString(MobUtil.ENTITY_TYPE_TAG);
+        Optional<EntityType<?>> entityType = EntityType.byString(s);
+
+        return entityType.map(MobUtil::getCurrentMob).orElse(null);
+    }
+
+    @Nonnull
+    public static MutableComponent getCurrentMob(EntityType<?> entityType) {
+        Component name = entityType.getDescription();
+        MutableComponent component = new TranslatableComponent("tooltip." + UtilitiX.getInstance().modid + ".current_mob");
+        component.withStyle(entityType.getCategory() == MobCategory.MONSTER ? ChatFormatting.RED : ChatFormatting.GOLD);
+
+        return component.append(": ").append(name);
     }
 }
