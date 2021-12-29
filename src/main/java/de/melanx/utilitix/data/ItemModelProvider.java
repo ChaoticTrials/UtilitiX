@@ -1,7 +1,9 @@
 package de.melanx.utilitix.data;
 
+import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.block.WeakRedstoneTorch;
 import de.melanx.utilitix.content.bell.BellBase;
+import de.melanx.utilitix.item.ItemMobYoinker;
 import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModItems;
 import io.github.noeppi_noeppi.libx.annotation.data.Datagen;
@@ -31,6 +33,12 @@ public class ItemModelProvider extends ItemModelProviderBase {
     protected void defaultItem(ResourceLocation id, Item item) {
         if (item instanceof BellBase) {
             super.defaultItem(new ResourceLocation(id.getNamespace(), id.getPath() + "_item"), item);
+        } else if (item instanceof ItemMobYoinker) {
+            this.withExistingParent(id.getPath(), GENERATED)
+                    .texture("layer0", new ResourceLocation(id.getNamespace(), "item/" + id.getPath())).override()
+                    .predicate(UtilitiX.getInstance().resource("filled"), 1)
+                    .model(this.withExistingParent(id.getPath() + "_filled", GENERATED)
+                            .texture("layer0", "item/" + id.getPath() + "_filled")).end();
         } else {
             super.defaultItem(id, item);
         }

@@ -1,11 +1,12 @@
 package de.melanx.utilitix;
 
-import de.melanx.utilitix.content.bell.ItemMobBell;
 import de.melanx.utilitix.content.gildingarmor.GildingArmorRecipe;
 import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.content.slime.StickyChunk;
 import de.melanx.utilitix.network.StickyChunkRequestSerializer;
 import de.melanx.utilitix.registration.ModItems;
+import de.melanx.utilitix.util.MobUtil;
+import de.melanx.utilitix.util.XPUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -55,31 +56,39 @@ import java.util.Set;
 
 public class EventListener {
 
-    private static final MutableComponent BLACKLISTED_MOB = new TranslatableComponent("tooltip." + UtilitiX.getInstance().modid + ".blacklisted_mob").withStyle(ChatFormatting.DARK_RED);
     private static final MutableComponent GILDED = new TranslatableComponent("tooltip.utilitix.gilded").withStyle(ChatFormatting.GOLD);
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
         Player player = event.getPlayer();
 
-        if (player.isShiftKeyDown() && player.getItemInHand(event.getHand()).getItem() == ModItems.mobBell && event.getTarget() instanceof LivingEntity target) {
+        if (player.isShiftKeyDown() && event.getTarget() instanceof LivingEntity target) {
             InteractionHand hand = event.getHand();
             ItemStack stack = player.getItemInHand(hand);
-            ResourceLocation entityKey = EntityType.getKey(target.getType());
-            if (entityKey.toString().equals(stack.getOrCreateTag().getString("Entity"))) {
-                return;
-            }
+            if (stack.getItem() == ModItems.mobBell) {
+                if (MobUtil.storeEntityData(player, hand, target, UtilitiXConfig.HandBells.mobBellEntities, true)) {
+                    event.setCancellationResult(InteractionResult.SUCCESS);
+                    event.setCanceled(true);
+                }
+            } else if (stack.getItem() == ModItems.mobYoinker) {
+                if (!player.isCreative()) {
+                    int xp = XPUtils.getExpPoints(player.experienceLevel, player.experienceProgress);
+                    int health = (int) target.getHealth();
+                    int diff = xp - health;
+                    if (diff < 0) {
+                        player.displayClientMessage(new TranslatableComponent("You need %s more xp to yoink this mob.", -diff), true);
+                        return;
+                    }
+                }
 
-            if (!UtilitiXConfig.HandBells.mobBellEntities.test(entityKey)) {
-                player.displayClientMessage(BLACKLISTED_MOB, true);
-                return;
-            }
+                if (MobUtil.storeEntityData(player, hand, target, UtilitiXConfig.HandBells.mobBellEntities, false)) {
+                    player.giveExperiencePoints((int) -target.getHealth());
+                    target.remove(Entity.RemovalReason.DISCARDED);
 
-            stack.getOrCreateTag().putString("Entity", entityKey.toString());
-            player.setItemInHand(hand, stack);
-            player.displayClientMessage(ItemMobBell.getCurrentMob(target.getType()), true);
-            event.setCancellationResult(InteractionResult.SUCCESS);
-            event.setCanceled(true);
+                    event.setCancellationResult(InteractionResult.SUCCESS);
+                    event.setCanceled(true);
+                }
+            }
         }
     }
 

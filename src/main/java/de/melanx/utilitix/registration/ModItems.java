@@ -9,6 +9,7 @@ import de.melanx.utilitix.content.slime.ItemGlueBall;
 import de.melanx.utilitix.content.track.ItemMinecartTinkerer;
 import de.melanx.utilitix.content.wireless.ItemLinkedCrystal;
 import de.melanx.utilitix.item.ItemBurnable;
+import de.melanx.utilitix.item.ItemMobYoinker;
 import de.melanx.utilitix.item.Quiver;
 import io.github.noeppi_noeppi.libx.annotation.registration.RegisterClass;
 import io.github.noeppi_noeppi.libx.base.ItemBase;
@@ -31,4 +32,5 @@ public class ModItems {
     public static final Item minecartTinkerer = new ItemMinecartTinkerer(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
     @SuppressWarnings("ConstantConditions")
     public static final Item diamondShears = new ShearsItem(new Item.Properties().stacksTo(1).durability(1486).tab(UtilitiX.getInstance().tab));
+    public static final Item mobYoinker = new ItemMobYoinker(new Item.Properties().stacksTo(1));
 }

@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "utilitix:item/mob_yoinker"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "utilitix:filled": 1.0
+      },
+      "model": "utilitix:item/mob_yoinker_filled"
+    }
+  ]
+}

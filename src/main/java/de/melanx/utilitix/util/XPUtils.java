@@ -27,6 +27,7 @@ public class XPUtils {
         return Pair.of(level, exp);
     }
 
+    // TODO 1.19 long
     public static int getExpPoints(int level, float exp) {
         int points = 0;
         for (int i = 0; i < level; i++) {

@@ -50,6 +50,7 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
         this.createCartRecipes(this.consumer());
         this.createShearsRecipes(this.consumer());
         this.wall(ModBlocks.stoneWall, Ingredient.of(Items.STONE));
+        this.shaped(ModItems.mobYoinker, "CIC", "ILI", "III", 'I', Items.IRON_BARS, 'C', Items.COPPER_INGOT, 'L', Items.LEAD);
     }
 
     private void createTinyCoalRecipe(Consumer<FinishedRecipe> consumer, ItemLike coal, ItemLike tinyCoal) {
