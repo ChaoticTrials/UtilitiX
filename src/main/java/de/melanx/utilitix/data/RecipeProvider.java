@@ -24,6 +24,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 
 import java.util.List;
@@ -51,6 +52,9 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
         this.createShearsRecipes(this.consumer());
         this.wall(ModBlocks.stoneWall, Ingredient.of(Items.STONE));
         this.shaped(ModItems.mobYoinker, "CIC", "ILI", "III", 'I', Items.IRON_BARS, 'C', Items.COPPER_INGOT, 'L', Items.LEAD);
+        this.shaped(ModBlocks.dimmableRedstoneLamp, 4, " L ", "LRL", " L ", 'L', Blocks.REDSTONE_LAMP, 'R', Tags.Items.DUSTS_REDSTONE);
+        //noinspection ConstantConditions
+        this.shapeless(UtilitiX.getInstance().resource(Blocks.REDSTONE_LAMP.getRegistryName().getPath() + "_revert"), Blocks.REDSTONE_LAMP, ModBlocks.dimmableRedstoneLamp);
     }
 
     private void createTinyCoalRecipe(Consumer<FinishedRecipe> consumer, ItemLike coal, ItemLike tinyCoal) {

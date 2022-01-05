@@ -2,6 +2,7 @@ package de.melanx.utilitix.data;
 
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.block.ComparatorRedirector;
+import de.melanx.utilitix.block.DimmableRedstoneLamp;
 import de.melanx.utilitix.block.ModProperties;
 import de.melanx.utilitix.data.state.RailState;
 import de.melanx.utilitix.registration.ModBlocks;
@@ -169,6 +170,22 @@ public class BlockStateProvider extends BlockStateProviderBase {
             }
         } else if (block == ModBlocks.stoneWall) {
             this.wallBlock((WallBlock) block, this.mcLoc("block/stone"));
+        } else if (block == ModBlocks.dimmableRedstoneLamp) {
+            VariantBlockStateBuilder builder = this.getVariantBuilder(block);
+            for (int signal : DimmableRedstoneLamp.SIGNAL.getPossibleValues()) {
+                boolean isDefault = signal == 0 || signal == 15;
+
+                ConfiguredModel signalModel;
+                if (isDefault) {
+                    boolean on = signal == 15;
+                    signalModel = new ConfiguredModel(this.models().cubeAll(id.getPath() + (on ? "_" + signal : ""), this.mcLoc("block/redstone_lamp" + (on ? "_on" : ""))));
+                } else {
+                    signalModel = new ConfiguredModel(this.models().cubeAll(id.getPath() + "_" + signal, this.modLoc("block/dimmable_redstone_lamp_" + signal)));
+                }
+
+                builder.partialState().with(DimmableRedstoneLamp.SIGNAL, signal)
+                        .addModels(signalModel);
+            }
         } else {
             super.defaultState(id, block, model);
         }

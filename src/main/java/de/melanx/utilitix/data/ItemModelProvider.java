@@ -7,6 +7,7 @@ import de.melanx.utilitix.item.ItemMobYoinker;
 import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModItems;
 import io.github.noeppi_noeppi.libx.annotation.data.Datagen;
+import io.github.noeppi_noeppi.libx.data.AlwaysExistentModelFile;
 import io.github.noeppi_noeppi.libx.data.provider.ItemModelProviderBase;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.data.DataGenerator;
@@ -54,6 +55,8 @@ public class ItemModelProvider extends ItemModelProviderBase {
             this.withExistingParent(id.getPath(), GENERATED).texture("layer0", new ResourceLocation(id.getNamespace(), "item/" + id.getPath()));
         } else if (item.getBlock() == ModBlocks.stoneWall) {
             this.withExistingParent(id.getPath(), WALL_PARENT).texture("wall", new ResourceLocation("block/stone"));
+        } else if (item.getBlock() == ModBlocks.dimmableRedstoneLamp) {
+            this.getBuilder(id.getPath()).parent(new AlwaysExistentModelFile(new ResourceLocation(id.getNamespace(), "block/" + id.getPath() + "_" + 7)));
         } else {
             super.defaultBlock(id, item);
         }

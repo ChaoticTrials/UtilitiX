@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "utilitix:block/dimmable_redstone_lamp_4"
+  }
+}

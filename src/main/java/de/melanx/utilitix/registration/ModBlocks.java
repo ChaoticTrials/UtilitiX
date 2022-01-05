@@ -1,10 +1,7 @@
 package de.melanx.utilitix.registration;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.block.ComparatorRedirector;
-import de.melanx.utilitix.block.ModProperties;
-import de.melanx.utilitix.block.StoneWallBlock;
-import de.melanx.utilitix.block.WeakRedstoneTorch;
+import de.melanx.utilitix.block.*;
 import de.melanx.utilitix.content.brewery.BlockAdvancedBrewery;
 import de.melanx.utilitix.content.brewery.ContainerMenuAdvancedBrewery;
 import de.melanx.utilitix.content.brewery.TileAdvancedBrewery;
@@ -25,6 +22,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
@@ -43,6 +41,7 @@ public class ModBlocks {
     public static final BlockBase comparatorRedirectorDown = new ComparatorRedirector(UtilitiX.getInstance(), Direction.DOWN, BlockBehaviour.Properties.copy(Blocks.OBSERVER));
     public static final WeakRedstoneTorch weakRedstoneTorch = new WeakRedstoneTorch(UtilitiX.getInstance(), BlockBehaviour.Properties.copy(Blocks.REDSTONE_TORCH));
     public static final BlockBase linkedRepeater = new BlockLinkedRepeater(UtilitiX.getInstance(), BlockBehaviour.Properties.copy(Blocks.REPEATER));
+    public static final DimmableRedstoneLamp dimmableRedstoneLamp = new DimmableRedstoneLamp(UtilitiX.getInstance(), BlockBehaviour.Properties.of(Material.BUILDABLE_GLASS).strength(0.3F).sound(SoundType.GLASS).lightLevel(DimmableRedstoneLamp.LIGHT_EMISSION).isValidSpawn((state, level, pos, entityType) -> true));
     public static final Block highspeedRail = new BlockPoweredRail(UtilitiX.getInstance(), 0.7, BlockBehaviour.Properties.copy(Blocks.POWERED_RAIL)) {
         @Nonnull
         @Override
