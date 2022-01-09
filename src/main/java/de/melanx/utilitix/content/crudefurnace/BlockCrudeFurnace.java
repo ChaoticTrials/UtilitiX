@@ -27,7 +27,7 @@ public class BlockCrudeFurnace extends MenuBlockBE<TileCrudeFurnace, ContainerMe
 
     public BlockCrudeFurnace(ModX mod, MenuType<ContainerMenuCrudeFurnace> menu, Properties properties) {
         super(mod, TileCrudeFurnace.class, menu, properties);
-        this.registerDefaultState(this.getStateDefinition().any()
+        this.registerDefaultState(this.defaultBlockState()
                 .setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH)
                 .setValue(AbstractFurnaceBlock.LIT, false));
     }

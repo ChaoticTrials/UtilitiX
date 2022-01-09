@@ -28,7 +28,10 @@ public abstract class BlockDirectionalRail extends BlockPoweredRail {
 
     public BlockDirectionalRail(ModX mod, double maxRailSpeed, Properties properties, Item.Properties itemProperties) {
         super(mod, maxRailSpeed, properties, itemProperties);
-        this.registerDefaultState(this.getStateDefinition().any().setValue(BlockStateProperties.POWERED, false).setValue(ModProperties.REVERSE, false));
+        this.registerDefaultState(this.defaultBlockState()
+                .setValue(BlockStateProperties.POWERED, false)
+                .setValue(ModProperties.REVERSE, false)
+                .setValue(BlockStateProperties.WATERLOGGED, false));
     }
 
     @Override

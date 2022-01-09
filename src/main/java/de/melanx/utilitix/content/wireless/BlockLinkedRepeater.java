@@ -48,7 +48,7 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
 
     public BlockLinkedRepeater(ModX mod, Properties properties, Item.Properties itemProperties) {
         super(mod, TileLinkedRepeater.class, properties, itemProperties);
-        this.registerDefaultState(this.getStateDefinition().any()
+        this.registerDefaultState(this.defaultBlockState()
                 .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
                 .setValue(BlockStateProperties.EYE, false)
                 .setValue(BlockStateProperties.POWER, 0)

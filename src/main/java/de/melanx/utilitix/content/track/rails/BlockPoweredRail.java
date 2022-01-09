@@ -20,7 +20,9 @@ public abstract class BlockPoweredRail extends BlockPowerableRail {
     public BlockPoweredRail(ModX mod, double maxRailSpeed, Properties properties, Item.Properties itemProperties) {
         super(mod, null, properties, itemProperties);
         this.maxRailSpeed = maxRailSpeed;
-        this.registerDefaultState(this.getStateDefinition().any().setValue(BlockStateProperties.POWERED, false));
+        this.registerDefaultState(this.defaultBlockState()
+                .setValue(BlockStateProperties.POWERED, false)
+                .setValue(BlockStateProperties.WATERLOGGED, false));
     }
 
     @Override

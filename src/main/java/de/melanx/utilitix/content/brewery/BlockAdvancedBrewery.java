@@ -35,7 +35,7 @@ public class BlockAdvancedBrewery extends MenuBlockBE<TileAdvancedBrewery, Conta
 
     public BlockAdvancedBrewery(ModX mod, Properties properties, Item.Properties itemProperties) {
         super(mod, TileAdvancedBrewery.class, BlockEntityMenu.createMenuType(ContainerMenuAdvancedBrewery::new), properties, itemProperties);
-        this.registerDefaultState(this.getStateDefinition().any().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        this.registerDefaultState(this.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
     }
 
     @Override
