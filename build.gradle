@@ -33,7 +33,8 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-1.18:9.0.0.40")
 
     implementation fg.deobf("curse.maven:jade-324717:3544015")
-//    runtimeOnly fg.deobf("de.melanx.recipeprinter:recipeprinter-1.16.3:2.0.4")
+
+    runtimeOnly fg.deobf("de.melanx:RecipePrinter:1.18.1-3.1.0")
 
     coremods 'io.github.noeppi_noeppi.misc:CoreModTypes:5.0.1-2'
 }
