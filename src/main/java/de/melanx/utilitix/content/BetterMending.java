@@ -44,7 +44,7 @@ public class BetterMending {
 
     private void moveExps(Level level, Stream<Entity> entities) {
         if (!UtilitiXConfig.betterMending) return;
-        entities.filter(e -> e.getType() == EntityType.ITEM)
+        entities.filter(e -> e != null && e.getType() == EntityType.ITEM)
                 .map(e -> (ItemEntity) e)
                 .filter(e -> e.getItem().getDamageValue() > 0 && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, e.getItem()) > 0)
                 .forEach(item -> {
