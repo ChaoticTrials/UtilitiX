@@ -82,4 +82,8 @@ public class UtilitiXConfig {
 
     @Config("Entity denylist for mob yoinker")
     public static ResourceList mobYoinkerEntities = ResourceList.DENY_LIST;
+
+    @Config({"Size scale for exporting maps", "1 = 128x128px", "2 = 256x256px", "3 = 384x384px", "And so on, you got the pattern I hope"})
+    @IntRange(min = 1)
+    public static int mapScale = 3;
 }

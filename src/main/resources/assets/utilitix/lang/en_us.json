@@ -102,5 +102,7 @@
   "jei.utilitix.gilding": "Gilding",
 
   "jade.utilitix.experience_crystal.level": "Level: ",
-  "jade.utilitix.experience_crystal.xp": "XP points: "
+  "jade.utilitix.experience_crystal.xp": "XP points: ",
+
+  "utilitix.map_saved": "Saved map here: %s"
 }

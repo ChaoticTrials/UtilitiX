@@ -212,9 +212,8 @@ public class StonecutterCart extends Cart {
         if (this.mode != this.entityData.get(MODE)) {
             this.entityData.set(MODE, this.mode);
         }
-        //noinspection UnstableApiUsage
+        // TODO NbtUtils.readBlockPos(CompoundTag)
         this.breakingBlock = NBTX.getPos(compound, "BreakPos");
-        //noinspection UnstableApiUsage
         this.lastSuccess = NBTX.getPos(compound, "LastSuccessfulBreak");
         this.breakProgress = compound.getInt("BreakProgress");
         if (compound.contains("StoredMotion", Tag.TAG_COMPOUND)) {
@@ -233,13 +232,11 @@ public class StonecutterCart extends Cart {
         if (this.breakingBlock == null) {
             compound.remove("BreakPos");
         } else {
-            //noinspection UnstableApiUsage
             NBTX.putPos(compound, "BreakPos", this.breakingBlock);
         }
         if (this.lastSuccess == null) {
             compound.remove("LastSuccessfulBreak");
         } else {
-            //noinspection UnstableApiUsage
             NBTX.putPos(compound, "LastSuccessfulBreak", this.lastSuccess);
         }
         compound.putInt("BreakProgress", this.breakProgress);

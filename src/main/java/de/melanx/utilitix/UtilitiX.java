@@ -1,9 +1,8 @@
 package de.melanx.utilitix;
 
+import de.melanx.utilitix.client.ClientUtilitiX;
 import de.melanx.utilitix.config.ArmorStandRotationMapper;
 import de.melanx.utilitix.content.BetterMending;
-import de.melanx.utilitix.content.bell.ItemMobBell;
-import de.melanx.utilitix.content.slime.SlimeRender;
 import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartContainerMenu;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartScreen;
@@ -20,8 +19,6 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -52,12 +49,7 @@ public final class UtilitiX extends ModXRegistration {
         ConfigManager.registerValueMapper("utilitix", new ArmorStandRotationMapper());
         ConfigManager.registerConfig(new ResourceLocation(this.modid, "common"), UtilitiXConfig.class, false);
 
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerItemColors);
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(Textures::registerTextures);
-
-            MinecraftForge.EVENT_BUS.addListener(SlimeRender::renderWorld);
-        });
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientUtilitiX::new);
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(SlimyCapability::registerCapability);
 
@@ -76,11 +68,6 @@ public final class UtilitiX extends ModXRegistration {
     @Override
     protected void clientSetup(FMLClientSetupEvent event) {
         MenuScreens.register(PistonCartContainerMenu.TYPE, PistonCartScreen::new);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    private void registerItemColors(ColorHandlerEvent.Item event) {
-        event.getItemColors().register((stack, idx) -> idx == 1 ? 0xFF000000 | ItemMobBell.getColor(stack) : 0xFFFFFFFF, ModItems.mobBell);
     }
 
     @Nonnull
