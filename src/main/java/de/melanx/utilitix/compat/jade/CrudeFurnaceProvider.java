@@ -56,7 +56,8 @@ public class CrudeFurnaceProvider implements IComponentProvider, IServerDataProv
         }
 
         data.put("Items", items);
-        CompoundTag furnaceTag = furnace.save(new CompoundTag());
+        CompoundTag furnaceTag = new CompoundTag();
+        furnace.saveAdditional(furnaceTag);
         data.putInt("burnTime", furnaceTag.getInt("burnTime"));
         data.putInt("maxTime", furnace.getRecipe() != null ? furnace.getRecipe().getBurnTime() : 0);
     }
