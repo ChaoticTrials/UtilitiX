@@ -166,7 +166,7 @@ public class EventListener {
                     // Block has been changed because of a piston move.
                     // Glue logic is handled in the piston til
                     // Skip this here
-                    // This is sometimes buggy, but we can't really do anything about this.
+                    // This is sometimes buggy but we can't really do anything about this.
                     return;
                 }
             }
