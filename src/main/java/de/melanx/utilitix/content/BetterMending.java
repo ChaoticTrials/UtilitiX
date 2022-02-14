@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BetterMending {
@@ -80,9 +81,13 @@ public class BetterMending {
         if (event.phase == TickEvent.Phase.END && Minecraft.getInstance().level != null) {
             Set<ItemEntity> items = Sets.newHashSet();
 
+            Set<UUID> mendingIds = ITEM_MENDING_MAP.entrySet().stream()
+                    .filter(Map.Entry::getValue)
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toSet());
+
             for (Entity entity : Minecraft.getInstance().level.entitiesForRendering()) {
-                Boolean hasMending = ITEM_MENDING_MAP.get(entity.getUUID());
-                if (hasMending != null && hasMending) {
+                if (mendingIds.contains(entity.getUUID())) {
                     items.add((ItemEntity) entity);
                 }
             }
