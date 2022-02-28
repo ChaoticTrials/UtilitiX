@@ -12,7 +12,7 @@ public class UtiliNetwork extends NetworkX {
 
     @Override
     protected Protocol getProtocol() {
-        return Protocol.of("5");
+        return Protocol.of("6");
     }
 
     @Override
