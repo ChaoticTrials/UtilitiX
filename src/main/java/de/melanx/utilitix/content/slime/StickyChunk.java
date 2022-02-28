@@ -2,6 +2,7 @@ package de.melanx.utilitix.content.slime;
 
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.network.StickyChunkUpdateSerializer;
+import io.github.noeppi_noeppi.libx.annotation.meta.RemoveIn;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.CompoundTag;
@@ -80,7 +81,7 @@ public class StickyChunk {
     public void attach(LevelChunk chunk) {
         this.chunk = chunk;
     }
-    
+
     public CompoundTag write() {
         CompoundTag nbt = new CompoundTag();
         for (Map.Entry<Integer, StickySection> entry : this.sections.entrySet()) {
@@ -90,7 +91,9 @@ public class StickyChunk {
         }
         return nbt;
     }
-    
+
+    @Deprecated(forRemoval = true)
+    @RemoveIn(minecraft = "1.19")
     public void readLegacy(ByteArrayTag nbt) {
         // Read legacy stuff stored in one byte array
         try {
