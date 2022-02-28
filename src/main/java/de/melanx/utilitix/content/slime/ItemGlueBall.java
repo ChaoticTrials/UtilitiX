@@ -1,15 +1,23 @@
 package de.melanx.utilitix.content.slime;
 
+import de.melanx.utilitix.compat.quark.QuarkCompat;
 import io.github.noeppi_noeppi.libx.base.ItemBase;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraftforge.fml.ModList;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class ItemGlueBall extends ItemBase {
 
@@ -42,5 +50,15 @@ public class ItemGlueBall extends ItemBase {
             }
         }
         return super.useOn(context);
+    }
+
+    @Override
+    public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level level, @Nonnull List<Component> tooltips, @Nonnull TooltipFlag isAdvanced) {
+        if (ModList.get().isLoaded("quark")) {
+            Component warning = QuarkCompat.warningForGlue();
+            if (warning != null) {
+                tooltips.add(warning);
+            }
+        }
     }
 }
