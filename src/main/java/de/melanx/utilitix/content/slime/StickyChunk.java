@@ -3,108 +3,179 @@ package de.melanx.utilitix.content.slime;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.network.StickyChunkUpdateSerializer;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.ByteArrayTag;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 public class StickyChunk {
 
     @Nullable
     private LevelChunk chunk;
-    private byte[] stickies;
-    // For performance
-    private Set<Integer> indicesWithGlue = null;
+    private final Map<Integer, StickySection> sections; 
 
     public StickyChunk() {
-        this.stickies = new byte[65536];
+        this.sections = new HashMap<>();
     }
 
     public boolean get(int x, int y, int z, Direction dir) {
-        int idx = ((y & 0xFF) << 8) | ((z & 0xF) << 4) | (x & 0xF);
-        byte data = this.stickies[idx];
-        return (data & (1 << dir.ordinal())) != 0;
+        StickySection section = this.getSection(y);
+        return section != null && section.get(x, y & 0xF, z, dir);
     }
 
     public void set(int x, int y, int z, Direction dir, boolean sticky) {
-        int idx = ((y & 0xFF) << 8) | ((z & 0xF) << 4) | (x & 0xF);
-        if (sticky) {
-            this.stickies[idx] = (byte) (this.stickies[idx] | ((byte) (1 << dir.ordinal())));
-        } else {
-            this.stickies[idx] = (byte) (this.stickies[idx] & ~((byte) (1 << dir.ordinal())));
-        }
-        this.indicesWithGlue = null;
-        if (this.chunk != null && !this.chunk.getLevel().isClientSide) {
-            this.chunk.setUnsaved(true);
-            UtilitiX.getNetwork().channel.send(PacketDistributor.TRACKING_CHUNK.with(() -> this.chunk), new StickyChunkUpdateSerializer.StickyChunkUpdateMessage(this.chunk.getPos(), this));
-        }
+        StickySection section = this.getOrCreateSection(y);
+        section.set(x, y & 0xF, z, dir, sticky);
     }
 
     public byte getData(int x, int y, int z) {
-        int idx = ((y & 0xFF) << 8) | ((z & 0xF) << 4) | (x & 0xF);
-        return this.stickies[idx];
+        StickySection section = this.getSection(y);
+        return section == null ? (byte) 0 : section.getData(x, y & 0xF, z);
     }
 
     public void setData(int x, int y, int z, byte data) {
-        int idx = ((y & 0xFF) << 8) | ((z & 0xF) << 4) | (x & 0xF);
-        this.stickies[idx] = data;
-        this.indicesWithGlue = null;
-        if (this.chunk != null && !this.chunk.getLevel().isClientSide) {
-            this.chunk.setUnsaved(true);
-            UtilitiX.getNetwork().channel.send(PacketDistributor.TRACKING_CHUNK.with(() -> this.chunk), new StickyChunkUpdateSerializer.StickyChunkUpdateMessage(this.chunk.getPos(), this));
-        }
+        StickySection section = this.getOrCreateSection(y);
+        section.setData(x, y & 0xF, z, data);
     }
 
     public void clearData(int x, int y, int z) {
-        int idx = ((y & 0xFF) << 8) | ((z & 0xF) << 4) | (x & 0xF);
-        this.stickies[idx] = 0;
-        this.indicesWithGlue = null;
+        StickySection section = this.getOrCreateSection(y);
+        section.clearData(x, y & 0xF, z);
+    }
+
+    public void foreach(ChunkAction action) {
+        for (Map.Entry<Integer, StickySection> entry : this.sections.entrySet()) {
+            if (!entry.getValue().canBeDiscarded()) {
+                SectionAction sectionAction = action.section(entry.getKey(), entry.getKey() << 4);
+                if (sectionAction != null) {
+                    entry.getValue().foreach(sectionAction);
+                }
+            }
+        }
+    }
+    
+    public void sync() {
         if (this.chunk != null && !this.chunk.getLevel().isClientSide) {
             this.chunk.setUnsaved(true);
             UtilitiX.getNetwork().channel.send(PacketDistributor.TRACKING_CHUNK.with(() -> this.chunk), new StickyChunkUpdateSerializer.StickyChunkUpdateMessage(this.chunk.getPos(), this));
         }
     }
-
-    public void foreach(StickyAction action) {
-        if (this.indicesWithGlue == null) {
-            this.indicesWithGlue = new HashSet<>();
-            for (int idx = 0; idx < this.stickies.length; idx++) {
-                byte data = this.stickies[idx];
-                if (data != 0) {
-                    this.indicesWithGlue.add(idx);
-                }
-            }
-        }
-        for (int idx : this.indicesWithGlue) {
-            byte data = this.stickies[idx];
-            if (data != 0) {
-                int y = (idx >>> 8) & 0xFF;
-                int z = (idx >>> 4) & 0xF;
-                int x = idx & 0xF;
-                action.accept(x, y, z, data);
-            }
-        }
+    
+    @Nullable
+    private StickySection getSection(int y) {
+        return this.sections.getOrDefault(y >> 4, null);
     }
-
-    public byte[] getStickies() {
-        return this.stickies;
-    }
-
-    public void setStickies(byte[] data) {
-        if (data.length != 65536)
-            throw new IllegalStateException("Invalid size of sticky data for chunk: " + data.length);
-        this.stickies = data;
-        this.indicesWithGlue = null;
+    
+    private StickySection getOrCreateSection(int y) {
+        // No need to sync as the newly created section is empty.
+        return this.sections.computeIfAbsent(y >> 4, k -> new StickySection(this));
     }
 
     public void attach(LevelChunk chunk) {
         this.chunk = chunk;
     }
+    
+    public CompoundTag write() {
+        CompoundTag nbt = new CompoundTag();
+        for (Map.Entry<Integer, StickySection> entry : this.sections.entrySet()) {
+            if (!entry.getValue().canBeDiscarded()) {
+                nbt.putByteArray(Integer.toString(entry.getKey()), entry.getValue().getStickies());
+            }
+        }
+        return nbt;
+    }
+    
+    public void readLegacy(ByteArrayTag nbt) {
+        // Read legacy stuff stored in one byte array
+        try {
+            byte[] data = nbt.getAsByteArray();
+            this.sections.clear();
+            for (int sectionId = 0; sectionId < 16; sectionId++) {
+                byte[] newData = new byte[4096];
+                int sectionOffset = sectionId << 4;
+                for (int x = 0; x < 16; x++) {
+                    for (int y = 0; y < 16; y++) {
+                        for (int z = 0; z < 16; z++) {
+                            int newIdx = ((y & 0xF) << 8) | ((z & 0xF) << 4) | (x & 0xF);
+                            int oldIdx = (((y + sectionOffset) & 0xFF) << 8) | ((z & 0xF) << 4) | (x & 0xF);
+                            newData[newIdx] = data[oldIdx];
+                        }
+                    }
+                }
+                StickySection section = new StickySection(this);
+                section.setStickies(newData);
+                if (!section.canBeDiscarded()) {
+                    this.sections.put(sectionId, section);
+                }
+            }
+        } catch (Exception e) {
+            UtilitiX.getInstance().logger.error(e);
+        }
+    }
+    
+    public void read(CompoundTag nbt) {
+        this.sections.clear();
+        for (String key : nbt.getAllKeys()) {
+            if (!nbt.contains(key, Tag.TAG_BYTE_ARRAY)) {
+                UtilitiX.getInstance().logger.error("Invalid chunk section value in sticky chunk for: " + key);
+                continue;
+            }
+            try {
+                int sectionId = Integer.parseInt(key);
+                StickySection section = new StickySection(this);
+                section.setStickies(nbt.getByteArray(key));
+                this.sections.put(sectionId, section);
+            } catch (NumberFormatException e) {
+                UtilitiX.getInstance().logger.error("Invalid chunk section id in sticky chunk: " + key);
+            }
+        }
+    }
 
-    public interface StickyAction {
+    public void write(FriendlyByteBuf buffer) {
+        buffer.writeVarInt(this.sections.size());
+        for (Map.Entry<Integer, StickySection> entry : this.sections.entrySet()) {
+            buffer.writeVarInt(entry.getKey());
+            entry.getValue().writeRawDataToBuffer(buffer);
+        }
+    }
+    
+    public void read(FriendlyByteBuf buffer) {
+        int size = buffer.readVarInt();
+        this.sections.clear();
+        for (int i = 0; i < size; i++) {
+            int sectionId = buffer.readVarInt();
+            StickySection section = new StickySection(this);
+            section.readRawDataFromBuffer(buffer);
+            this.sections.put(sectionId, section);
+        }
+    }
+    
+    // Will clear the argument.
+    public void loadFrom(StickyChunk networkChunk) {
+        if (networkChunk.chunk != null) {
+            throw new IllegalArgumentException("Can't copy data from attached chunk");
+        }
+        this.sections.clear();
+        this.sections.putAll(networkChunk.sections);
+        networkChunk.sections.clear();
+    }
+    
+    public interface ChunkAction {
 
+        @Nullable
+        SectionAction section(int sectionId, int sectionOffset);
+    }
+    
+    public interface SectionAction {
+
+        void start();
         void accept(int x, int y, int z, byte data);
+        void stop();
     }
 }

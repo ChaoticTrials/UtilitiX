@@ -14,16 +14,16 @@ public class StickyChunkUpdateSerializer implements PacketSerializer<StickyChunk
 
     @Override
     public void encode(StickyChunkUpdateMessage msg, FriendlyByteBuf buffer) {
-        buffer.writeInt(msg.pos.x);
-        buffer.writeInt(msg.pos.z);
-        buffer.writeByteArray(msg.data.getStickies());
+        buffer.writeInt(msg.pos().x);
+        buffer.writeInt(msg.pos().z);
+        msg.data().write(buffer);
     }
 
     @Override
     public StickyChunkUpdateMessage decode(FriendlyByteBuf buffer) {
         ChunkPos pos = new ChunkPos(buffer.readInt(), buffer.readInt());
         StickyChunk chunk = new StickyChunk();
-        chunk.setStickies(buffer.readByteArray());
+        chunk.read(buffer);
         return new StickyChunkUpdateMessage(pos, chunk);
     }
 

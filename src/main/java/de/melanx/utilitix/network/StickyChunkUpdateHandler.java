@@ -26,7 +26,7 @@ public class StickyChunkUpdateHandler {
                         StickyChunk glue = loaded.getCapability(SlimyCapability.STICKY_CHUNK).orElse(null);
                         //noinspection ConstantConditions
                         if (glue != null) {
-                            glue.setStickies(msg.data().getStickies());
+                            glue.loadFrom(msg.data());
                             return;
                         }
                     }

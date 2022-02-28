@@ -1,5 +1,6 @@
 package de.melanx.utilitix.content.wireless;
 
+import io.github.noeppi_noeppi.libx.annotation.meta.RemoveIn;
 import io.github.noeppi_noeppi.libx.util.NBTX;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -11,6 +12,9 @@ import net.minecraft.world.level.Level;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
+// Use net.minecraft.core.GlobalPos
+@Deprecated(forRemoval = true)
+@RemoveIn(minecraft = "1.19")
 public class WorldAndPos {
 
     public final ResourceKey<Level> dimension;

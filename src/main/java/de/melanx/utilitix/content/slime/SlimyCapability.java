@@ -5,6 +5,7 @@ import io.github.noeppi_noeppi.libx.util.LazyValue;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.ByteArrayTag;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -22,12 +23,10 @@ public class SlimyCapability {
 
     public static final ResourceLocation KEY = new ResourceLocation(UtilitiX.getInstance().modid, "sticky_chunk");
 
-    public static Capability<StickyChunk> STICKY_CHUNK;
+    public static final Capability<StickyChunk> STICKY_CHUNK = CapabilityManager.get(new CapabilityToken<>() {});
 
     public static void registerCapability(RegisterCapabilitiesEvent event) {
         event.register(StickyChunk.class);
-        STICKY_CHUNK = CapabilityManager.get(new CapabilityToken<>() {
-        });
     }
 
     public static void attach(AttachCapabilitiesEvent<LevelChunk> event) {
@@ -50,11 +49,9 @@ public class SlimyCapability {
 
     public static class SimpleProvider implements ICapabilityProvider, INBTSerializable<Tag> {
 
-        public final Capability<?> capability;
-        public final LazyValue<?> value;
+        public final LazyValue<? extends StickyChunk> value;
 
-        public <T> SimpleProvider(Capability<T> capability, LazyValue<? extends T> value) {
-            this.capability = capability;
+        public <T> SimpleProvider(Capability<T> capability, LazyValue<? extends StickyChunk> value) {
             this.value = value;
         }
 
@@ -62,17 +59,23 @@ public class SlimyCapability {
         @Override
         public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
             //noinspection NullableProblems
-            return cap == this.capability ? LazyOptional.of(this.value::get).cast() : LazyOptional.empty();
+            return cap == SlimyCapability.STICKY_CHUNK ? LazyOptional.of(this.value::get).cast() : LazyOptional.empty();
         }
 
         @Override
         public Tag serializeNBT() {
-            return new ByteArrayTag(((StickyChunk) this.value.get()).getStickies());
+            return this.value.get().write();
         }
 
         @Override
         public void deserializeNBT(Tag nbt) {
-            ((StickyChunk) this.value.get()).setStickies(((ByteArrayTag) nbt).getAsByteArray());
+            if (nbt instanceof ByteArrayTag legacy) {
+                this.value.get().readLegacy(legacy);
+            } else if (nbt instanceof CompoundTag tag) {
+                this.value.get().read(tag);
+            } else {
+                UtilitiX.getInstance().logger.error("Invalid nbt tag type for stored sticky chunk: " + nbt.getType());
+            }
         }
     }
 }
