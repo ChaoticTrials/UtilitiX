@@ -1,18 +1,19 @@
 package de.melanx.utilitix.compat.jei;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.recipe.BreweryRecipe;
 import de.melanx.utilitix.registration.ModBlocks;
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.ITickTimer;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -39,7 +40,7 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
     public BreweryCategory(IGuiHelper guiHelper) {
         ResourceLocation location = new ResourceLocation(UtilitiX.getInstance().modid, "textures/container/advanced_brewery.png");
         this.background = guiHelper.drawableBuilder(location, 55, 15, 64, 60).addPadding(1, 0, 0, 50).build();
-        this.icon = guiHelper.createDrawableIngredient(new ItemStack(ModBlocks.advancedBrewery));
+        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(ModBlocks.advancedBrewery));
         this.localizedName = new TranslatableComponent("screen.utilitix.advanced_brewery");
         this.arrow = guiHelper.drawableBuilder(location, 176, 0, 9, 28).buildAnimated(400, IDrawableAnimated.StartDirection.TOP, false);
         ITickTimer bubblesTickTimer = new BubbleTimer(guiHelper);
@@ -79,28 +80,21 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
     }
 
     @Override
-    public void setIngredients(@Nonnull BreweryRecipe recipe, @Nonnull IIngredients ii) {
+    public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull BreweryRecipe recipe, @Nonnull IFocusGroup focuses) {
         ItemStack stack = new ItemStack(Items.POTION);
         PotionUtils.setPotion(stack, Potions.AWKWARD);
 
-        ii.setInputIngredients(recipe.getIngredients());
-        ii.setOutputs(VanillaTypes.ITEM, ImmutableList.of(
-                stack,
-                recipe.getResultItem()
-        ));
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 24, 44)
+                .addItemStack(stack);
+
+        builder.addSlot(RecipeIngredientRole.INPUT, 24, 3);
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 81, 3)
+                .addItemStack(recipe.getResultItem())
+                .setBackground(this.slot, -1, -1);
     }
 
     @Override
-    public void setRecipe(@Nonnull IRecipeLayout layout, @Nonnull BreweryRecipe recipe, @Nonnull IIngredients ii) {
-        layout.getItemStacks().init(0, false, 23, 43);
-        layout.getItemStacks().init(1, true, 23, 2);
-        layout.getItemStacks().init(2, false, 80, 2);
-        layout.getItemStacks().setBackground(2, this.slot);
-        layout.getItemStacks().set(ii);
-    }
-
-    @Override
-    public void draw(@Nonnull BreweryRecipe recipe, @Nonnull PoseStack poseStack, double mouseX, double mouseY) {
+    public void draw(@Nonnull BreweryRecipe recipe, @Nonnull IRecipeSlotsView slotsView, @Nonnull PoseStack poseStack, double mouseX, double mouseY) {
         this.blazeHeat.draw(poseStack, 5, 30);
         this.bubbles.draw(poseStack, 8, 0);
         this.arrow.draw(poseStack, 42, 2);

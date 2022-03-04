@@ -2,11 +2,11 @@ package de.melanx.utilitix.compat.jei;
 
 import de.melanx.utilitix.UtilitiX;
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -16,7 +16,6 @@ import net.minecraft.world.item.crafting.UpgradeRecipe;
 import net.minecraft.world.level.block.Blocks;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 
 public class GildingCategory implements IRecipeCategory<UpgradeRecipe> {
 
@@ -25,7 +24,7 @@ public class GildingCategory implements IRecipeCategory<UpgradeRecipe> {
 
     public GildingCategory(IGuiHelper helper) {
         this.background = helper.createDrawable(new ResourceLocation("jei", "textures/gui/gui_vanilla.png"), 0, 168, 125, 18);
-        this.icon = helper.createDrawableIngredient(new ItemStack(Blocks.SMITHING_TABLE));
+        this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(Blocks.SMITHING_TABLE));
     }
 
     public static final ResourceLocation ID = new ResourceLocation(UtilitiX.getInstance().modid, "gilding");
@@ -61,19 +60,9 @@ public class GildingCategory implements IRecipeCategory<UpgradeRecipe> {
     }
 
     @Override
-    public void setIngredients(@Nonnull UpgradeRecipe recipe, @Nonnull IIngredients ingredients) {
-        ingredients.setInputIngredients(Arrays.asList(recipe.base, recipe.addition));
-        ingredients.setOutput(VanillaTypes.ITEM, recipe.getResultItem());
-    }
-
-    @Override
-    public void setRecipe(@Nonnull IRecipeLayout layout, @Nonnull UpgradeRecipe recipe, @Nonnull IIngredients ingredients) {
-        IGuiItemStackGroup stacks = layout.getItemStacks();
-
-        stacks.init(0, true, 0, 0);
-        stacks.init(1, true, 49, 0);
-        stacks.init(2, false, 107, 0);
-
-        stacks.set(ingredients);
+    public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull UpgradeRecipe recipe, @Nonnull IFocusGroup focuses) {
+        builder.addSlot(RecipeIngredientRole.INPUT, 1, 1).addIngredients(recipe.base);
+        builder.addSlot(RecipeIngredientRole.INPUT, 50, 1).addIngredients(recipe.addition);
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 108, 1).addItemStack(recipe.getResultItem());
     }
 }
