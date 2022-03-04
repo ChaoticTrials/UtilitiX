@@ -31,13 +31,13 @@ public class ExperienceCrystalProvider implements IComponentProvider, IServerDat
 
         int xp = accessor.getServerData().getInt("Xp");
         IElementHelper helper = tooltip.getElementHelper();
-        tooltip.add(helper.item(XP_BOTTLE, 0.75f));
+        tooltip.add(Jade.smallItem(helper, XP_BOTTLE));
         if (accessor.getServerData().getBoolean("ShowDetails")) {
-            tooltip.append(helper.text(new TranslatableComponent("jade.utilitix.experience_crystal.xp")).translate(Jade.VERTICAL_OFFSET));
-            tooltip.append(helper.text(new TextComponent(String.valueOf(xp))).translate(Jade.VERTICAL_OFFSET));
+            tooltip.append(helper.text(new TranslatableComponent("jade.utilitix.experience_crystal.xp")).translate(Jade.SMALL_ITEM_OFFSET));
+            tooltip.append(helper.text(new TextComponent(String.valueOf(xp))).translate(Jade.SMALL_ITEM_OFFSET));
         } else {
-            tooltip.append(helper.text(new TranslatableComponent("jade.utilitix.experience_crystal.level")).translate(Jade.VERTICAL_OFFSET));
-            tooltip.append(helper.text(new TextComponent(XPUtils.getLevelExp(xp).getLeft().toString())).translate(Jade.VERTICAL_OFFSET));
+            tooltip.append(helper.text(new TranslatableComponent("jade.utilitix.experience_crystal.level")).translate(Jade.SMALL_ITEM_OFFSET));
+            tooltip.append(helper.text(new TextComponent(XPUtils.getLevelExp(xp).getLeft().toString())).translate(Jade.SMALL_ITEM_OFFSET));
         }
     }
 

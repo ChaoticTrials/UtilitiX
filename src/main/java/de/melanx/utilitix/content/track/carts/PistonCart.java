@@ -61,13 +61,13 @@ public class PistonCart extends Cart {
     public PistonCart(EntityType<?> type, Level level) {
         super(type, level);
         this.railIn = BaseItemStackHandler.builder(12)
-                .validator(stack -> ItemTags.RAILS.contains(stack.getItem()))
+                .validator(stack -> stack.is(ItemTags.RAILS))
                 .build();
         this.railOut = BaseItemStackHandler.builder(12)
-                .validator(stack -> ItemTags.RAILS.contains(stack.getItem()))
+                .validator(stack -> stack.is(ItemTags.RAILS))
                 .build();
         this.torchIn = BaseItemStackHandler.builder(12)
-                .validator(stack -> ModItemTags.RAIL_POWER_SOURCES.contains(stack.getItem()))
+                .validator(stack -> stack.is(ModItemTags.RAIL_POWER_SOURCES))
                 .build();
     }
 

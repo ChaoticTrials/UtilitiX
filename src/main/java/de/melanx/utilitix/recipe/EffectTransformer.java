@@ -149,7 +149,7 @@ public abstract class EffectTransformer {
 
         @Override
         public boolean canTransform(PotionInput input) {
-            return ModItemTags.POTIONS.contains(input.getMain().getItem()) && input.testEffectsMain(List::isEmpty) && input.getIn1().isEmpty() && input.getIn2().isEmpty();
+            return input.getMain().is(ModItemTags.POTIONS) && input.testEffectsMain(List::isEmpty) && input.getIn1().isEmpty() && input.getIn2().isEmpty();
         }
 
         @Override
@@ -356,8 +356,8 @@ public abstract class EffectTransformer {
 
         @Override
         public boolean canTransform(PotionInput input) {
-            return input.testEffectsMain(list -> !list.isEmpty()) && ModItemTags.POTIONS.contains(input.getIn1().getItem())
-                    && input.getEffects1() == null && ModItemTags.POTIONS.contains(input.getIn2().getItem())
+            return input.testEffectsMain(list -> !list.isEmpty()) && input.getIn1().is(ModItemTags.POTIONS)
+                    && input.getEffects1() == null && input.getIn2().is(ModItemTags.POTIONS)
                     && input.getEffects2() == null;
         }
 

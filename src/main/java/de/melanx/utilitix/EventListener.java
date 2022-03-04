@@ -231,7 +231,7 @@ public class EventListener {
         Level level = event.getWorld();
         BlockPos pos = event.getPos();
         BlockState state = level.getBlockState(pos);
-        if (!(state.getBlock() instanceof DoorBlock) && !BlockTags.DOORS.contains(state.getBlock()) || state.getBlock().material == Material.METAL) {
+        if (!(state.getBlock() instanceof DoorBlock) && !state.is(BlockTags.DOORS) || state.getBlock().material == Material.METAL) {
             return;
         }
 
@@ -243,7 +243,7 @@ public class EventListener {
         BlockPos neighborPos = pos.relative(hinge == DoorHingeSide.LEFT ? facing.getClockWise() : facing.getCounterClockWise());
 
         BlockState neighborState = level.getBlockState(neighborPos);
-        if (!(neighborState.getBlock() instanceof DoorBlock) && !BlockTags.DOORS.contains(neighborState.getBlock()) || neighborState.getBlock().material == Material.METAL) {
+        if (!(neighborState.getBlock() instanceof DoorBlock) && !neighborState.is(BlockTags.DOORS) || neighborState.getBlock().material == Material.METAL) {
             return;
         }
 

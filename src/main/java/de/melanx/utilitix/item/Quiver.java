@@ -36,7 +36,7 @@ public class Quiver extends ItemBase implements Registerable {
 
     @Override
     public void registerCommon(ResourceLocation id, Consumer<Runnable> defer) {
-        GenericMenu.registerSlotValidator(SLOT_VALIDATOR, (slot, stack) -> ItemTags.ARROWS.contains(stack.getItem()));
+        GenericMenu.registerSlotValidator(SLOT_VALIDATOR, (slot, stack) -> stack.is(ItemTags.ARROWS));
     }
 
     @Nonnull
@@ -51,7 +51,7 @@ public class Quiver extends ItemBase implements Registerable {
                         stack.getOrCreateTag().put("Items", handler.get().serializeNBT());
                         player.setItemInHand(hand, stack);
                     })
-                    .validator(stack1 -> ItemTags.ARROWS.contains(stack1.getItem()), 0, 1, 2, 3, 4, 5, 6, 7, 8)
+                    .validator(stack1 -> stack1.is(ItemTags.ARROWS), 0, 1, 2, 3, 4, 5, 6, 7, 8)
                     .build());
             if (stack.getOrCreateTag().contains("Items")) {
                 handler.get().deserializeNBT(stack.getOrCreateTag().getCompound("Items"));
@@ -78,7 +78,7 @@ public class Quiver extends ItemBase implements Registerable {
         AtomicReference<BaseItemStackHandler> handler = new AtomicReference<>(null);
         handler.set(BaseItemStackHandler.builder(9)
                 .contentsChanged(slot -> stack.getOrCreateTag().put("Items", handler.get().serializeNBT()))
-                .validator(stack1 -> ItemTags.ARROWS.contains(stack1.getItem()))
+                .validator(stack1 -> stack1.is(ItemTags.ARROWS))
                 .build()
         );
         handler.get().deserializeNBT(stack.getOrCreateTag().getCompound("Items"));

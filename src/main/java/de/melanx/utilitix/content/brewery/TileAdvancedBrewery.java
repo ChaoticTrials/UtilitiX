@@ -59,7 +59,7 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickableBloc
                     this.setDispatchable();
                 })
                 .validator(stack -> this.level != null && RecipeHelper.isItemValidInput(this.level.getRecipeManager(), ModRecipes.BREWERY, stack), 0)
-                .validator(stack -> ModItemTags.BOTTLES.contains(stack.getItem()), 1, 2, 3)
+                .validator(stack -> stack.is(ModItemTags.BOTTLES), 1, 2, 3)
                 .validator(stack -> stack.getItem() == Items.BLAZE_POWDER, 4)
                 .slotLimit(1, 1, 2, 3)
                 .build();

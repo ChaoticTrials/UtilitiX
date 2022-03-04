@@ -3,7 +3,7 @@ package de.melanx.utilitix.content.track.rails;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -18,13 +18,13 @@ import javax.annotation.Nullable;
 public abstract class BlockPowerableRail extends BlockRail {
 
     @Nullable
-    private final Tag<Block> powerables;
+    private final TagKey<Block> powerables;
 
-    public BlockPowerableRail(ModX mod, @Nullable Tag<Block> powerables, Properties properties) {
+    public BlockPowerableRail(ModX mod, @Nullable TagKey<Block> powerables, Properties properties) {
         this(mod, powerables, properties, new Item.Properties());
     }
 
-    public BlockPowerableRail(ModX mod, @Nullable Tag<Block> powerables, Properties properties, Item.Properties itemProperties) {
+    public BlockPowerableRail(ModX mod, @Nullable TagKey<Block> powerables, Properties properties, Item.Properties itemProperties) {
         super(mod, false, properties, itemProperties);
         this.powerables = powerables;
     }
@@ -98,7 +98,7 @@ public abstract class BlockPowerableRail extends BlockRail {
             if (shape == RailShape.NORTH_SOUTH && (rail == RailShape.EAST_WEST || rail == RailShape.ASCENDING_EAST || rail == RailShape.ASCENDING_WEST)) {
                 return false;
             }
-            if (this.powerables == null ? target.getBlock() == this : this.powerables.contains(target.getBlock())) {
+            if (this.powerables == null ? target.getBlock() == this : target.is(this.powerables)) {
                 return level.hasNeighborSignal(pos) || this.findPower(level, pos, target, searchForward, recursionCount + 1);
             } else {
                 return false;

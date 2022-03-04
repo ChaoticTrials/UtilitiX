@@ -5,7 +5,7 @@ import de.melanx.utilitix.recipe.EffectTransformer;
 import de.melanx.utilitix.registration.ModRecipes;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -34,7 +34,7 @@ public class BreweryRecipeBuilder {
         return this.input(Ingredient.of(input));
     }
 
-    public BreweryRecipeBuilder input(Tag<Item> input) {
+    public BreweryRecipeBuilder input(TagKey<Item> input) {
         return this.input(Ingredient.of(input));
     }
 

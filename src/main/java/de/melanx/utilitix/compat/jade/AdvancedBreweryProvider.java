@@ -8,6 +8,7 @@ import mcp.mobius.waila.api.ITooltip;
 import mcp.mobius.waila.api.config.IPluginConfig;
 import mcp.mobius.waila.api.ui.IElementHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -33,13 +34,13 @@ public class AdvancedBreweryProvider implements IComponentProvider, IServerDataP
         int time = tag.getInt("time");
 
         IElementHelper helper = tooltip.getElementHelper();
-        tooltip.add(helper.item(BLAZE_POWDER, 0.75f));
-        tooltip.append(helper.text(new TranslatableComponent("jade.brewingStand.fuel", fuel)).translate(Jade.VERTICAL_OFFSET));
+        tooltip.add(Jade.smallItem(helper, BLAZE_POWDER));
+        tooltip.append(helper.text(new TextComponent(Integer.toString(fuel))));
 
         if (time > 0 && time != TileAdvancedBrewery.MAX_BREW_TIME) {
             tooltip.append(helper.spacer(5, 0));
             tooltip.append(helper.item(CLOCK, 0.75f));
-            tooltip.append(helper.text(new TranslatableComponent("jade.brewingStand.time", time / 20)).translate(Jade.VERTICAL_OFFSET));
+            tooltip.append(helper.text(new TranslatableComponent("jade.seconds", time / 20)).translate(Jade.SMALL_ITEM_OFFSET));
         }
     }
 

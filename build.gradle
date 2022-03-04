@@ -31,19 +31,19 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.18.1-3.1.2")
+    annotationProcessor fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.18.2-3.2.0")
 
-    implementation fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.18.1-3.1.2")
-    compileOnly fg.deobf("mezz.jei:jei-1.18:9.0.0.40:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.18:9.0.0.40")
+    implementation fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.18.2-3.2.0")
+    compileOnly fg.deobf("mezz.jei:jei-1.18.2:9.4.1.116:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:9.4.1.116")
 
-    implementation fg.deobf("curse.maven:jade-324717:3544015")
+    implementation fg.deobf("curse.maven:jade-324717:3671210")
 
-    runtimeOnly fg.deobf("de.melanx:RecipePrinter:1.18.1-3.1.0")
+    runtimeOnly fg.deobf("de.melanx:RecipePrinter:1.18.2-3.2.0")
 
     coremods 'io.github.noeppi_noeppi.misc:CoreModTypes:5.0.1-2'
 
     // for testing
-    implementation fg.deobf("vazkii.quark:Quark:3.1-340.2124")
-    implementation fg.deobf("vazkii.autoreglib:AutoRegLib:1.7-53.111")
+//    implementation fg.deobf("vazkii.quark:Quark:3.1-340.2124")
+//    implementation fg.deobf("vazkii.autoreglib:AutoRegLib:1.7-53.111")
 }

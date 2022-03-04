@@ -118,7 +118,7 @@ public class StonecutterCart extends Cart {
             boolean shouldResetMotion = true;
             if (!this.breakingBlock.equals(this.lastSuccess) && this.cartHasMoved) {
                 BlockState state = this.level.getBlockState(this.breakingBlock);
-                if (!state.isAir() && !state.getMaterial().isReplaceable() && !BlockTags.RAILS.contains(state.getBlock())) {
+                if (!state.isAir() && !state.getMaterial().isReplaceable() && !state.is(BlockTags.RAILS)) {
                     float hardness = state.getDestroySpeed(this.level, this.breakingBlock);
                     if (hardness >= 0 && hardness <= UtilitiXConfig.Track.stonecutterMaxHardness) {
                         this.breakProgress += Mth.clamp(5 - hardness, 1, 5);

@@ -73,7 +73,7 @@ public class PotionInput {
     private List<MobEffectInstance> getEffects(ItemStack stack) {
         if (stack.isEmpty()) {
             return null;
-        } else if (ModItemTags.POTIONS.contains(stack.getItem())) {
+        } else if (stack.is(ModItemTags.POTIONS)) {
             List<MobEffectInstance> list = PotionUtils.getMobEffects(stack);
             if (list.isEmpty() && PotionUtils.getPotion(stack) != Potions.AWKWARD) {
                 return null;

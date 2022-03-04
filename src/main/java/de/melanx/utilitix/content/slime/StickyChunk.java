@@ -118,7 +118,7 @@ public class StickyChunk {
                 }
             }
         } catch (Exception e) {
-            UtilitiX.getInstance().logger.error(e);
+            UtilitiX.getInstance().logger.error("Something went wrong during loading old chunks stickiness", e);
         }
     }
     
