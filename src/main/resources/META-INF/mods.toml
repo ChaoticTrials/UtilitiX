@@ -38,7 +38,7 @@ A lot of items, nice to have
 
 [[dependencies.utilitix]]
     modId = "jade"
-    mandatory = true
+    mandatory = false
     versionRange = "[1.18.2-3.2.0,)"
     ordering = "NONE"
     side = "BOTH"
