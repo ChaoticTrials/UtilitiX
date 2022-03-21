@@ -44,6 +44,6 @@ dependencies {
     coremods 'io.github.noeppi_noeppi.misc:CoreModTypes:5.0.1-2'
 
     // for testing
-//    implementation fg.deobf("vazkii.quark:Quark:3.1-340.2124")
-//    implementation fg.deobf("vazkii.autoreglib:AutoRegLib:1.7-53.111")
+    implementation fg.deobf("vazkii.quark:Quark:3.2-344.2208")
+    implementation fg.deobf("vazkii.autoreglib:AutoRegLib:1.7-53.111")
 }
