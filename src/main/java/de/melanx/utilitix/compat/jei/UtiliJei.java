@@ -60,8 +60,8 @@ public class UtiliJei implements IModPlugin {
         List<BreweryRecipe> simpleBrewery = recipes.getAllRecipesFor(ModRecipes.BREWERY).stream()
                 .filter(r -> r.getAction() instanceof EffectTransformer.Apply)
                 .collect(Collectors.toList());
-        registration.addRecipes(simpleBrewery, BreweryCategory.ID);
-        registration.addRecipes(GildingArmorRecipe.getRecipes(), GildingCategory.ID);
+        registration.addRecipes(RecipeTypes.BREWING, simpleBrewery);
+        registration.addRecipes(RecipeTypes.GILDING, GildingArmorRecipe.getRecipes());
 
         registration.addIngredientInfo(new ItemStack(ModBlocks.advancedBrewery), VanillaTypes.ITEM, new TranslatableComponent("description.utilitix.advanced_brewery"), new TranslatableComponent("description.utilitix.advanced_brewery.brewing"), new TranslatableComponent("description.utilitix.advanced_brewery.merging"), new TranslatableComponent("description.utilitix.advanced_brewery.upgrading"), new TranslatableComponent("description.utilitix.advanced_brewery.cloning"));
         registration.addIngredientInfo(ImmutableList.of(new ItemStack(ModBlocks.comparatorRedirectorUp), new ItemStack(ModBlocks.comparatorRedirectorDown)), VanillaTypes.ITEM, new TranslatableComponent("description.utilitix.comparator_redirector"));
@@ -90,13 +90,13 @@ public class UtiliJei implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.advancedBrewery), BreweryCategory.ID);
-        registration.addRecipeCatalyst(new ItemStack(Blocks.SMITHING_TABLE), GildingCategory.ID);
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.advancedBrewery), RecipeTypes.BREWING);
+        registration.addRecipeCatalyst(new ItemStack(Blocks.SMITHING_TABLE), RecipeTypes.GILDING);
     }
 
     @Override
     public void registerGuiHandlers(@Nonnull IGuiHandlerRegistration registration) {
-        registration.addRecipeClickArea(ScreenAdvancedBrewery.class, 98, 17, 7, 26, BreweryCategory.ID);
+        registration.addRecipeClickArea(ScreenAdvancedBrewery.class, 98, 17, 7, 26, RecipeTypes.BREWING);
     }
 
     @Override

@@ -14,6 +14,7 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -26,8 +27,6 @@ import net.minecraft.world.item.alchemy.Potions;
 import javax.annotation.Nonnull;
 
 public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
-
-    public static final ResourceLocation ID = new ResourceLocation(UtilitiX.getInstance().modid, "advanced_brewery");
 
     private final IDrawable background;
     private final IDrawable icon;
@@ -51,8 +50,14 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
 
     @Nonnull
     @Override
+    public RecipeType<BreweryRecipe> getRecipeType() {
+        return RecipeTypes.BREWING;
+    }
+
+    @Nonnull
+    @Override
     public ResourceLocation getUid() {
-        return ID;
+        return RecipeTypes.BREWING.getUid();
     }
 
     @Nonnull

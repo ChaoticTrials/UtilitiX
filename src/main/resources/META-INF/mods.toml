@@ -42,3 +42,10 @@ A lot of items, nice to have
     versionRange = "[1.18.2-3.2.0,)"
     ordering = "NONE"
     side = "BOTH"
+
+[[dependencies.utilitix]]
+    modId = "jei"
+    mandatory = false
+    versionRange = "[9.5.2.136,)" # TODO actually '9.5.3.143'
+    ordering = "NONE"
+    side = "BOTH"

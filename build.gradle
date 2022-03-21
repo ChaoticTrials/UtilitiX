@@ -34,8 +34,8 @@ dependencies {
     annotationProcessor fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.18.2-3.2.0")
 
     implementation fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.18.2-3.2.0")
-    compileOnly fg.deobf("mezz.jei:jei-1.18.2:9.4.1.116:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:9.4.1.116")
+    compileOnly fg.deobf("mezz.jei:jei-1.18.2:9.5.3.143:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:9.5.3.143")
 
     implementation fg.deobf("curse.maven:jade-324717:3671210")
 

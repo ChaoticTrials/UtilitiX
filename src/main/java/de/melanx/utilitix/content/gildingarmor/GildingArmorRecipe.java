@@ -14,10 +14,10 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.UpgradeRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.commons.compress.utils.Lists;
 
 import javax.annotation.Nonnull;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 public class GildingArmorRecipe extends UpgradeRecipe {
 
@@ -71,8 +71,8 @@ public class GildingArmorRecipe extends UpgradeRecipe {
         return !item.makesPiglinsNeutral(new ItemStack(item), null) && item.getMaterial() != ArmorMaterials.GOLD;
     }
 
-    public static Set<UpgradeRecipe> getRecipes() {
-        Set<UpgradeRecipe> recipes = new HashSet<>();
+    public static List<UpgradeRecipe> getRecipes() {
+        List<UpgradeRecipe> recipes = Lists.newArrayList();
 
         Ingredient gildingItem = Ingredient.of(ModItems.gildingCrystal);
 

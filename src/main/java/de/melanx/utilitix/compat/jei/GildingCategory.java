@@ -1,12 +1,12 @@
 package de.melanx.utilitix.compat.jei;
 
-import de.melanx.utilitix.UtilitiX;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -27,12 +27,16 @@ public class GildingCategory implements IRecipeCategory<UpgradeRecipe> {
         this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(Blocks.SMITHING_TABLE));
     }
 
-    public static final ResourceLocation ID = new ResourceLocation(UtilitiX.getInstance().modid, "gilding");
+    @Nonnull
+    @Override
+    public RecipeType<UpgradeRecipe> getRecipeType() {
+        return RecipeTypes.GILDING;
+    }
 
     @Nonnull
     @Override
     public ResourceLocation getUid() {
-        return ID;
+        return RecipeTypes.GILDING.getUid();
     }
 
     @Nonnull
