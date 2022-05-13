@@ -3,8 +3,8 @@ buildscript {
 }
 
 apply from: 'https://noeppi-noeppi.github.io/ModUtils/v3/mod.gradle'
-
 apply plugin: 'io.github.noeppi_noeppi.tools.modgradle.coremods'
+apply plugin: 'io.github.noeppi_noeppi.tools.modgradle.cursedep'
 
 repositories {
     maven {
@@ -19,14 +19,10 @@ repositories {
         name = "MinecraftUtilities"
         url = 'https://noeppi-noeppi.github.io/MinecraftUtilities/maven'
     }
-    maven {
-        name = "CurseForge Maven"
-        url = "https://cursemaven.com/"
-    }
 
     maven {
-        name "blamejared"
-        url "https://maven.blamejared.com/"
+        name = "blamejared"
+        url = "https://maven.blamejared.com/"
     }
 }
 
@@ -46,6 +42,6 @@ dependencies {
     // for testing
     implementation fg.deobf("vazkii.quark:Quark:3.2-344.2208")
     implementation fg.deobf("vazkii.autoreglib:AutoRegLib:1.7-53.111")
-    implementation fg.deobf("curse.maven:pipez-443900:3760255")
-    implementation fg.deobf("curse.maven:mob-grinding-utils-254241:3781218")
+    runtimeOnly curse.mod(443900, 3760255) // Pipez
+    runtimeOnly curse.mod(254241, 3781218) // Mob Grinding Utils
 }

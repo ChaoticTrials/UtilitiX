@@ -27,11 +27,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -113,26 +111,30 @@ public class BlockExperienceCrystal extends MenuBlockBE<TileExperienceCrystal, C
         return COLLISION_SHAPE.getShape(state.getValue(BlockStateProperties.FACING));
     }
 
-    private boolean useFluidItem(BlockEntity blockEntity, Player player, InteractionHand hand, Level level, BlockPos pos, BlockHitResult hit) {
-        IFluidHandler handler = blockEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getDirection())
+    private boolean useFluidItem(BlockEntity blockEntity, Player player, InteractionHand hand, Level level, BlockPos pos, BlockHitResult hitResult) {
+        IFluidHandler handler = blockEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hitResult.getDirection())
                 .resolve()
                 .orElse(null);
-        // Shouldn't happen but if there's no tank pass
-        if (handler == null) return false;
-        // If the user isn't holding an item or if the tank is empty pass
-        if (player.getItemInHand(hand).isEmpty() && !handler.getFluidInTank(0).isEmpty())
-            return false;
-        // try to interact. If that fails pass
-        return FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection());
-        // it worked
 
+        // Shouldn't happen but if there's no tank pass
+        if (handler == null) {
+            return false;
+        }
+
+        // If the user isn't holding an item or if the tank is empty pass
+        if (player.getItemInHand(hand).isEmpty() && !handler.getFluidInTank(0).isEmpty()) {
+            return false;
+        }
+
+        // try to interact. If that fails pass
+        return FluidUtil.interactWithFluidHandler(player, hand, level, pos, hitResult.getDirection());
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+    public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
         // ignore client side
-        if (level.isClientSide || !useFluidItem(getBlockEntity(level, pos), player, hand, level, pos, hit))
+        if (level.isClientSide || !this.useFluidItem(this.getBlockEntity(level, pos), player, hand, level, pos, hit))
             return super.use(state, level, pos, player, hand, hit);
         return InteractionResult.SUCCESS;
     }
