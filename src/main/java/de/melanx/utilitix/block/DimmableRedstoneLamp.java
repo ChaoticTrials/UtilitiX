@@ -3,6 +3,7 @@ package de.melanx.utilitix.block;
 import io.github.noeppi_noeppi.libx.base.BlockBase;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -13,9 +14,11 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Random;
 import java.util.function.ToIntFunction;
 
 public class DimmableRedstoneLamp extends BlockBase {
+
     public static final IntegerProperty SIGNAL = BlockStateProperties.POWER;
     public static final ToIntFunction<BlockState> LIGHT_EMISSION = state -> state.getValue(SIGNAL);
 
@@ -48,8 +51,21 @@ public class DimmableRedstoneLamp extends BlockBase {
 
     private void updatePowerStrength(BlockState state, Level level, BlockPos pos) {
         int signal = level.getBestNeighborSignal(pos);
-        if (state.getValue(SIGNAL) != signal) {
-            level.setBlock(pos, state.setValue(SIGNAL, signal), Block.UPDATE_CLIENTS);
+        boolean flag = state.getValue(SIGNAL) > 0;
+        if (flag != level.hasNeighborSignal(pos)) {
+            if (flag) {
+                level.scheduleTick(pos, this, 4);
+            } else if (state.getValue(SIGNAL) != signal) {
+                level.setBlock(pos, state.setValue(SIGNAL, signal), Block.UPDATE_CLIENTS);
+            }
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull Random random) {
+        if (state.getValue(SIGNAL) > 0 && !level.hasNeighborSignal(pos)) {
+            level.setBlock(pos, state.setValue(SIGNAL, 0), Block.UPDATE_CLIENTS);
         }
     }
 
