@@ -1,21 +1,58 @@
 package de.melanx.utilitix.content.experiencecrystal;
 
 import de.melanx.utilitix.UtilitiXConfig;
+import de.melanx.utilitix.block.ModProperties;
 import de.melanx.utilitix.util.BoundingBoxUtils;
 import io.github.noeppi_noeppi.libx.base.tile.BlockEntityBase;
 import io.github.noeppi_noeppi.libx.base.tile.TickableBlock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.tags.ITag;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
-public class TileExperienceCrystal extends BlockEntityBase implements TickableBlock {
+public class TileExperienceCrystal extends BlockEntityBase implements TickableBlock, IFluidTank, IFluidHandler {
+
+    public static int MB_PER_XP = 20;
+
+    private static @NotNull ITag<Fluid> getFluidTag(TagKey<Fluid> tag) {
+        return Objects.requireNonNull(ForgeRegistries.FLUIDS.tags())
+                .getTag(tag);
+    }
+
+    // returns true if any of the xp fluid tags
+    public static boolean validXpFluidIsPresent() {
+        return ModProperties.XP_FLUID_TAGS
+                .stream()
+                .anyMatch(tag -> !getFluidTag(tag).isEmpty());
+    }
+
+    public static Optional<Fluid> xpFluid() {
+        return ModProperties.XP_FLUID_TAGS
+                .stream()
+                .flatMap(tag -> getFluidTag(tag).stream())
+                .findFirst();
+    }
 
     private int xp;
 
@@ -86,4 +123,91 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickableBl
             orb.setDeltaMovement(orb.getDeltaMovement().add(vector.normalize().scale(scale * scale * 0.1)));
         }
     }
+
+    @NotNull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction side) {
+        if (validXpFluidIsPresent() && capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
+            return LazyOptional.of(() -> this).cast();
+        return super.getCapability(capability, side);
+    }
+
+    @NotNull
+    @Override
+    public FluidStack getFluid() {
+        return xpFluid()
+                .map(fluid -> new FluidStack(fluid, xp * MB_PER_XP))
+                .orElse(FluidStack.EMPTY);
+    }
+
+    @Override
+    public int getFluidAmount() {
+        if(xp > Integer.MAX_VALUE / MB_PER_XP)
+            return Integer.MAX_VALUE;
+        return xp * MB_PER_XP;
+    }
+
+    @Override
+    public int getCapacity() {
+        if(UtilitiXConfig.ExperienceCrystal.maxXp > Integer.MAX_VALUE / MB_PER_XP)
+            return Integer.MAX_VALUE;
+        return UtilitiXConfig.ExperienceCrystal.maxXp * MB_PER_XP;
+    }
+
+    @Override
+    public boolean isFluidValid(FluidStack stack) {
+        return ModProperties.XP_FLUID_TAGS
+                .stream()
+                .anyMatch(p -> getFluidTag(p).contains(stack.getFluid()));
+    }
+
+    @Override
+    public int getTanks() {
+        return 1;
+    }
+
+    @NotNull
+    @Override
+    public FluidStack getFluidInTank(int tank) {
+        return getFluid();
+    }
+
+    @Override
+    public int getTankCapacity(int tank) {
+        return getCapacity();
+    }
+
+    @Override
+    public boolean isFluidValid(int tank, @NotNull FluidStack stack) {
+        return isFluidValid(stack);
+    }
+
+    @Override
+    public int fill(FluidStack resource, IFluidHandler.FluidAction action) {
+        if(!isFluidValid(resource)) return 0;
+        // we need to make sure we are only adding / subbing xp in increments of MB_PER_XP
+        int xpAccepted = Math.min(getCapacity() - getFluidAmount(), resource.getAmount()) / MB_PER_XP;
+        if(action.execute())
+            xpAccepted = addXp(xpAccepted);
+        return xpAccepted * MB_PER_XP;
+    }
+
+    @NotNull
+    @Override
+    public FluidStack drain(int maxDrain, IFluidHandler.FluidAction action) {
+        return drain(new FluidStack(getFluid(), maxDrain), action);
+    }
+
+    @NotNull
+    @Override
+    public FluidStack drain(FluidStack resource, IFluidHandler.FluidAction action) {
+        if(!isFluidValid(resource) || resource.getAmount() == 0 || getFluidAmount() == 0) return FluidStack.EMPTY;
+        // we need to make sure we are only adding / subbing xp in increments of MB_PER_XP
+        int xpToDrain = Math.min(getFluidAmount(), resource.getAmount()) / MB_PER_XP;
+        FluidStack result = new FluidStack(resource.getFluid(), xpToDrain * MB_PER_XP);
+        if(action.execute())
+            subtractXp(xpToDrain);
+        return result;
+    }
+
 }

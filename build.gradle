@@ -34,8 +34,8 @@ dependencies {
     annotationProcessor fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.18.2-3.2.0")
 
     implementation fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.18.2-3.2.0")
-    compileOnly fg.deobf("mezz.jei:jei-1.18.2:9.5.3.143:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:9.5.3.143")
+    compileOnly fg.deobf("mezz.jei:jei-1.18.2:9.5.5.174:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:9.5.5.174")
 
     implementation fg.deobf("curse.maven:jade-324717:3671210")
 
@@ -46,4 +46,6 @@ dependencies {
     // for testing
     implementation fg.deobf("vazkii.quark:Quark:3.2-344.2208")
     implementation fg.deobf("vazkii.autoreglib:AutoRegLib:1.7-53.111")
+    implementation fg.deobf("curse.maven:pipez-443900:3760255")
+    implementation fg.deobf("curse.maven:mob-grinding-utils-254241:3781218")
 }

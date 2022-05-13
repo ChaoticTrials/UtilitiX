@@ -9,19 +9,29 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -101,5 +111,29 @@ public class BlockExperienceCrystal extends MenuBlockBE<TileExperienceCrystal, C
     @SuppressWarnings("deprecation")
     public VoxelShape getCollisionShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
         return COLLISION_SHAPE.getShape(state.getValue(BlockStateProperties.FACING));
+    }
+
+    private boolean useFluidItem(BlockEntity blockEntity, Player player, InteractionHand hand, Level level, BlockPos pos, BlockHitResult hit) {
+        IFluidHandler handler = blockEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getDirection())
+                .resolve()
+                .orElse(null);
+        // Shouldn't happen but if there's no tank pass
+        if (handler == null) return false;
+        // If the user isn't holding an item or if the tank is empty pass
+        if (player.getItemInHand(hand).isEmpty() && !handler.getFluidInTank(0).isEmpty())
+            return false;
+        // try to interact. If that fails pass
+        return FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection());
+        // it worked
+
+    }
+
+    @NotNull
+    @Override
+    public InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+        // ignore client side
+        if (level.isClientSide || !useFluidItem(getBlockEntity(level, pos), player, hand, level, pos, hit))
+            return super.use(state, level, pos, player, hand, hit);
+        return InteractionResult.SUCCESS;
     }
 }
