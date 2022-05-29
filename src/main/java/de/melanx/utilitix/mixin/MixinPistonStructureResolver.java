@@ -1,11 +1,15 @@
 package de.melanx.utilitix.mixin;
 
+import de.melanx.utilitix.content.slime.SlimyCapability;
+import de.melanx.utilitix.content.slime.StickyChunk;
 import de.melanx.utilitix.util.MixinUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -45,6 +49,29 @@ public class MixinPistonStructureResolver {
             cancellable = true
     )
     private void addBranchingBlocks(BlockPos fromPos, CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(MixinUtil.addBranchingBlocks((PistonStructureResolver) (Object) this, fromPos));
+        // We call this in any case. If it's a regular sticky block, do vanilla logic
+        // if not, add direction-specific branching
+        Level level = ((PistonStructureResolver) (Object) this).level;
+        if (!level.getBlockState(fromPos).isStickyBlock()) {
+            // We need our own logic here
+            LevelChunk chunk = level.getChunkAt(fromPos);
+            //noinspection ConstantConditions
+            StickyChunk glue = chunk.getCapability(SlimyCapability.STICKY_CHUNK).orElse(null);
+            //noinspection ConstantConditions
+            if (glue != null) {
+                int x = fromPos.getX() & 0xF;
+                int y = fromPos.getY();
+                int z = fromPos.getZ() & 0xF;
+                for (Direction dir : Direction.values()) {
+                    if (glue.get(x, y, z, dir)) {
+                        if (!MixinUtil.addDirectionBranchingBlocks((PistonStructureResolver) (Object) this, fromPos, dir)) {
+                            cir.setReturnValue(false);
+                            return;
+                        }
+                    }
+                }
+            }
+            cir.setReturnValue(true);
+        }
     }
 }
