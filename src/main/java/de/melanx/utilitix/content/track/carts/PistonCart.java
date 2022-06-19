@@ -6,7 +6,6 @@ import de.melanx.utilitix.content.track.carts.piston.PistonCartMode;
 import de.melanx.utilitix.content.track.rails.BlockPistonControllerRail;
 import de.melanx.utilitix.registration.ModItemTags;
 import de.melanx.utilitix.registration.ModSerializers;
-import io.github.noeppi_noeppi.libx.inventory.BaseItemStackHandler;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -43,6 +42,7 @@ import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.network.NetworkHooks;
 import org.apache.commons.lang3.tuple.Pair;
+import org.moddingx.libx.inventory.BaseItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

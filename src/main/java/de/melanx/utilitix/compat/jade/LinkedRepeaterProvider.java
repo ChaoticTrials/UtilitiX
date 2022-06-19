@@ -1,24 +1,31 @@
 package de.melanx.utilitix.compat.jade;
 
+import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.content.wireless.TileLinkedRepeater;
-import mcp.mobius.waila.api.BlockAccessor;
-import mcp.mobius.waila.api.IComponentProvider;
-import mcp.mobius.waila.api.IServerDataProvider;
-import mcp.mobius.waila.api.ITooltip;
-import mcp.mobius.waila.api.config.IPluginConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import snownee.jade.api.BlockAccessor;
+import snownee.jade.api.IBlockComponentProvider;
+import snownee.jade.api.IServerDataProvider;
+import snownee.jade.api.ITooltip;
+import snownee.jade.api.config.IPluginConfig;
 
 import java.util.UUID;
 
-public class LinkedRepeaterProvider implements IComponentProvider, IServerDataProvider<BlockEntity> {
+public class LinkedRepeaterProvider implements IBlockComponentProvider, IServerDataProvider<BlockEntity> {
 
+    public static final ResourceLocation UID = UtilitiX.getInstance().resource("linked_repeater");
     public static final LinkedRepeaterProvider INSTANCE = new LinkedRepeaterProvider();
+
+    @Override
+    public ResourceLocation getUid() {
+        return UID;
+    }
 
     @Override
     public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
@@ -28,9 +35,9 @@ public class LinkedRepeaterProvider implements IComponentProvider, IServerDataPr
 
         if (accessor.getServerData().get("LinkId") != null) {
             UUID linkId = accessor.getServerData().getUUID("LinkId");
-            tooltip.add(new TranslatableComponent("tooltip.utilitix.valid_link", new TextComponent(linkId.toString()).withStyle(ChatFormatting.GREEN)).withStyle(ChatFormatting.RED));
+            tooltip.add(Component.translatable("tooltip.utilitix.valid_link", Component.literal(linkId.toString()).withStyle(ChatFormatting.GREEN)).withStyle(ChatFormatting.RED));
         } else {
-            tooltip.add(new TranslatableComponent("tooltip.utilitix.invalid_link").withStyle(ChatFormatting.RED));
+            tooltip.add(Component.translatable("tooltip.utilitix.invalid_link").withStyle(ChatFormatting.RED));
         }
     }
 

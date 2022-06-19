@@ -10,8 +10,8 @@ import de.melanx.utilitix.util.XPUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
@@ -51,12 +51,13 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Set;
 
 public class EventListener {
 
-    private static final MutableComponent GILDED = new TranslatableComponent("tooltip.utilitix.gilded").withStyle(ChatFormatting.GOLD);
+    private static final MutableComponent GILDED = Component.translatable("tooltip.utilitix.gilded").withStyle(ChatFormatting.GOLD);
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
@@ -76,7 +77,7 @@ public class EventListener {
                     int health = (int) target.getHealth();
                     int diff = xp - health;
                     if (diff < 0) {
-                        player.displayClientMessage(new TranslatableComponent("You need %s more xp to yoink this mob.", -diff), true);
+                        player.displayClientMessage(Component.translatable("message.utilitix.mob_yoinker", -diff), true);
                         return;
                     }
                 }
@@ -200,7 +201,7 @@ public class EventListener {
             BlockPos pos = entity.blockPosition();
             ItemStack stack = entity.getItem();
             if (stack.getItem() instanceof BlockItem item && (item.getBlock() instanceof CropBlock || item.getBlock() instanceof SaplingBlock)) {
-                if (!UtilitiXConfig.plantsOnDespawn.test(item.getRegistryName())) {
+                if (!UtilitiXConfig.plantsOnDespawn.test(ForgeRegistries.ITEMS.getKey(item))) {
                     return;
                 }
 
@@ -288,9 +289,9 @@ public class EventListener {
     );
 
     @SubscribeEvent
-    public void onBlockToolInteraction(BlockEvent.BlockToolInteractEvent event) {
-        if (event.getToolAction() == ToolActions.SHOVEL_FLATTEN && event.getPlayer().isCrouching()
-                && (!ModList.get().isLoaded("aiotbotania") || !AIOTBOTANIA_FLATTEN_ALLOWED.contains(event.getHeldItemStack().getItem().getRegistryName()))) {
+    public void onBlockToolInteraction(BlockEvent.BlockToolModificationEvent event) {
+        if (event.getToolAction() == ToolActions.SHOVEL_FLATTEN && event.getPlayer() != null && event.getPlayer().isCrouching()
+                && (!ModList.get().isLoaded("aiotbotania") || !AIOTBOTANIA_FLATTEN_ALLOWED.contains(ForgeRegistries.ITEMS.getKey(event.getHeldItemStack().getItem())))) {
             event.setCanceled(true);
         }
     }

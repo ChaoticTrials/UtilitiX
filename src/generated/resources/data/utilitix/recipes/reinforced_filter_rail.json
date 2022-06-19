@@ -1,20 +1,20 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "n": {
+      "tag": "forge:nuggets/iron"
+    },
+    "r": {
+      "item": "utilitix:reinforced_rail"
+    }
+  },
   "pattern": [
     "r ",
     "nr",
     "r "
   ],
-  "key": {
-    "r": {
-      "item": "utilitix:reinforced_rail"
-    },
-    "n": {
-      "tag": "forge:nuggets/iron"
-    }
-  },
   "result": {
-    "item": "utilitix:reinforced_filter_rail",
-    "count": 2
+    "count": 2,
+    "item": "utilitix:reinforced_filter_rail"
   }
 }

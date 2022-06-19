@@ -3,7 +3,6 @@ package de.melanx.utilitix.network;
 import de.melanx.utilitix.content.experiencecrystal.ScreenExperienceCrystal;
 import de.melanx.utilitix.content.experiencecrystal.TileExperienceCrystal;
 import de.melanx.utilitix.util.XPUtils;
-import io.github.noeppi_noeppi.libx.network.PacketSerializer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
@@ -11,6 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.network.NetworkEvent;
+import org.moddingx.libx.network.PacketSerializer;
 
 import java.util.function.Supplier;
 

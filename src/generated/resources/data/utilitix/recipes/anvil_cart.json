@@ -1,17 +1,17 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "c": {
+      "item": "minecraft:minecart"
+    },
+    "i": {
+      "item": "minecraft:anvil"
+    }
+  },
   "pattern": [
     "i",
     "c"
   ],
-  "key": {
-    "i": {
-      "item": "minecraft:anvil"
-    },
-    "c": {
-      "item": "minecraft:minecart"
-    }
-  },
   "result": {
     "item": "utilitix:anvil_cart"
   }

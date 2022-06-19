@@ -4,13 +4,7 @@ import de.melanx.utilitix.recipe.BreweryRecipe;
 import de.melanx.utilitix.recipe.PotionOutput;
 import de.melanx.utilitix.registration.ModItemTags;
 import de.melanx.utilitix.registration.ModItems;
-import de.melanx.utilitix.registration.ModRecipes;
-import io.github.noeppi_noeppi.libx.base.tile.BlockEntityBase;
-import io.github.noeppi_noeppi.libx.base.tile.TickableBlock;
-import io.github.noeppi_noeppi.libx.capability.ItemCapabilities;
-import io.github.noeppi_noeppi.libx.crafting.recipe.RecipeHelper;
-import io.github.noeppi_noeppi.libx.inventory.BaseItemStackHandler;
-import io.github.noeppi_noeppi.libx.inventory.VanillaWrapper;
+import de.melanx.utilitix.registration.ModRecipeTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -29,6 +23,12 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.moddingx.libx.base.tile.BlockEntityBase;
+import org.moddingx.libx.base.tile.TickingBlock;
+import org.moddingx.libx.capability.ItemCapabilities;
+import org.moddingx.libx.crafting.recipe.RecipeHelper;
+import org.moddingx.libx.inventory.BaseItemStackHandler;
+import org.moddingx.libx.inventory.VanillaWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
 //Potion-Ingredient-Slot L: 2
 //Output-Slot: 3
 //Blaze-Slot: 4
-public class TileAdvancedBrewery extends BlockEntityBase implements TickableBlock {
+public class TileAdvancedBrewery extends BlockEntityBase implements TickingBlock {
 
     public static final int MAX_BREW_TIME = 400;
 
@@ -58,7 +58,7 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickableBloc
                     this.setChanged();
                     this.setDispatchable();
                 })
-                .validator(stack -> this.level != null && RecipeHelper.isItemValidInput(this.level.getRecipeManager(), ModRecipes.BREWERY, stack), 0)
+                .validator(stack -> this.level != null && RecipeHelper.isItemValidInput(this.level.getRecipeManager(), ModRecipeTypes.BREWERY, stack), 0)
                 .validator(stack -> stack.is(ModItemTags.BOTTLES), 1, 2, 3)
                 .validator(stack -> stack.getItem() == Items.BLAZE_POWDER, 4)
                 .slotLimit(1, 1, 2, 3)
@@ -83,7 +83,7 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickableBloc
                     this.setDispatchable();
                 }
             }
-            BreweryRecipe recipe = this.level.getRecipeManager().getRecipeFor(ModRecipes.BREWERY, this.vanilla, this.level).orElse(null);
+            BreweryRecipe recipe = this.level.getRecipeManager().getRecipeFor(ModRecipeTypes.BREWERY, this.vanilla, this.level).orElse(null);
             if ((this.fuel <= 0 || recipe == null) && this.brewTime > 0) {
                 this.brewTime = 0;
                 this.setChanged();

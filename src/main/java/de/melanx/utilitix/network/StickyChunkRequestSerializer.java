@@ -1,8 +1,8 @@
 package de.melanx.utilitix.network;
 
-import io.github.noeppi_noeppi.libx.network.PacketSerializer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.ChunkPos;
+import org.moddingx.libx.network.PacketSerializer;
 
 public class StickyChunkRequestSerializer implements PacketSerializer<StickyChunkRequestSerializer.StickyChunkRequestMessage> {
 

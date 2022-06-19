@@ -1,6 +1,7 @@
 package de.melanx.utilitix.recipe;
 
 import com.google.gson.JsonObject;
+import de.melanx.utilitix.registration.ModRecipeTypes;
 import de.melanx.utilitix.registration.ModRecipes;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
@@ -12,12 +13,10 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@SuppressWarnings("ClassCanBeRecord")
 public class BreweryRecipe implements Recipe<Container> {
 
     private final ResourceLocation id;
@@ -97,7 +96,7 @@ public class BreweryRecipe implements Recipe<Container> {
     @Nonnull
     @Override
     public RecipeType<?> getType() {
-        return ModRecipes.BREWERY;
+        return ModRecipeTypes.BREWERY;
     }
 
     @Nonnull
@@ -106,7 +105,7 @@ public class BreweryRecipe implements Recipe<Container> {
         return ModRecipes.BREWERY_SERIALIZER;
     }
 
-    public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<BreweryRecipe> {
+    public static class Serializer implements RecipeSerializer<BreweryRecipe> {
 
         @Nonnull
         @Override

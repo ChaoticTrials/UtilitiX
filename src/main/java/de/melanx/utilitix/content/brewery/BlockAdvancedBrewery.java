@@ -1,14 +1,9 @@
 package de.melanx.utilitix.content.brewery;
 
-import io.github.noeppi_noeppi.libx.base.tile.MenuBlockBE;
-import io.github.noeppi_noeppi.libx.block.RotationShape;
-import io.github.noeppi_noeppi.libx.menu.BlockEntityMenu;
-import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -18,12 +13,14 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import org.moddingx.libx.base.tile.MenuBlockBE;
+import org.moddingx.libx.block.RotationShape;
+import org.moddingx.libx.menu.BlockEntityMenu;
+import org.moddingx.libx.mod.ModX;
+import org.moddingx.libx.registration.SetupContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.function.Consumer;
 
 public class BlockAdvancedBrewery extends MenuBlockBE<TileAdvancedBrewery, ContainerMenuAdvancedBrewery> {
 
@@ -39,8 +36,7 @@ public class BlockAdvancedBrewery extends MenuBlockBE<TileAdvancedBrewery, Conta
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void registerClient(ResourceLocation id, Consumer<Runnable> defer) {
+    public void registerClient(SetupContext ctx) {
         BlockEntityRenderers.register(this.getBlockEntityType(), context -> new BesrAdvancedBrewery());
         MenuScreens.register(this.menu, ScreenAdvancedBrewery::new);
     }

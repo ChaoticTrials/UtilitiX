@@ -2,33 +2,57 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "name": "main",
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:copy_nbt",
-              "source": "block_entity",
-              "ops": [
-                {
-                  "source": "Xp",
-                  "target": "BlockEntityTag.Xp",
-                  "op": "replace"
-                }
-              ]
-            }
-          ],
-          "name": "utilitix:experience_crystal"
-        }
-      ],
       "conditions": [
         {
           "condition": "minecraft:survives_explosion"
         }
-      ]
+      ],
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:match_tool",
+                  "predicate": {
+                    "enchantments": [
+                      {
+                        "enchantment": "minecraft:silk_touch",
+                        "levels": {
+                          "min": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "name": "utilitix:experience_crystal"
+            },
+            {
+              "type": "minecraft:item",
+              "functions": [
+                {
+                  "function": "minecraft:copy_nbt",
+                  "ops": [
+                    {
+                      "op": "replace",
+                      "source": "Xp",
+                      "target": "BlockEntityTag.Xp"
+                    }
+                  ],
+                  "source": "block_entity"
+                }
+              ],
+              "name": "utilitix:experience_crystal"
+            }
+          ]
+        }
+      ],
+      "name": "main",
+      "rolls": 1.0
     }
   ]
 }

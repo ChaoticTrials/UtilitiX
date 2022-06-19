@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "CIC",
-    "ILI",
-    "III"
-  ],
   "key": {
-    "I": {
-      "item": "minecraft:iron_bars"
-    },
     "C": {
       "item": "minecraft:copper_ingot"
+    },
+    "I": {
+      "item": "minecraft:iron_bars"
     },
     "L": {
       "item": "minecraft:lead"
     }
   },
+  "pattern": [
+    "CIC",
+    "ILI",
+    "III"
+  ],
   "result": {
     "item": "utilitix:mob_yoinker"
   }

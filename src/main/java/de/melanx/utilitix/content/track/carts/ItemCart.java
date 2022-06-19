@@ -1,14 +1,10 @@
 package de.melanx.utilitix.content.track.carts;
 
-import io.github.noeppi_noeppi.libx.base.ItemBase;
-import io.github.noeppi_noeppi.libx.mod.ModX;
-import io.github.noeppi_noeppi.libx.mod.registration.Registerable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -20,9 +16,12 @@ import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.phys.Vec3;
+import org.moddingx.libx.base.ItemBase;
+import org.moddingx.libx.mod.ModX;
+import org.moddingx.libx.registration.Registerable;
+import org.moddingx.libx.registration.SetupContext;
 
 import javax.annotation.Nonnull;
-import java.util.function.Consumer;
 
 public class ItemCart extends ItemBase implements Registerable {
 
@@ -34,8 +33,8 @@ public class ItemCart extends ItemBase implements Registerable {
     }
 
     @Override
-    public void registerCommon(ResourceLocation id, Consumer<Runnable> defer) {
-        defer.accept(() -> DispenserBlock.registerBehavior(this, this.dispenseBehaviour));
+    public void registerCommon(SetupContext ctx) {
+        ctx.enqueue(() -> DispenserBlock.registerBehavior(this, this.dispenseBehaviour));
     }
 
     @Nonnull

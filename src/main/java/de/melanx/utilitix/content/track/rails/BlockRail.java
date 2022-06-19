@@ -1,13 +1,8 @@
 package de.melanx.utilitix.content.track.rails;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import io.github.noeppi_noeppi.libx.mod.ModX;
-import io.github.noeppi_noeppi.libx.mod.registration.Registerable;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
@@ -20,12 +15,12 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.RailShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.moddingx.libx.mod.ModX;
+import org.moddingx.libx.registration.Registerable;
+import org.moddingx.libx.registration.RegistrationContext;
 
 import javax.annotation.Nonnull;
-import java.util.Set;
-import java.util.function.Consumer;
 
 public abstract class BlockRail extends BaseRailBlock implements Registerable {
 
@@ -52,14 +47,13 @@ public abstract class BlockRail extends BaseRailBlock implements Registerable {
     }
 
     @Override
-    public Set<Object> getAdditionalRegisters(ResourceLocation id) {
-        return ImmutableSet.of(this.item);
+    public void registerAdditional(RegistrationContext ctx, EntryCollector builder) {
+        builder.register(Registry.ITEM_REGISTRY, this.item);
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void registerClient(ResourceLocation id, Consumer<Runnable> defer) {
-        ItemBlockRenderTypes.setRenderLayer(this, RenderType.cutout());
+    public void initTracking(RegistrationContext ctx, TrackingCollector builder) throws ReflectiveOperationException {
+        builder.track(ForgeRegistries.ITEMS, BlockRail.class.getDeclaredField("item"));
     }
 
     @Override

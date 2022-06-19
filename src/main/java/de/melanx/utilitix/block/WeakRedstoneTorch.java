@@ -1,13 +1,10 @@
 package de.melanx.utilitix.block;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import io.github.noeppi_noeppi.libx.mod.ModX;
-import io.github.noeppi_noeppi.libx.mod.registration.Registerable;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -18,14 +15,13 @@ import net.minecraft.world.level.block.RedstoneTorchBlock;
 import net.minecraft.world.level.block.RedstoneWallTorchBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.moddingx.libx.mod.ModX;
+import org.moddingx.libx.registration.Registerable;
+import org.moddingx.libx.registration.RegistrationContext;
+import org.moddingx.libx.registration.SetupContext;
 
 import javax.annotation.Nonnull;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.function.Consumer;
 
 public class WeakRedstoneTorch extends RedstoneTorchBlock implements Registerable {
 
@@ -48,24 +44,25 @@ public class WeakRedstoneTorch extends RedstoneTorchBlock implements Registerabl
     }
 
     @Override
-    public Set<Object> getAdditionalRegisters(ResourceLocation id) {
-        return ImmutableSet.of(this.item);
+    public void registerAdditional(RegistrationContext ctx, EntryCollector builder) {
+        builder.registerNamed(Registry.BLOCK_REGISTRY, "wall", this.wallTorch);
+        builder.register(Registry.ITEM_REGISTRY, this.item);
     }
 
     @Override
-    public Map<String, Object> getNamedAdditionalRegisters(ResourceLocation id) {
-        return ImmutableMap.of("wall", this.wallTorch);
+    public void initTracking(RegistrationContext ctx, TrackingCollector builder) throws ReflectiveOperationException {
+        builder.trackNamed(ForgeRegistries.BLOCKS, "wall", WeakRedstoneTorch.class.getDeclaredField("wallTorch"));
+        builder.track(ForgeRegistries.ITEMS, WeakRedstoneTorch.class.getDeclaredField("item"));
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void registerClient(ResourceLocation id, Consumer<Runnable> defer) {
+    public void registerClient(SetupContext ctx) {
         ItemBlockRenderTypes.setRenderLayer(this, RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(this.wallTorch, RenderType.cutout());
     }
 
     @Override
-    public void animateTick(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Random rand) {
+    public void animateTick(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull RandomSource rand) {
         // stop redstone particles
     }
 
@@ -84,7 +81,7 @@ public class WeakRedstoneTorch extends RedstoneTorchBlock implements Registerabl
         }
 
         @Override
-        public void animateTick(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Random random) {
+        public void animateTick(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
             // stop redstone particles
         }
     }

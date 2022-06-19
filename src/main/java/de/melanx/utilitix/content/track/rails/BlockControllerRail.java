@@ -3,11 +3,9 @@ package de.melanx.utilitix.content.track.rails;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Function3;
 import de.melanx.utilitix.registration.ModItems;
-import io.github.noeppi_noeppi.libx.menu.GenericMenu;
-import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -28,10 +26,13 @@ import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.moddingx.libx.menu.GenericMenu;
+import org.moddingx.libx.mod.ModX;
+import org.moddingx.libx.registration.RegistrationContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Set;
 
 public abstract class BlockControllerRail<T extends TileControllerRail> extends BlockRail implements EntityBlock {
 
@@ -56,8 +57,14 @@ public abstract class BlockControllerRail<T extends TileControllerRail> extends 
     }
 
     @Override
-    public Set<Object> getAdditionalRegisters(ResourceLocation id) {
-        return ImmutableSet.builder().addAll(super.getAdditionalRegisters(id)).add(this.beType).build();
+    public void registerAdditional(RegistrationContext ctx, EntryCollector builder) {
+        super.registerAdditional(ctx, builder);
+        builder.register(Registry.BLOCK_ENTITY_TYPE_REGISTRY, this.beType);
+    }
+
+    @Override
+    public void initTracking(RegistrationContext ctx, TrackingCollector builder) throws ReflectiveOperationException {
+        builder.track(ForgeRegistries.BLOCK_ENTITIES, BlockControllerRail.class.getDeclaredField("beType"));
     }
 
     @Nonnull
@@ -87,7 +94,7 @@ public abstract class BlockControllerRail<T extends TileControllerRail> extends 
                     }
                 };
                 handler.setStackInSlot(0, tile.getFilterStack().copy());
-                GenericMenu.open((ServerPlayer) player, handler, new TranslatableComponent("screen.utilitix.minecart_tinkerer"), null);
+                GenericMenu.open((ServerPlayer) player, handler, Component.translatable("screen.utilitix.minecart_tinkerer"), null);
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }

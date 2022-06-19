@@ -17,7 +17,6 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -39,8 +38,8 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
     public BreweryCategory(IGuiHelper guiHelper) {
         ResourceLocation location = new ResourceLocation(UtilitiX.getInstance().modid, "textures/container/advanced_brewery.png");
         this.background = guiHelper.drawableBuilder(location, 55, 15, 64, 60).addPadding(1, 0, 0, 50).build();
-        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(ModBlocks.advancedBrewery));
-        this.localizedName = new TranslatableComponent("screen.utilitix.advanced_brewery");
+        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.advancedBrewery));
+        this.localizedName = Component.translatable("screen.utilitix.advanced_brewery");
         this.arrow = guiHelper.drawableBuilder(location, 176, 0, 9, 28).buildAnimated(400, IDrawableAnimated.StartDirection.TOP, false);
         ITickTimer bubblesTickTimer = new BubbleTimer(guiHelper);
         this.bubbles = guiHelper.drawableBuilder(location, 185, 0, 12, 29).buildAnimated(bubblesTickTimer, IDrawableAnimated.StartDirection.BOTTOM);
@@ -52,18 +51,6 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
     @Override
     public RecipeType<BreweryRecipe> getRecipeType() {
         return RecipeTypes.BREWING;
-    }
-
-    @Nonnull
-    @Override
-    public ResourceLocation getUid() {
-        return RecipeTypes.BREWING.getUid();
-    }
-
-    @Nonnull
-    @Override
-    public Class<? extends BreweryRecipe> getRecipeClass() {
-        return BreweryRecipe.class;
     }
 
     @Nonnull

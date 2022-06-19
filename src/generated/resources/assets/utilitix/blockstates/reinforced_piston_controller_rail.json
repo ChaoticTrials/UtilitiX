@@ -1,11 +1,11 @@
 {
   "variants": {
-    "shape=north_south": {
-      "model": "utilitix:block/reinforced_piston_controller_rail"
-    },
     "shape=east_west": {
       "model": "utilitix:block/reinforced_piston_controller_rail",
       "y": 90
+    },
+    "shape=north_south": {
+      "model": "utilitix:block/reinforced_piston_controller_rail"
     }
   }
 }

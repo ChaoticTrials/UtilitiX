@@ -8,9 +8,6 @@ import de.melanx.utilitix.content.track.carts.piston.PistonCartContainerMenu;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartScreen;
 import de.melanx.utilitix.network.UtiliNetwork;
 import de.melanx.utilitix.registration.ModItems;
-import io.github.noeppi_noeppi.libx.config.ConfigManager;
-import io.github.noeppi_noeppi.libx.mod.registration.ModXRegistration;
-import io.github.noeppi_noeppi.libx.mod.registration.RegistrationBuilder;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -25,6 +22,11 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.moddingx.libx.config.ConfigManager;
+import org.moddingx.libx.mod.ModXRegistration;
+import org.moddingx.libx.registration.RegistrationBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -33,6 +35,7 @@ public final class UtilitiX extends ModXRegistration {
 
     private static UtilitiX instance;
     private static UtiliNetwork network;
+    public final Logger logger = LoggerFactory.getLogger(UtilitiX.class);
 
     public UtilitiX() {
         super(new CreativeModeTab("utilitix") {
@@ -82,6 +85,6 @@ public final class UtilitiX extends ModXRegistration {
 
     @Override
     protected void initRegistration(RegistrationBuilder builder) {
-        builder.setVersion(1);
+        builder.enableRegistryTracking();
     }
 }

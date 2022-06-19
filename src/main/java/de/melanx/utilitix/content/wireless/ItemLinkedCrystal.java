@@ -1,11 +1,7 @@
 package de.melanx.utilitix.content.wireless;
 
-import io.github.noeppi_noeppi.libx.base.ItemBase;
-import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -13,6 +9,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.moddingx.libx.base.ItemBase;
+import org.moddingx.libx.mod.ModX;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,12 +32,12 @@ public class ItemLinkedCrystal extends ItemBase {
             if (!level.isClientSide) {
                 WirelessStorage storage = WirelessStorage.get(level);
                 int strength = storage.getStrength(uid);
-                player.sendMessage(new TranslatableComponent("tooltip.utilitix.signal_strength", new TextComponent(Integer.toString(strength)).withStyle(ChatFormatting.RED)), player.getUUID());
+                player.sendSystemMessage(Component.translatable("tooltip.utilitix.signal_strength", Component.literal(Integer.toString(strength)).withStyle(ChatFormatting.RED)));
             }
             return InteractionResultHolder.sidedSuccess(held, level.isClientSide);
         } else if (held.getCount() < 2) {
             if (level.isClientSide) {
-                player.displayClientMessage(new TranslatableComponent("tooltip.utilitix.link_failed"), true);
+                player.displayClientMessage(Component.translatable("tooltip.utilitix.link_failed"), true);
             }
             return new InteractionResultHolder<>(InteractionResult.FAIL, held);
         } else {
@@ -58,9 +56,9 @@ public class ItemLinkedCrystal extends ItemBase {
         super.appendHoverText(stack, level, tooltip, flag);
         UUID uid = getId(stack);
         if (uid == null) {
-            tooltip.add(new TranslatableComponent("tooltip.utilitix.invalid_link").withStyle(ChatFormatting.RED));
+            tooltip.add(Component.translatable("tooltip.utilitix.invalid_link").withStyle(ChatFormatting.RED));
         } else {
-            tooltip.add(new TranslatableComponent("tooltip.utilitix.valid_link", new TextComponent(uid.toString()).withStyle(ChatFormatting.GREEN)).withStyle(ChatFormatting.RED));
+            tooltip.add(Component.translatable("tooltip.utilitix.valid_link", Component.literal(uid.toString()).withStyle(ChatFormatting.GREEN)).withStyle(ChatFormatting.RED));
         }
     }
     

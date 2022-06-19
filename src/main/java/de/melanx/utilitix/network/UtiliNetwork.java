@@ -1,8 +1,8 @@
 package de.melanx.utilitix.network;
 
-import io.github.noeppi_noeppi.libx.mod.ModX;
-import io.github.noeppi_noeppi.libx.network.NetworkX;
 import net.minecraftforge.network.NetworkDirection;
+import org.moddingx.libx.mod.ModX;
+import org.moddingx.libx.network.NetworkX;
 
 public class UtiliNetwork extends NetworkX {
 

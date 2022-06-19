@@ -1,23 +1,23 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "e": {
+      "tag": "forge:gems/emerald"
+    },
+    "r": {
+      "tag": "forge:dusts/redstone"
+    },
+    "s": {
+      "tag": "forge:rods/wooden"
+    }
+  },
   "pattern": [
     "e e",
     "ese",
     "ere"
   ],
-  "key": {
-    "e": {
-      "tag": "forge:gems/emerald"
-    },
-    "s": {
-      "tag": "forge:rods/wooden"
-    },
-    "r": {
-      "tag": "forge:dusts/redstone"
-    }
-  },
   "result": {
-    "item": "utilitix:highspeed_rail",
-    "count": 3
+    "count": 3,
+    "item": "utilitix:highspeed_rail"
   }
 }

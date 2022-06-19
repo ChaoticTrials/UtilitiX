@@ -3,10 +3,10 @@ package de.melanx.utilitix.content.track.carts;
 import de.melanx.utilitix.UtilitiXConfig;
 import de.melanx.utilitix.content.track.carts.stonecutter.StonecutterCartMode;
 import de.melanx.utilitix.registration.ModSerializers;
-import io.github.noeppi_noeppi.libx.util.NBTX;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -213,8 +213,8 @@ public class StonecutterCart extends Cart {
             this.entityData.set(MODE, this.mode);
         }
         // TODO NbtUtils.readBlockPos(CompoundTag)
-        this.breakingBlock = NBTX.getPos(compound, "BreakPos");
-        this.lastSuccess = NBTX.getPos(compound, "LastSuccessfulBreak");
+        this.breakingBlock = NbtUtils.readBlockPos(compound.getCompound("BreakPos"));
+        this.lastSuccess = NbtUtils.readBlockPos(compound.getCompound("LastSuccessfulBreak"));
         this.breakProgress = compound.getInt("BreakProgress");
         if (compound.contains("StoredMotion", Tag.TAG_COMPOUND)) {
             CompoundTag motionNbt = compound.getCompound("StoredMotion");
@@ -232,12 +232,12 @@ public class StonecutterCart extends Cart {
         if (this.breakingBlock == null) {
             compound.remove("BreakPos");
         } else {
-            NBTX.putPos(compound, "BreakPos", this.breakingBlock);
+            compound.put("BreakPos", NbtUtils.writeBlockPos(this.breakingBlock));
         }
         if (this.lastSuccess == null) {
             compound.remove("LastSuccessfulBreak");
         } else {
-            NBTX.putPos(compound, "LastSuccessfulBreak", this.lastSuccess);
+            compound.put("LastSuccessfulBreak", NbtUtils.writeBlockPos(this.lastSuccess));
         }
         compound.putInt("BreakProgress", this.breakProgress);
         if (this.storedMotion == null) {

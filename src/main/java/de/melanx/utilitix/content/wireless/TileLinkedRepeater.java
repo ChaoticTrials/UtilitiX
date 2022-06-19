@@ -2,14 +2,15 @@ package de.melanx.utilitix.content.wireless;
 
 import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModItems;
-import io.github.noeppi_noeppi.libx.base.tile.BlockEntityBase;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.ticks.TickPriority;
+import org.moddingx.libx.base.tile.BlockEntityBase;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,9 +45,9 @@ public class TileLinkedRepeater extends BlockEntityBase {
         UUID newId = this.getLinkId();
         if (oldId != newId && this.level != null && !this.level.isClientSide) {
             WirelessStorage storage = WirelessStorage.get(this.level);
-            storage.remove(this.level, oldId, new WorldAndPos(this.level.dimension(), this.worldPosition));
+            storage.remove(this.level, oldId, GlobalPos.of(this.level.dimension(), this.worldPosition));
             if (newId != null) {
-                storage.update(this.level, newId, new WorldAndPos(this.level.dimension(), this.worldPosition), BlockLinkedRepeater.inputStrength(this.level, this.getBlockState(), this.worldPosition));
+                storage.update(this.level, newId, GlobalPos.of(this.level.dimension(), this.worldPosition), BlockLinkedRepeater.inputStrength(this.level, this.getBlockState(), this.worldPosition));
             }
             BlockState state = this.getBlockState().setValue(BlockStateProperties.EYE, newId != null);
             this.level.setBlock(this.worldPosition, state, 3);

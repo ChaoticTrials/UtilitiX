@@ -1,12 +1,12 @@
 package de.melanx.utilitix.block;
 
-import io.github.noeppi_noeppi.libx.mod.registration.Registerable;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.WallBlock;
-
-import java.util.Set;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.moddingx.libx.registration.Registerable;
+import org.moddingx.libx.registration.RegistrationContext;
 
 public class StoneWallBlock extends WallBlock implements Registerable {
 
@@ -18,7 +18,12 @@ public class StoneWallBlock extends WallBlock implements Registerable {
     }
 
     @Override
-    public Set<Object> getAdditionalRegisters(ResourceLocation id) {
-        return Set.of(this.item);
+    public void registerAdditional(RegistrationContext ctx, EntryCollector builder) {
+        builder.register(Registry.ITEM_REGISTRY, this.item);
+    }
+
+    @Override
+    public void initTracking(RegistrationContext ctx, TrackingCollector builder) throws ReflectiveOperationException {
+        builder.track(ForgeRegistries.ITEMS, StoneWallBlock.class.getDeclaredField("item"));
     }
 }

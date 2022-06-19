@@ -2,12 +2,12 @@ package de.melanx.utilitix.content.brewery;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
-import io.github.noeppi_noeppi.libx.render.ClientTickHandler;
-import io.github.noeppi_noeppi.libx.render.block.RotatedBlockRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.world.item.ItemStack;
+import org.moddingx.libx.render.ClientTickHandler;
+import org.moddingx.libx.render.block.RotatedBlockRenderer;
 
 import javax.annotation.Nonnull;
 

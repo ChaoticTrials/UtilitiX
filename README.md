@@ -18,7 +18,6 @@ A lot of items, nice to have
 - [x] double doors open at same time
 - [ ] make use of LockableTileEntities
 - [x] ~~[Modlist to Clipboard](https://github.com/noeppi-noeppi/LibX/issues/6)~~
-- [ ] Ability to stand on tiptoes
 
 
 ## Tiles/Blocks

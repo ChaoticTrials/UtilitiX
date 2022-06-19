@@ -1,10 +1,8 @@
 package de.melanx.utilitix.content.slime;
 
 import de.melanx.utilitix.UtilitiX;
-import io.github.noeppi_noeppi.libx.util.LazyValue;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -15,6 +13,7 @@ import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import org.moddingx.libx.util.lazy.LazyValue;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -69,9 +68,7 @@ public class SlimyCapability {
 
         @Override
         public void deserializeNBT(Tag nbt) {
-            if (nbt instanceof ByteArrayTag legacy) {
-                this.value.get().readLegacy(legacy);
-            } else if (nbt instanceof CompoundTag tag) {
+            if (nbt instanceof CompoundTag tag) {
                 this.value.get().read(tag);
             } else {
                 UtilitiX.getInstance().logger.error("Invalid nbt tag type for stored sticky chunk: " + nbt.getType());

@@ -6,9 +6,6 @@ import de.melanx.utilitix.block.DimmableRedstoneLamp;
 import de.melanx.utilitix.block.ModProperties;
 import de.melanx.utilitix.data.state.RailState;
 import de.melanx.utilitix.registration.ModBlocks;
-import io.github.noeppi_noeppi.libx.annotation.data.Datagen;
-import io.github.noeppi_noeppi.libx.data.provider.BlockStateProviderBase;
-import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.core.Direction;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
@@ -23,6 +20,9 @@ import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import org.moddingx.libx.annotation.data.Datagen;
+import org.moddingx.libx.datagen.provider.BlockStateProviderBase;
+import org.moddingx.libx.mod.ModX;
 
 import java.util.function.Supplier;
 
@@ -149,16 +149,15 @@ public class BlockStateProvider extends BlockStateProviderBase {
 //            }
         } else if (block == ModBlocks.crudeFurnace) {
             VariantBlockStateBuilder builder = this.getVariantBuilder(block);
-            //noinspection ConstantConditions
             ModelFile modelOn = this.models().orientable(id.getPath() + "_on",
-                    this.modLoc("block/" + ModBlocks.crudeFurnace.getRegistryName().getPath() + "_side"),
-                    this.modLoc("block/" + ModBlocks.crudeFurnace.getRegistryName().getPath() + "_front_on"),
-                    this.modLoc("block/" + ModBlocks.crudeFurnace.getRegistryName().getPath() + "_top")
+                    this.modLoc("block/" + id.getPath() + "_side"),
+                    this.modLoc("block/" + id.getPath() + "_front_on"),
+                    this.modLoc("block/" + id.getPath() + "_top")
             );
             ModelFile modelOff = this.models().orientable(id.getPath(),
-                    this.modLoc("block/" + ModBlocks.crudeFurnace.getRegistryName().getPath() + "_side"),
-                    this.modLoc("block/" + ModBlocks.crudeFurnace.getRegistryName().getPath() + "_front"),
-                    this.modLoc("block/" + ModBlocks.crudeFurnace.getRegistryName().getPath() + "_top")
+                    this.modLoc("block/" + id.getPath() + "_side"),
+                    this.modLoc("block/" + id.getPath() + "_front"),
+                    this.modLoc("block/" + id.getPath() + "_top")
             );
             for (Direction dir : BlockStateProperties.HORIZONTAL_FACING.getPossibleValues()) {
                 for (boolean value : AbstractFurnaceBlock.LIT.getPossibleValues()) {

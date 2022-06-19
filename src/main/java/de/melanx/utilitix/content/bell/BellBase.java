@@ -2,14 +2,11 @@ package de.melanx.utilitix.content.bell;
 
 import de.melanx.utilitix.UtilitiXConfig;
 import de.melanx.utilitix.registration.ModEnchantments;
-import io.github.noeppi_noeppi.libx.base.ItemBase;
-import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -24,11 +21,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.client.IItemRenderProperties;
 import net.minecraftforge.fml.ModList;
+import org.moddingx.libx.base.ItemBase;
+import org.moddingx.libx.mod.ModX;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,6 +47,8 @@ public abstract class BellBase extends ItemBase {
                 return new RenderBell(new BlockEntityRendererProvider.Context(
                         Minecraft.getInstance().getBlockEntityRenderDispatcher(),
                         Minecraft.getInstance().getBlockRenderer(),
+                        Minecraft.getInstance().getItemRenderer(),
+                        Minecraft.getInstance().getEntityRenderDispatcher(),
                         Minecraft.getInstance().getEntityModels(),
                         Minecraft.getInstance().font
                 ));
@@ -74,7 +74,7 @@ public abstract class BellBase extends ItemBase {
     @Nonnull
     @Override
     public ItemStack finishUsingItem(@Nonnull ItemStack stack, @Nonnull Level level, @Nonnull LivingEntity entityLiving) {
-        double range = UtilitiXConfig.HandBells.glowRadius * (1 + EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.bellRange, stack) * 0.25D);
+        double range = UtilitiXConfig.HandBells.glowRadius * (1 + stack.getEnchantmentLevel(ModEnchantments.bellRange) * 0.25D);
         List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(entityLiving.getX() - range, entityLiving.getY() - range, entityLiving.getZ() - range, entityLiving.getX() + range, entityLiving.getY() + range, entityLiving.getZ() + range), livingEntity -> this.entityFilter(livingEntity, stack));
         entities.forEach(e -> e.addEffect(new MobEffectInstance(MobEffects.GLOWING, UtilitiXConfig.HandBells.glowTime)));
 
@@ -100,7 +100,7 @@ public abstract class BellBase extends ItemBase {
 
         if (!level.isClientSide) {
             if (this.notifyNearbyEntities()) {
-                double range = UtilitiXConfig.HandBells.notifyRadius * (1 + EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.bellRange, stack) * 0.25D);
+                double range = UtilitiXConfig.HandBells.notifyRadius * (1 + stack.getEnchantmentLevel(ModEnchantments.bellRange) * 0.25D);
                 List<LivingEntity> entities = entity.getCommandSenderWorld().getEntitiesOfClass(LivingEntity.class, new AABB(entity.getX() - range, entity.getY() - range, entity.getZ() - range, entity.getX() + range, entity.getY() + range, entity.getZ() + range));
                 for (LivingEntity e : entities) {
                     e.getBrain().setMemory(MemoryModuleType.HEARD_BELL_TIME, level.getGameTime());
@@ -122,7 +122,7 @@ public abstract class BellBase extends ItemBase {
     public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level level, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flag) {
         super.appendHoverText(stack, level, tooltip, flag);
         if (ModList.get().isLoaded("emojiful")) {
-            tooltip.add(new TextComponent(":DinkDonk:"));
+            tooltip.add(Component.literal(":DinkDonk:"));
         }
     }
 }

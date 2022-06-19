@@ -6,13 +6,11 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.UtilitiXConfig;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.MapRenderer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -79,10 +77,10 @@ public class MapsCommand {
         Path path = MAPS.resolve("map_" + mapId + ".png");
         try {
             img.writeToFile(path);
-            player.sendMessage(new TranslatableComponent("utilitix.map_saved", path), Util.NIL_UUID);
+            player.sendSystemMessage(Component.translatable("utilitix.map_saved", path));
             return 1;
         } catch (IOException e) {
-            player.sendMessage(new TextComponent("Something went wrong saving the map. More information in the log."), Util.NIL_UUID);
+            player.sendSystemMessage(Component.translatable("message.utilitix.map_save_command"));
             UtilitiX.getInstance().logger.warn("Files to save file: {}", path, e);
             return 0;
         }

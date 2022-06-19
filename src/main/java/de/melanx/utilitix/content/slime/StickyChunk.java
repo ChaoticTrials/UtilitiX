@@ -2,9 +2,7 @@ package de.melanx.utilitix.content.slime;
 
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.network.StickyChunkUpdateSerializer;
-import io.github.noeppi_noeppi.libx.annotation.meta.RemoveIn;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -90,36 +88,6 @@ public class StickyChunk {
             }
         }
         return nbt;
-    }
-
-    @Deprecated(forRemoval = true)
-    @RemoveIn(minecraft = "1.19")
-    public void readLegacy(ByteArrayTag nbt) {
-        // Read legacy stuff stored in one byte array
-        try {
-            byte[] data = nbt.getAsByteArray();
-            this.sections.clear();
-            for (int sectionId = 0; sectionId < 16; sectionId++) {
-                byte[] newData = new byte[4096];
-                int sectionOffset = sectionId << 4;
-                for (int x = 0; x < 16; x++) {
-                    for (int y = 0; y < 16; y++) {
-                        for (int z = 0; z < 16; z++) {
-                            int newIdx = ((y & 0xF) << 8) | ((z & 0xF) << 4) | (x & 0xF);
-                            int oldIdx = (((y + sectionOffset) & 0xFF) << 8) | ((z & 0xF) << 4) | (x & 0xF);
-                            newData[newIdx] = data[oldIdx];
-                        }
-                    }
-                }
-                StickySection section = new StickySection(this);
-                section.setStickies(newData);
-                if (!section.canBeDiscarded()) {
-                    this.sections.put(sectionId, section);
-                }
-            }
-        } catch (Exception e) {
-            UtilitiX.getInstance().logger.error("Something went wrong during loading old chunks stickiness", e);
-        }
     }
     
     public void read(CompoundTag nbt) {

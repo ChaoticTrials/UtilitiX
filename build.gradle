@@ -1,10 +1,10 @@
 buildscript {
-    apply from: 'https://noeppi-noeppi.github.io/ModUtils/v3/buildscript.gradle', to: buildscript
+    apply from: 'https://moddingx.github.io/ModUtils/experimental/buildscript.gradle', to: buildscript
 }
 
-apply from: 'https://noeppi-noeppi.github.io/ModUtils/v3/mod.gradle'
-apply plugin: 'io.github.noeppi_noeppi.tools.modgradle.coremods'
-apply plugin: 'io.github.noeppi_noeppi.tools.modgradle.cursedep'
+apply from: 'https://moddingx.github.io/ModUtils/experimental/mod.gradle'
+apply plugin: 'org.moddingx.modgradle.coremods'
+apply plugin: 'org.moddingx.modgradle.cursedep'
 
 repositories {
     maven {
@@ -16,8 +16,8 @@ repositories {
         url = "https://maven.melanx.de/"
     }
     maven {
-        name = "MinecraftUtilities"
-        url = 'https://noeppi-noeppi.github.io/MinecraftUtilities/maven'
+        name = "ModdingX"
+        url = 'https://maven.moddingx.org/'
     }
 
     maven {
@@ -27,21 +27,20 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.18.2-3.2.0")
+    annotationProcessor fg.deobf("org.moddingx:LibX:1.19-4.0.3")
 
-    implementation fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.18.2-3.2.0")
-    compileOnly fg.deobf("mezz.jei:jei-1.18.2:9.5.5.174:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:9.5.5.174")
+    implementation fg.deobf("org.moddingx:LibX:1.19-4.0.3")
+    implementation fg.deobf("mezz.jei:jei-1.19-forge:11.0.0.206")
 
-    implementation fg.deobf("curse.maven:jade-324717:3671210")
+    implementation curse.mod(324717, 3834997) // Jade 1.19-forge-7.3.1
 
-    runtimeOnly fg.deobf("de.melanx:RecipePrinter:1.18.2-3.2.0")
+//    runtimeOnly fg.deobf("de.melanx:RecipePrinter:1.18.2-3.2.0")
 
-    coremods 'io.github.noeppi_noeppi.misc:CoreModTypes:5.0.1-2'
+    coremods 'org.moddingx:CoreModTypes:5.0.2-2'
 
     // for testing
-    implementation fg.deobf("vazkii.quark:Quark:3.2-344.2208")
-    implementation fg.deobf("vazkii.autoreglib:AutoRegLib:1.7-53.111")
-    runtimeOnly curse.mod(443900, 3760255) // Pipez
-    runtimeOnly curse.mod(254241, 3781218) // Mob Grinding Utils
+//    implementation fg.deobf("vazkii.quark:Quark:3.2-344.2208")
+//    implementation fg.deobf("vazkii.autoreglib:AutoRegLib:1.7-53.111")
+//    runtimeOnly curse.mod(443900, 3760255) // Pipez
+//    runtimeOnly curse.mod(254241, 3781218) // Mob Grinding Utils
 }

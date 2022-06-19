@@ -1,22 +1,22 @@
 package de.melanx.utilitix.content.track.carts.piston;
 
 import de.melanx.utilitix.content.track.carts.PistonCart;
-import io.github.noeppi_noeppi.libx.annotation.registration.RegName;
-import io.github.noeppi_noeppi.libx.annotation.registration.RegisterClass;
-import io.github.noeppi_noeppi.libx.menu.EntityMenu;
-import io.github.noeppi_noeppi.libx.menu.slot.OutputSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.items.SlotItemHandler;
+import org.moddingx.libx.annotation.registration.Reg.Name;
+import org.moddingx.libx.annotation.registration.RegisterClass;
+import org.moddingx.libx.menu.EntityMenu;
+import org.moddingx.libx.menu.slot.OutputSlot;
 
 import javax.annotation.Nullable;
 
-@RegisterClass
+@RegisterClass(registry = "MENU_REGISTRY")
 public class PistonCartContainerMenu extends EntityMenu<PistonCart> {
 
-    @RegName("piston_cart_container")
+    @Name("piston_cart_container")
     public static final MenuType<PistonCartContainerMenu> TYPE = createMenuType(PistonCartContainerMenu::new);
 
     protected PistonCartContainerMenu(@Nullable MenuType<?> type, int windowId, Level level, int entityId, Inventory playerContainer, Player player) {

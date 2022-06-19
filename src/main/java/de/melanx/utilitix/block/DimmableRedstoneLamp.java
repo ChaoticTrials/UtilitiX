@@ -1,9 +1,8 @@
 package de.melanx.utilitix.block;
 
-import io.github.noeppi_noeppi.libx.base.BlockBase;
-import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -11,10 +10,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import org.moddingx.libx.base.BlockBase;
+import org.moddingx.libx.mod.ModX;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Random;
 import java.util.function.ToIntFunction;
 
 public class DimmableRedstoneLamp extends BlockBase {
@@ -63,7 +63,7 @@ public class DimmableRedstoneLamp extends BlockBase {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull Random random) {
+    public void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
         if (state.getValue(SIGNAL) > 0 && !level.hasNeighborSignal(pos)) {
             level.setBlock(pos, state.setValue(SIGNAL, 0), Block.UPDATE_CLIENTS);
         }

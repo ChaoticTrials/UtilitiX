@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": {
+      "tag": "forge:stone"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    },
+    "S": {
+      "tag": "forge:cobblestone"
+    }
+  },
   "pattern": [
     "C C",
     "SFS",
     "SSS"
   ],
-  "key": {
-    "C": {
-      "tag": "forge:stone"
-    },
-    "S": {
-      "tag": "forge:cobblestone"
-    },
-    "F": {
-      "item": "minecraft:furnace"
-    }
-  },
   "result": {
     "item": "utilitix:crude_furnace"
   }

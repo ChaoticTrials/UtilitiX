@@ -1,26 +1,26 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "g": {
+      "tag": "forge:ingots/gold"
+    },
+    "i": {
+      "tag": "forge:nuggets/iron"
+    },
+    "r": {
+      "tag": "forge:dusts/redstone"
+    },
+    "s": {
+      "tag": "forge:rods/wooden"
+    }
+  },
   "pattern": [
     "gig",
     "gsg",
     "grg"
   ],
-  "key": {
-    "g": {
-      "tag": "forge:ingots/gold"
-    },
-    "s": {
-      "tag": "forge:rods/wooden"
-    },
-    "r": {
-      "tag": "forge:dusts/redstone"
-    },
-    "i": {
-      "tag": "forge:nuggets/iron"
-    }
-  },
   "result": {
-    "item": "utilitix:directional_rail",
-    "count": 6
+    "count": 6,
+    "item": "utilitix:directional_rail"
   }
 }

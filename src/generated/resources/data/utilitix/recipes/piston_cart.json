@@ -1,17 +1,17 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "c": {
+      "item": "minecraft:minecart"
+    },
+    "i": {
+      "item": "minecraft:piston"
+    }
+  },
   "pattern": [
     "i",
     "c"
   ],
-  "key": {
-    "i": {
-      "item": "minecraft:piston"
-    },
-    "c": {
-      "item": "minecraft:minecart"
-    }
-  },
   "result": {
     "item": "utilitix:piston_cart"
   }

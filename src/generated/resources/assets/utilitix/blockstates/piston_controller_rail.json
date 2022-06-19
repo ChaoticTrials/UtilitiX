@@ -1,18 +1,7 @@
 {
   "variants": {
-    "shape=north_south": {
-      "model": "utilitix:block/piston_controller_rail"
-    },
-    "shape=east_west": {
-      "model": "utilitix:block/piston_controller_rail",
-      "y": 90
-    },
     "shape=ascending_east": {
       "model": "utilitix:block/piston_controller_rail_ascending_ne",
-      "y": 90
-    },
-    "shape=ascending_west": {
-      "model": "utilitix:block/piston_controller_rail_ascending_sw",
       "y": 90
     },
     "shape=ascending_north": {
@@ -20,6 +9,17 @@
     },
     "shape=ascending_south": {
       "model": "utilitix:block/piston_controller_rail_ascending_sw"
+    },
+    "shape=ascending_west": {
+      "model": "utilitix:block/piston_controller_rail_ascending_sw",
+      "y": 90
+    },
+    "shape=east_west": {
+      "model": "utilitix:block/piston_controller_rail",
+      "y": 90
+    },
+    "shape=north_south": {
+      "model": "utilitix:block/piston_controller_rail"
     }
   }
 }

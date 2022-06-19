@@ -1,10 +1,10 @@
 package de.melanx.utilitix.content.crudefurnace;
 
-import io.github.noeppi_noeppi.libx.crafting.recipe.RecipeHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
+import org.moddingx.libx.crafting.recipe.RecipeHelper;
 
 import javax.annotation.Nullable;
 

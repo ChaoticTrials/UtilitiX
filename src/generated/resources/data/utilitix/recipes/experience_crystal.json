@@ -1,24 +1,24 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "c": {
+      "item": "minecraft:black_concrete"
+    },
+    "e": {
+      "tag": "forge:gems/emerald"
+    },
+    "g": {
+      "tag": "forge:glass/lime"
+    },
+    "x": {
+      "item": "minecraft:experience_bottle"
+    }
+  },
   "pattern": [
     "geg",
     "exe",
     "ccc"
   ],
-  "key": {
-    "g": {
-      "tag": "forge:glass/lime"
-    },
-    "e": {
-      "tag": "forge:gems/emerald"
-    },
-    "x": {
-      "item": "minecraft:experience_bottle"
-    },
-    "c": {
-      "item": "minecraft:black_concrete"
-    }
-  },
   "result": {
     "item": "utilitix:experience_crystal"
   }

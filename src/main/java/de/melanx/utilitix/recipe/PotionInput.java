@@ -2,11 +2,11 @@ package de.melanx.utilitix.recipe;
 
 import com.google.common.collect.ImmutableList;
 import de.melanx.utilitix.registration.ModItemTags;
-import io.github.noeppi_noeppi.libx.util.LazyValue;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
+import org.moddingx.libx.util.lazy.LazyValue;
 
 import javax.annotation.Nullable;
 import java.util.List;

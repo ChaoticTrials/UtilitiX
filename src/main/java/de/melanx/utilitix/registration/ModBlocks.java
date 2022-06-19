@@ -13,10 +13,6 @@ import de.melanx.utilitix.content.experiencecrystal.ContainerMenuExperienceCryst
 import de.melanx.utilitix.content.experiencecrystal.TileExperienceCrystal;
 import de.melanx.utilitix.content.track.rails.*;
 import de.melanx.utilitix.content.wireless.BlockLinkedRepeater;
-import io.github.noeppi_noeppi.libx.annotation.registration.RegisterClass;
-import io.github.noeppi_noeppi.libx.base.BlockBase;
-import io.github.noeppi_noeppi.libx.base.tile.MenuBlockBE;
-import io.github.noeppi_noeppi.libx.menu.BlockEntityMenu;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -29,10 +25,14 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
+import org.moddingx.libx.annotation.registration.RegisterClass;
+import org.moddingx.libx.base.BlockBase;
+import org.moddingx.libx.base.tile.MenuBlockBE;
+import org.moddingx.libx.menu.BlockEntityMenu;
 
 import javax.annotation.Nonnull;
 
-@RegisterClass(priority = 1)
+@RegisterClass(registry = "BLOCK_REGISTRY", priority = 1)
 public class ModBlocks {
 
     public static final MenuBlockBE<TileAdvancedBrewery, ContainerMenuAdvancedBrewery> advancedBrewery = new BlockAdvancedBrewery(UtilitiX.getInstance(), BlockBehaviour.Properties.copy(Blocks.BREWING_STAND));

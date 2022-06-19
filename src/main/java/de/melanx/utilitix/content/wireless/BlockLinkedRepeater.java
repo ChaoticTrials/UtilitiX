@@ -1,13 +1,12 @@
 package de.melanx.utilitix.content.wireless;
 
 import de.melanx.utilitix.registration.ModItems;
-import io.github.noeppi_noeppi.libx.base.tile.BlockBE;
-import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,14 +28,14 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.ticks.TickPriority;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.ForgeEventFactory;
+import org.moddingx.libx.base.tile.BlockBE;
+import org.moddingx.libx.mod.ModX;
+import org.moddingx.libx.registration.SetupContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Random;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
 
@@ -56,8 +55,7 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void registerClient(ResourceLocation id, Consumer<Runnable> defer) {
+    public void registerClient(SetupContext ctx) {
         BlockEntityRenderers.register(this.getBlockEntityType(), context -> new BesrLinkedRepeater());
     }
 
@@ -104,7 +102,7 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
     public void onRemove(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
         if (state.hasBlockEntity() && (!state.is(newState.getBlock()) || !newState.hasBlockEntity())) {
             TileLinkedRepeater tile = this.getBlockEntity(level, pos);
-            WirelessStorage.get(level).remove(level, tile.getLinkId(), new WorldAndPos(level.dimension(), pos));
+            WirelessStorage.get(level).remove(level, tile.getLinkId(), GlobalPos.of(level.dimension(), pos));
             ItemStack stack = tile.getLink();
             if (!stack.isEmpty()) {
                 ItemEntity entity = new ItemEntity(level, pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, stack.copy());
@@ -195,12 +193,12 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
 
     @Override
     @SuppressWarnings("deprecation")
-    public void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull Random rand) {
+    public void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource rand) {
         UUID uid = this.getBlockEntity(level, pos).getLinkId();
         int input = inputStrength(level, state, pos);
         if (uid != null) {
             WirelessStorage storage = WirelessStorage.get(level);
-            storage.update(level, uid, new WorldAndPos(level.dimension(), pos), input);
+            storage.update(level, uid, GlobalPos.of(level.dimension(), pos), input);
             input = storage.getStrength(uid);
         }
         if (input != state.getValue(BlockStateProperties.POWER)) {
@@ -211,7 +209,7 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
     private void notifyNeighbors(Level level, BlockPos pos, BlockState state) {
         Direction face = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
         BlockPos target = pos.relative(face.getOpposite());
-        if (net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(level, pos, level.getBlockState(pos), java.util.EnumSet.of(face.getOpposite()), false).isCanceled())
+        if (ForgeEventFactory.onNeighborNotify(level, pos, level.getBlockState(pos), java.util.EnumSet.of(face.getOpposite()), false).isCanceled())
             return;
         level.neighborChanged(target, this, pos);
         level.updateNeighborsAtExceptFromFacing(target, this, face);

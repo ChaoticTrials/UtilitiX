@@ -1,10 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "123",
-    "456",
-    "789"
-  ],
   "key": {
     "1": {
       "item": "minecraft:spider_eye"
@@ -34,6 +29,11 @@
       "item": "minecraft:rotten_flesh"
     }
   },
+  "pattern": [
+    "123",
+    "456",
+    "789"
+  ],
   "result": {
     "item": "utilitix:mob_bell"
   }

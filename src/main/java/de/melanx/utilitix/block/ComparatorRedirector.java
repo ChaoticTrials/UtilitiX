@@ -1,12 +1,12 @@
 package de.melanx.utilitix.block;
 
-import io.github.noeppi_noeppi.libx.base.BlockBase;
-import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.moddingx.libx.base.BlockBase;
+import org.moddingx.libx.mod.ModX;
 
 import javax.annotation.Nonnull;
 

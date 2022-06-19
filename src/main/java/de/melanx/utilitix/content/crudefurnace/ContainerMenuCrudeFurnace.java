@@ -1,6 +1,5 @@
 package de.melanx.utilitix.content.crudefurnace;
 
-import io.github.noeppi_noeppi.libx.menu.BlockEntityMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -9,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.items.SlotItemHandler;
+import org.moddingx.libx.menu.BlockEntityMenu;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

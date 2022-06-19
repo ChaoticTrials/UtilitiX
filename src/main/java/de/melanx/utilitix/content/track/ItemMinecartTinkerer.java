@@ -1,11 +1,8 @@
 package de.melanx.utilitix.content.track;
 
-import io.github.noeppi_noeppi.libx.base.ItemBase;
-import io.github.noeppi_noeppi.libx.menu.GenericMenu;
-import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -15,6 +12,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+import org.moddingx.libx.base.ItemBase;
+import org.moddingx.libx.menu.GenericMenu;
+import org.moddingx.libx.mod.ModX;
 
 public class ItemMinecartTinkerer extends ItemBase {
 
@@ -42,7 +42,7 @@ public class ItemMinecartTinkerer extends ItemBase {
                     }
                 };
                 handler.setStackInSlot(0, getLabelStack((AbstractMinecart) entity));
-                GenericMenu.open((ServerPlayer) player, handler, new TranslatableComponent("screen.utilitix.minecart_tinkerer"), null);
+                GenericMenu.open((ServerPlayer) player, handler, Component.translatable("screen.utilitix.minecart_tinkerer"), null);
             }
             return true;
         }

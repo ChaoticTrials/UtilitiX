@@ -9,7 +9,6 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.UpgradeRecipe;
@@ -24,7 +23,7 @@ public class GildingCategory implements IRecipeCategory<UpgradeRecipe> {
 
     public GildingCategory(IGuiHelper helper) {
         this.background = helper.createDrawable(new ResourceLocation("jei", "textures/gui/gui_vanilla.png"), 0, 168, 125, 18);
-        this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(Blocks.SMITHING_TABLE));
+        this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Blocks.SMITHING_TABLE));
     }
 
     @Nonnull
@@ -35,20 +34,8 @@ public class GildingCategory implements IRecipeCategory<UpgradeRecipe> {
 
     @Nonnull
     @Override
-    public ResourceLocation getUid() {
-        return RecipeTypes.GILDING.getUid();
-    }
-
-    @Nonnull
-    @Override
-    public Class<? extends UpgradeRecipe> getRecipeClass() {
-        return UpgradeRecipe.class;
-    }
-
-    @Nonnull
-    @Override
     public Component getTitle() {
-        return new TranslatableComponent("jei.utilitix.gilding");
+        return Component.translatable("jei.utilitix.gilding");
     }
 
     @Nonnull

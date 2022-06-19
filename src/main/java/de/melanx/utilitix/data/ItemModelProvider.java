@@ -6,16 +6,16 @@ import de.melanx.utilitix.content.bell.BellBase;
 import de.melanx.utilitix.item.ItemMobYoinker;
 import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModItems;
-import io.github.noeppi_noeppi.libx.annotation.data.Datagen;
-import io.github.noeppi_noeppi.libx.data.AlwaysExistentModelFile;
-import io.github.noeppi_noeppi.libx.data.provider.ItemModelProviderBase;
-import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.BaseRailBlock;
+import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import org.moddingx.libx.annotation.data.Datagen;
+import org.moddingx.libx.datagen.provider.ItemModelProviderBase;
+import org.moddingx.libx.mod.ModX;
 
 @Datagen
 public class ItemModelProvider extends ItemModelProviderBase {
@@ -56,7 +56,7 @@ public class ItemModelProvider extends ItemModelProviderBase {
         } else if (item.getBlock() == ModBlocks.stoneWall) {
             this.withExistingParent(id.getPath(), WALL_PARENT).texture("wall", new ResourceLocation("block/stone"));
         } else if (item.getBlock() == ModBlocks.dimmableRedstoneLamp) {
-            this.getBuilder(id.getPath()).parent(new AlwaysExistentModelFile(new ResourceLocation(id.getNamespace(), "block/" + id.getPath() + "_" + 7)));
+            this.getBuilder(id.getPath()).parent(new UncheckedModelFile(new ResourceLocation(id.getNamespace(), "block/" + id.getPath() + "_" + 7)));
         } else {
             super.defaultBlock(id, item);
         }

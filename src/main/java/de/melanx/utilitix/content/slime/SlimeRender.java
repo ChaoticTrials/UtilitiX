@@ -2,8 +2,6 @@ package de.melanx.utilitix.content.slime;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.melanx.utilitix.Textures;
-import io.github.noeppi_noeppi.libx.render.RenderHelperBlock;
-import io.github.noeppi_noeppi.libx.render.RenderHelperLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LightTexture;
@@ -14,12 +12,13 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
+import org.moddingx.libx.render.RenderHelperBlock;
+import org.moddingx.libx.render.RenderHelperLevel;
 
 public class SlimeRender {
 

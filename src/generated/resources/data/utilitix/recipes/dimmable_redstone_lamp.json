@@ -1,10 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " L ",
-    "LRL",
-    " L "
-  ],
   "key": {
     "L": {
       "item": "minecraft:redstone_lamp"
@@ -13,8 +8,13 @@
       "tag": "forge:dusts/redstone"
     }
   },
+  "pattern": [
+    " L ",
+    "LRL",
+    " L "
+  ],
   "result": {
-    "item": "utilitix:dimmable_redstone_lamp",
-    "count": 4
+    "count": 4,
+    "item": "utilitix:dimmable_redstone_lamp"
   }
 }

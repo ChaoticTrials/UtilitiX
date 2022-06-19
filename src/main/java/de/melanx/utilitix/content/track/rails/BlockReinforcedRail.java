@@ -1,10 +1,10 @@
 package de.melanx.utilitix.content.track.rails;
 
 import de.melanx.utilitix.block.ModProperties;
-import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.RailShape;
+import org.moddingx.libx.mod.ModX;
 
 import javax.annotation.Nonnull;
 

@@ -1,18 +1,18 @@
 {
   "variants": {
-    "powered=false,shape=north_south": {
-      "model": "utilitix:block/highspeed_rail"
-    },
-    "powered=true,shape=north_south": {
-      "model": "utilitix:block/highspeed_rail_on"
-    },
     "powered=false,shape=east_west": {
       "model": "utilitix:block/highspeed_rail",
       "y": 90
     },
+    "powered=false,shape=north_south": {
+      "model": "utilitix:block/highspeed_rail"
+    },
     "powered=true,shape=east_west": {
       "model": "utilitix:block/highspeed_rail_on",
       "y": 90
+    },
+    "powered=true,shape=north_south": {
+      "model": "utilitix:block/highspeed_rail_on"
     }
   }
 }

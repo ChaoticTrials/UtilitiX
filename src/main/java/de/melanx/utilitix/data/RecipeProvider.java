@@ -6,10 +6,6 @@ import de.melanx.utilitix.recipe.EffectTransformer;
 import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModEntities;
 import de.melanx.utilitix.registration.ModItems;
-import io.github.noeppi_noeppi.libx.annotation.data.Datagen;
-import io.github.noeppi_noeppi.libx.data.provider.recipe.RecipeProviderBase;
-import io.github.noeppi_noeppi.libx.data.provider.recipe.crafting.CraftingExtension;
-import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.data.DataGenerator;
@@ -17,7 +13,7 @@ import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SingleItemRecipeBuilder;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -26,6 +22,11 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.moddingx.libx.annotation.data.Datagen;
+import org.moddingx.libx.datagen.provider.recipe.RecipeProviderBase;
+import org.moddingx.libx.datagen.provider.recipe.crafting.CraftingExtension;
+import org.moddingx.libx.mod.ModX;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -54,7 +55,7 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
         this.shaped(ModItems.mobYoinker, "CIC", "ILI", "III", 'I', Items.IRON_BARS, 'C', Items.COPPER_INGOT, 'L', Items.LEAD);
         this.shaped(ModBlocks.dimmableRedstoneLamp, 4, " L ", "LRL", " L ", 'L', Blocks.REDSTONE_LAMP, 'R', Tags.Items.DUSTS_REDSTONE);
         //noinspection ConstantConditions
-        this.shapeless(UtilitiX.getInstance().resource(Blocks.REDSTONE_LAMP.getRegistryName().getPath() + "_revert"), Blocks.REDSTONE_LAMP, ModBlocks.dimmableRedstoneLamp);
+        this.shapeless(UtilitiX.getInstance().resource(ForgeRegistries.BLOCKS.getKey(Blocks.REDSTONE_LAMP).getPath() + "_revert"), Blocks.REDSTONE_LAMP, ModBlocks.dimmableRedstoneLamp);
     }
 
     private void createTinyCoalRecipe(Consumer<FinishedRecipe> consumer, ItemLike coal, ItemLike tinyCoal) {
@@ -234,7 +235,7 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
         BreweryRecipeBuilder.breweryRecipe()
                 .input(Items.GOLDEN_APPLE)
                 .action(new EffectTransformer.Apply(
-                        new TranslatableComponent("item." + UtilitiX.getInstance().modid + ".apple_juice").withStyle(ChatFormatting.GREEN),
+                        Component.translatable("item." + UtilitiX.getInstance().modid + ".apple_juice").withStyle(ChatFormatting.GREEN),
                         new MobEffectInstance(MobEffects.REGENERATION, 100, 1),
                         new MobEffectInstance(MobEffects.ABSORPTION, 2400, 0)
                 ))
@@ -243,7 +244,7 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
         BreweryRecipeBuilder.breweryRecipe()
                 .input(Items.ENCHANTED_GOLDEN_APPLE)
                 .action(new EffectTransformer.Apply(
-                        new TranslatableComponent("item." + UtilitiX.getInstance().modid + ".god_apple_juice").withStyle(ChatFormatting.GREEN),
+                        Component.translatable("item." + UtilitiX.getInstance().modid + ".god_apple_juice").withStyle(ChatFormatting.GREEN),
                         new MobEffectInstance(MobEffects.REGENERATION, 400, 1),
                         new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 6000, 0),
                         new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 6000, 0),
@@ -433,7 +434,7 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
             cuttingRecipe.unlockedBy("criterion" + i, triggerInstances.get(i));
         }
         //noinspection ConstantConditions
-        cuttingRecipe.save(this.consumer(), new ResourceLocation(wall.asItem().getRegistryName().getNamespace(), wall.asItem().getRegistryName().getPath() + "_stone_cutter"));
+        cuttingRecipe.save(this.consumer(), new ResourceLocation(ForgeRegistries.ITEMS.getKey(wall.asItem()).getNamespace(), ForgeRegistries.ITEMS.getKey(wall.asItem()).getPath() + "_stone_cutter"));
     }
 
     private void removeNbt(Consumer<FinishedRecipe> consumer, ItemLike item) {

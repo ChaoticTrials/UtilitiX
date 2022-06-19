@@ -1,7 +1,7 @@
 package de.melanx.utilitix.network;
 
-import io.github.noeppi_noeppi.libx.network.PacketSerializer;
 import net.minecraft.network.FriendlyByteBuf;
+import org.moddingx.libx.network.PacketSerializer;
 
 public class PistonCartModeCycleSerializer implements PacketSerializer<PistonCartModeCycleSerializer.PistonCartModeCycleMessage> {
 

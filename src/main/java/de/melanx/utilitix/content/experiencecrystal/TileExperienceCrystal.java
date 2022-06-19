@@ -3,8 +3,6 @@ package de.melanx.utilitix.content.experiencecrystal;
 import de.melanx.utilitix.UtilitiXConfig;
 import de.melanx.utilitix.util.BoundingBoxUtils;
 import de.melanx.utilitix.util.XPUtils;
-import io.github.noeppi_noeppi.libx.base.tile.BlockEntityBase;
-import io.github.noeppi_noeppi.libx.base.tile.TickableBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -24,13 +22,15 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.tags.ITag;
 import org.jetbrains.annotations.Nullable;
+import org.moddingx.libx.base.tile.BlockEntityBase;
+import org.moddingx.libx.base.tile.TickingBlock;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class TileExperienceCrystal extends BlockEntityBase implements TickableBlock, IFluidTank, IFluidHandler {
+public class TileExperienceCrystal extends BlockEntityBase implements TickingBlock, IFluidTank, IFluidHandler {
 
     public static int MB_PER_XP = 20;
     private int xp;

@@ -4,9 +4,8 @@ import de.melanx.utilitix.content.track.ItemMinecartTinkerer;
 import de.melanx.utilitix.content.track.carts.PistonCart;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartMode;
 import de.melanx.utilitix.registration.ModItems;
-import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -16,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import org.moddingx.libx.mod.ModX;
 
 import javax.annotation.Nonnull;
 
@@ -43,7 +43,7 @@ public abstract class BlockPistonControllerRail extends BlockControllerRail<Tile
                     int modeIdx = tile.getMode().ordinal();
                     PistonCartMode[] modes = PistonCartMode.values();
                     tile.setMode(modes[(modeIdx + 1) % modes.length]);
-                    player.sendMessage(new TranslatableComponent("tooltip.utilitix.piston_cart_mode", tile.getMode().name), player.getUUID());
+                    player.sendSystemMessage(Component.translatable("tooltip.utilitix.piston_cart_mode", tile.getMode().name));
                 }
                 return InteractionResult.sidedSuccess(level.isClientSide);
             } else {

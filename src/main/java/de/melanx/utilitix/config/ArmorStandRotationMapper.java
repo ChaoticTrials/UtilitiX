@@ -2,10 +2,10 @@ package de.melanx.utilitix.config;
 
 import com.google.gson.JsonObject;
 import de.melanx.utilitix.util.ArmorStandRotation;
-import io.github.noeppi_noeppi.libx.config.ValidatorInfo;
-import io.github.noeppi_noeppi.libx.config.ValueMapper;
-import io.github.noeppi_noeppi.libx.config.gui.ConfigEditor;
 import net.minecraft.network.FriendlyByteBuf;
+import org.moddingx.libx.config.gui.ConfigEditor;
+import org.moddingx.libx.config.mapper.ValueMapper;
+import org.moddingx.libx.config.validator.ValidatorInfo;
 
 public class ArmorStandRotationMapper implements ValueMapper<ArmorStandRotation, JsonObject> {
 

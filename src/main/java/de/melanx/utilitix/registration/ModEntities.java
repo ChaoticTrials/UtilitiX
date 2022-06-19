@@ -1,9 +1,9 @@
 package de.melanx.utilitix.registration;
 
 import de.melanx.utilitix.content.track.carts.*;
-import io.github.noeppi_noeppi.libx.annotation.registration.RegisterClass;
+import org.moddingx.libx.annotation.registration.RegisterClass;
 
-@RegisterClass
+@RegisterClass(registry = "")
 public class ModEntities {
 
     public static final Cart.CartType<EnderCart> enderCart = Cart.type("ender_cart", EnderCart::new);

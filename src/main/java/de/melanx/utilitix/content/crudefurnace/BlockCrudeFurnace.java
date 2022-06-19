@@ -1,13 +1,9 @@
 package de.melanx.utilitix.content.crudefurnace;
 
 import de.melanx.utilitix.registration.ModBlocks;
-import io.github.noeppi_noeppi.libx.base.tile.MenuBlockBE;
-import io.github.noeppi_noeppi.libx.inventory.BaseItemStackHandler;
-import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -18,10 +14,13 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import org.moddingx.libx.base.tile.MenuBlockBE;
+import org.moddingx.libx.inventory.BaseItemStackHandler;
+import org.moddingx.libx.mod.ModX;
+import org.moddingx.libx.registration.SetupContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.function.Consumer;
 
 public class BlockCrudeFurnace extends MenuBlockBE<TileCrudeFurnace, ContainerMenuCrudeFurnace> {
 
@@ -33,7 +32,7 @@ public class BlockCrudeFurnace extends MenuBlockBE<TileCrudeFurnace, ContainerMe
     }
 
     @Override
-    public void registerClient(ResourceLocation id, Consumer<Runnable> defer) {
+    public void registerClient(SetupContext ctx) {
         MenuScreens.register(ModBlocks.crudeFurnace.menu, ScreenCrudeFurnace::new);
     }
 

@@ -1,10 +1,10 @@
 package de.melanx.utilitix.content.bell;
 
-import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.moddingx.libx.mod.ModX;
 
 public class ItemHandBell extends BellBase {
 

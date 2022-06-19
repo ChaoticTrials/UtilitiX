@@ -1,10 +1,10 @@
 package de.melanx.utilitix.data;
 
 import de.melanx.utilitix.registration.ModBlocks;
-import io.github.noeppi_noeppi.libx.annotation.data.Datagen;
-import io.github.noeppi_noeppi.libx.data.provider.BlockLootProviderBase;
-import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.data.DataGenerator;
+import org.moddingx.libx.annotation.data.Datagen;
+import org.moddingx.libx.datagen.provider.loot.BlockLootProviderBase;
+import org.moddingx.libx.mod.ModX;
 
 @Datagen
 public class LootTableProvider extends BlockLootProviderBase {

@@ -11,8 +11,6 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
@@ -76,8 +74,8 @@ public class ScreenExperienceCrystal extends AbstractContainerScreen<ContainerMe
         this.blit(poseStack, this.relX + (this.imageWidth / 2 - 50), this.relY + 49, 0, this.imageHeight + 40, 100, 7);
         Pair<Integer, Float> xp = XPUtils.getLevelExp(this.menu.getBlockEntity().getXp());
         this.blit(poseStack, this.relX + (this.imageWidth / 2 - 49), this.relY + 50, 0, this.imageHeight + 47, (int) (xp.getRight() * 98), 5);
-        TextComponent s = new TextComponent(String.valueOf(xp.getLeft()));
-        int width = this.font.width(s.getText());
+        MutableComponent s = Component.literal(String.valueOf(xp.getLeft()));
+        int width = this.font.width(s.getString());
         this.font.draw(poseStack, s, this.relX + ((float) this.imageWidth / 2) - ((float) width / 2), this.relY + 40, Color.DARK_GRAY.getRGB());
     }
 
@@ -134,7 +132,7 @@ public class ScreenExperienceCrystal extends AbstractContainerScreen<ContainerMe
             this.x = x;
             this.y = y;
             this.offset = offset;
-            this.component = new TranslatableComponent("tooltip.utilitix.experience_crystal." + translationKey);
+            this.component = Component.translatable("tooltip.utilitix.experience_crystal." + translationKey);
         }
     }
 }

@@ -6,6 +6,24 @@
     "power=1": {
       "model": "utilitix:block/dimmable_redstone_lamp_1"
     },
+    "power=10": {
+      "model": "utilitix:block/dimmable_redstone_lamp_10"
+    },
+    "power=11": {
+      "model": "utilitix:block/dimmable_redstone_lamp_11"
+    },
+    "power=12": {
+      "model": "utilitix:block/dimmable_redstone_lamp_12"
+    },
+    "power=13": {
+      "model": "utilitix:block/dimmable_redstone_lamp_13"
+    },
+    "power=14": {
+      "model": "utilitix:block/dimmable_redstone_lamp_14"
+    },
+    "power=15": {
+      "model": "utilitix:block/dimmable_redstone_lamp_15"
+    },
     "power=2": {
       "model": "utilitix:block/dimmable_redstone_lamp_2"
     },
@@ -29,24 +47,6 @@
     },
     "power=9": {
       "model": "utilitix:block/dimmable_redstone_lamp_9"
-    },
-    "power=10": {
-      "model": "utilitix:block/dimmable_redstone_lamp_10"
-    },
-    "power=11": {
-      "model": "utilitix:block/dimmable_redstone_lamp_11"
-    },
-    "power=12": {
-      "model": "utilitix:block/dimmable_redstone_lamp_12"
-    },
-    "power=13": {
-      "model": "utilitix:block/dimmable_redstone_lamp_13"
-    },
-    "power=14": {
-      "model": "utilitix:block/dimmable_redstone_lamp_14"
-    },
-    "power=15": {
-      "model": "utilitix:block/dimmable_redstone_lamp_15"
     }
   }
 }

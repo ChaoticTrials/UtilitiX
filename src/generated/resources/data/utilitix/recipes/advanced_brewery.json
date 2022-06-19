@@ -1,24 +1,24 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "b": {
+      "item": "minecraft:smooth_stone"
+    },
+    "g": {
+      "tag": "forge:ingots/gold"
+    },
+    "i": {
+      "tag": "forge:ingots/iron"
+    },
+    "s": {
+      "item": "minecraft:brewing_stand"
+    }
+  },
   "pattern": [
     " g ",
     "isi",
     "bbb"
   ],
-  "key": {
-    "s": {
-      "item": "minecraft:brewing_stand"
-    },
-    "b": {
-      "item": "minecraft:smooth_stone"
-    },
-    "i": {
-      "tag": "forge:ingots/iron"
-    },
-    "g": {
-      "tag": "forge:ingots/gold"
-    }
-  },
   "result": {
     "item": "utilitix:advanced_brewery"
   }

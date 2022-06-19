@@ -1,14 +1,14 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "XXX",
-    "XXX"
-  ],
   "key": {
     "X": {
       "item": "minecraft:stone"
     }
   },
+  "pattern": [
+    "XXX",
+    "XXX"
+  ],
   "result": {
     "item": "utilitix:stone_wall"
   }

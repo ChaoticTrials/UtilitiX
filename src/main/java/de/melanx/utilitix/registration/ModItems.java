@@ -11,12 +11,12 @@ import de.melanx.utilitix.content.wireless.ItemLinkedCrystal;
 import de.melanx.utilitix.item.ItemBurnable;
 import de.melanx.utilitix.item.ItemMobYoinker;
 import de.melanx.utilitix.item.Quiver;
-import io.github.noeppi_noeppi.libx.annotation.registration.RegisterClass;
-import io.github.noeppi_noeppi.libx.base.ItemBase;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ShearsItem;
+import org.moddingx.libx.annotation.registration.RegisterClass;
+import org.moddingx.libx.base.ItemBase;
 
-@RegisterClass
+@RegisterClass(registry = "ITEM_REGISTRY")
 public class ModItems {
 
     public static final Item tinyCoal = new ItemBurnable(UtilitiX.getInstance(), new Item.Properties(), 200);

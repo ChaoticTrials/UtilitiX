@@ -1,12 +1,12 @@
 package de.melanx.utilitix.data.state;
 
-import io.github.noeppi_noeppi.libx.data.provider.BlockStateProviderBase;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
+import org.moddingx.libx.datagen.provider.BlockStateProviderBase;
 
 import javax.annotation.Nullable;
 import java.util.function.UnaryOperator;

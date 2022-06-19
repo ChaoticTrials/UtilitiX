@@ -3,7 +3,6 @@ package de.melanx.utilitix.content.track.rails;
 import de.melanx.utilitix.block.ModProperties;
 import de.melanx.utilitix.content.track.TrackUtil;
 import de.melanx.utilitix.content.track.carts.Cart;
-import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
@@ -17,6 +16,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.tuple.Pair;
+import org.moddingx.libx.mod.ModX;
 
 import javax.annotation.Nonnull;
 

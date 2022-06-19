@@ -9,11 +9,11 @@ import de.melanx.utilitix.content.experiencecrystal.BlockExperienceCrystal;
 import de.melanx.utilitix.content.experiencecrystal.TileExperienceCrystal;
 import de.melanx.utilitix.content.wireless.BlockLinkedRepeater;
 import de.melanx.utilitix.content.wireless.TileLinkedRepeater;
-import mcp.mobius.waila.api.IRegistrar;
-import mcp.mobius.waila.api.IWailaPlugin;
-import mcp.mobius.waila.api.TooltipPosition;
-import mcp.mobius.waila.api.WailaPlugin;
 import net.minecraft.resources.ResourceLocation;
+import snownee.jade.api.IWailaClientRegistration;
+import snownee.jade.api.IWailaCommonRegistration;
+import snownee.jade.api.IWailaPlugin;
+import snownee.jade.api.WailaPlugin;
 
 @WailaPlugin
 public class UtilJade implements IWailaPlugin {
@@ -24,21 +24,18 @@ public class UtilJade implements IWailaPlugin {
     public static final ResourceLocation LINKED_REPEATER = UtilitiX.getInstance().resource("linked_repeater");
 
     @Override
-    public void register(IRegistrar registrar) {
-        registrar.registerComponentProvider(AdvancedBreweryProvider.INSTANCE, TooltipPosition.BODY, BlockAdvancedBrewery.class);
-        registrar.registerBlockDataProvider(AdvancedBreweryProvider.INSTANCE, TileAdvancedBrewery.class);
-        registrar.addConfig(ADVANCED_BREWERY, true);
+    public void register(IWailaCommonRegistration registration) {
+        registration.registerBlockDataProvider(AdvancedBreweryProvider.INSTANCE, TileAdvancedBrewery.class);
+        registration.registerBlockDataProvider(CrudeFurnaceProvider.INSTANCE, TileCrudeFurnace.class);
+        registration.registerBlockDataProvider(ExperienceCrystalProvider.INSTANCE, TileExperienceCrystal.class);
+        registration.registerBlockDataProvider(LinkedRepeaterProvider.INSTANCE, TileLinkedRepeater.class);
+    }
 
-        registrar.registerComponentProvider(CrudeFurnaceProvider.INSTANCE, TooltipPosition.BODY, BlockCrudeFurnace.class);
-        registrar.registerBlockDataProvider(CrudeFurnaceProvider.INSTANCE, TileCrudeFurnace.class);
-        registrar.addConfig(CRUDE_FURNACE, true);
-
-        registrar.registerComponentProvider(ExperienceCrystalProvider.INSTANCE, TooltipPosition.BODY, BlockExperienceCrystal.class);
-        registrar.registerBlockDataProvider(ExperienceCrystalProvider.INSTANCE, TileExperienceCrystal.class);
-        registrar.addConfig(EXPERIENCE_CRYSTAL, true);
-
-        registrar.registerComponentProvider(LinkedRepeaterProvider.INSTANCE, TooltipPosition.BODY, BlockLinkedRepeater.class);
-        registrar.registerBlockDataProvider(LinkedRepeaterProvider.INSTANCE, TileLinkedRepeater.class);
-        registrar.addConfig(LINKED_REPEATER, true);
+    @Override
+    public void registerClient(IWailaClientRegistration registration) {
+        registration.registerBlockComponent(AdvancedBreweryProvider.INSTANCE, BlockAdvancedBrewery.class);
+        registration.registerBlockComponent(CrudeFurnaceProvider.INSTANCE, BlockCrudeFurnace.class);
+        registration.registerBlockComponent(ExperienceCrystalProvider.INSTANCE, BlockExperienceCrystal.class);
+        registration.registerBlockComponent(LinkedRepeaterProvider.INSTANCE, BlockLinkedRepeater.class);
     }
 }

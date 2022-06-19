@@ -2,7 +2,6 @@ package de.melanx.utilitix.item;
 
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.util.MobUtil;
-import io.github.noeppi_noeppi.libx.base.ItemBase;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -17,6 +16,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.IItemRenderProperties;
+import org.moddingx.libx.base.ItemBase;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

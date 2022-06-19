@@ -1,14 +1,10 @@
 package de.melanx.utilitix.content.experiencecrystal;
 
 import de.melanx.utilitix.registration.ModBlocks;
-import io.github.noeppi_noeppi.libx.base.tile.MenuBlockBE;
-import io.github.noeppi_noeppi.libx.block.DirectionShape;
-import io.github.noeppi_noeppi.libx.mod.ModX;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -30,10 +26,13 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import org.moddingx.libx.base.tile.MenuBlockBE;
+import org.moddingx.libx.block.DirectionShape;
+import org.moddingx.libx.mod.ModX;
+import org.moddingx.libx.registration.SetupContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.function.Consumer;
 
 public class BlockExperienceCrystal extends MenuBlockBE<TileExperienceCrystal, ContainerMenuExperienceCrystal> {
 
@@ -64,7 +63,7 @@ public class BlockExperienceCrystal extends MenuBlockBE<TileExperienceCrystal, C
     }
 
     @Override
-    public void registerClient(ResourceLocation id, Consumer<Runnable> defer) {
+    public void registerClient(SetupContext ctx) {
         MenuScreens.register(ModBlocks.experienceCrystal.menu, ScreenExperienceCrystal::new);
         ItemBlockRenderTypes.setRenderLayer(this, RenderType.translucent());
     }

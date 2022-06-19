@@ -1,9 +1,9 @@
 package de.melanx.utilitix.network;
 
 import de.melanx.utilitix.content.slime.StickyChunk;
-import io.github.noeppi_noeppi.libx.network.PacketSerializer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.ChunkPos;
+import org.moddingx.libx.network.PacketSerializer;
 
 public class StickyChunkUpdateSerializer implements PacketSerializer<StickyChunkUpdateSerializer.StickyChunkUpdateMessage> {
 

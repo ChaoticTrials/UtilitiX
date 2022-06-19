@@ -5,12 +5,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import de.melanx.utilitix.registration.ModItemTags;
 import de.melanx.utilitix.registration.ModItems;
-import io.github.noeppi_noeppi.libx.util.Misc;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
@@ -21,10 +19,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.moddingx.libx.util.Misc;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public abstract class EffectTransformer {
@@ -77,7 +77,7 @@ public abstract class EffectTransformer {
             for (int i = 0; i < size; i++) {
                 CompoundTag nbt = buffer.readNbt();
                 if (nbt != null) {
-                    effects.add(MobEffectInstance.load(nbt));
+                    effects.add(Objects.requireNonNull(MobEffectInstance.load(nbt)));
                 }
             }
             return new Apply(name, effects.build());
@@ -101,7 +101,7 @@ public abstract class EffectTransformer {
 
     public static JsonObject serializeEffect(MobEffectInstance effect) {
         JsonObject json = new JsonObject();
-        ResourceLocation id = effect.getEffect().getRegistryName();
+        ResourceLocation id = ForgeRegistries.MOB_EFFECTS.getKey(effect.getEffect());
         if (id == null) id = Misc.MISSIGNO;
         json.addProperty("effect", id.toString());
         json.addProperty("amplifier", effect.getAmplifier() + 1);
@@ -238,7 +238,7 @@ public abstract class EffectTransformer {
                 return PotionOutput.simple(new ItemStack(ModItems.failedPotion));
             } else {
                 ItemStack stack = create(input.getIn1().getItem(), merged);
-                stack.setHoverName(new TranslatableComponent("item.utilitix.merged_potion").withStyle(ChatFormatting.GREEN));
+                stack.setHoverName(Component.translatable("item.utilitix.merged_potion").withStyle(ChatFormatting.GREEN));
                 return PotionOutput.simple(stack);
             }
         }

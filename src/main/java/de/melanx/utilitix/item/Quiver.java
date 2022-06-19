@@ -1,13 +1,8 @@
 package de.melanx.utilitix.item;
 
 import de.melanx.utilitix.UtilitiX;
-import io.github.noeppi_noeppi.libx.base.ItemBase;
-import io.github.noeppi_noeppi.libx.inventory.BaseItemStackHandler;
-import io.github.noeppi_noeppi.libx.menu.GenericMenu;
-import io.github.noeppi_noeppi.libx.mod.ModX;
-import io.github.noeppi_noeppi.libx.mod.registration.Registerable;
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
@@ -20,11 +15,16 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.moddingx.libx.base.ItemBase;
+import org.moddingx.libx.inventory.BaseItemStackHandler;
+import org.moddingx.libx.menu.GenericMenu;
+import org.moddingx.libx.mod.ModX;
+import org.moddingx.libx.registration.Registerable;
+import org.moddingx.libx.registration.SetupContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
 public class Quiver extends ItemBase implements Registerable {
 
@@ -35,7 +35,7 @@ public class Quiver extends ItemBase implements Registerable {
     }
 
     @Override
-    public void registerCommon(ResourceLocation id, Consumer<Runnable> defer) {
+    public void registerCommon(SetupContext ctx) {
         GenericMenu.registerSlotValidator(SLOT_VALIDATOR, (slot, stack) -> stack.is(ItemTags.ARROWS));
     }
 
@@ -57,7 +57,7 @@ public class Quiver extends ItemBase implements Registerable {
                 handler.get().deserializeNBT(stack.getOrCreateTag().getCompound("Items"));
             }
             if (player instanceof ServerPlayer) {
-                GenericMenu.open((ServerPlayer) player, handler.get(), new TranslatableComponent("screen." + UtilitiX.getInstance().modid + ".quiver"), SLOT_VALIDATOR);
+                GenericMenu.open((ServerPlayer) player, handler.get(), Component.translatable("screen." + UtilitiX.getInstance().modid + ".quiver"), SLOT_VALIDATOR);
             }
             return InteractionResultHolder.sidedSuccess(stack, false);
         }
