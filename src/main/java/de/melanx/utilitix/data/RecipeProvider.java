@@ -4,15 +4,13 @@ import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.data.recipe.BreweryRecipeBuilder;
 import de.melanx.utilitix.recipe.EffectTransformer;
 import de.melanx.utilitix.registration.ModBlocks;
-import de.melanx.utilitix.registration.ModEntities;
 import de.melanx.utilitix.registration.ModItems;
+import de.melanx.utilitix.registration.ModRegisterables;
 import net.minecraft.ChatFormatting;
-import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
-import net.minecraft.data.recipes.SingleItemRecipeBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -25,14 +23,14 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.moddingx.libx.annotation.data.Datagen;
 import org.moddingx.libx.datagen.provider.recipe.RecipeProviderBase;
+import org.moddingx.libx.datagen.provider.recipe.StoneCuttingExtension;
 import org.moddingx.libx.datagen.provider.recipe.crafting.CraftingExtension;
 import org.moddingx.libx.mod.ModX;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 @Datagen
-public class RecipeProvider extends RecipeProviderBase implements CraftingExtension {
+public class RecipeProvider extends RecipeProviderBase implements CraftingExtension, StoneCuttingExtension {
 
     public RecipeProvider(ModX mod, DataGenerator generator) {
         super(mod, generator);
@@ -369,7 +367,7 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
                 .unlockedBy("has_item1", has(Tags.Items.NUGGETS_IRON))
                 .save(consumer);
 
-        this.controllerRail(ModBlocks.pistonControllerRail, ModBlocks.reinforcedPistonControllerRail, ModEntities.pistonCart.item(), consumer);
+        this.controllerRail(ModBlocks.pistonControllerRail, ModBlocks.reinforcedPistonControllerRail, ModRegisterables.pistonCart.item(), consumer);
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -400,10 +398,10 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
     }
 
     private void createCartRecipes(Consumer<FinishedRecipe> consumer) {
-        this.cart(ModEntities.enderCart.item(), Items.ENDER_CHEST, consumer);
-        this.cart(ModEntities.pistonCart.item(), Items.PISTON, consumer);
-        this.cart(ModEntities.stonecutterCart.item(), Items.STONECUTTER, consumer);
-        this.cart(ModEntities.anvilCart.item(), Items.ANVIL, consumer);
+        this.cart(ModRegisterables.enderCart.item(), Items.ENDER_CHEST, consumer);
+        this.cart(ModRegisterables.pistonCart.item(), Items.PISTON, consumer);
+        this.cart(ModRegisterables.stonecutterCart.item(), Items.STONECUTTER, consumer);
+        this.cart(ModRegisterables.anvilCart.item(), Items.ANVIL, consumer);
     }
 
     private void createShearsRecipes(Consumer<FinishedRecipe> consumer) {
@@ -428,13 +426,7 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
 
     private void wall(ItemLike wall, Ingredient ingredient) {
         this.shaped(wall, "XXX", "XXX", 'X', ingredient);
-        SingleItemRecipeBuilder cuttingRecipe = SingleItemRecipeBuilder.stonecutting(ingredient, wall);
-        List<CriterionTriggerInstance> triggerInstances = this.criteria(ingredient);
-        for (int i = 0; i < triggerInstances.size(); i++) {
-            cuttingRecipe.unlockedBy("criterion" + i, triggerInstances.get(i));
-        }
-        //noinspection ConstantConditions
-        cuttingRecipe.save(this.consumer(), new ResourceLocation(ForgeRegistries.ITEMS.getKey(wall.asItem()).getNamespace(), ForgeRegistries.ITEMS.getKey(wall.asItem()).getPath() + "_stone_cutter"));
+        this.stoneCutting(ingredient, wall);
     }
 
     private void removeNbt(Consumer<FinishedRecipe> consumer, ItemLike item) {

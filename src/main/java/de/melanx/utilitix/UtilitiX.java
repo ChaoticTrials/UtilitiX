@@ -3,12 +3,15 @@ package de.melanx.utilitix;
 import de.melanx.utilitix.client.ClientUtilitiX;
 import de.melanx.utilitix.config.ArmorStandRotationMapper;
 import de.melanx.utilitix.content.BetterMending;
+import de.melanx.utilitix.content.shulkerboat.ShulkerBoatRenderer;
 import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartContainerMenu;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartScreen;
 import de.melanx.utilitix.network.UtiliNetwork;
+import de.melanx.utilitix.registration.ModEntities;
 import de.melanx.utilitix.registration.ModItems;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.raid.Raid;
@@ -71,6 +74,7 @@ public final class UtilitiX extends ModXRegistration {
     @Override
     protected void clientSetup(FMLClientSetupEvent event) {
         MenuScreens.register(PistonCartContainerMenu.TYPE, PistonCartScreen::new);
+        EntityRenderers.register(ModEntities.shulkerBoat, ShulkerBoatRenderer::new);
     }
 
     @Nonnull

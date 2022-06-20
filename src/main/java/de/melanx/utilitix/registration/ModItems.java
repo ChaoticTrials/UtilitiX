@@ -5,12 +5,14 @@ import de.melanx.utilitix.content.ArmedStand;
 import de.melanx.utilitix.content.bell.ItemHandBell;
 import de.melanx.utilitix.content.bell.ItemMobBell;
 import de.melanx.utilitix.content.brewery.ItemFailedPotion;
+import de.melanx.utilitix.content.shulkerboat.ShulkerBoatItem;
 import de.melanx.utilitix.content.slime.ItemGlueBall;
 import de.melanx.utilitix.content.track.ItemMinecartTinkerer;
 import de.melanx.utilitix.content.wireless.ItemLinkedCrystal;
 import de.melanx.utilitix.item.ItemBurnable;
 import de.melanx.utilitix.item.ItemMobYoinker;
 import de.melanx.utilitix.item.Quiver;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ShearsItem;
 import org.moddingx.libx.annotation.registration.RegisterClass;
@@ -33,4 +35,11 @@ public class ModItems {
     @SuppressWarnings("ConstantConditions")
     public static final Item diamondShears = new ShearsItem(new Item.Properties().stacksTo(1).durability(1486).tab(UtilitiX.getInstance().tab));
     public static final Item mobYoinker = new ItemMobYoinker(new Item.Properties().stacksTo(1));
+    public static final Item oakShulkerBoat = new ShulkerBoatItem(Boat.Type.OAK, new Item.Properties().stacksTo(1).tab(UtilitiX.getInstance().tab));
+    public static final Item spruceShulkerBoat = new ShulkerBoatItem(Boat.Type.SPRUCE, new Item.Properties().stacksTo(1).tab(UtilitiX.getInstance().tab));
+    public static final Item birchShulkerBoat = new ShulkerBoatItem(Boat.Type.BIRCH, new Item.Properties().stacksTo(1).tab(UtilitiX.getInstance().tab));
+    public static final Item jungleShulkerBoat = new ShulkerBoatItem(Boat.Type.JUNGLE, new Item.Properties().stacksTo(1).tab(UtilitiX.getInstance().tab));
+    public static final Item acaciaShulkerBoat = new ShulkerBoatItem(Boat.Type.ACACIA, new Item.Properties().stacksTo(1).tab(UtilitiX.getInstance().tab));
+    public static final Item darkOakShulkerBoat = new ShulkerBoatItem(Boat.Type.DARK_OAK, new Item.Properties().stacksTo(1).tab(UtilitiX.getInstance().tab));
+    public static final Item mangroveShulkerBoat = new ShulkerBoatItem(Boat.Type.MANGROVE, new Item.Properties().stacksTo(1).tab(UtilitiX.getInstance().tab));
 }

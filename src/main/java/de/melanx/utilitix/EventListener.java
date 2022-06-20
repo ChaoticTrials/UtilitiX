@@ -40,6 +40,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -294,5 +295,10 @@ public class EventListener {
                 && (!ModList.get().isLoaded("aiotbotania") || !AIOTBOTANIA_FLATTEN_ALLOWED.contains(ForgeRegistries.ITEMS.getKey(event.getHeldItemStack().getItem())))) {
             event.setCanceled(true);
         }
+    }
+
+    @SubscribeEvent
+    public void addLayers(EntityRenderersEvent.AddLayers event) {
+
     }
 }

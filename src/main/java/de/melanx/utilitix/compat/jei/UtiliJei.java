@@ -7,9 +7,9 @@ import de.melanx.utilitix.content.gildingarmor.GildingArmorRecipe;
 import de.melanx.utilitix.recipe.BreweryRecipe;
 import de.melanx.utilitix.recipe.EffectTransformer;
 import de.melanx.utilitix.registration.ModBlocks;
-import de.melanx.utilitix.registration.ModEntities;
 import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.registration.ModRecipeTypes;
+import de.melanx.utilitix.registration.ModRegisterables;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
@@ -80,11 +80,11 @@ public class UtiliJei implements IModPlugin {
         registration.addIngredientInfo(ImmutableList.of(new ItemStack(ModBlocks.crossingRail), new ItemStack(ModBlocks.reinforcedCrossingRail)), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.crossing_rail"));
         registration.addIngredientInfo(ImmutableList.of(new ItemStack(ModBlocks.filterRail), new ItemStack(ModBlocks.reinforcedFilterRail)), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.filter_rail"));
         registration.addIngredientInfo(new ItemStack(ModBlocks.reinforcedRail), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.reinforced_rail"));
-        registration.addIngredientInfo(new ItemStack(ModEntities.enderCart.item()), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.ender_cart"));
-        registration.addIngredientInfo(new ItemStack(ModEntities.pistonCart.item()), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.piston_cart"));
+        registration.addIngredientInfo(new ItemStack(ModRegisterables.enderCart.item()), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.ender_cart"));
+        registration.addIngredientInfo(new ItemStack(ModRegisterables.pistonCart.item()), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.piston_cart"));
         registration.addIngredientInfo(ImmutableList.of(new ItemStack(ModBlocks.pistonControllerRail), new ItemStack(ModBlocks.reinforcedPistonControllerRail)), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.piston_controller_rail"));
-        registration.addIngredientInfo(new ItemStack(ModEntities.stonecutterCart.item()), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.stonecutter_cart"));
-        registration.addIngredientInfo(new ItemStack(ModEntities.anvilCart.item()), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.anvil_cart"));
+        registration.addIngredientInfo(new ItemStack(ModRegisterables.stonecutterCart.item()), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.stonecutter_cart"));
+        registration.addIngredientInfo(new ItemStack(ModRegisterables.anvilCart.item()), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.anvil_cart"));
         registration.addIngredientInfo(new ItemStack(ModBlocks.crudeFurnace), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.crude_furnace"));
     }
 

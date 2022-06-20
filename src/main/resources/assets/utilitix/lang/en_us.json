@@ -28,6 +28,7 @@
   "entity.utilitix.piston_cart": "Piston Minecart",
   "entity.utilitix.stonecutter_cart": "Stonecutter Minecart",
   "entity.utilitix.anvil_cart": "Anvil Minecart",
+  "entity.utilitix.shulker_boat": "Boat with Shulker Box",
 
   "item.utilitix.hand_bell": "Hand Bell",
   "item.utilitix.gilding_crystal": "Gilding Crystal",
@@ -45,6 +46,13 @@
   "item.utilitix.minecart_tinkerer": "Minecart Tinkerer",
   "item.utilitix.diamond_shears": "Diamond Shears",
   "item.utilitix.mob_yoinker": "Mob Yoinker",
+  "item.utilitix.oak_shulker_boat": "Oak Boat with Shulker Box",
+  "item.utilitix.spruce_shulker_boat": "Spruce Boat with Shulker Box",
+  "item.utilitix.birch_shulker_boat": "Birch Boat with Shulker Box",
+  "item.utilitix.jungle_shulker_boat": "Jungle Boat with Shulker Box",
+  "item.utilitix.acacia_shulker_boat": "Acacia Boat with Shulker Box",
+  "item.utilitix.dark_oak_shulker_boat": "Dark Oak Boat with Shulker Box",
+  "item.utilitix.mangrove_shulker_boat": "Mangrove Boat with Shulker Box",
 
   "screen.utilitix.experience_crystal": "Experience Crystal",
   "screen.utilitix.quiver": "Quiver",
