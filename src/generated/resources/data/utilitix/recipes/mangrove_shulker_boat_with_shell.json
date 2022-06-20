@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "b": {
+      "item": "minecraft:mangrove_chest_boat"
+    },
+    "s": {
+      "item": "minecraft:shulker_shell"
+    }
+  },
+  "pattern": [
+    "s",
+    "b",
+    "s"
+  ],
+  "result": {
+    "item": "utilitix:mangrove_shulker_boat"
+  }
+}

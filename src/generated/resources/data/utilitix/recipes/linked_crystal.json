@@ -1,17 +1,9 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "key": {
-    "g": {
-      "tag": "forge:gems/emerald"
-    },
-    "r": {
-      "tag": "forge:dusts/redstone"
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "utilitix:linked_crystal"
     }
-  },
-  "pattern": [
-    " r ",
-    "rgr",
-    " r "
   ],
   "result": {
     "item": "utilitix:linked_crystal"

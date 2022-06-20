@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_item0": {
+    "criterion0": {
       "conditions": {
         "items": [
           {
@@ -13,7 +13,7 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
-    "has_item1": {
+    "criterion1": {
       "conditions": {
         "items": [
           {
@@ -23,7 +23,7 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
-    "has_item2": {
+    "criterion2": {
       "conditions": {
         "items": [
           {
@@ -42,9 +42,9 @@
   },
   "requirements": [
     [
-      "has_item0",
-      "has_item1",
-      "has_item2",
+      "criterion0",
+      "criterion1",
+      "criterion2",
       "has_the_recipe"
     ]
   ],

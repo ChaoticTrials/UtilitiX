@@ -1,11 +1,21 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_redstone": {
+    "criterion0": {
       "conditions": {
         "items": [
           {
             "tag": "forge:dusts/redstone"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "criterion1": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:rods/wooden"
           }
         ]
       },
@@ -20,7 +30,8 @@
   },
   "requirements": [
     [
-      "has_redstone",
+      "criterion0",
+      "criterion1",
       "has_the_recipe"
     ]
   ],

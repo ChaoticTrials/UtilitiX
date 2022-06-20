@@ -1,16 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "B": {
+    "b": {
       "item": "minecraft:bell"
     },
-    "S": {
+    "s": {
       "tag": "forge:rods/wooden"
     }
   },
   "pattern": [
-    " S",
-    "SB"
+    " s",
+    "sb"
   ],
   "result": {
     "item": "utilitix:hand_bell"

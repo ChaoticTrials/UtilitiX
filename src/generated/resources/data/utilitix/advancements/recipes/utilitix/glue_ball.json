@@ -1,7 +1,17 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_item": {
+    "criterion0": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:slimeballs"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "criterion1": {
       "conditions": {
         "items": [
           {
@@ -20,7 +30,8 @@
   },
   "requirements": [
     [
-      "has_item",
+      "criterion0",
+      "criterion1",
       "has_the_recipe"
     ]
   ],
