@@ -8,7 +8,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraft.world.item.BoatItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
@@ -18,16 +17,18 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.moddingx.libx.base.ItemBase;
+import org.moddingx.libx.mod.ModX;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ShulkerBoatItem extends BoatItem {
+public class ShulkerBoatItem extends ItemBase {
 
     private final Boat.Type boatType;
 
-    public ShulkerBoatItem(Boat.Type boatType, Properties properties) {
-        super(true, boatType, properties);
+    public ShulkerBoatItem(ModX mod, Boat.Type boatType, Properties properties) {
+        super(mod, properties);
         this.boatType = boatType;
     }
 

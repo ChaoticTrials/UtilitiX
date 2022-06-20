@@ -53,6 +53,7 @@
   "item.utilitix.acacia_shulker_boat": "Acacia Boat with Shulker Box",
   "item.utilitix.dark_oak_shulker_boat": "Dark Oak Boat with Shulker Box",
   "item.utilitix.mangrove_shulker_boat": "Mangrove Boat with Shulker Box",
+  "item.utilitix.ancient_compass": "Ancient Compass",
 
   "screen.utilitix.experience_crystal": "Experience Crystal",
   "screen.utilitix.quiver": "Quiver",
@@ -78,6 +79,7 @@
   "tooltip.utilitix.experience_crystal.sub_1": "Retrieve 1 level",
   "tooltip.utilitix.experience_crystal.sub_10": "Retrieve 10 levels",
   "tooltip.utilitix.experience_crystal.sub_all": "Retrieve all levels",
+  "tooltip.utilitix.ancient_compass": "Don't use me unless you're quiet enough",
 
   "description.utilitix.advanced_brewery": "The advanced brewery can modify potions. Just like a regular brewery it requires blaze powder to work. It has four modes: Brewing, Merging, Upgrading and Cloning",
   "description.utilitix.advanced_brewery.brewing": "In brewing mode, one potion is required in the center potion slot and a special ingredient is required in the input slot. You can view brewing recipes in JEI.",

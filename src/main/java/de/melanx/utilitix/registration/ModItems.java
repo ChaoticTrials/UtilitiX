@@ -1,6 +1,7 @@
 package de.melanx.utilitix.registration;
 
 import de.melanx.utilitix.UtilitiX;
+import de.melanx.utilitix.content.AncientCompass;
 import de.melanx.utilitix.content.ArmedStand;
 import de.melanx.utilitix.content.bell.ItemHandBell;
 import de.melanx.utilitix.content.bell.ItemMobBell;
@@ -35,11 +36,12 @@ public class ModItems {
     @SuppressWarnings("ConstantConditions")
     public static final Item diamondShears = new ShearsItem(new Item.Properties().stacksTo(1).durability(1486).tab(UtilitiX.getInstance().tab));
     public static final Item mobYoinker = new ItemMobYoinker(new Item.Properties().stacksTo(1));
-    public static final Item oakShulkerBoat = new ShulkerBoatItem(Boat.Type.OAK, new Item.Properties().stacksTo(1).tab(UtilitiX.getInstance().tab));
-    public static final Item spruceShulkerBoat = new ShulkerBoatItem(Boat.Type.SPRUCE, new Item.Properties().stacksTo(1).tab(UtilitiX.getInstance().tab));
-    public static final Item birchShulkerBoat = new ShulkerBoatItem(Boat.Type.BIRCH, new Item.Properties().stacksTo(1).tab(UtilitiX.getInstance().tab));
-    public static final Item jungleShulkerBoat = new ShulkerBoatItem(Boat.Type.JUNGLE, new Item.Properties().stacksTo(1).tab(UtilitiX.getInstance().tab));
-    public static final Item acaciaShulkerBoat = new ShulkerBoatItem(Boat.Type.ACACIA, new Item.Properties().stacksTo(1).tab(UtilitiX.getInstance().tab));
-    public static final Item darkOakShulkerBoat = new ShulkerBoatItem(Boat.Type.DARK_OAK, new Item.Properties().stacksTo(1).tab(UtilitiX.getInstance().tab));
-    public static final Item mangroveShulkerBoat = new ShulkerBoatItem(Boat.Type.MANGROVE, new Item.Properties().stacksTo(1).tab(UtilitiX.getInstance().tab));
+    public static final Item oakShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.OAK, new Item.Properties().stacksTo(1));
+    public static final Item spruceShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.SPRUCE, new Item.Properties().stacksTo(1));
+    public static final Item birchShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.BIRCH, new Item.Properties().stacksTo(1));
+    public static final Item jungleShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.JUNGLE, new Item.Properties().stacksTo(1));
+    public static final Item acaciaShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.ACACIA, new Item.Properties().stacksTo(1));
+    public static final Item darkOakShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.DARK_OAK, new Item.Properties().stacksTo(1));
+    public static final Item mangroveShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.MANGROVE, new Item.Properties().stacksTo(1));
+    public static final Item ancientCompass = new AncientCompass(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
 }

@@ -38,10 +38,15 @@ import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -298,7 +303,15 @@ public class EventListener {
     }
 
     @SubscribeEvent
-    public void addLayers(EntityRenderersEvent.AddLayers event) {
-
+    public void addLayers(LootTableLoadEvent event) {
+        LootTable table = event.getTable();
+        if (table.getLootTableId().equals(BuiltInLootTables.SIMPLE_DUNGEON)) {
+            table.addPool(LootPool.lootPool()
+                    .setRolls(ConstantValue.exactly(1))
+                    .add(LootItem.lootTableItem(ModItems.ancientCompass))
+                    .add(LootItem.lootTableItem(Items.AIR)
+                            .setWeight(31))
+                    .build());
+        }
     }
 }
