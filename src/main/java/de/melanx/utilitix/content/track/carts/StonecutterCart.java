@@ -212,7 +212,6 @@ public class StonecutterCart extends Cart {
         if (this.mode != this.entityData.get(MODE)) {
             this.entityData.set(MODE, this.mode);
         }
-        // TODO NbtUtils.readBlockPos(CompoundTag)
         this.breakingBlock = NbtUtils.readBlockPos(compound.getCompound("BreakPos"));
         this.lastSuccess = NbtUtils.readBlockPos(compound.getCompound("LastSuccessfulBreak"));
         this.breakProgress = compound.getInt("BreakProgress");

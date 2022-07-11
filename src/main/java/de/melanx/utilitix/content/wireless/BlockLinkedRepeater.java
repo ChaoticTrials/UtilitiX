@@ -28,6 +28,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.ticks.TickPriority;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.ForgeEventFactory;
 import org.moddingx.libx.base.tile.BlockBE;
 import org.moddingx.libx.mod.ModX;
@@ -55,6 +57,7 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void registerClient(SetupContext ctx) {
         BlockEntityRenderers.register(this.getBlockEntityType(), context -> new BesrLinkedRepeater());
     }

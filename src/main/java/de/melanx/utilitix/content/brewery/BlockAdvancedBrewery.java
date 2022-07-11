@@ -13,6 +13,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.moddingx.libx.base.tile.MenuBlockBE;
 import org.moddingx.libx.block.RotationShape;
 import org.moddingx.libx.menu.BlockEntityMenu;
@@ -36,6 +38,7 @@ public class BlockAdvancedBrewery extends MenuBlockBE<TileAdvancedBrewery, Conta
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void registerClient(SetupContext ctx) {
         BlockEntityRenderers.register(this.getBlockEntityType(), context -> new BesrAdvancedBrewery());
         MenuScreens.register(this.menu, ScreenAdvancedBrewery::new);

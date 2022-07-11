@@ -16,6 +16,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IItemRenderProperties;
 import org.moddingx.libx.base.ItemBase;
 import org.moddingx.libx.mod.ModX;
@@ -58,6 +60,7 @@ public class AncientCompass extends ItemBase {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void initializeClient(@Nonnull Consumer<IItemRenderProperties> consumer) {
         ItemProperties.register(this, new ResourceLocation("angle"), new CompassItemPropertyFunction((level, stack, entity) -> {
             if (!stack.getOrCreateTag().contains("AncientCityPos") || !stack.getOrCreateTag().contains("AncientCityLevel")) {
