@@ -3,6 +3,7 @@ package de.melanx.utilitix.compat.quark;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import vazkii.quark.base.handler.GeneralConfig;
 
 public class QuarkCompat {
 
@@ -11,9 +12,9 @@ public class QuarkCompat {
     public static Component warningForGlue() {
         Component component = null;
 
-//        if (GeneralConfig.usePistonLogicRepl) {
-//            component = WARNING;
-//        }
+        if (GeneralConfig.usePistonLogicRepl) {
+            component = WARNING;
+        }
 
         return component;
     }

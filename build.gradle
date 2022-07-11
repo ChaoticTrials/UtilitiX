@@ -39,8 +39,8 @@ dependencies {
     coremods 'org.moddingx:CoreModTypes:5.0.2-2'
 
     // for testing
-//    implementation fg.deobf("vazkii.quark:Quark:3.2-344.2208")
-//    implementation fg.deobf("vazkii.autoreglib:AutoRegLib:1.7-53.111")
+    implementation fg.deobf("vazkii.quark:Quark:3.3-364.2446")
+    implementation fg.deobf("vazkii.autoreglib:AutoRegLib:1.8-54.115")
 //    runtimeOnly curse.mod(443900, 3760255) // Pipez
 //    runtimeOnly curse.mod(254241, 3781218) // Mob Grinding Utils
 }
