@@ -6,7 +6,7 @@ import net.minecraft.network.syncher.EntityDataSerializer;
 import org.moddingx.libx.annotation.registration.RegisterClass;
 import org.moddingx.libx.network.EnumDataSerializer;
 
-@RegisterClass(registry = "DATA_SERIALIZERS")
+@RegisterClass(registry = "ENTITY_DATA_SERIALIZERS")
 public class ModSerializers {
 
     public static final EntityDataSerializer<PistonCartMode> pistonCartMode = new EnumDataSerializer<>(PistonCartMode.class);

@@ -107,7 +107,7 @@ public class Cart extends AbstractMinecart {
 
         @Override
         public void initTracking(RegistrationContext ctx, TrackingCollector builder) throws ReflectiveOperationException {
-            builder.track(ForgeRegistries.ENTITIES, DefaultCartType.class.getDeclaredField("type"));
+            builder.track(ForgeRegistries.ENTITY_TYPES, DefaultCartType.class.getDeclaredField("type"));
             builder.track(ForgeRegistries.ITEMS, DefaultCartType.class.getDeclaredField("item"));
         }
 

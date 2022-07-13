@@ -64,7 +64,7 @@ public abstract class BlockControllerRail<T extends TileControllerRail> extends 
 
     @Override
     public void initTracking(RegistrationContext ctx, TrackingCollector builder) throws ReflectiveOperationException {
-        builder.track(ForgeRegistries.BLOCK_ENTITIES, BlockControllerRail.class.getDeclaredField("beType"));
+        builder.track(ForgeRegistries.BLOCK_ENTITY_TYPES, BlockControllerRail.class.getDeclaredField("beType"));
     }
 
     @Nonnull

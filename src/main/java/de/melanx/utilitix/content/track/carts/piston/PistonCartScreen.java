@@ -32,7 +32,7 @@ public class PistonCartScreen extends AbstractContainerScreen<PistonCartContaine
         MinecraftForge.EVENT_BUS.addListener(this::onGuiInit);
     }
 
-    private void onGuiInit(ScreenEvent.InitScreenEvent event) {
+    private void onGuiInit(ScreenEvent.Init event) {
         this.relX = (event.getScreen().width - this.imageWidth) / 2;
         this.relY = (event.getScreen().height - this.imageHeight) / 2;
     }

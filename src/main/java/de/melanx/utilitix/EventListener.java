@@ -50,9 +50,9 @@ import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.ChunkEvent;
-import net.minecraftforge.event.world.ExplosionEvent;
+import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.event.level.ChunkEvent;
+import net.minecraftforge.event.level.ExplosionEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -67,7 +67,7 @@ public class EventListener {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
 
         if (player.isShiftKeyDown() && event.getTarget() instanceof LivingEntity target) {
             InteractionHand hand = event.getHand();
@@ -137,7 +137,7 @@ public class EventListener {
     @SubscribeEvent
     public void entityInteract(PlayerInteractEvent.EntityInteractSpecific event) {
         if (event.getTarget() instanceof ArmorStand && event.getTarget().getPersistentData().getBoolean("UtilitiXArmorStand")) {
-            if (event.getItemStack().getItem() == Items.FLINT && event.getPlayer().isShiftKeyDown()) {
+            if (event.getItemStack().getItem() == Items.FLINT && event.getEntity().isShiftKeyDown()) {
                 ArmorStand entity = (ArmorStand) event.getTarget();
                 if (UtilitiXConfig.armorStandPoses.size() >= 2) {
                     int newIdx = (entity.getPersistentData().getInt("UtilitiXPoseIdx") + 1) % UtilitiXConfig.armorStandPoses.size();
@@ -153,14 +153,14 @@ public class EventListener {
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void loadChunk(ChunkEvent.Load event) {
-        if (event.getWorld().isClientSide()) {
+        if (event.getLevel().isClientSide()) {
             UtilitiX.getNetwork().channel.sendToServer(new StickyChunkRequestSerializer.StickyChunkRequestMessage(event.getChunk().getPos()));
         }
     }
 
     @SubscribeEvent
     public void neighbourChange(BlockEvent.NeighborNotifyEvent event) {
-        if (!event.getWorld().isClientSide() && event.getWorld() instanceof Level level) {
+        if (!event.getLevel().isClientSide() && event.getLevel() instanceof Level level) {
             for (Direction dir : Direction.values()) {
                 BlockPos thePos = event.getPos().relative(dir);
                 BlockState state = level.getBlockState(thePos);
@@ -201,7 +201,7 @@ public class EventListener {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onItemDespawn(ItemExpireEvent event) {
-        ItemEntity entity = event.getEntityItem();
+        ItemEntity entity = event.getEntity();
         Level level = entity.getCommandSenderWorld();
         if (!level.isClientSide) {
             BlockPos pos = entity.blockPosition();
@@ -235,7 +235,7 @@ public class EventListener {
             return;
         }
 
-        Level level = event.getWorld();
+        Level level = event.getLevel();
         BlockPos pos = event.getPos();
         BlockState state = level.getBlockState(pos);
         if (!(state.getBlock() instanceof DoorBlock) && !state.is(BlockTags.DOORS) || state.getBlock().material == Material.METAL) {
@@ -255,7 +255,7 @@ public class EventListener {
         }
 
         if (neighborState.getValue(DoorBlock.HALF) == half && neighborState.getValue(DoorBlock.HINGE) != hinge && neighborState.getValue(DoorBlock.FACING) == facing) {
-            ((DoorBlock) neighborState.getBlock()).setOpen(event.getPlayer(), level, neighborState, neighborPos, !open);
+            ((DoorBlock) neighborState.getBlock()).setOpen(event.getEntity(), level, neighborState, neighborPos, !open);
         }
     }
 

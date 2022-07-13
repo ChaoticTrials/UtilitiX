@@ -143,8 +143,8 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickingBlock
     private void consumeItem(int slot) {
         ItemStack stack = this.inventory.getStackInSlot(slot);
         if (!stack.isEmpty()) {
-            if (stack.hasContainerItem()) {
-                this.inventory.setStackInSlot(slot, stack.getContainerItem().copy());
+            if (stack.hasCraftingRemainingItem()) {
+                this.inventory.setStackInSlot(slot, stack.getCraftingRemainingItem().copy());
             } else if (stack.getItem() == Items.POTION || stack.getItem() == ModItems.failedPotion) {
                 // Only give glass bottles for normal potions as other types don't give glass bottles as well.
                 this.inventory.setStackInSlot(slot, new ItemStack(Items.GLASS_BOTTLE, stack.getCount()));

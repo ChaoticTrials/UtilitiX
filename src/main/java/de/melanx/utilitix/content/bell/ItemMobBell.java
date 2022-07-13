@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.moddingx.libx.mod.ModX;
 
@@ -53,8 +54,8 @@ public class ItemMobBell extends BellBase {
     public static int getColor(ItemStack stack) {
         if (stack.getTag() != null && stack.getTag().contains(MobUtil.ENTITY_TYPE_TAG, Tag.TAG_STRING)) {
             ResourceLocation rl = ResourceLocation.tryParse(stack.getTag().getString(MobUtil.ENTITY_TYPE_TAG));
-            EntityType<?> entityType = rl == null ? null : ForgeRegistries.ENTITIES.getValue(rl);
-            SpawnEggItem egg = entityType == null ? null : SpawnEggItem.byId(entityType);
+            EntityType<?> entityType = rl == null ? null : ForgeRegistries.ENTITY_TYPES.getValue(rl);
+            SpawnEggItem egg = entityType == null ? null : ForgeSpawnEggItem.fromEntityType(entityType);
             if (egg != null) {
                 return Objects.requireNonNull(egg).getColor(0);
             }

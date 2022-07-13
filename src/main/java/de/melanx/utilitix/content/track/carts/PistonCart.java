@@ -133,7 +133,7 @@ public class PistonCart extends Cart {
                     return PistonCartContainerMenu.TYPE.create(containerId, inventory, buffer);
                 }
             };
-            NetworkHooks.openGui((ServerPlayer) player, containerProvider, buffer -> buffer.writeInt(PistonCart.this.getId()));
+            NetworkHooks.openScreen((ServerPlayer) player, containerProvider, buffer -> buffer.writeInt(PistonCart.this.getId()));
         }
         return InteractionResult.sidedSuccess(player.level.isClientSide);
     }

@@ -28,9 +28,9 @@ import java.util.stream.Stream;
 public class BetterMending {
 
     @SubscribeEvent
-    public void pullXP(TickEvent.WorldTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && event.world instanceof ServerLevel) {
-            this.moveExps(event.world, Streams.stream(((ServerLevel) event.world).getEntities().getAll()));
+    public void pullXP(TickEvent.LevelTickEvent event) {
+        if (event.phase == TickEvent.Phase.END && event.level instanceof ServerLevel) {
+            this.moveExps(event.level, Streams.stream(((ServerLevel) event.level).getEntities().getAll()));
         }
     }
 

@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.client.IItemRenderProperties;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.moddingx.libx.base.ItemBase;
 
 import javax.annotation.Nonnull;
@@ -33,7 +33,7 @@ public class ItemMobYoinker extends ItemBase {
     }
 
     @Override
-    public void initializeClient(@Nonnull Consumer<IItemRenderProperties> consumer) {
+    public void initializeClient(@Nonnull Consumer<IClientItemExtensions> consumer) {
         ItemProperties.register(this, UtilitiX.getInstance().resource("filled"), ((stack, level, entity, seed) -> stack.getOrCreateTag().getBoolean(TAG_FILLED) ? 1.0F : 0.0F));
     }
 

@@ -2,10 +2,10 @@ package de.melanx.utilitix.content.slime;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.melanx.utilitix.Textures;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -16,15 +16,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import org.moddingx.libx.render.RenderHelperBlock;
 import org.moddingx.libx.render.RenderHelperLevel;
 
 public class SlimeRender {
 
-    public static void renderWorld(RenderLevelLastEvent event) {
+    public static void renderWorld(RenderLevelStageEvent event) {
         ClientLevel level = Minecraft.getInstance().level;
-        if (level != null) {
+        if (level != null && event.getStage() == RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS) {
             Minecraft.getInstance().getProfiler().push("utilitix_glue");
             Minecraft.getInstance().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS);
             TextureAtlasSprite slime = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(Textures.GLUE_OVERLAY_TEXTURE);
@@ -44,7 +44,7 @@ public class SlimeRender {
                             StickyChunk data = chunk.getCapability(SlimyCapability.STICKY_CHUNK).orElse(null);
                             //noinspection ConstantConditions
                             if (data != null) {
-                                data.foreach(renderChunk(clip, poseStack, Minecraft.getInstance().renderBuffers().bufferSource(), pos, chunk, slime));
+                                data.foreach(renderChunk(event.getCamera(), clip, poseStack, pos, chunk, slime));
                             }
                         }
                     }
@@ -55,24 +55,24 @@ public class SlimeRender {
             Minecraft.getInstance().getProfiler().pop(); // utilitix_glue
         }
     }
-    
-    private static StickyChunk.ChunkAction renderChunk(Frustum clip, PoseStack poseStack, MultiBufferSource buffer, ChunkPos pos, LevelChunk chunk, TextureAtlasSprite slime) {
+
+    private static StickyChunk.ChunkAction renderChunk(Camera camera, Frustum clip, PoseStack poseStack, ChunkPos pos, LevelChunk chunk, TextureAtlasSprite slime) {
         return (sectionId, sectionOffset) -> {
             if (clip.isVisible(new AABB(pos.getMinBlockX(), sectionOffset, pos.getMinBlockZ(), pos.getMaxBlockX() + 1, sectionOffset + 16, pos.getMaxBlockZ() + 1))) {
-                return renderSection(poseStack, buffer, pos, sectionOffset, chunk, slime);
+                return renderSection(camera, poseStack, pos, sectionOffset, chunk, slime);
             } else {
                 return null;
             }
         };
     }
-    
-    private static StickyChunk.SectionAction renderSection(PoseStack poseStack, MultiBufferSource buffer, ChunkPos pos, int sectionOffset, LevelChunk chunk, TextureAtlasSprite slime) {
+
+    private static StickyChunk.SectionAction renderSection(Camera camera, PoseStack poseStack, ChunkPos pos, int sectionOffset, LevelChunk chunk, TextureAtlasSprite slime) {
         return new StickyChunk.SectionAction() {
-            
+
             @Override
             public void start() {
                 poseStack.pushPose();
-                RenderHelperLevel.loadProjection(poseStack, pos.getMinBlockX(), sectionOffset, pos.getMinBlockZ());
+                RenderHelperLevel.loadCameraPosition(camera, poseStack, pos.getMinBlockX(), sectionOffset, pos.getMinBlockZ());
                 Minecraft.getInstance().getProfiler().push("render_chunk_glue");
             }
 
@@ -85,7 +85,7 @@ public class SlimeRender {
                 int light = LightTexture.pack(lightValue, lightValue);
                 poseStack.pushPose();
                 poseStack.translate(x, y, z);
-                RenderHelperBlock.renderBlockOverlaySprite(state, poseStack, buffer, light, OverlayTexture.NO_OVERLAY, slime, state.getSeed(block), dir -> (data & (1 << dir.ordinal())) != 0);
+                RenderHelperBlock.renderBlockOverlaySprite(state, poseStack, light, OverlayTexture.NO_OVERLAY, slime, state.getSeed(block), dir -> (data & (1 << dir.ordinal())) != 0);
                 Minecraft.getInstance().renderBuffers().crumblingBufferSource().endBatch();
                 poseStack.popPose();
                 Minecraft.getInstance().getProfiler().pop(); // do_render
