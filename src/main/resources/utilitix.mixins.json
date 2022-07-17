@@ -13,6 +13,7 @@
     "MixinLevel",
     "MixinPiglinAi",
     "MixinPistonMovingBlockEntity",
-    "MixinPistonStructureResolver"
+    "MixinPistonStructureResolver",
+    "WanderingTraderSpawnerMixin"
   ]
 }
