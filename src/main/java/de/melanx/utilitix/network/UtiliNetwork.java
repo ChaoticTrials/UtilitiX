@@ -12,16 +12,16 @@ public class UtiliNetwork extends NetworkX {
 
     @Override
     protected Protocol getProtocol() {
-        return Protocol.of("6");
+        return Protocol.of("7");
     }
 
     @Override
     protected void registerPackets() {
-        this.register(new StickyChunkRequestSerializer(), () -> StickyChunkRequestHandler::handle, NetworkDirection.PLAY_TO_SERVER);
-        this.register(new PistonCartModeCycleSerializer(), () -> PistonCartModeCycleHandler::handle, NetworkDirection.PLAY_TO_SERVER);
-        this.register(new ClickScreenButtonHandler.ClickScreenButtonSerializer(), () -> ClickScreenButtonHandler::handle, NetworkDirection.PLAY_TO_SERVER);
-        
-        this.register(new StickyChunkUpdateSerializer(), () -> StickyChunkUpdateHandler::handle, NetworkDirection.PLAY_TO_CLIENT);
-        this.register(new ItemEntityRepairedSerializer(), () -> ItemEntityRepairedHandler::handle, NetworkDirection.PLAY_TO_CLIENT);
+        this.registerGame(NetworkDirection.PLAY_TO_SERVER, new StickyChunkRequest.Serializer(), () -> StickyChunkRequest.Handler::new);
+        this.registerGame(NetworkDirection.PLAY_TO_SERVER, new PistonCartModeCycle.Serializer(), () -> PistonCartModeCycle.Handler::new);
+        this.registerGame(NetworkDirection.PLAY_TO_SERVER, new ClickScreenButton.Serializer(), () -> ClickScreenButton.Handler::new);
+
+        this.registerGame(NetworkDirection.PLAY_TO_CLIENT, new StickyChunkUpdate.Serializer(), () -> StickyChunkUpdate.Handler::new);
+        this.registerGame(NetworkDirection.PLAY_TO_CLIENT, new ItemEntityRepaired.Serializer(), () -> ItemEntityRepaired.Handler::new);
     }
 }

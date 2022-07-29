@@ -1,7 +1,7 @@
 package de.melanx.utilitix.content.slime;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.network.StickyChunkUpdateSerializer;
+import de.melanx.utilitix.network.StickyChunkUpdate;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -62,7 +62,7 @@ public class StickyChunk {
     public void sync() {
         if (this.chunk != null && !this.chunk.getLevel().isClientSide) {
             this.chunk.setUnsaved(true);
-            UtilitiX.getNetwork().channel.send(PacketDistributor.TRACKING_CHUNK.with(() -> this.chunk), new StickyChunkUpdateSerializer.StickyChunkUpdateMessage(this.chunk.getPos(), this));
+            UtilitiX.getNetwork().channel.send(PacketDistributor.TRACKING_CHUNK.with(() -> this.chunk), new StickyChunkUpdate(this.chunk.getPos(), this));
         }
     }
     

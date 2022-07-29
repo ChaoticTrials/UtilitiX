@@ -3,7 +3,7 @@ package de.melanx.utilitix.content;
 import com.google.common.collect.Streams;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.UtilitiXConfig;
-import de.melanx.utilitix.network.ItemEntityRepairedSerializer;
+import de.melanx.utilitix.network.ItemEntityRepaired;
 import de.melanx.utilitix.util.BoundingBoxUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerLevel;
@@ -58,7 +58,7 @@ public class BetterMending {
                             orb.remove(Entity.RemovalReason.KILLED);
 
                             if (!stack.isDamaged()) {
-                                UtilitiX.getNetwork().channel.send(PacketDistributor.TRACKING_ENTITY.with(() -> item), new ItemEntityRepairedSerializer.ItemEntityRepairedMessage(item.getId()));
+                                UtilitiX.getNetwork().channel.send(PacketDistributor.TRACKING_ENTITY.with(() -> item), new ItemEntityRepaired(item.getId()));
                             }
                         } else {
                             double scale = 1 - (vector.length() / 8);

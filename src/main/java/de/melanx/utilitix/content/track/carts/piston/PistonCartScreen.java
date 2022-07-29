@@ -3,7 +3,7 @@ package de.melanx.utilitix.content.track.carts.piston;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.network.PistonCartModeCycleSerializer;
+import de.melanx.utilitix.network.PistonCartModeCycle;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -73,7 +73,7 @@ public class PistonCartScreen extends AbstractContainerScreen<PistonCartContaine
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
             if (mouseX >= this.relX + 65 && mouseX <= this.relX + 111 && mouseY >= this.relY + 18 && mouseY <= this.relY + 34 && this.menu.entity != null) {
-                UtilitiX.getNetwork().channel.sendToServer(new PistonCartModeCycleSerializer.PistonCartModeCycleMessage(this.menu.entity.getId()));
+                UtilitiX.getNetwork().channel.sendToServer(new PistonCartModeCycle(this.menu.entity.getId()));
                 Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
                 return true;
             }

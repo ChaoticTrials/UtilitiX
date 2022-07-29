@@ -3,7 +3,7 @@ package de.melanx.utilitix.content.experiencecrystal;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.network.ClickScreenButtonHandler;
+import de.melanx.utilitix.network.ClickScreenButton;
 import de.melanx.utilitix.util.XPUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -104,7 +104,7 @@ public class ScreenExperienceCrystal extends AbstractContainerScreen<ContainerMe
             Button pressed = this.getHoveredButton((int) mouseX, (int) mouseY);
             if (pressed != null) {
                 Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
-                UtilitiX.getNetwork().channel.sendToServer(new ClickScreenButtonHandler.Message(this.menu.getPos(), pressed));
+                UtilitiX.getNetwork().channel.sendToServer(new ClickScreenButton(this.menu.getPos(), pressed));
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);

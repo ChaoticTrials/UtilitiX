@@ -3,7 +3,7 @@ package de.melanx.utilitix;
 import de.melanx.utilitix.content.gildingarmor.GildingArmorRecipe;
 import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.content.slime.StickyChunk;
-import de.melanx.utilitix.network.StickyChunkRequestSerializer;
+import de.melanx.utilitix.network.StickyChunkRequest;
 import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.util.MobUtil;
 import de.melanx.utilitix.util.XPUtils;
@@ -154,7 +154,7 @@ public class EventListener {
     @OnlyIn(Dist.CLIENT)
     public void loadChunk(ChunkEvent.Load event) {
         if (event.getLevel().isClientSide()) {
-            UtilitiX.getNetwork().channel.sendToServer(new StickyChunkRequestSerializer.StickyChunkRequestMessage(event.getChunk().getPos()));
+            UtilitiX.getNetwork().channel.sendToServer(new StickyChunkRequest(event.getChunk().getPos()));
         }
     }
 

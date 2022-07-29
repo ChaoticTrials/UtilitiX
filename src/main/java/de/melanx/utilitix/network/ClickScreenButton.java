@@ -10,17 +10,27 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.network.NetworkEvent;
+import org.moddingx.libx.network.PacketHandler;
 import org.moddingx.libx.network.PacketSerializer;
 
 import java.util.function.Supplier;
 
-public class ClickScreenButtonHandler {
+public record ClickScreenButton(BlockPos pos, ScreenExperienceCrystal.Button button) {
 
-    public static void handle(ClickScreenButtonHandler.Message msg, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
+    public static class Handler implements PacketHandler<ClickScreenButton> {
+
+        @Override
+        public Target target() {
+            return Target.MAIN_THREAD;
+        }
+
+        @Override
+        public boolean handle(ClickScreenButton msg, Supplier<NetworkEvent.Context> ctx) {
             ServerPlayer player = ctx.get().getSender();
-            if (player == null)
-                return;
+            if (player == null) {
+                return true;
+            }
+
             ServerLevel level = player.getLevel();
             ScreenExperienceCrystal.Button button = msg.button;
             BlockEntity be = level.getBlockEntity(msg.pos);
@@ -61,8 +71,8 @@ public class ClickScreenButtonHandler {
                 }
             }
 
-        });
-        ctx.get().setPacketHandled(true);
+            return true;
+        }
     }
 
     private static void normalizeAddition(Player player, TileExperienceCrystal tile) {
@@ -83,33 +93,22 @@ public class ClickScreenButtonHandler {
         }
     }
 
-    public static class ClickScreenButtonSerializer implements PacketSerializer<Message> {
+    public static class Serializer implements PacketSerializer<ClickScreenButton> {
 
         @Override
-        public Class<Message> messageClass() {
-            return Message.class;
+        public Class<ClickScreenButton> messageClass() {
+            return ClickScreenButton.class;
         }
 
         @Override
-        public void encode(Message msg, FriendlyByteBuf buffer) {
+        public void encode(ClickScreenButton msg, FriendlyByteBuf buffer) {
             buffer.writeBlockPos(msg.pos);
             buffer.writeEnum(msg.button);
         }
 
         @Override
-        public Message decode(FriendlyByteBuf buffer) {
-            return new Message(buffer.readBlockPos(), buffer.readEnum(ScreenExperienceCrystal.Button.class));
-        }
-    }
-
-    public static class Message {
-
-        public final BlockPos pos;
-        public final ScreenExperienceCrystal.Button button;
-
-        public Message(BlockPos pos, ScreenExperienceCrystal.Button button) {
-            this.pos = pos;
-            this.button = button;
+        public ClickScreenButton decode(FriendlyByteBuf buffer) {
+            return new ClickScreenButton(buffer.readBlockPos(), buffer.readEnum(ScreenExperienceCrystal.Button.class));
         }
     }
 }
