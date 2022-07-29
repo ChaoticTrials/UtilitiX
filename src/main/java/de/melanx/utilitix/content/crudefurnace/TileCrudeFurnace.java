@@ -85,11 +85,6 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickingBlock {
                 this.initDone = true;
             }
 
-            if (this.fuelTime > 0) {
-                this.fuelTime--;
-                this.setDispatchable();
-            }
-
             if (this.recipe != null) {
                 ItemStack result = this.recipe.getOutput();
 
@@ -106,6 +101,11 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickingBlock {
                     this.updateRecipe();
                     this.setDispatchable();
                 }
+            }
+
+            if (this.fuelTime > 0) {
+                this.fuelTime--;
+                this.setDispatchable();
             }
 
             if (this.recipe != null && this.fuelTime <= 0) {
