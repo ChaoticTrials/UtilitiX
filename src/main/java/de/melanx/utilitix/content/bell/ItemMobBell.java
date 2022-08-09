@@ -32,10 +32,10 @@ public class ItemMobBell extends BellBase {
         if (!stack.hasTag()) {
             return false;
         }
-        if (!stack.getOrCreateTag().contains("Entity")) {
+        if (!stack.getOrCreateTag().contains("EntityType")) {
             return false;
         }
-        String s = stack.getOrCreateTag().getString("Entity");
+        String s = stack.getOrCreateTag().getString("EntityType");
         return EntityType.getKey(entity.getType()).equals(ResourceLocation.tryParse(s));
     }
 
