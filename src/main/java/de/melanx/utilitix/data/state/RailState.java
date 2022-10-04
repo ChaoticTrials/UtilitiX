@@ -141,7 +141,8 @@ public class RailState {
         }
         if (needsModel) {
             return provider.models().withExistingParent(id.getPath() + modelId, parent)
-                    .texture("rail", new ResourceLocation(id.getNamespace(), "block/" + id.getPath() + textureId));
+                    .texture("rail", new ResourceLocation(id.getNamespace(), "block/" + id.getPath() + textureId))
+                    .renderType("cutout");
         } else {
             return null;
         }

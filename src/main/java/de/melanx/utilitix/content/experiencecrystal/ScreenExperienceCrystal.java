@@ -30,7 +30,7 @@ public class ScreenExperienceCrystal extends AbstractContainerScreen<ContainerMe
 
     public ScreenExperienceCrystal(ContainerMenuExperienceCrystal menu, Inventory inv, Component title) {
         super(menu, inv, title);
-        this.imageHeight += 10;
+        this.imageHeight = 176;
         MinecraftForge.EVENT_BUS.addListener(this::onGuiInit);
     }
 
