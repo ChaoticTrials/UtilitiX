@@ -14,7 +14,9 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ShulkerBoxMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
@@ -43,6 +45,43 @@ public class ShulkerBoat extends ChestBoat {
 
         this.unpackLootTable(player);
         return new ShulkerBoxMenu(id, inventory, this);
+    }
+
+    @Override
+    public boolean hurt(@Nonnull DamageSource source, float amount) {
+        if (this.isInvulnerableTo(source)) {
+            return false;
+        }
+
+        if (this.level.isClientSide || this.isRemoved()) {
+            return true;
+        }
+
+        this.setHurtDir(-this.getHurtDir());
+        this.setHurtTime(10);
+        this.setDamage(this.getDamage() + amount * 10);
+        this.markHurt();
+        this.gameEvent(GameEvent.ENTITY_DAMAGE, source.getEntity());
+        boolean creative = source.getEntity() instanceof Player player && player.getAbilities().instabuild;
+        if (creative || this.getDamage() > 40) {
+            if ((!creative || this.hasItems()) && (this.level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS) || this.hasItems())) {
+                this.destroy(source);
+            }
+
+            this.discard();
+        }
+
+        return true;
+    }
+
+    private boolean hasItems() {
+        for (ItemStack item : this.getItemStacks()) {
+            if (!item.isEmpty()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Nonnull
