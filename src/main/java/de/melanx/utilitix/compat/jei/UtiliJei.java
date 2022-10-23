@@ -21,15 +21,21 @@ import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.UpgradeRecipe;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.commons.compress.utils.Lists;
 
 import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -61,7 +67,7 @@ public class UtiliJei implements IModPlugin {
                 .filter(r -> r.getAction() instanceof EffectTransformer.Apply)
                 .collect(Collectors.toList());
         registration.addRecipes(RecipeTypes.BREWING, simpleBrewery);
-        registration.addRecipes(RecipeTypes.GILDING, GildingArmorRecipe.getRecipes());
+        registration.addRecipes(RecipeTypes.GILDING, getGildingRecipes());
 
         registration.addIngredientInfo(new ItemStack(ModBlocks.advancedBrewery), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.advanced_brewery"), Component.translatable("description.utilitix.advanced_brewery.brewing"), Component.translatable("description.utilitix.advanced_brewery.merging"), Component.translatable("description.utilitix.advanced_brewery.upgrading"), Component.translatable("description.utilitix.advanced_brewery.cloning"));
         registration.addIngredientInfo(ImmutableList.of(new ItemStack(ModBlocks.comparatorRedirectorUp), new ItemStack(ModBlocks.comparatorRedirectorDown)), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.comparator_redirector"));
@@ -116,5 +122,28 @@ public class UtiliJei implements IModPlugin {
         } else {
             return Optional.empty();
         }
+    }
+
+    private static List<UpgradeRecipe> getGildingRecipes() {
+        List<UpgradeRecipe> recipes = Lists.newArrayList();
+        
+        Ingredient gildingItem = Ingredient.of(ModItems.gildingCrystal);
+        Level level = Minecraft.getInstance().level;
+        if (level == null) return List.of();
+        
+        for (Map.Entry<ResourceKey<Item>, Item> entry : ForgeRegistries.ITEMS.getEntries()) {
+            if (entry.getValue() instanceof ArmorItem item && GildingArmorRecipe.canGild(item, new ItemStack(item), level)) {
+                ResourceLocation id = UtilitiX.getInstance().resource("gilding/" + entry.getKey().location().getNamespace() + "/" + entry.getKey().location().getPath());
+                
+                ItemStack output = new ItemStack(item);
+                output.getOrCreateTag().putBoolean("Gilded_UtilitiX", true);
+
+                UpgradeRecipe recipe = new UpgradeRecipe(id, Ingredient.of(item), gildingItem, output);
+
+                recipes.add(recipe);
+            }
+        }
+
+        return Collections.unmodifiableList(recipes);
     }
 }
