@@ -67,8 +67,12 @@ public class GildingArmorRecipe extends UpgradeRecipe {
         return stack.hasTag() && stack.getOrCreateTag().getBoolean("Gilded_UtilitiX");
     }
 
-    public static boolean canGild(ArmorItem item) {
-        return !item.makesPiglinsNeutral(new ItemStack(item), null) && item.getMaterial() != ArmorMaterials.GOLD;
+    private static boolean canGild(ArmorItem item) {
+        try {
+            return !item.makesPiglinsNeutral(new ItemStack(item), null) && item.getMaterial() != ArmorMaterials.GOLD;
+        } catch (NullPointerException e) {
+            return false;
+        }
     }
 
     public static List<UpgradeRecipe> getRecipes() {
