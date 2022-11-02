@@ -16,12 +16,10 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -77,12 +75,6 @@ public class StonecutterCart extends Cart {
     @Override
     public BlockState getDefaultDisplayBlockState() {
         return Blocks.STONECUTTER.defaultBlockState();
-    }
-
-    @Override
-    public void destroy(@Nonnull DamageSource source) {
-        super.destroy(source);
-        this.spawnAtLocation(Items.STONECUTTER);
     }
 
     @Override

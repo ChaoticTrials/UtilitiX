@@ -30,7 +30,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseRailBlock;
@@ -100,7 +99,6 @@ public class PistonCart extends Cart {
     @Override
     public void destroy(@Nonnull DamageSource source) {
         super.destroy(source);
-        this.spawnAtLocation(Items.PISTON);
         for (int i = 0; i < this.railIn.getSlots(); i++) {
             this.spawnAtLocation(this.railIn.getStackInSlot(i));
         }

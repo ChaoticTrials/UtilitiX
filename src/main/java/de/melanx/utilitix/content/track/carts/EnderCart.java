@@ -4,11 +4,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.SimpleMenuProvider;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -30,12 +28,6 @@ public class EnderCart extends Cart {
     @Override
     public int getDefaultDisplayOffset() {
         return 8;
-    }
-
-    @Override
-    public void destroy(@Nonnull DamageSource source) {
-        super.destroy(source);
-        this.spawnAtLocation(Items.ENDER_CHEST);
     }
 
     @Nonnull
