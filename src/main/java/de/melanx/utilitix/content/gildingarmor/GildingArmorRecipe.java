@@ -1,11 +1,10 @@
 package de.melanx.utilitix.content.gildingarmor;
 
 import com.mojang.authlib.GameProfile;
+import de.melanx.utilitix.client.ClientUtil;
 import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.registration.ModRecipes;
 import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
@@ -24,7 +23,7 @@ import javax.annotation.Nonnull;
 public class GildingArmorRecipe extends UpgradeRecipe {
 
     private static final GameProfile FAKE_PROFILE = new GameProfile(Util.NIL_UUID, "Steve");
-    
+
     public GildingArmorRecipe(ResourceLocation id) {
         super(id, Ingredient.EMPTY, Ingredient.EMPTY, ItemStack.EMPTY);
     }
@@ -76,10 +75,7 @@ public class GildingArmorRecipe extends UpgradeRecipe {
         if (level instanceof ServerLevel serverLevel) {
             return !armor.makesPiglinsNeutral(stack, new FakePlayer(serverLevel, FAKE_PROFILE));
         } else {
-            return DistExecutor.unsafeRunForDist(() -> () -> {
-                if (!(level instanceof ClientLevel) || Minecraft.getInstance().player == null) return false;
-                return !armor.makesPiglinsNeutral(stack, Minecraft.getInstance().player);
-            }, () -> () -> false);
+            return DistExecutor.unsafeRunForDist(() -> () -> ClientUtil.canGild(armor, stack, level), () -> () -> false);
         }
     }
 }
