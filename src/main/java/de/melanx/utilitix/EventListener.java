@@ -43,8 +43,12 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
@@ -64,6 +68,7 @@ import java.util.Set;
 public class EventListener {
 
     private static final MutableComponent GILDED = Component.translatable("tooltip.utilitix.gilded").withStyle(ChatFormatting.GOLD);
+    private static boolean HANDLE_DOOR = false;
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
@@ -231,7 +236,7 @@ public class EventListener {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getUseItem() == Event.Result.ALLOW || event.getUseBlock() == Event.Result.DENY) {
+        if (event.getUseItem() == Event.Result.ALLOW || event.getUseBlock() == Event.Result.DENY || HANDLE_DOOR) {
             return;
         }
 
@@ -250,12 +255,19 @@ public class EventListener {
         BlockPos neighborPos = pos.relative(hinge == DoorHingeSide.LEFT ? facing.getClockWise() : facing.getCounterClockWise());
 
         BlockState neighborState = level.getBlockState(neighborPos);
-        if (!(neighborState.getBlock() instanceof DoorBlock) && !neighborState.is(BlockTags.DOORS) || neighborState.getBlock().material == Material.METAL) {
+        if (!(neighborState.getBlock() instanceof DoorBlock) && !neighborState.is(BlockTags.DOORS) || neighborState.getValue(DoorBlock.OPEN) != open || neighborState.getMaterial() == Material.METAL) {
             return;
         }
 
         if (neighborState.getValue(DoorBlock.HALF) == half && neighborState.getValue(DoorBlock.HINGE) != hinge && neighborState.getValue(DoorBlock.FACING) == facing) {
-            ((DoorBlock) neighborState.getBlock()).setOpen(event.getEntity(), level, neighborState, neighborPos, !open);
+            BlockHitResult neighborHit = new BlockHitResult(new Vec3(neighborPos.getX() + 0.5, neighborPos.getY() + 0.5, neighborPos.getZ() + 0.5), facing, neighborPos, false);
+            HANDLE_DOOR = true;
+            if (neighborHit.getType() == HitResult.Type.BLOCK
+                    && !MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickBlock(event.getEntity(), event.getHand(), neighborPos, neighborHit))) {
+                neighborState.use(level, event.getEntity(), event.getHand(), neighborHit);
+            }
+            HANDLE_DOOR = false;
+//            ((DoorBlock) neighborState.getBlock()).setOpen(event.getEntity(), level, neighborState, neighborPos, !open);
         }
     }
 
