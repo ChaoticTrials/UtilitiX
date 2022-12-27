@@ -236,7 +236,7 @@ public class EventListener {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getUseItem() == Event.Result.ALLOW || event.getUseBlock() == Event.Result.DENY || HANDLE_DOOR) {
+        if (!UtilitiXConfig.doubleDoor || event.getUseItem() == Event.Result.ALLOW || event.getUseBlock() == Event.Result.DENY || HANDLE_DOOR) {
             return;
         }
 
