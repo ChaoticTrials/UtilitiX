@@ -82,7 +82,7 @@ public class MapsCommand {
             player.sendMessage(new TranslatableComponent("utilitix.map_saved", path), Util.NIL_UUID);
             return 1;
         } catch (IOException e) {
-            player.sendMessage(new TextComponent("Something went wrong saving the map. More information in the log."), Util.NIL_UUID);
+            player.sendMessage(new TextComponent("message.utilitix.map_save_command"), Util.NIL_UUID);
             UtilitiX.getInstance().logger.warn("Files to save file: {}", path, e);
             return 0;
         }

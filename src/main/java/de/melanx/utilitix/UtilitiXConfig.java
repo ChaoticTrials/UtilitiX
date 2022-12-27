@@ -86,4 +86,7 @@ public class UtilitiXConfig {
     @Config({"Size scale for exporting maps", "1 = 128x128px", "2 = 256x256px", "3 = 384x384px", "And so on, you got the pattern I hope"})
     @IntRange(min = 1)
     public static int mapScale = 3;
+
+    @Config("Both doors open at the same time if connected")
+    public static boolean doubleDoor = true;
 }

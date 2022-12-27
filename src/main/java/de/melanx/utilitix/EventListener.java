@@ -135,7 +135,7 @@ public class EventListener {
     @SubscribeEvent
     public void entityInteract(PlayerInteractEvent.EntityInteractSpecific event) {
         if (event.getTarget() instanceof ArmorStand && event.getTarget().getPersistentData().getBoolean("UtilitiXArmorStand")) {
-            if (event.getItemStack().getItem() == Items.FLINT && event.getPlayer().isShiftKeyDown()) {
+            if (event.getItemStack().getItem() == Items.FLINT && event.getEntity().isShiftKeyDown()) {
                 ArmorStand entity = (ArmorStand) event.getTarget();
                 if (UtilitiXConfig.armorStandPoses.size() >= 2) {
                     int newIdx = (entity.getPersistentData().getInt("UtilitiXPoseIdx") + 1) % UtilitiXConfig.armorStandPoses.size();
@@ -229,7 +229,7 @@ public class EventListener {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getUseItem() == Event.Result.ALLOW || event.getUseBlock() == Event.Result.DENY) {
+        if (!UtilitiXConfig.doubleDoor || event.getUseItem() == Event.Result.ALLOW || event.getUseBlock() == Event.Result.DENY || HANDLE_DOOR) {
             return;
         }
 
