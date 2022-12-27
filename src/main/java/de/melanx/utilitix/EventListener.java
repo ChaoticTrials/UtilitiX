@@ -93,7 +93,7 @@ public class EventListener {
                     }
                 }
 
-                if (MobUtil.storeEntityData(player, hand, target, UtilitiXConfig.HandBells.mobBellEntities, false)) {
+                if (MobUtil.storeEntityData(player, hand, target, UtilitiXConfig.mobYoinkerEntities, false)) {
                     player.giveExperiencePoints((int) -target.getHealth());
                     target.remove(Entity.RemovalReason.DISCARDED);
 
