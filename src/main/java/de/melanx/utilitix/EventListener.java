@@ -13,7 +13,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -30,25 +29,17 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DoorHingeSide;
-import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
@@ -57,7 +48,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.level.ExplosionEvent;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
@@ -231,43 +221,6 @@ public class EventListener {
                     UtilitiX.getInstance().logger.warn("Tried to place {} but was prevented.", item);
                 }
             }
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.LOW)
-    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (!UtilitiXConfig.doubleDoor || event.getUseItem() == Event.Result.ALLOW || event.getUseBlock() == Event.Result.DENY || HANDLE_DOOR) {
-            return;
-        }
-
-        Level level = event.getLevel();
-        BlockPos pos = event.getPos();
-        BlockState state = level.getBlockState(pos);
-        if (!(state.getBlock() instanceof DoorBlock) && !state.is(BlockTags.DOORS) || state.getBlock().material == Material.METAL) {
-            return;
-        }
-
-        Direction facing = state.getValue(DoorBlock.FACING);
-        DoorHingeSide hinge = state.getValue(DoorBlock.HINGE);
-        DoubleBlockHalf half = state.getValue(DoorBlock.HALF);
-        boolean open = state.getValue(DoorBlock.OPEN);
-
-        BlockPos neighborPos = pos.relative(hinge == DoorHingeSide.LEFT ? facing.getClockWise() : facing.getCounterClockWise());
-
-        BlockState neighborState = level.getBlockState(neighborPos);
-        if (!(neighborState.getBlock() instanceof DoorBlock) && !neighborState.is(BlockTags.DOORS) || neighborState.getValue(DoorBlock.OPEN) != open || neighborState.getMaterial() == Material.METAL) {
-            return;
-        }
-
-        if (neighborState.getValue(DoorBlock.HALF) == half && neighborState.getValue(DoorBlock.HINGE) != hinge && neighborState.getValue(DoorBlock.FACING) == facing) {
-            BlockHitResult neighborHit = new BlockHitResult(new Vec3(neighborPos.getX() + 0.5, neighborPos.getY() + 0.5, neighborPos.getZ() + 0.5), facing, neighborPos, false);
-            HANDLE_DOOR = true;
-            if (neighborHit.getType() == HitResult.Type.BLOCK
-                    && !MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickBlock(event.getEntity(), event.getHand(), neighborPos, neighborHit))) {
-                neighborState.use(level, event.getEntity(), event.getHand(), neighborHit);
-            }
-            HANDLE_DOOR = false;
-//            ((DoorBlock) neighborState.getBlock()).setOpen(event.getEntity(), level, neighborState, neighborPos, !open);
         }
     }
 

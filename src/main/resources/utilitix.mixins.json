@@ -10,6 +10,7 @@
     "MixinAbstractMinecart",
     "MixinAbstractVillager",
     "MixinArmorStand",
+    "MixinDoorBlock",
     "MixinLevel",
     "MixinPiglinAi",
     "MixinPistonMovingBlockEntity",
