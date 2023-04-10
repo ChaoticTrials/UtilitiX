@@ -5,6 +5,7 @@ import de.melanx.utilitix.util.BoundingBoxUtils;
 import de.melanx.utilitix.util.XPUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -26,6 +27,7 @@ import org.moddingx.libx.base.tile.BlockEntityBase;
 import org.moddingx.libx.base.tile.TickingBlock;
 
 import javax.annotation.Nonnull;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -219,9 +221,10 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
     }
 
     public static Optional<Fluid> xpFluid() {
+        //noinspection deprecation
         return XPUtils.XP_FLUID_TAGS
                 .stream()
                 .flatMap(tag -> getFluidTag(tag).stream())
-                .findFirst();
+                .min(Comparator.comparing(Registry.FLUID::getKey));
     }
 }
