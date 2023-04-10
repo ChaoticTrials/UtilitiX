@@ -1,12 +1,9 @@
 package de.melanx.utilitix.content.gildingarmor;
 
-import com.mojang.authlib.GameProfile;
-import de.melanx.utilitix.client.ClientUtil;
+import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.registration.ModRecipes;
-import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
@@ -15,14 +12,10 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.UpgradeRecipe;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nonnull;
 
 public class GildingArmorRecipe extends UpgradeRecipe {
-
-    private static final GameProfile FAKE_PROFILE = new GameProfile(Util.NIL_UUID, "Steve");
 
     public GildingArmorRecipe(ResourceLocation id) {
         super(id, Ingredient.EMPTY, Ingredient.EMPTY, ItemStack.EMPTY);
@@ -33,7 +26,7 @@ public class GildingArmorRecipe extends UpgradeRecipe {
         ItemStack input = inv.getItem(0);
         ItemStack addition = inv.getItem(1);
 
-        if (input.getItem() instanceof ArmorItem armor && !isGilded(input) && canGild(armor, input, level)) {
+        if (input.getItem() instanceof ArmorItem armor && !isGilded(input) && canGild(armor, input)) {
             return addition.getItem() == ModItems.gildingCrystal;
         }
 
@@ -70,12 +63,13 @@ public class GildingArmorRecipe extends UpgradeRecipe {
         return stack.hasTag() && stack.getOrCreateTag().getBoolean("Gilded_UtilitiX");
     }
 
-    public static boolean canGild(ArmorItem armor, ItemStack stack, Level level) {
+    public static boolean canGild(ArmorItem armor, ItemStack stack) {
         if (armor.getMaterial() == ArmorMaterials.GOLD) return false;
-        if (level instanceof ServerLevel serverLevel) {
-            return !armor.makesPiglinsNeutral(stack, new FakePlayer(serverLevel, FAKE_PROFILE));
-        } else {
-            return DistExecutor.unsafeRunForDist(() -> () -> ClientUtil.canGild(armor, stack, level), () -> () -> false);
+        try {
+            return !armor.makesPiglinsNeutral(stack, null);
+        } catch (NullPointerException e) {
+            UtilitiX.getInstance().logger.warn("Please report this with complete modlist information and latest.log here: https://github.com/MelanX/UtilitiX/issues", e);
+            return false;
         }
     }
 }

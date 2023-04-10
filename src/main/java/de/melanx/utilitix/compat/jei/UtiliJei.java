@@ -29,7 +29,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.UpgradeRecipe;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.compress.utils.Lists;
@@ -126,15 +125,12 @@ public class UtiliJei implements IModPlugin {
 
     private static List<UpgradeRecipe> getGildingRecipes() {
         List<UpgradeRecipe> recipes = Lists.newArrayList();
-        
         Ingredient gildingItem = Ingredient.of(ModItems.gildingCrystal);
-        Level level = Minecraft.getInstance().level;
-        if (level == null) return List.of();
         
         for (Map.Entry<ResourceKey<Item>, Item> entry : ForgeRegistries.ITEMS.getEntries()) {
-            if (entry.getValue() instanceof ArmorItem item && GildingArmorRecipe.canGild(item, new ItemStack(item), level)) {
+            if (entry.getValue() instanceof ArmorItem item && GildingArmorRecipe.canGild(item, new ItemStack(item))) {
                 ResourceLocation id = UtilitiX.getInstance().resource("gilding/" + entry.getKey().location().getNamespace() + "/" + entry.getKey().location().getPath());
-                
+
                 ItemStack output = new ItemStack(item);
                 output.getOrCreateTag().putBoolean("Gilded_UtilitiX", true);
 

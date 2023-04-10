@@ -1,14 +1,14 @@
 {
   "values": [
-    "utilitix:highspeed_rail",
-    "utilitix:directional_rail",
-    "utilitix:directional_highspeed_rail",
     "utilitix:crossing_rail",
+    "utilitix:directional_highspeed_rail",
+    "utilitix:directional_rail",
     "utilitix:filter_rail",
-    "utilitix:reinforced_rail",
+    "utilitix:highspeed_rail",
+    "utilitix:piston_controller_rail",
     "utilitix:reinforced_crossing_rail",
     "utilitix:reinforced_filter_rail",
-    "utilitix:piston_controller_rail",
-    "utilitix:reinforced_piston_controller_rail"
+    "utilitix:reinforced_piston_controller_rail",
+    "utilitix:reinforced_rail"
   ]
 }
