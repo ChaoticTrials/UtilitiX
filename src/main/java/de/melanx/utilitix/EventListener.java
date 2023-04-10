@@ -58,7 +58,6 @@ import java.util.Set;
 public class EventListener {
 
     private static final MutableComponent GILDED = Component.translatable("tooltip.utilitix.gilded").withStyle(ChatFormatting.GOLD);
-    private static boolean HANDLE_DOOR = false;
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
