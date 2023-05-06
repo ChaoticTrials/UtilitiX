@@ -42,5 +42,7 @@ dependencies {
     compileOnly fg.deobf("vazkii.quark:Quark:3.3-364.2446")
     compileOnly fg.deobf("vazkii.autoreglib:AutoRegLib:1.8-54.115")
 //    runtimeOnly curse.mod(443900, 3760255) // Pipez
-//    runtimeOnly curse.mod(254241, 3781218) // Mob Grinding Utils
+    runtimeOnly curse.mod(254241, 4018863) // Mob Grinding Utils
+    implementation curse.mod(400085, 4496094)
+    implementation curse.mod(566700, 4411903)
 }

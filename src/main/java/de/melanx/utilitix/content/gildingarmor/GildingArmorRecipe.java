@@ -1,10 +1,11 @@
 package de.melanx.utilitix.content.gildingarmor;
 
-import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.registration.ModRecipes;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.ItemStack;
@@ -12,6 +13,8 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.UpgradeRecipe;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nonnull;
 
@@ -66,9 +69,9 @@ public class GildingArmorRecipe extends UpgradeRecipe {
     public static boolean canGild(ArmorItem armor, ItemStack stack) {
         if (armor.getMaterial() == ArmorMaterials.GOLD) return false;
         try {
-            return !armor.makesPiglinsNeutral(stack, null);
+            Player player = DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
+            return !armor.makesPiglinsNeutral(stack, player);
         } catch (NullPointerException e) {
-            UtilitiX.getInstance().logger.warn("Please report this with complete modlist information and latest.log here: https://github.com/MelanX/UtilitiX/issues", e);
             return false;
         }
     }
