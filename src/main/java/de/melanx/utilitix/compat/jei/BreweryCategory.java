@@ -79,7 +79,8 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
         builder.addSlot(RecipeIngredientRole.OUTPUT, 24, 44)
                 .addItemStack(stack);
 
-        builder.addSlot(RecipeIngredientRole.INPUT, 24, 3);
+        builder.addSlot(RecipeIngredientRole.INPUT, 24, 3)
+                .addIngredients(recipe.getIngredients().get(0));
         builder.addSlot(RecipeIngredientRole.OUTPUT, 81, 3)
                 .addItemStack(recipe.getResultItem())
                 .setBackground(this.slot, -1, -1);

@@ -1,15 +1,15 @@
 buildscript {
-    apply from: 'https://moddingx.github.io/ModUtils/experimental/buildscript.gradle', to: buildscript
+    apply from: 'https://moddingx.github.io/ModUtils/v4/buildscript.gradle', to: buildscript
 }
 
-apply from: 'https://moddingx.github.io/ModUtils/experimental/mod.gradle'
+apply from: 'https://moddingx.github.io/ModUtils/v4/mod.gradle'
 apply plugin: 'org.moddingx.modgradle.coremods'
 apply plugin: 'org.moddingx.modgradle.cursedep'
 
 repositories {
     maven {
-        name = "JEI"
-        url = "https://dvs1.progwml6.com/files/maven/"
+        name = "BlameJared"
+        url = "https://maven.blamejared.com/"
     }
     maven {
         name = "LibX"
@@ -18,11 +18,6 @@ repositories {
     maven {
         name = "ModdingX"
         url = 'https://maven.moddingx.org/'
-    }
-
-    maven {
-        name = "blamejared"
-        url = "https://maven.blamejared.com/"
     }
 }
 
