@@ -7,10 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.IServerDataProvider;
@@ -19,7 +16,7 @@ import snownee.jade.api.config.IPluginConfig;
 import snownee.jade.api.ui.IElementHelper;
 import snownee.jade.impl.ui.ProgressArrowElement;
 
-public class CrudeFurnaceProvider implements IBlockComponentProvider, IServerDataProvider<BlockEntity> {
+public class CrudeFurnaceProvider implements IBlockComponentProvider, IServerDataProvider<BlockAccessor> {
 
     public static final ResourceLocation UID = UtilitiX.getInstance().resource("crude_furnace");
     public static final CrudeFurnaceProvider INSTANCE = new CrudeFurnaceProvider();
@@ -56,8 +53,8 @@ public class CrudeFurnaceProvider implements IBlockComponentProvider, IServerDat
     }
 
     @Override
-    public void appendServerData(CompoundTag data, ServerPlayer player, Level level, BlockEntity blockEntity, boolean showDetails) {
-        TileCrudeFurnace furnace = (TileCrudeFurnace) blockEntity;
+    public void appendServerData(CompoundTag data, BlockAccessor accessor) {
+        TileCrudeFurnace furnace = (TileCrudeFurnace) accessor.getBlockEntity();
         ListTag items = new ListTag();
         for (int i = 0; i < 3; i++) {
             items.add(furnace.getInventory().getStackInSlot(i).serializeNBT());

@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "a": {
       "item": "minecraft:armor_stand"
@@ -15,5 +16,6 @@
   ],
   "result": {
     "item": "utilitix:armed_stand"
-  }
+  },
+  "show_notification": true
 }

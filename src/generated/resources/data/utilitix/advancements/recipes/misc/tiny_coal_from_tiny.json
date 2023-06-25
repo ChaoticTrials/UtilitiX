@@ -121,5 +121,6 @@
     "recipes": [
       "utilitix:tiny_coal_from_tiny"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

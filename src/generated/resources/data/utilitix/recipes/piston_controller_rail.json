@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "a": {
       "item": "minecraft:activator_rail"
@@ -19,5 +20,6 @@
   "result": {
     "count": 8,
     "item": "utilitix:piston_controller_rail"
-  }
+  },
+  "show_notification": true
 }

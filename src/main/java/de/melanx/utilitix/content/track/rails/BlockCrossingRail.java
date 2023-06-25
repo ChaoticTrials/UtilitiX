@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 public class BlockCrossingRail extends BlockRail {
 
     public final boolean reinforced;
-    
+
     public BlockCrossingRail(ModX mod, boolean reinforced, Properties properties) {
         super(mod, false, properties);
         this.reinforced = reinforced;

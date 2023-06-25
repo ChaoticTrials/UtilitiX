@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BlockFilterRail extends BlockControllerRail<TileFilterRail> {
-    
+
     public BlockFilterRail(ModX mod, boolean reinforced, Properties properties) {
         super(mod, TileFilterRail::new, reinforced, properties);
     }
@@ -68,7 +68,7 @@ public class BlockFilterRail extends BlockControllerRail<TileFilterRail> {
         if (filterCart.isEmpty()) return baseShape;
         ItemStack filterThis = this.getTile(level, pos).getFilterStack();
         if (filterThis.isEmpty()) return baseShape;
-        if (!ItemStack.isSame(filterThis, filterCart) || !ItemStack.tagMatches(filterThis, filterCart)) {
+        if (!ItemStack.isSameItemSameTags(filterThis, filterCart)) {
             return baseShape;
         }
         boolean reverse = state.getValue(ModProperties.REVERSE);

@@ -5,7 +5,6 @@ import de.melanx.utilitix.util.BoundingBoxUtils;
 import de.melanx.utilitix.util.XPUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -15,10 +14,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.tags.ITag;
@@ -108,7 +107,7 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction side) {
-        if (validXpFluidIsPresent() && capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (validXpFluidIsPresent() && capability == ForgeCapabilities.FLUID_HANDLER) {
             return LazyOptional.of(() -> this).cast();
         }
 
@@ -221,10 +220,10 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
     }
 
     public static Optional<Fluid> xpFluid() {
-        //noinspection deprecation
+        //noinspection DataFlowIssue
         return XPUtils.XP_FLUID_TAGS
                 .stream()
                 .flatMap(tag -> getFluidTag(tag).stream())
-                .min(Comparator.comparing(Registry.FLUID::getKey));
+                .min(Comparator.comparing(ForgeRegistries.FLUIDS::getKey));
     }
 }

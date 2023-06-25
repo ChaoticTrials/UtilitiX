@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "c": {
       "item": "minecraft:black_concrete"
@@ -21,5 +22,6 @@
   ],
   "result": {
     "item": "utilitix:experience_crystal"
-  }
+  },
+  "show_notification": true
 }

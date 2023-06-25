@@ -7,7 +7,6 @@ import de.melanx.utilitix.block.ModProperties;
 import de.melanx.utilitix.data.state.RailState;
 import de.melanx.utilitix.registration.ModBlocks;
 import net.minecraft.core.Direction;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.BaseRailBlock;
@@ -19,14 +18,11 @@ import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import org.moddingx.libx.annotation.data.Datagen;
-import org.moddingx.libx.datagen.provider.BlockStateProviderBase;
-import org.moddingx.libx.mod.ModX;
+import org.moddingx.libx.datagen.DatagenContext;
+import org.moddingx.libx.datagen.provider.model.BlockStateProviderBase;
 
 import java.util.function.Supplier;
 
-@Datagen
 public class BlockStateProvider extends BlockStateProviderBase {
 
     public static final ResourceLocation LINKED_REPEATER_PARENT = new ResourceLocation(UtilitiX.getInstance().modid, "block/linked_repeater_base");
@@ -37,8 +33,8 @@ public class BlockStateProvider extends BlockStateProviderBase {
     public static final ResourceLocation TEXTURE_TORCH_OFF = new ResourceLocation("minecraft", "block/redstone_torch_off");
     public static final ResourceLocation TEXTURE_TORCH_ON = new ResourceLocation("minecraft", "block/redstone_torch");
 
-    public BlockStateProvider(ModX mod, DataGenerator generator, ExistingFileHelper helper) {
-        super(mod, generator, helper);
+    public BlockStateProvider(DatagenContext context) {
+        super(context);
     }
 
     @Override

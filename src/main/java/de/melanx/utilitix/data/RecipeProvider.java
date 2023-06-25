@@ -7,7 +7,6 @@ import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.registration.ModRegisterables;
 import net.minecraft.ChatFormatting;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -18,17 +17,15 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.moddingx.libx.annotation.data.Datagen;
+import org.moddingx.libx.datagen.DatagenContext;
 import org.moddingx.libx.datagen.provider.recipe.RecipeProviderBase;
 import org.moddingx.libx.datagen.provider.recipe.StoneCuttingExtension;
 import org.moddingx.libx.datagen.provider.recipe.crafting.CraftingExtension;
-import org.moddingx.libx.mod.ModX;
 
-@Datagen
 public class RecipeProvider extends RecipeProviderBase implements CraftingExtension, StoneCuttingExtension {
 
-    public RecipeProvider(ModX mod, DataGenerator generator) {
-        super(mod, generator);
+    public RecipeProvider(DatagenContext context) {
+        super(context);
     }
 
     @Override
@@ -278,16 +275,20 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
         this.shapeless(ModItems.birchShulkerBoat, shulker, Items.BIRCH_BOAT);
         this.shapeless(ModItems.jungleShulkerBoat, shulker, Items.JUNGLE_BOAT);
         this.shapeless(ModItems.acaciaShulkerBoat, shulker, Items.ACACIA_BOAT);
+        this.shapeless(ModItems.cherryShulkerBoat, shulker, Items.CHERRY_BOAT);
         this.shapeless(ModItems.darkOakShulkerBoat, shulker, Items.DARK_OAK_BOAT);
         this.shapeless(ModItems.mangroveShulkerBoat, shulker, Items.MANGROVE_BOAT);
+        this.shapeless(ModItems.bambooShulkerRaft, shulker, Items.BAMBOO_RAFT);
 
         this.shaped(this.loc(ModItems.oakShulkerBoat, "with_shell"), ModItems.oakShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.OAK_CHEST_BOAT);
         this.shaped(this.loc(ModItems.spruceShulkerBoat, "with_shell"), ModItems.spruceShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.SPRUCE_CHEST_BOAT);
         this.shaped(this.loc(ModItems.birchShulkerBoat, "with_shell"), ModItems.birchShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.BIRCH_CHEST_BOAT);
         this.shaped(this.loc(ModItems.jungleShulkerBoat, "with_shell"), ModItems.jungleShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.JUNGLE_CHEST_BOAT);
         this.shaped(this.loc(ModItems.acaciaShulkerBoat, "with_shell"), ModItems.acaciaShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.ACACIA_CHEST_BOAT);
+        this.shaped(this.loc(ModItems.cherryShulkerBoat, "with_shell"), ModItems.cherryShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.CHERRY_CHEST_BOAT);
         this.shaped(this.loc(ModItems.darkOakShulkerBoat, "with_shell"), ModItems.darkOakShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.DARK_OAK_CHEST_BOAT);
         this.shaped(this.loc(ModItems.mangroveShulkerBoat, "with_shell"), ModItems.mangroveShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.MANGROVE_CHEST_BOAT);
+        this.shaped(this.loc(ModItems.bambooShulkerRaft, "with_shell"), ModItems.bambooShulkerRaft, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.BAMBOO_CHEST_RAFT);
     }
 
     private void cart(ItemLike cart, ItemLike content) {

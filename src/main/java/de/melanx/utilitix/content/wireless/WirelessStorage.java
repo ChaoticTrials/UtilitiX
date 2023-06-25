@@ -4,7 +4,7 @@ import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.registration.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -50,7 +50,7 @@ public class WirelessStorage extends SavedData {
             for (int j = 0; j < entries.size(); j++) {
                 CompoundTag cmp = entries.getCompound(j);
                 try {
-                    GlobalPos pos = GlobalPos.of(ResourceKey.create(Registry.DIMENSION_REGISTRY, Objects.requireNonNull(ResourceLocation.tryParse(cmp.getString("L")))), BlockPos.of(cmp.getLong("P")));
+                    GlobalPos pos = GlobalPos.of(ResourceKey.create(Registries.DIMENSION, Objects.requireNonNull(ResourceLocation.tryParse(cmp.getString("L")))), BlockPos.of(cmp.getLong("P")));
                     int strength = cmp.getInt("R");
                     signalMap.put(pos, strength);
                 } catch (NullPointerException e) {

@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "g": {
       "tag": "forge:ingots/gold"
@@ -22,5 +23,6 @@
   "result": {
     "count": 6,
     "item": "utilitix:directional_rail"
-  }
+  },
+  "show_notification": true
 }

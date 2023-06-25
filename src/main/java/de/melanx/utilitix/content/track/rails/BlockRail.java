@@ -2,7 +2,7 @@ package de.melanx.utilitix.content.track.rails;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
@@ -36,9 +36,6 @@ public abstract class BlockRail extends BaseRailBlock implements Registerable {
     public BlockRail(ModX mod, boolean corners, Properties properties, Item.Properties itemProperties) {
         super(!corners, properties);
         this.mod = mod;
-        if (mod.tab != null) {
-            itemProperties.tab(mod.tab);
-        }
         this.item = new BlockItem(this, itemProperties);
         this.hasCorners = this.getShapeProperty().getPossibleValues().containsAll(ImmutableList.of(RailShape.NORTH_EAST, RailShape.NORTH_WEST, RailShape.SOUTH_EAST, RailShape.SOUTH_WEST));
         this.hasSlopes = this.getShapeProperty().getPossibleValues().containsAll(ImmutableList.of(RailShape.ASCENDING_NORTH, RailShape.ASCENDING_SOUTH, RailShape.ASCENDING_EAST, RailShape.ASCENDING_WEST));
@@ -48,7 +45,7 @@ public abstract class BlockRail extends BaseRailBlock implements Registerable {
 
     @Override
     public void registerAdditional(RegistrationContext ctx, EntryCollector builder) {
-        builder.register(Registry.ITEM_REGISTRY, this.item);
+        builder.register(Registries.ITEM, this.item);
     }
 
     @Override

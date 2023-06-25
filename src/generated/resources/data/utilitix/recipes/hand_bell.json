@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "b": {
       "item": "minecraft:bell"
@@ -14,5 +15,6 @@
   ],
   "result": {
     "item": "utilitix:hand_bell"
-  }
+  },
+  "show_notification": true
 }

@@ -15,7 +15,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.MapItem;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.minecraftforge.fml.loading.FMLPaths;
 
@@ -52,7 +52,7 @@ public class MapsCommand {
         //noinspection ConstantConditions
         int mapId = MapItem.getMapId(stack);
 
-        MapItemSavedData data = MapItem.getSavedData(stack, player.level);
+        MapItemSavedData data = MapItem.getSavedData(stack, player.level());
         if (data == null) {
             return 0;
         }
@@ -92,7 +92,7 @@ public class MapsCommand {
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < size; ++j) {
                 int k = (j / scale) + (i / scale) * 128;
-                img.setPixelRGBA(j, i, MaterialColor.getColorFromPackedId(data.colors[k]));
+                img.setPixelRGBA(j, i, MapColor.getColorFromPackedId(data.colors[k]));
             }
         }
 

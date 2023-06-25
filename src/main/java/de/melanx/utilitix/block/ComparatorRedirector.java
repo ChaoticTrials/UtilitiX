@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 public class ComparatorRedirector extends BlockBase {
 
     public final Direction direction;
-    
+
     public ComparatorRedirector(ModX mod, Direction direction, Properties properties) {
         super(mod, properties);
         this.direction = direction;

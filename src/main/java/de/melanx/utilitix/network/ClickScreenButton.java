@@ -31,7 +31,7 @@ public record ClickScreenButton(BlockPos pos, ScreenExperienceCrystal.Button but
                 return true;
             }
 
-            ServerLevel level = player.getLevel();
+            ServerLevel level = (ServerLevel) player.level();
             ScreenExperienceCrystal.Button button = msg.button;
             BlockEntity be = level.getBlockEntity(msg.pos);
 

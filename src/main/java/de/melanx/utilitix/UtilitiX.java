@@ -7,16 +7,15 @@ import de.melanx.utilitix.content.shulkerboat.ShulkerBoatRenderer;
 import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartContainerMenu;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartScreen;
+import de.melanx.utilitix.data.*;
 import de.melanx.utilitix.network.UtiliNetwork;
+import de.melanx.utilitix.registration.ModCreativeTab;
 import de.melanx.utilitix.registration.ModEntities;
-import de.melanx.utilitix.registration.ModItems;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.raid.Raid;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -26,6 +25,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.moddingx.libx.config.ConfigManager;
+import org.moddingx.libx.datagen.DatagenSystem;
 import org.moddingx.libx.mod.ModXRegistration;
 import org.moddingx.libx.registration.RegistrationBuilder;
 import org.slf4j.Logger;
@@ -41,14 +41,6 @@ public final class UtilitiX extends ModXRegistration {
     public final Logger logger = LoggerFactory.getLogger(UtilitiX.class);
 
     public UtilitiX() {
-        super(new CreativeModeTab("utilitix") {
-            @Nonnull
-            @Override
-            public ItemStack makeIcon() {
-                return new ItemStack(ModItems.handBell);
-            }
-        });
-
         instance = this;
         network = new UtiliNetwork(this);
 
@@ -58,17 +50,26 @@ public final class UtilitiX extends ModXRegistration {
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientUtilitiX::new);
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(SlimyCapability::registerCapability);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(ModCreativeTab::onCreateTabs);
 
         MinecraftForge.EVENT_BUS.register(new EventListener());
         MinecraftForge.EVENT_BUS.register(new BetterMending());
         MinecraftForge.EVENT_BUS.addGenericListener(LevelChunk.class, SlimyCapability::attach);
 
         Raid.RaiderType.create("utilitix_illusioner", EntityType.ILLUSIONER, new int[]{0, 5, 0, 2, 0, 2, 0, 3});
+
+        DatagenSystem.create(this, system -> {
+            system.addDataProvider(BlockStateProvider::new);
+            system.addDataProvider(ItemModelProvider::new);
+            system.addDataProvider(LootTableProvider::new);
+            system.addDataProvider(ModTagProvider::new);
+            system.addDataProvider(RecipeProvider::new);
+        });
     }
 
     @Override
     protected void setup(FMLCommonSetupEvent event) {
-        // 
+        // NO-OP
     }
 
     @Override
@@ -89,6 +90,6 @@ public final class UtilitiX extends ModXRegistration {
 
     @Override
     protected void initRegistration(RegistrationBuilder builder) {
-        builder.enableRegistryTracking();
+        // NO-OP
     }
 }

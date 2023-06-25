@@ -29,8 +29,8 @@ public record StickyChunkRequest(ChunkPos pos) {
         public boolean handle(StickyChunkRequest msg, Supplier<NetworkEvent.Context> ctx) {
             ServerPlayer sender = ctx.get().getSender();
             //noinspection deprecation
-            if (sender != null && sender.getLevel().hasChunkAt(new BlockPos(msg.pos().getMinBlockX(), 0, msg.pos().getMinBlockZ()))) {
-                LevelChunk chunk = sender.getLevel().getChunk(msg.pos().x, msg.pos().z);
+            if (sender != null && sender.level().hasChunkAt(new BlockPos(msg.pos().getMinBlockX(), 0, msg.pos().getMinBlockZ()))) {
+                LevelChunk chunk = sender.level().getChunk(msg.pos().x, msg.pos().z);
                 //noinspection ConstantConditions
                 if (chunk != null && chunk.loaded) {
                     LazyOptional<StickyChunk> cap = chunk.getCapability(SlimyCapability.STICKY_CHUNK);

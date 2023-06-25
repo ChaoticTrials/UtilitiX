@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Function3;
 import de.melanx.utilitix.registration.ModItems;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -59,7 +59,7 @@ public abstract class BlockControllerRail<T extends TileControllerRail> extends 
     @Override
     public void registerAdditional(RegistrationContext ctx, EntryCollector builder) {
         super.registerAdditional(ctx, builder);
-        builder.register(Registry.BLOCK_ENTITY_TYPE_REGISTRY, this.beType);
+        builder.register(Registries.BLOCK_ENTITY_TYPE, this.beType);
     }
 
     @Override

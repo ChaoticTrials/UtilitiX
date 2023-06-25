@@ -1,6 +1,4 @@
 {
-  "itemGroup.utilitix": "UtilitiX",
-
   "block.utilitix.experience_crystal": "Experience Crystal",
   "block.utilitix.weak_redstone_torch": "Weak Redstone Torch",
   "block.utilitix.advanced_brewery": "Advanced Brewery",
@@ -51,8 +49,10 @@
   "item.utilitix.birch_shulker_boat": "Birch Boat with Shulker Box",
   "item.utilitix.jungle_shulker_boat": "Jungle Boat with Shulker Box",
   "item.utilitix.acacia_shulker_boat": "Acacia Boat with Shulker Box",
+  "item.utilitix.cherry_shulker_boat": "Cherry Boat with Shulker Box",
   "item.utilitix.dark_oak_shulker_boat": "Dark Oak Boat with Shulker Box",
   "item.utilitix.mangrove_shulker_boat": "Mangrove Boat with Shulker Box",
+  "item.utilitix.bamboo_shulker_raft": "Bamboo Raft with Shulker Box",
   "item.utilitix.ancient_compass": "Ancient Compass",
 
   "screen.utilitix.experience_crystal": "Experience Crystal",

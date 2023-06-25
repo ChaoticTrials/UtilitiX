@@ -4,10 +4,13 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Pair;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.model.BoatModel;
+import net.minecraft.client.model.ListModel;
+import net.minecraft.client.model.RaftModel;
 import net.minecraft.client.model.ShulkerModel;
 import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
@@ -24,14 +27,15 @@ import java.util.stream.Stream;
 
 public class ShulkerBoatRenderer extends BoatRenderer {
 
-    private final Map<Boat.Type, Pair<ResourceLocation, BoatModel>> boatResources;
+    private final Map<Boat.Type, Pair<ResourceLocation, ListModel<Boat>>> boatResources;
     private final ShulkerModel<?> shulkerModel;
 
     public ShulkerBoatRenderer(EntityRendererProvider.Context context) {
         super(context, true);
         this.boatResources = Stream.of(Boat.Type.values()).collect(ImmutableMap.toImmutableMap(type -> type, type -> {
             ResourceLocation location = new ResourceLocation("minecraft", "textures/entity/boat/" + type.getName() + ".png");
-            BoatModel model = new BoatModel(context.bakeLayer(ModelLayers.createBoatModelName(type)), false);
+            ModelPart modelPart = context.bakeLayer(ModelLayers.createBoatModelName(type));
+            ListModel<Boat> model = type == Boat.Type.BAMBOO ? new RaftModel(modelPart) : new BoatModel(modelPart);
             return Pair.of(location, model);
         }));
         this.shulkerModel = new ShulkerModel<>(context.bakeLayer(ModelLayers.SHULKER));
@@ -43,24 +47,25 @@ public class ShulkerBoatRenderer extends BoatRenderer {
         RenderType renderType = this.shulkerModel.renderType(new ResourceLocation("minecraft", "textures/" + Sheets.DEFAULT_SHULKER_TEXTURE_LOCATION.texture().getPath() + ".png"));
         VertexConsumer vertexConsumer = buffer.getBuffer(renderType);
         poseStack.pushPose();
-        poseStack.mulPose(Vector3f.YP.rotationDegrees(180.0F - entityYaw));
+        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - entityYaw));
         float remainingHurtTime = (float) boat.getHurtTime() - partialTick;
         if (remainingHurtTime > 0) {
             float damage = Math.max(0, boat.getDamage() - partialTick);
-            poseStack.mulPose(Vector3f.XP.rotationDegrees(Mth.sin(remainingHurtTime) * remainingHurtTime * damage / 10.0F * (float) boat.getHurtDir()));
+            poseStack.mulPose(Axis.XP.rotationDegrees(Mth.sin(remainingHurtTime) * remainingHurtTime * damage / 10.0F * (float) boat.getHurtDir()));
         }
 
-        poseStack.translate(0, 1.39, 0.475);
+        boolean bamboo = boat.getVariant() == Boat.Type.BAMBOO;
+        poseStack.translate(0, bamboo ? 1.7 : 1.39, bamboo ? 0.46 : 0.475);
         poseStack.scale(0.8f, 0.8f, 0.8f);
         poseStack.scale(-1.0F, -1.0F, 1.0F);
-        poseStack.mulPose(Vector3f.YP.rotationDegrees(90.0F));
+        poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
         this.shulkerModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
         poseStack.popPose();
     }
 
     @Nonnull
     @Override
-    public Pair<ResourceLocation, BoatModel> getModelWithLocation(@Nonnull Boat boat) {
-        return this.boatResources.get(boat.getBoatType());
+    public Pair<ResourceLocation, ListModel<Boat>> getModelWithLocation(@Nonnull Boat boat) {
+        return this.boatResources.get(boat.getVariant());
     }
 }

@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "L": {
       "item": "minecraft:redstone_lamp"
@@ -16,5 +17,6 @@
   "result": {
     "count": 4,
     "item": "utilitix:dimmable_redstone_lamp"
-  }
+  },
+  "show_notification": true
 }

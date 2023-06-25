@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
-import org.moddingx.libx.datagen.provider.BlockStateProviderBase;
+import org.moddingx.libx.datagen.provider.model.BlockStateProviderBase;
 
 import javax.annotation.Nullable;
 import java.util.function.UnaryOperator;
@@ -59,66 +59,62 @@ public class RailState {
         }
         for (RailShape shape : this.shapeProperty.getPossibleValues()) {
             switch (shape) {
-                case NORTH_SOUTH:
+                case NORTH_SOUTH -> {
                     if (this.reverseProperty == null) {
                         this.partial(builder, shape, false).addModels(new ConfiguredModel(modelStraight, 0, 0, false));
                     } else {
                         this.partial(builder, shape, false).addModels(new ConfiguredModel(modelStraight, 0, 0, false));
                         this.partial(builder, shape, true).addModels(new ConfiguredModel(modelStraight, 0, 180, false));
                     }
-                    break;
-                case EAST_WEST:
+                }
+                case EAST_WEST -> {
                     if (this.reverseProperty == null) {
                         this.partial(builder, shape, false).addModels(new ConfiguredModel(modelStraight, 0, 90, false));
                     } else {
                         this.partial(builder, shape, false).addModels(new ConfiguredModel(modelStraight, 0, 90, false));
                         this.partial(builder, shape, true).addModels(new ConfiguredModel(modelStraight, 0, 270, false));
                     }
-                    break;
-                case ASCENDING_EAST:
+                }
+                case ASCENDING_EAST -> {
                     if (this.reverseProperty == null) {
                         this.partial(builder, shape, false).addModels(new ConfiguredModel(modelRaisedNE, 0, 90, false));
                     } else {
                         this.partial(builder, shape, false).addModels(new ConfiguredModel(modelRaisedNE, 0, 90, false));
                         this.partial(builder, shape, true).addModels(new ConfiguredModel(modelRaisedSW, 0, 270, false));
                     }
-                    break;
-                case ASCENDING_WEST:
+                }
+                case ASCENDING_WEST -> {
                     if (this.reverseProperty == null) {
                         this.partial(builder, shape, false).addModels(new ConfiguredModel(modelRaisedSW, 0, 90, false));
                     } else {
                         this.partial(builder, shape, false).addModels(new ConfiguredModel(modelRaisedSW, 0, 90, false));
                         this.partial(builder, shape, true).addModels(new ConfiguredModel(modelRaisedNE, 0, 270, false));
                     }
-                    break;
-                case ASCENDING_NORTH:
+                }
+                case ASCENDING_NORTH -> {
                     if (this.reverseProperty == null) {
                         this.partial(builder, shape, false).addModels(new ConfiguredModel(modelRaisedNE, 0, 0, false));
                     } else {
                         this.partial(builder, shape, false).addModels(new ConfiguredModel(modelRaisedNE, 0, 0, false));
                         this.partial(builder, shape, true).addModels(new ConfiguredModel(modelRaisedSW, 0, 180, false));
                     }
-                    break;
-                case ASCENDING_SOUTH:
+                }
+                case ASCENDING_SOUTH -> {
                     if (this.reverseProperty == null) {
                         this.partial(builder, shape, false).addModels(new ConfiguredModel(modelRaisedSW, 0, 0, false));
                     } else {
                         this.partial(builder, shape, false).addModels(new ConfiguredModel(modelRaisedSW, 0, 0, false));
                         this.partial(builder, shape, true).addModels(new ConfiguredModel(modelRaisedNE, 0, 180, false));
                     }
-                    break;
-                case SOUTH_EAST:
-                    this.partial(builder, shape, false).addModels(new ConfiguredModel(modelCorner, 0, 0, false));
-                    break;
-                case SOUTH_WEST:
-                    this.partial(builder, shape, false).addModels(new ConfiguredModel(modelCorner, 0, 90, false));
-                    break;
-                case NORTH_WEST:
-                    this.partial(builder, shape, false).addModels(new ConfiguredModel(modelCorner, 0, 180, false));
-                    break;
-                case NORTH_EAST:
-                    this.partial(builder, shape, false).addModels(new ConfiguredModel(modelCorner, 0, 270, false));
-                    break;
+                }
+                case SOUTH_EAST ->
+                        this.partial(builder, shape, false).addModels(new ConfiguredModel(modelCorner, 0, 0, false));
+                case SOUTH_WEST ->
+                        this.partial(builder, shape, false).addModels(new ConfiguredModel(modelCorner, 0, 90, false));
+                case NORTH_WEST ->
+                        this.partial(builder, shape, false).addModels(new ConfiguredModel(modelCorner, 0, 180, false));
+                case NORTH_EAST ->
+                        this.partial(builder, shape, false).addModels(new ConfiguredModel(modelCorner, 0, 270, false));
             }
         }
     }

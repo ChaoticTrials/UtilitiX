@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "e": {
       "tag": "forge:gems/emerald"
@@ -19,5 +20,6 @@
   "result": {
     "count": 3,
     "item": "utilitix:highspeed_rail"
-  }
+  },
+  "show_notification": true
 }

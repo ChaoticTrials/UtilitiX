@@ -61,8 +61,8 @@ public class ContainerMenuCrudeFurnace extends BlockEntityMenu<TileCrudeFurnace>
 
         @Override
         protected void checkTakeAchievements(ItemStack stack) {
-            stack.onCraftedBy(this.player.level, this.player, this.removeCount);
-            if (!this.player.level.isClientSide) {
+            stack.onCraftedBy(this.player.level(), this.player, this.removeCount);
+            if (!this.player.level().isClientSide) {
                 this.tile.unlockRecipes(this.player);
             }
 

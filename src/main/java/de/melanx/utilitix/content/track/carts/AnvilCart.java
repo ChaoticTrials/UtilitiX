@@ -2,7 +2,6 @@ package de.melanx.utilitix.content.track.carts;
 
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
@@ -34,7 +33,7 @@ public class AnvilCart extends Cart {
         //noinspection ConstantConditions
         AABB collisionBox = this.getCollisionHandler() != null ? this.getCollisionHandler().getMinecartCollisionBox(this) : this.getBoundingBox().inflate(0.2, 0, 0.2);
         if (this.canBeRidden() && getHorizontalDistanceSqr(this.getDeltaMovement()) > 0.1 * 0.1) {
-            for (Entity entity : this.level.getEntities(this, collisionBox, EntitySelector.pushableBy(this))) {
+            for (Entity entity : this.level().getEntities(this, collisionBox, EntitySelector.pushableBy(this))) {
                 if (!(entity instanceof AbstractMinecart)) {
                     if (entity instanceof Player || entity instanceof IronGolem || this.isVehicle() || entity.isPassenger()) {
                         this.boostEntity(entity);
@@ -46,7 +45,7 @@ public class AnvilCart extends Cart {
                 }
             }
         } else {
-            for (Entity entity : this.level.getEntities(this, collisionBox)) {
+            for (Entity entity : this.level().getEntities(this, collisionBox)) {
                 if (!this.hasPassenger(entity) && entity.isPushable() && !(entity instanceof AbstractMinecart)) {
                     this.boostEntity(entity);
                 }
@@ -68,7 +67,7 @@ public class AnvilCart extends Cart {
                 0,
                 (entity.getZ() - this.getZ()) * (minecartDir.getAxis() == Direction.Axis.X ? 2.5 : 0.8)
         ).normalize().scale(1.5 * boost);
-        entity.hurt(DamageSource.ANVIL, 0.25f);
+        entity.hurt(this.damageSources().anvil(entity), 0.25f);
         entity.push(targetVec.x, targetVec.y, targetVec.z);
     }
 }

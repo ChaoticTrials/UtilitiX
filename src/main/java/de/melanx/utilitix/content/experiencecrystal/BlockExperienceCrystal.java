@@ -23,8 +23,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.moddingx.libx.base.tile.MenuBlockBE;
 import org.moddingx.libx.block.DirectionShape;
@@ -111,7 +111,7 @@ public class BlockExperienceCrystal extends MenuBlockBE<TileExperienceCrystal, C
     }
 
     private boolean useFluidItem(BlockEntity blockEntity, Player player, InteractionHand hand, Level level, BlockPos pos, BlockHitResult hitResult) {
-        IFluidHandler handler = blockEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hitResult.getDirection())
+        IFluidHandler handler = blockEntity.getCapability(ForgeCapabilities.FLUID_HANDLER, hitResult.getDirection())
                 .resolve()
                 .orElse(null);
 

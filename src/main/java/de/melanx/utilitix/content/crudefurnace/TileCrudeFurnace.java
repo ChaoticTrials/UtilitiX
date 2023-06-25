@@ -21,8 +21,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.moddingx.libx.base.tile.BlockEntityBase;
@@ -52,7 +52,7 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickingBlock {
         super(blockEntityTypeIn, pos, state);
         this.inventory = BaseItemStackHandler.builder(5)
                 .validator(stack -> ForgeHooks.getBurnTime(stack, RecipeType.SMELTING) > 0, 0)
-                .validator(stack -> this.level != null && CrudeFurnaceRecipeHelper.getResult(this.level.getRecipeManager(), stack) != null, 1)
+                .validator(stack -> this.level != null && CrudeFurnaceRecipeHelper.getResult(this.level, stack) != null, 1)
                 .output(2)
                 .contentsChanged(() -> {
                     this.setChanged();
@@ -70,7 +70,7 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickingBlock {
             return ForgeHooks.getBurnTime(stack, RecipeType.SMELTING) > 0;
         }
         if (slot == 1) {
-            return this.level != null && CrudeFurnaceRecipeHelper.getResult(this.level.getRecipeManager(), stack) != null;
+            return this.level != null && CrudeFurnaceRecipeHelper.getResult(this.level, stack) != null;
         }
 
         return false;
@@ -148,7 +148,7 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickingBlock {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
             if (side == null) {
                 return LazyOptional.of(this::getInventory).cast();
             }
@@ -185,7 +185,7 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickingBlock {
 
     // [Vanilla copy start]
     public void unlockRecipes(Player player) {
-        List<Recipe<?>> recipes = this.grantStoredRecipeExperience(player.level, player.position());
+        List<Recipe<?>> recipes = this.grantStoredRecipeExperience(player.level(), player.position());
         player.awardRecipes(recipes);
         this.recipes.clear();
     }
@@ -196,7 +196,7 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickingBlock {
         for (Object2IntMap.Entry<ResourceLocation> entry : this.recipes.object2IntEntrySet()) {
             level.getRecipeManager().byKey(entry.getKey()).ifPresent((recipe) -> {
                 list.add(recipe);
-                splitAndSpawnExperience(level, pos, entry.getIntValue(), (new CrudeFurnaceRecipeHelper.ModifiedRecipe((SmeltingRecipe) recipe)).getXp());
+                splitAndSpawnExperience(level, pos, entry.getIntValue(), (new CrudeFurnaceRecipeHelper.ModifiedRecipe(level.registryAccess(), (SmeltingRecipe) recipe)).getXp());
             });
         }
 
@@ -219,7 +219,7 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickingBlock {
 
     private void updateRecipe() {
         if (this.level != null) {
-            this.recipe = CrudeFurnaceRecipeHelper.getResult(this.level.getRecipeManager(), this.inventory.getStackInSlot(1));
+            this.recipe = CrudeFurnaceRecipeHelper.getResult(this.level, this.inventory.getStackInSlot(1));
         }
     }
     // [Vanilla copy end]

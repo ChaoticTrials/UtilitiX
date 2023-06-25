@@ -52,7 +52,7 @@ public class ItemMobYoinker extends ItemBase {
             String entityKey = nbt.getString(MobUtil.ENTITY_TYPE_TAG);
             Optional<EntityType<?>> entityType = EntityType.byString(entityKey);
             if (entityType.isPresent()) {
-                Entity mob = entityType.get().create(player.level);
+                Entity mob = entityType.get().create(player.level());
                 if (mob == null) {
                     ItemMobYoinker.reset(stack);
                     return InteractionResult.PASS;
@@ -60,7 +60,7 @@ public class ItemMobYoinker extends ItemBase {
 
                 mob.load(nbt.getCompound(MobUtil.ENTITY_DATA_TAG));
                 mob.setPos(context.getClickLocation());
-                if (player.level.addFreshEntity(mob)) {
+                if (player.level().addFreshEntity(mob)) {
                     ItemMobYoinker.reset(stack);
                     return InteractionResult.SUCCESS;
                 }

@@ -133,16 +133,16 @@ public class PistonCart extends Cart {
             };
             NetworkHooks.openScreen((ServerPlayer) player, containerProvider, buffer -> buffer.writeInt(PistonCart.this.getId()));
         }
-        return InteractionResult.sidedSuccess(player.level.isClientSide);
+        return InteractionResult.sidedSuccess(player.level().isClientSide);
     }
 
     @Override
     public void tick() {
         super.tick();
-        if (!this.level.isClientSide) {
+        if (!this.level().isClientSide) {
             if (this.mode == PistonCartMode.PLACE && this.shouldDoRailFunctions()) {
                 BlockPos pos = new BlockPos(Mth.floor(this.getX()), Mth.floor(this.getY()), Mth.floor(this.getZ()));
-                if (!this.level.getBlockState(pos).is(BlockTags.RAILS) && !this.level.getBlockState(pos.below()).is(BlockTags.RAILS)) {
+                if (!this.level().getBlockState(pos).is(BlockTags.RAILS) && !this.level().getBlockState(pos.below()).is(BlockTags.RAILS)) {
                     // Simulate extraction of a rail and see what we should place next.
                     Pair<ItemStack, Integer> result = this.findRail(this.railIn);
                     ItemStack railStack = result.getLeft();
@@ -159,10 +159,10 @@ public class PistonCart extends Cart {
                 }
             } else if (this.mode == PistonCartMode.REPLACE && this.shouldDoRailFunctions()) {
                 BlockPos pos = new BlockPos(Mth.floor(this.getX()), Mth.floor(this.getY()), Mth.floor(this.getZ()));
-                if (!this.level.getBlockState(pos).is(BlockTags.RAILS) && this.level.getBlockState(pos.below()).is(BlockTags.RAILS)) {
+                if (!this.level().getBlockState(pos).is(BlockTags.RAILS) && this.level().getBlockState(pos.below()).is(BlockTags.RAILS)) {
                     pos = pos.below();
                 }
-                if (this.level.getBlockState(pos).is(BlockTags.RAILS)) {
+                if (this.level().getBlockState(pos).is(BlockTags.RAILS)) {
                     // Simulate extraction of a rail and see what we should place next.
                     Pair<ItemStack, Integer> result = this.findRail(this.railIn);
                     ItemStack railStack = result.getLeft();
@@ -200,25 +200,25 @@ public class PistonCart extends Cart {
             }
         }
         if (!remainder.isEmpty()) {
-            ItemEntity ie = new ItemEntity(this.level, this.getX(), this.getY(), this.getZ(), remainder);
-            this.level.addFreshEntity(ie);
+            ItemEntity ie = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), remainder);
+            this.level().addFreshEntity(ie);
         }
     }
 
     @Nullable
     private List<ItemStack> placeRail(ItemStack railStack, BlockPos pos, boolean replace) {
-        BlockState oldState = this.level.getBlockState(pos);
+        BlockState oldState = this.level().getBlockState(pos);
         if (replace) {
             RailShape shape = switch (this.getMotionDirection()) {
                 case WEST, EAST -> RailShape.EAST_WEST;
                 default -> RailShape.NORTH_SOUTH;
             };
             if (oldState.getBlock() instanceof BaseRailBlock) {
-                shape = ((BaseRailBlock) oldState.getBlock()).getRailDirection(oldState, this.level, pos, this);
+                shape = ((BaseRailBlock) oldState.getBlock()).getRailDirection(oldState, this.level(), pos, this);
             }
             List<ItemStack> drops = null;
-            if (this.level instanceof ServerLevel) {
-                drops = Block.getDrops(oldState, (ServerLevel) this.level, pos, this.level.getBlockEntity(pos));
+            if (this.level() instanceof ServerLevel) {
+                drops = Block.getDrops(oldState, (ServerLevel) this.level(), pos, this.level().getBlockEntity(pos));
             }
             if (this.doPlaceRail(railStack, shape, pos, oldState.getBlock())) {
                 return drops == null ? ImmutableList.of() : drops;
@@ -226,7 +226,7 @@ public class PistonCart extends Cart {
                 return null;
             }
         } else {
-            if (oldState.isAir() || oldState.getMaterial().isReplaceable()) {
+            if (oldState.isAir() || oldState.canBeReplaced()) {
                 RailShape shape = switch (this.getMotionDirection()) {
                     case WEST, EAST -> RailShape.EAST_WEST;
                     default -> RailShape.NORTH_SOUTH;
@@ -253,16 +253,16 @@ public class PistonCart extends Cart {
             if (railBlock instanceof BaseRailBlock) {
                 //noinspection deprecation
                 if (((BaseRailBlock) railBlock).getShapeProperty().getPossibleValues().contains(shape)) {
-                    BlockState railState = railBlock.getStateForPlacement(new DirectionalPlaceContext(this.level, pos, this.getMotionDirection(), railStack.copy(), Direction.UP));
+                    BlockState railState = railBlock.getStateForPlacement(new DirectionalPlaceContext(this.level(), pos, this.getMotionDirection(), railStack.copy(), Direction.UP));
                     if (railState == null) {
                         railState = railBlock.defaultBlockState();
                     }
                     //noinspection deprecation
                     railState = railState.setValue(((BaseRailBlock) railBlock).getShapeProperty(), shape);
-                    if (!railState.canSurvive(this.level, pos)) {
+                    if (!railState.canSurvive(this.level(), pos)) {
                         return false;
                     }
-                    this.level.setBlock(pos, railState, 11);
+                    this.level().setBlock(pos, railState, 11);
                     this.tryPower(pos);
                     return true;
                 }
@@ -273,28 +273,28 @@ public class PistonCart extends Cart {
 
     private void tryPower(BlockPos railPos) {
         // We need to query it again as it might have changed its properties
-        BlockState railState = this.level.getBlockState(railPos);
+        BlockState railState = this.level().getBlockState(railPos);
         if (railState.hasProperty(BlockStateProperties.POWERED) && !railState.getValue(BlockStateProperties.POWERED)) {
             // Only place torch if block above can redirect power to the rail
-            if (this.level.getBlockState(railPos.below()).canOcclude()) {
+            if (this.level().getBlockState(railPos.below()).canOcclude()) {
                 BlockPos pos = railPos.below(2);
                 Pair<ItemStack, Integer> result = this.findRail(this.torchIn);
                 ItemStack torchStack = result.getLeft();
                 int torchSlot = result.getRight();
                 if (!torchStack.isEmpty() && torchSlot >= 0 && torchStack.getItem() instanceof BlockItem) {
-                    BlockState oldState = this.level.getBlockState(pos);
+                    BlockState oldState = this.level().getBlockState(pos);
                     BlockState state = ((BlockItem) torchStack.getItem()).getBlock().defaultBlockState();
-                    if (state.canSurvive(this.level, pos)) {
+                    if (state.canSurvive(this.level(), pos)) {
                         List<ItemStack> drops = null;
-                        if (this.level instanceof ServerLevel) {
-                            drops = Block.getDrops(oldState, (ServerLevel) this.level, pos, this.level.getBlockEntity(pos));
+                        if (this.level() instanceof ServerLevel) {
+                            drops = Block.getDrops(oldState, (ServerLevel) this.level(), pos, this.level().getBlockEntity(pos));
                         }
-                        this.level.setBlock(pos, state, 11);
+                        this.level().setBlock(pos, state, 11);
                         this.torchIn.extractItem(torchSlot, 1, false);
                         if (drops != null) {
                             for (ItemStack drop : drops) {
-                                ItemEntity ie = new ItemEntity(this.level, this.getX(), this.getY(), this.getZ(), drop.copy());
-                                this.level.addFreshEntity(ie);
+                                ItemEntity ie = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), drop.copy());
+                                this.level().addFreshEntity(ie);
                             }
                         }
                     }

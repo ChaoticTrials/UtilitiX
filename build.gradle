@@ -1,8 +1,8 @@
 buildscript {
-    apply from: 'https://moddingx.github.io/ModUtils/v4/buildscript.gradle', to: buildscript
+    apply from: 'https://moddingx.github.io/ModUtils/experimental/buildscript.gradle', to: buildscript
 }
 
-apply from: 'https://moddingx.github.io/ModUtils/v4/mod.gradle'
+apply from: 'https://moddingx.github.io/ModUtils/experimental/mod.gradle'
 apply plugin: 'org.moddingx.modgradle.coremods'
 apply plugin: 'org.moddingx.modgradle.cursedep'
 
@@ -22,22 +22,22 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor fg.deobf("org.moddingx:LibX:1.19.2-4.2.8")
+    annotationProcessor fg.deobf("org.moddingx:LibX:1.20.1-5.0.1")
 
-    implementation fg.deobf("org.moddingx:LibX:1.19.2-4.2.8")
-    implementation fg.deobf("mezz.jei:jei-1.19.2-forge:11.3.0.262")
+    implementation fg.deobf("org.moddingx:LibX:1.20.1-5.0.1")
+    implementation fg.deobf("mezz.jei:jei-1.20.1-forge:15.0.0.12")
 
-    implementation curse.mod(324717, 3903693) // Jade 1.19.1-forge-8.0.1
+    implementation curse.mod(324717, 4573193) // Jade 1.20-forge-11.0.3
 
 //    runtimeOnly fg.deobf("de.melanx:RecipePrinter:1.18.2-3.2.0")
 
     coremods 'org.moddingx:CoreModTypes:5.0.2-2'
 
     // for testing
-    compileOnly fg.deobf("vazkii.quark:Quark:3.3-364.2446")
-    compileOnly fg.deobf("vazkii.autoreglib:AutoRegLib:1.8-54.115")
+    compileOnly fg.deobf("vazkii.quark:Quark:3.4-405.2987") // 1.19.2
+    compileOnly fg.deobf("vazkii.autoreglib:AutoRegLib:1.8.2-55.124")
 //    runtimeOnly curse.mod(443900, 3760255) // Pipez
-    runtimeOnly curse.mod(254241, 4018863) // Mob Grinding Utils
-    implementation curse.mod(400085, 4496094)
-    implementation curse.mod(566700, 4411903)
+//    runtimeOnly curse.mod(254241, 4569291) // mob_grinding_utils-1.19.2-0.4.50
+    compileOnly curse.mod(400085, 4509436) // Upgraded Netherite - 1.19.4-5.3.0.1
+    compileOnly curse.mod(566700, 4509434) // Upgraded Core - 1.19.4-4.3.0.1
 }

@@ -24,6 +24,6 @@ public class ClientEventListener {
 
     @SubscribeEvent
     public static void registerLayerDefinition(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(SHULKER_BOAT, () -> BoatModel.createBodyModel(true));
+        event.registerLayerDefinition(SHULKER_BOAT, BoatModel::createBodyModel);
     }
 }

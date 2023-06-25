@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.moddingx.libx.mod.ModX;
 
 public abstract class BlockPoweredRail extends BlockPowerableRail {
-    
+
     public final double maxRailSpeed;
 
     public BlockPoweredRail(ModX mod, double maxRailSpeed, Properties properties) {

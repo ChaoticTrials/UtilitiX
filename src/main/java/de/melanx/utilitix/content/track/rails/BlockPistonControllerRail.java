@@ -63,7 +63,7 @@ public abstract class BlockPistonControllerRail extends BlockControllerRail<Tile
             ItemStack filterCart = ItemMinecartTinkerer.getLabelStack(cart);
             if (filterCart.isEmpty()) {
                 return;
-            } else if (!ItemStack.isSame(filterThis, filterCart) || !ItemStack.tagMatches(filterThis, filterCart)) {
+            } else if (!ItemStack.isSameItemSameTags(filterThis, filterCart)) {
                 return;
             }
         }

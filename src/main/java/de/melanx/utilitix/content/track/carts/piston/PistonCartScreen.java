@@ -1,10 +1,10 @@
 package de.melanx.utilitix.content.track.carts.piston;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.network.PistonCartModeCycle;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -38,34 +38,32 @@ public class PistonCartScreen extends AbstractContainerScreen<PistonCartContaine
     }
 
     @Override
-    public void render(@Nonnull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(matrixStack);
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.renderTooltip(matrixStack, mouseX, mouseY);
+    public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        this.renderBackground(guiGraphics);
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
     @Override
-    protected void renderBg(@Nonnull PoseStack poseStack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(@Nonnull GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
-        this.blit(poseStack, this.relX, this.relY, 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(TEXTURE, this.relX, this.relY, 0, 0, this.imageWidth, this.imageHeight);
         if (mouseX >= this.relX + 65 && mouseX <= this.relX + 111 && mouseY >= this.relY + 18 && mouseY <= this.relY + 34) {
-            this.blit(poseStack, this.relX + 64, this.relY + 17, 176, 0, 48, 18);
+            guiGraphics.blit(TEXTURE, this.relX + 64, this.relY + 17, 176, 0, 48, 18);
         }
     }
 
     @Override
-    protected void renderLabels(@Nonnull PoseStack poseStack, int mouseX, int mouseY) {
+    protected void renderLabels(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY) {
         String s = this.title.getString();
-        //noinspection IntegerDivisionInFloatingPointContext
-        this.font.draw(poseStack, s, (this.imageWidth / 2) - (this.font.width(s) / 2), 5, Color.DARK_GRAY.getRGB());
-        this.font.draw(poseStack, this.playerInventoryTitle, 8, this.imageHeight - 94, Color.DARK_GRAY.getRGB());
+        guiGraphics.drawString(this.font, s, (float) ((this.imageWidth / 2) - (this.font.width(s) / 2)), 5, Color.DARK_GRAY.getRGB(), true);
+        guiGraphics.drawString(this.font, this.playerInventoryTitle, 8, this.imageHeight - 94, Color.DARK_GRAY.getRGB());
         if (this.menu.entity != null) {
             //noinspection ConstantConditions
-            int modeStrWidth = this.minecraft.font.width(this.menu.entity.getMode().name);
-            //noinspection IntegerDivisionInFloatingPointContext
-            this.minecraft.font.drawShadow(poseStack, this.menu.entity.getMode().name, 88 - (modeStrWidth / 2), 22, 0xFFFFFF);
+            int modeStrWidth = this.font.width(this.menu.entity.getMode().name);
+            guiGraphics.drawString(this.font, this.menu.entity.getMode().name.getString(), (float) (88 - (modeStrWidth / 2)), 22, 0xFFFFFF, true);
         }
     }
 

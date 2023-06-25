@@ -37,6 +37,6 @@ public class EnderCart extends Cart {
         if (ret.consumesAction()) return ret;
         SimpleContainer ender = player.getEnderChestInventory();
         player.openMenu(new SimpleMenuProvider((id, inventory, usingPlayer) -> ChestMenu.threeRows(id, inventory, ender), this.getDisplayName()));
-        return InteractionResult.sidedSuccess(player.level.isClientSide);
+        return InteractionResult.sidedSuccess(player.level().isClientSide);
     }
 }

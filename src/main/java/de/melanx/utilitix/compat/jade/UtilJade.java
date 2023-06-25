@@ -9,6 +9,7 @@ import de.melanx.utilitix.content.experiencecrystal.BlockExperienceCrystal;
 import de.melanx.utilitix.content.experiencecrystal.TileExperienceCrystal;
 import de.melanx.utilitix.content.wireless.BlockLinkedRepeater;
 import de.melanx.utilitix.content.wireless.TileLinkedRepeater;
+import de.melanx.utilitix.registration.ModEntities;
 import net.minecraft.resources.ResourceLocation;
 import snownee.jade.api.IWailaClientRegistration;
 import snownee.jade.api.IWailaCommonRegistration;
@@ -37,5 +38,7 @@ public class UtilJade implements IWailaPlugin {
         registration.registerBlockComponent(CrudeFurnaceProvider.INSTANCE, BlockCrudeFurnace.class);
         registration.registerBlockComponent(ExperienceCrystalProvider.INSTANCE, BlockExperienceCrystal.class);
         registration.registerBlockComponent(LinkedRepeaterProvider.INSTANCE, BlockLinkedRepeater.class);
+
+        registration.usePickedResult(ModEntities.shulkerBoat);
     }
 }

@@ -13,7 +13,7 @@ import org.moddingx.libx.menu.slot.OutputSlot;
 
 import javax.annotation.Nullable;
 
-@RegisterClass(registry = "MENU_REGISTRY")
+@RegisterClass(registry = "MENU")
 public class PistonCartContainerMenu extends EntityMenu<PistonCart> {
 
     @Name("piston_cart_container")

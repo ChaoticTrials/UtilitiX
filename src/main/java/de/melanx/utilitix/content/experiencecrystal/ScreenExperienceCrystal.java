@@ -1,11 +1,11 @@
 package de.melanx.utilitix.content.experiencecrystal;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.network.ClickScreenButton;
 import de.melanx.utilitix.util.XPUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -40,49 +40,48 @@ public class ScreenExperienceCrystal extends AbstractContainerScreen<ContainerMe
     }
 
     @Override
-    public void render(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(poseStack);
+    public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        this.renderBackground(guiGraphics);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, GUI);
-        this.blit(poseStack, this.relX, this.relY, 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(GUI, this.relX, this.relY, 0, 0, this.imageWidth, this.imageHeight);
 
         Button hoveredButton = this.getHoveredButton(mouseX, mouseY);
         for (Button button : Button.values()) {
-            this.renderButton(poseStack, button, hoveredButton == button);
+            this.renderButton(guiGraphics, button, hoveredButton == button);
         }
 
-        super.render(poseStack, mouseX, mouseY, partialTicks);
-        this.renderTooltip(poseStack, mouseX, mouseY);
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
 
         for (Button button : Button.values()) {
             if (hoveredButton == button) {
-                this.renderTooltip(poseStack, button.component, mouseX, mouseY);
+                guiGraphics.renderTooltip(this.font, button.component, mouseX, mouseY);
             }
         }
     }
 
     @Override
-    protected void renderLabels(@Nonnull PoseStack poseStack, int mouseX, int mouseY) {
-        this.font.draw(poseStack, this.title, this.titleLabelX, this.titleLabelY, Color.DARK_GRAY.getRGB());
-        this.font.draw(poseStack, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY + 10, Color.DARK_GRAY.getRGB());
+    protected void renderLabels(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        guiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, Color.DARK_GRAY.getRGB(), false);
+        guiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY + 10, Color.DARK_GRAY.getRGB(), false);
     }
 
     @Override
-    protected void renderBg(@Nonnull PoseStack poseStack, float partialTicks, int mouseX, int mouseY) {
-//        this.minecraft.getTextureManager().bind(GUI);
-        this.blit(poseStack, this.relX + (this.imageWidth / 2 - 50), this.relY + 49, 0, this.imageHeight + 40, 100, 7);
+    protected void renderBg(@Nonnull GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+        guiGraphics.blit(GUI, this.relX + (this.imageWidth / 2 - 50), this.relY + 49, 0, this.imageHeight + 40, 100, 7);
         Pair<Integer, Float> xp = XPUtils.getLevelExp(this.menu.getBlockEntity().getXp());
-        this.blit(poseStack, this.relX + (this.imageWidth / 2 - 49), this.relY + 50, 0, this.imageHeight + 47, (int) (xp.getRight() * 98), 5);
+        guiGraphics.blit(GUI, this.relX + (this.imageWidth / 2 - 49), this.relY + 50, 0, this.imageHeight + 47, (int) (xp.getRight() * 98), 5);
         MutableComponent s = Component.literal(String.valueOf(xp.getLeft()));
         int width = this.font.width(s.getString());
-        this.font.draw(poseStack, s, this.relX + ((float) this.imageWidth / 2) - ((float) width / 2), this.relY + 40, Color.DARK_GRAY.getRGB());
+        guiGraphics.drawString(this.font, s.getString(), this.relX + ((float) this.imageWidth / 2) - ((float) width / 2), this.relY + 40, Color.DARK_GRAY.getRGB(), false);
     }
 
-    public void renderButton(PoseStack ms, Button button, boolean mouseHovered) {
+    public void renderButton(GuiGraphics guiGraphics, Button button, boolean mouseHovered) {
         int xButton = this.relX + button.x;
         int yButton = this.relY + button.y;
-        this.blit(ms, xButton, yButton, button.offset, mouseHovered ? this.imageHeight + 20 : this.imageHeight, 20, 20);
+        guiGraphics.blit(GUI, xButton, yButton, button.offset, mouseHovered ? this.imageHeight + 20 : this.imageHeight, 20, 20);
     }
 
     @Nullable

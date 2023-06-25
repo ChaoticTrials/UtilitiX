@@ -66,7 +66,7 @@ public class TrackUtil {
     }
 
     public static void defaultCollisions(AbstractMinecart cart, Entity other) {
-        if (!cart.level.isClientSide && !cart.noPhysics && !other.noPhysics && !cart.hasPassenger(other)) {
+        if (!cart.level().isClientSide && !cart.noPhysics && !other.noPhysics && !cart.hasPassenger(other)) {
             double xd = other.getX() - cart.getX();
             double zd = other.getZ() - cart.getZ();
             double horizontalSquared = xd * xd + zd * zd;

@@ -1,6 +1,6 @@
 package de.melanx.utilitix.util;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
@@ -11,8 +11,8 @@ import java.util.Set;
 public class XPUtils {
 
     public static final Set<TagKey<Fluid>> XP_FLUID_TAGS = Set.of(
-            TagKey.create(Registry.FLUID_REGISTRY, new ResourceLocation("forge", "experience")),
-            TagKey.create(Registry.FLUID_REGISTRY, new ResourceLocation("forge", "xpjuice"))
+            TagKey.create(Registries.FLUID, new ResourceLocation("forge", "experience")),
+            TagKey.create(Registries.FLUID, new ResourceLocation("forge", "xpjuice"))
     );
 
     public static int getXpBarCap(int level) {

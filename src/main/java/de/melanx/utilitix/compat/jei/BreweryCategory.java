@@ -1,6 +1,5 @@
 package de.melanx.utilitix.compat.jei;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.recipe.BreweryRecipe;
 import de.melanx.utilitix.registration.ModBlocks;
@@ -16,6 +15,8 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import mezz.jei.library.util.RecipeUtil;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -82,15 +83,15 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
         builder.addSlot(RecipeIngredientRole.INPUT, 24, 3)
                 .addIngredients(recipe.getIngredients().get(0));
         builder.addSlot(RecipeIngredientRole.OUTPUT, 81, 3)
-                .addItemStack(recipe.getResultItem())
+                .addItemStack(RecipeUtil.getResultItem(recipe))
                 .setBackground(this.slot, -1, -1);
     }
 
     @Override
-    public void draw(@Nonnull BreweryRecipe recipe, @Nonnull IRecipeSlotsView slotsView, @Nonnull PoseStack poseStack, double mouseX, double mouseY) {
-        this.blazeHeat.draw(poseStack, 5, 30);
-        this.bubbles.draw(poseStack, 8, 0);
-        this.arrow.draw(poseStack, 42, 2);
+    public void draw(@Nonnull BreweryRecipe recipe, @Nonnull IRecipeSlotsView slotsView, @Nonnull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+        this.blazeHeat.draw(guiGraphics, 5, 30);
+        this.bubbles.draw(guiGraphics, 8, 0);
+        this.arrow.draw(guiGraphics, 42, 2);
     }
 
     private static class BubbleTimer implements ITickTimer {

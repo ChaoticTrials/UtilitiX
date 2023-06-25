@@ -24,7 +24,7 @@ public record PistonCartModeCycle(int id) {
         public boolean handle(PistonCartModeCycle msg, Supplier<NetworkEvent.Context> ctx) {
             ServerPlayer sender = ctx.get().getSender();
             if (sender != null) {
-                Entity entity = sender.getLevel().getEntity(msg.id());
+                Entity entity = sender.level().getEntity(msg.id());
                 if (entity instanceof PistonCart) {
                     int modeIdx = ((PistonCart) entity).getMode().ordinal();
                     PistonCartMode[] modes = PistonCartMode.values();

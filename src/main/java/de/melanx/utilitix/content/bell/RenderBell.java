@@ -2,7 +2,7 @@ package de.melanx.utilitix.content.bell;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import de.melanx.utilitix.Textures;
 import de.melanx.utilitix.registration.ModItems;
 import net.minecraft.client.Minecraft;
@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -22,6 +21,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -56,10 +56,10 @@ public class RenderBell extends BlockEntityWithoutLevelRenderer {
     }
 
     @Override
-    public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemTransforms.TransformType transform, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource buffer, int light, int overlay) {
+    public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemDisplayContext transform, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource buffer, int light, int overlay) {
         Minecraft mc = Minecraft.getInstance();
         VertexConsumer vertex = buffer.getBuffer(RenderType.cutout());
-        if (transform == ItemTransforms.TransformType.GUI) {
+        if (transform == ItemDisplayContext.GUI) {
             mc.getItemRenderer().renderModelLists(stack.getItem() == ModItems.mobBell ? mobBellModel : handBellModel, stack, light, OverlayTexture.NO_OVERLAY, poseStack, vertex);
         } else {
             poseStack.pushPose();
@@ -84,8 +84,8 @@ public class RenderBell extends BlockEntityWithoutLevelRenderer {
                 poseStack.pushPose();
                 poseStack.scale(0.7F, 0.7F, 0.7F);
                 poseStack.translate(0, 0F, 0.25F);
-                poseStack.mulPose(Vector3f.ZP.rotationDegrees(-45));
-                poseStack.mulPose(Vector3f.XP.rotationDegrees(180));
+                poseStack.mulPose(Axis.ZP.rotationDegrees(-45));
+                poseStack.mulPose(Axis.XP.rotationDegrees(180));
                 poseStack.translate(-0.475, -1.6, -1);
                 if (stack.getItem() == ModItems.mobBell) {
                     float[] color = ItemMobBell.getFloatColor(stack);

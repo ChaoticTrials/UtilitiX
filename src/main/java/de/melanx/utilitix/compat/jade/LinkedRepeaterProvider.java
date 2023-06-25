@@ -6,9 +6,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.IServerDataProvider;
@@ -17,7 +14,7 @@ import snownee.jade.api.config.IPluginConfig;
 
 import java.util.UUID;
 
-public class LinkedRepeaterProvider implements IBlockComponentProvider, IServerDataProvider<BlockEntity> {
+public class LinkedRepeaterProvider implements IBlockComponentProvider, IServerDataProvider<BlockAccessor> {
 
     public static final ResourceLocation UID = UtilitiX.getInstance().resource("linked_repeater");
     public static final LinkedRepeaterProvider INSTANCE = new LinkedRepeaterProvider();
@@ -42,12 +39,12 @@ public class LinkedRepeaterProvider implements IBlockComponentProvider, IServerD
     }
 
     @Override
-    public void appendServerData(CompoundTag data, ServerPlayer player, Level level, BlockEntity blockEntity, boolean showDetails) {
-        TileLinkedRepeater linkedRepeater = (TileLinkedRepeater) blockEntity;
+    public void appendServerData(CompoundTag data, BlockAccessor accessor) {
+        TileLinkedRepeater linkedRepeater = (TileLinkedRepeater) accessor.getBlockEntity();
         UUID id = linkedRepeater.getLinkId();
         if (id != null) {
             data.putUUID("LinkId", id);
         }
-        data.putBoolean("showDetails", showDetails);
+        data.putBoolean("showDetails", accessor.showDetails());
     }
 }

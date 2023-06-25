@@ -53,7 +53,7 @@ public class ShulkerBoat extends ChestBoat {
             return false;
         }
 
-        if (this.level.isClientSide || this.isRemoved()) {
+        if (this.level().isClientSide || this.isRemoved()) {
             return true;
         }
 
@@ -64,7 +64,7 @@ public class ShulkerBoat extends ChestBoat {
         this.gameEvent(GameEvent.ENTITY_DAMAGE, source.getEntity());
         boolean creative = source.getEntity() instanceof Player player && player.getAbilities().instabuild;
         if (creative || this.getDamage() > 40) {
-            if ((!creative || this.hasItems()) && (this.level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS) || this.hasItems())) {
+            if ((!creative || this.hasItems()) && (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS) || this.hasItems())) {
                 this.destroy(source);
             }
 
@@ -87,13 +87,15 @@ public class ShulkerBoat extends ChestBoat {
     @Nonnull
     @Override
     public Item getDropItem() {
-        return switch (this.getBoatType()) {
+        return switch (this.getVariant()) {
             case SPRUCE -> ModItems.spruceShulkerBoat;
             case BIRCH -> ModItems.birchShulkerBoat;
             case JUNGLE -> ModItems.jungleShulkerBoat;
             case ACACIA -> ModItems.acaciaShulkerBoat;
+            case CHERRY -> ModItems.cherryShulkerBoat;
             case DARK_OAK -> ModItems.darkOakShulkerBoat;
             case MANGROVE -> ModItems.mangroveShulkerBoat;
+            case BAMBOO -> ModItems.bambooShulkerRaft;
             default -> ModItems.oakShulkerBoat;
         };
     }

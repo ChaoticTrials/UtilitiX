@@ -4,7 +4,11 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.item.CompassItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.core.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -45,7 +49,7 @@ public class AncientCompass extends ItemBase {
             }
 
             ServerLevel serverLevel = (ServerLevel) level;
-            Pair<BlockPos, Holder<Structure>> nearestMapStructure = serverLevel.getChunkSource().getGenerator().findNearestMapStructure(serverLevel, HolderSet.direct(serverLevel.registryAccess().registryOrThrow(Registry.STRUCTURE_REGISTRY).getHolderOrThrow(BuiltinStructures.ANCIENT_CITY)), entity.blockPosition(), 50, false);
+            Pair<BlockPos, Holder<Structure>> nearestMapStructure = serverLevel.getChunkSource().getGenerator().findNearestMapStructure(serverLevel, HolderSet.direct(serverLevel.registryAccess().registryOrThrow(Registries.STRUCTURE).getHolderOrThrow(BuiltinStructures.ANCIENT_CITY)), entity.blockPosition(), 50, false);
             if (nearestMapStructure != null) {
                 if (nearestMapStructure.getFirst() != pos) {
                     tag.putLong("AncientCityPos", nearestMapStructure.getFirst().asLong());
@@ -67,7 +71,7 @@ public class AncientCompass extends ItemBase {
                 return null;
             }
 
-            return GlobalPos.of(ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(stack.getOrCreateTag().getString("AncientCityLevel"))), BlockPos.of(stack.getOrCreateTag().getLong("AncientCityPos")));
+            return GlobalPos.of(ResourceKey.create(Registries.DIMENSION, new ResourceLocation(stack.getOrCreateTag().getString("AncientCityLevel"))), BlockPos.of(stack.getOrCreateTag().getLong("AncientCityPos")));
         }));
     }
 

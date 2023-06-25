@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import de.melanx.utilitix.registration.ModRecipeTypes;
 import de.melanx.utilitix.registration.ModRecipes;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -52,7 +53,7 @@ public class BreweryRecipe implements Recipe<Container> {
 
     @Nonnull
     @Override
-    public ItemStack assemble(@Nonnull Container inv) {
+    public ItemStack assemble(@Nonnull Container inv, @Nonnull RegistryAccess registry) {
         PotionOutput output = this.getPotionResult(inv);
         return output == null ? inv.getItem(3).copy() : output.getMain();
     }
@@ -64,7 +65,7 @@ public class BreweryRecipe implements Recipe<Container> {
 
     @Nonnull
     @Override
-    public ItemStack getResultItem() {
+    public ItemStack getResultItem(@Nonnull RegistryAccess registry) {
         return this.transformer.output();
     }
 

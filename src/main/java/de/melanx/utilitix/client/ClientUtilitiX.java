@@ -1,6 +1,5 @@
 package de.melanx.utilitix.client;
 
-import de.melanx.utilitix.Textures;
 import de.melanx.utilitix.content.bell.ItemMobBell;
 import de.melanx.utilitix.content.slime.SlimeRender;
 import de.melanx.utilitix.registration.ModItems;
@@ -12,7 +11,6 @@ public class ClientUtilitiX {
 
     public ClientUtilitiX() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerItemColors);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(Textures::registerTextures);
 
         MinecraftForge.EVENT_BUS.addListener(SlimeRender::renderWorld);
         MinecraftForge.EVENT_BUS.register(new ClientEventListener());

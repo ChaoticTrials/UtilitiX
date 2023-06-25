@@ -28,7 +28,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.UpgradeRecipe;
+import net.minecraft.world.item.crafting.SmithingTransformRecipe;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.compress.utils.Lists;
@@ -123,10 +123,10 @@ public class UtiliJei implements IModPlugin {
         }
     }
 
-    private static List<UpgradeRecipe> getGildingRecipes() {
-        List<UpgradeRecipe> recipes = Lists.newArrayList();
+    private static List<SmithingTransformRecipe> getGildingRecipes() {
+        List<SmithingTransformRecipe> recipes = Lists.newArrayList();
         Ingredient gildingItem = Ingredient.of(ModItems.gildingCrystal);
-        
+
         for (Map.Entry<ResourceKey<Item>, Item> entry : ForgeRegistries.ITEMS.getEntries()) {
             if (entry.getValue() instanceof ArmorItem item && GildingArmorRecipe.canGild(item, new ItemStack(item))) {
                 ResourceLocation id = UtilitiX.getInstance().resource("gilding/" + entry.getKey().location().getNamespace() + "/" + entry.getKey().location().getPath());
@@ -134,7 +134,7 @@ public class UtiliJei implements IModPlugin {
                 ItemStack output = new ItemStack(item);
                 output.getOrCreateTag().putBoolean("Gilded_UtilitiX", true);
 
-                UpgradeRecipe recipe = new UpgradeRecipe(id, Ingredient.of(item), gildingItem, output);
+                SmithingTransformRecipe recipe = new SmithingTransformRecipe(id, Ingredient.EMPTY, Ingredient.of(item), gildingItem, output);
 
                 recipes.add(recipe);
             }

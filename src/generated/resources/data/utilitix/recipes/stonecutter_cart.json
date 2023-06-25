@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "c": {
       "item": "minecraft:minecart"
@@ -14,5 +15,6 @@
   ],
   "result": {
     "item": "utilitix:stonecutter_cart"
-  }
+  },
+  "show_notification": true
 }

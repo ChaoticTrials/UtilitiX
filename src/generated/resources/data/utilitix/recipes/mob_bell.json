@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "a": {
       "item": "minecraft:spider_eye"
@@ -36,5 +37,6 @@
   ],
   "result": {
     "item": "utilitix:mob_bell"
-  }
+  },
+  "show_notification": true
 }

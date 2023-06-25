@@ -102,7 +102,7 @@ public abstract class EffectTransformer {
     public static JsonObject serializeEffect(MobEffectInstance effect) {
         JsonObject json = new JsonObject();
         ResourceLocation id = ForgeRegistries.MOB_EFFECTS.getKey(effect.getEffect());
-        if (id == null) id = Misc.MISSIGNO;
+        if (id == null) id = Misc.MISSINGNO;
         json.addProperty("effect", id.toString());
         json.addProperty("amplifier", effect.getAmplifier() + 1);
         json.addProperty("duration", effect.getDuration());

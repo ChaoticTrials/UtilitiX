@@ -25,7 +25,7 @@ public class ItemMinecartTinkerer extends ItemBase {
     @Override
     public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
         if (entity instanceof AbstractMinecart) {
-            Level level = player.level;
+            Level level = player.level();
             if (!level.isClientSide && player instanceof ServerPlayer) {
                 IItemHandlerModifiable handler = new ItemStackHandler(1) {
 

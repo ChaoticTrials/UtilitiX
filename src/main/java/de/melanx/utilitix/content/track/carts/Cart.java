@@ -3,8 +3,9 @@ package de.melanx.utilitix.content.track.carts;
 import de.melanx.utilitix.UtilitiX;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
@@ -53,7 +54,7 @@ public class Cart extends AbstractMinecart {
 
     @Nonnull
     @Override
-    public Packet<?> getAddEntityPacket() {
+    public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
@@ -101,8 +102,8 @@ public class Cart extends AbstractMinecart {
 
         @Override
         public void registerAdditional(RegistrationContext ctx, EntryCollector builder) {
-            builder.register(Registry.ENTITY_TYPE_REGISTRY, this.type);
-            builder.register(Registry.ITEM_REGISTRY, this.item);
+            builder.register(Registries.ENTITY_TYPE, this.type);
+            builder.register(Registries.ITEM, this.item);
         }
 
         @Override

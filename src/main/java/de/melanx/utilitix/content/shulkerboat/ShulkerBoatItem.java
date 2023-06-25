@@ -56,7 +56,7 @@ public class ShulkerBoatItem extends ItemBase {
 
         if (hitResult.getType() == HitResult.Type.BLOCK) {
             ShulkerBoat boat = new ShulkerBoat(level, hitResult.getLocation());
-            boat.setType(this.boatType);
+            boat.setVariant(this.boatType);
             boat.setYRot(player.getYRot());
             if (!level.noCollision(boat, boat.getBoundingBox())) {
                 return InteractionResultHolder.fail(stack);

@@ -21,7 +21,6 @@ function initializeCoreMod(): CoreMods {
                 'methodDesc': '(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/BlockHitResult;)Z'
             },
             'transformer': function (method: MethodNode) {
-
                 let insertAfter: AbstractInsnNode | null = null;
                 let targetLabel: LabelNode | null = null;
 

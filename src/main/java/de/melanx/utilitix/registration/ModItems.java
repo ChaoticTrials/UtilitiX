@@ -19,7 +19,7 @@ import net.minecraft.world.item.ShearsItem;
 import org.moddingx.libx.annotation.registration.RegisterClass;
 import org.moddingx.libx.base.ItemBase;
 
-@RegisterClass(registry = "ITEM_REGISTRY")
+@RegisterClass(registry = "ITEM")
 public class ModItems {
 
     public static final Item tinyCoal = new ItemBurnable(UtilitiX.getInstance(), new Item.Properties(), 200);
@@ -28,20 +28,22 @@ public class ModItems {
     public static final Item mobBell = new ItemMobBell(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
     public static final Item quiver = new Quiver(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
     public static final Item failedPotion = new ItemFailedPotion(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
-    public static final Item armedStand = new ArmedStand(UtilitiX.getInstance(), new Item.Properties().stacksTo(16));
+    public static final Item armedStand = new ArmedStand(new Item.Properties().stacksTo(16));
     public static final Item glueBall = new ItemGlueBall(UtilitiX.getInstance(), new Item.Properties());
     public static final Item linkedCrystal = new ItemLinkedCrystal(UtilitiX.getInstance(), new Item.Properties().stacksTo(8));
     public static final Item gildingCrystal = new ItemBase(UtilitiX.getInstance(), new Item.Properties().stacksTo(16));
     public static final Item minecartTinkerer = new ItemMinecartTinkerer(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
     @SuppressWarnings("ConstantConditions")
-    public static final Item diamondShears = new ShearsItem(new Item.Properties().stacksTo(1).durability(1486).tab(UtilitiX.getInstance().tab));
+    public static final Item diamondShears = new ShearsItem(new Item.Properties().stacksTo(1).durability(1486));
     public static final Item mobYoinker = new ItemMobYoinker(new Item.Properties().stacksTo(1));
     public static final Item oakShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.OAK, new Item.Properties().stacksTo(1));
     public static final Item spruceShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.SPRUCE, new Item.Properties().stacksTo(1));
     public static final Item birchShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.BIRCH, new Item.Properties().stacksTo(1));
     public static final Item jungleShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.JUNGLE, new Item.Properties().stacksTo(1));
     public static final Item acaciaShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.ACACIA, new Item.Properties().stacksTo(1));
+    public static final Item cherryShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.CHERRY, new Item.Properties().stacksTo(1));
     public static final Item darkOakShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.DARK_OAK, new Item.Properties().stacksTo(1));
     public static final Item mangroveShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.MANGROVE, new Item.Properties().stacksTo(1));
+    public static final Item bambooShulkerRaft = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.BAMBOO, new Item.Properties().stacksTo(1));
     public static final Item ancientCompass = new AncientCompass(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
 }

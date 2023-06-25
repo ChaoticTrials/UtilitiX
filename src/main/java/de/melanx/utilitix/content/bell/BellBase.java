@@ -57,7 +57,7 @@ public abstract class BellBase extends ItemBase {
     }
 
     @Override
-    public void onUsingTick(ItemStack stack, LivingEntity entity, int count) {
+    public void onStopUsing(ItemStack stack, LivingEntity entity, int count) {
         if (count % 4 == 0) {
             boolean ringed = this.dinkDonk(entity, stack);
             if (ringed && entity instanceof Player) {

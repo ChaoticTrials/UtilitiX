@@ -20,7 +20,7 @@ public class MixinArmorStand {
     )
     private void breakArmorStand(DamageSource source, CallbackInfo ci) {
         if (((ArmorStand) (Object) this).getPersistentData().getBoolean("UtilitiXArmorStand")) {
-            Block.popResource(((ArmorStand) (Object) this).level, ((ArmorStand) (Object) this).blockPosition(), new ItemStack(ModItems.armedStand));
+            Block.popResource(((ArmorStand) (Object) this).level(), ((ArmorStand) (Object) this).blockPosition(), new ItemStack(ModItems.armedStand));
             ((ArmorStand) (Object) this).brokenByAnything(source);
             ci.cancel();
         }

@@ -3,7 +3,8 @@ package de.melanx.utilitix.block;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -36,17 +37,14 @@ public class WeakRedstoneTorch extends RedstoneTorchBlock implements Registerabl
     public WeakRedstoneTorch(ModX mod, Properties properties, Item.Properties itemProperties) {
         super(properties);
         this.mod = mod;
-        if (mod.tab != null) {
-            itemProperties.tab(mod.tab);
-        }
         this.wallTorch = new Wall(properties);
-        this.item = new StandingAndWallBlockItem(this, this.wallTorch, itemProperties);
+        this.item = new StandingAndWallBlockItem(this, this.wallTorch, itemProperties, Direction.DOWN);
     }
 
     @Override
     public void registerAdditional(RegistrationContext ctx, EntryCollector builder) {
-        builder.registerNamed(Registry.BLOCK_REGISTRY, "wall", this.wallTorch);
-        builder.register(Registry.ITEM_REGISTRY, this.item);
+        builder.registerNamed(Registries.BLOCK, "wall", this.wallTorch);
+        builder.register(Registries.ITEM, this.item);
     }
 
     @Override

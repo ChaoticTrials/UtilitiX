@@ -1,7 +1,7 @@
 package de.melanx.utilitix.content.crudefurnace;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -30,25 +30,25 @@ public class ScreenCrudeFurnace extends AbstractContainerScreen<ContainerMenuCru
     }
 
     @Override
-    public void render(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(poseStack);
-        super.render(poseStack, mouseX, mouseY, partialTicks);
-        this.renderTooltip(poseStack, mouseX, mouseY);
+    public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        this.renderBackground(guiGraphics);
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
     @Override
-    protected void renderBg(@Nonnull PoseStack poseStack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(@Nonnull GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, GUI);
-        this.blit(poseStack, this.relX, this.relY, 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(GUI, this.relX, this.relY, 0, 0, this.imageWidth, this.imageHeight);
 
         if (this.menu.getBlockEntity().isBurning()) {
             int i = this.menu.getBlockEntity().getScaledBurnTime();
-            this.blit(poseStack, this.relX + 56, this.relY + 48 - i, 176, 12 - i, 14, i + 1);
+            guiGraphics.blit(GUI, this.relX + 56, this.relY + 48 - i, 176, 12 - i, 14, i + 1);
         }
 
         int i = this.menu.getBlockEntity().getCookProgressionScaled();
-        this.blit(poseStack, this.relX + 79, this.relY + 34, 176, 14, i + 1, 16);
+        guiGraphics.blit(GUI, this.relX + 79, this.relY + 34, 176, 14, i + 1, 16);
     }
 }

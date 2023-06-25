@@ -1,0 +1,12 @@
+{
+  "sources": [
+    {
+      "type": "single",
+      "resource": "utilitix:special/glue_ball_overlay"
+    },
+    {
+      "type": "single",
+      "resource": "utilitix:special/gray_bell"
+    }
+  ]
+}
