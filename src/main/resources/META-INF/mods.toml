@@ -47,5 +47,5 @@ A lot of items, nice to have
     modId = "jei"
     mandatory = false
     versionRange = "[15.0.0.12,)"
-    ordering = "AFTER"
+    ordering = "BEFORE"
     side = "BOTH"
