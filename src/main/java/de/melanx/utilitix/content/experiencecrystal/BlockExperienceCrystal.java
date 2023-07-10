@@ -71,15 +71,15 @@ public class BlockExperienceCrystal extends MenuBlockBE<TileExperienceCrystal, C
     @SuppressWarnings("deprecation")
     @Override
     public void entityInside(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Entity entity) {
-        if (entity instanceof ExperienceOrb) {
-            TileExperienceCrystal tile = this.getBlockEntity(level, pos);
+        if (entity instanceof ExperienceOrb orb) {
             if (!level.isClientSide) {
-                int xpValue = ((ExperienceOrb) entity).value;
+                TileExperienceCrystal tile = this.getBlockEntity(level, pos);
+                int xpValue = orb.value;
                 int added = tile.addXp(xpValue);
                 if (added == xpValue) {
                     entity.remove(Entity.RemovalReason.KILLED);
                 } else {
-                    ((ExperienceOrb) entity).value -= added;
+                    orb.value -= added;
                 }
             }
         }
