@@ -28,7 +28,7 @@ public class MobUtil {
     public static boolean storeEntityData(Player player, InteractionHand hand, LivingEntity entity, ResourceList denylist, boolean typeKeyOnly) {
         String entityKey = entity.getEncodeId();
         ItemStack stack = player.getItemInHand(hand);
-        CompoundTag nbt = stack.getOrCreateTag();
+        CompoundTag nbt = stack.getOrCreateTag().copy();
         if (entityKey == null || entityKey.equals(nbt.getString(MobUtil.ENTITY_TYPE_TAG))) {
             return false;
         }
@@ -42,7 +42,18 @@ public class MobUtil {
         if (!typeKeyOnly) {
             nbt.put(MobUtil.ENTITY_DATA_TAG, entity.saveWithoutId(new CompoundTag()));
         }
-        player.setItemInHand(hand, stack);
+
+        if (stack.getCount() > 1) {
+            stack.shrink(1);
+            ItemStack copyStack = stack.copy();
+            copyStack.setCount(1);
+            copyStack.setTag(nbt);
+            player.addItem(copyStack);
+        } else {
+            stack.setTag(nbt);
+            player.setItemInHand(hand, stack);
+        }
+
         player.displayClientMessage(MobUtil.getCurrentMob(entity.getType()), true);
         return true;
     }
