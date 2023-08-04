@@ -3,10 +3,12 @@ package de.melanx.utilitix.config;
 import com.google.gson.JsonObject;
 import de.melanx.utilitix.util.ArmorStandRotation;
 import net.minecraft.network.FriendlyByteBuf;
+import org.moddingx.libx.annotation.config.RegisterMapper;
 import org.moddingx.libx.config.gui.ConfigEditor;
 import org.moddingx.libx.config.mapper.ValueMapper;
 import org.moddingx.libx.config.validator.ValidatorInfo;
 
+@RegisterMapper
 public class ArmorStandRotationMapper implements ValueMapper<ArmorStandRotation, JsonObject> {
 
     @Override

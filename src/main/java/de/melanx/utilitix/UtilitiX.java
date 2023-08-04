@@ -1,7 +1,6 @@
 package de.melanx.utilitix;
 
 import de.melanx.utilitix.client.ClientUtilitiX;
-import de.melanx.utilitix.config.ArmorStandRotationMapper;
 import de.melanx.utilitix.content.BetterMending;
 import de.melanx.utilitix.content.shulkerboat.ShulkerBoatRenderer;
 import de.melanx.utilitix.content.slime.SlimyCapability;
@@ -12,7 +11,6 @@ import de.melanx.utilitix.registration.ModEntities;
 import de.melanx.utilitix.registration.ModItems;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.CreativeModeTab;
@@ -25,7 +23,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.moddingx.libx.config.ConfigManager;
 import org.moddingx.libx.mod.ModXRegistration;
 import org.moddingx.libx.registration.RegistrationBuilder;
 import org.slf4j.Logger;
@@ -51,9 +48,6 @@ public final class UtilitiX extends ModXRegistration {
 
         instance = this;
         network = new UtiliNetwork(this);
-
-        ConfigManager.registerValueMapper("utilitix", new ArmorStandRotationMapper());
-        ConfigManager.registerConfig(new ResourceLocation(this.modid, "common"), UtilitiXConfig.class, false);
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientUtilitiX::new);
 
