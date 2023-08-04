@@ -11,6 +11,7 @@ import de.melanx.utilitix.content.wireless.BlockLinkedRepeater;
 import de.melanx.utilitix.content.wireless.TileLinkedRepeater;
 import de.melanx.utilitix.registration.ModEntities;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 import snownee.jade.api.IWailaClientRegistration;
 import snownee.jade.api.IWailaCommonRegistration;
 import snownee.jade.api.IWailaPlugin;
@@ -23,6 +24,7 @@ public class UtilJade implements IWailaPlugin {
     public static final ResourceLocation CRUDE_FURNACE = UtilitiX.getInstance().resource("crude_furnace");
     public static final ResourceLocation EXPERIENCE_CRYSTAL = UtilitiX.getInstance().resource("experience_crystal");
     public static final ResourceLocation LINKED_REPEATER = UtilitiX.getInstance().resource("linked_repeater");
+    public static final ResourceLocation GLUE_INFORMATION = UtilitiX.getInstance().resource("glue_information");
 
     @Override
     public void register(IWailaCommonRegistration registration) {
@@ -38,7 +40,9 @@ public class UtilJade implements IWailaPlugin {
         registration.registerBlockComponent(CrudeFurnaceProvider.INSTANCE, BlockCrudeFurnace.class);
         registration.registerBlockComponent(ExperienceCrystalProvider.INSTANCE, BlockExperienceCrystal.class);
         registration.registerBlockComponent(LinkedRepeaterProvider.INSTANCE, BlockLinkedRepeater.class);
+        registration.registerBlockComponent(GlueProvider.INSTANCE, Block.class);
 
         registration.usePickedResult(ModEntities.shulkerBoat);
+        registration.markAsClientFeature(GLUE_INFORMATION);
     }
 }

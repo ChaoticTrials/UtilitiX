@@ -119,9 +119,11 @@
 
   "jade.utilitix.experience_crystal.level": "Level: ",
   "jade.utilitix.experience_crystal.xp": "XP points: ",
+  "jade.utilitix.glue_information": "Sticky side",
 
+  "config.jade.plugin_utilitix.advanced_brewery": "Advanced Brewery",
   "config.jade.plugin_utilitix.crude_furnace": "Crude Furnace",
   "config.jade.plugin_utilitix.experience_crystal": "Experience Crystal",
-  "config.jade.plugin_utilitix.advanced_brewery": "Advanced Brewery",
+  "config.jade.plugin_utilitix.glue_information": "Glue Information",
   "config.jade.plugin_utilitix.linked_repeater": "Linked Repeater"
 }
