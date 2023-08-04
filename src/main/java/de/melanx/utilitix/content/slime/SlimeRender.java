@@ -2,6 +2,7 @@ package de.melanx.utilitix.content.slime;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.melanx.utilitix.Textures;
+import de.melanx.utilitix.config.ClientConfig;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -23,6 +24,7 @@ import org.moddingx.libx.render.RenderHelperLevel;
 public class SlimeRender {
 
     public static void renderWorld(RenderLevelStageEvent event) {
+        if (!ClientConfig.renderGlueOnBlocks) return;
         ClientLevel level = Minecraft.getInstance().level;
         if (level != null && event.getStage() == RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS) {
             Minecraft.getInstance().getProfiler().push("utilitix_glue");

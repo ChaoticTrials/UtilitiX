@@ -2,6 +2,7 @@ package de.melanx.utilitix;
 
 import com.google.common.collect.ImmutableList;
 import de.melanx.utilitix.util.ArmorStandRotation;
+import org.moddingx.libx.annotation.config.RegisterConfig;
 import org.moddingx.libx.config.Config;
 import org.moddingx.libx.config.Group;
 import org.moddingx.libx.config.validate.FloatRange;
@@ -10,6 +11,7 @@ import org.moddingx.libx.util.data.ResourceList;
 
 import java.util.List;
 
+@RegisterConfig(value = "common")
 public class UtilitiXConfig {
 
     @Group("Config values for the two bells, mob bell and hand bell")
