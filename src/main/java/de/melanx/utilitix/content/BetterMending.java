@@ -12,7 +12,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -46,7 +45,7 @@ public class BetterMending {
         if (!UtilitiXConfig.betterMending) return;
         entities.filter(e -> e != null && e.getType() == EntityType.ITEM)
                 .map(e -> (ItemEntity) e)
-                .filter(e -> e.getItem().getDamageValue() > 0 && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, e.getItem()) > 0)
+                .filter(e -> e.getItem().getDamageValue() > 0 && e.getItem().getEnchantmentLevel(Enchantments.MENDING) > 0)
                 .forEach(item -> {
                     List<ExperienceOrb> xps = level.getEntitiesOfClass(ExperienceOrb.class, BoundingBoxUtils.expand(item, 7));
                     for (ExperienceOrb orb : xps) {
