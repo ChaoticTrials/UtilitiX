@@ -44,7 +44,7 @@ public class RenderBell extends BlockEntityWithoutLevelRenderer {
 
     private final LazyValue<ItemStack> stick = new LazyValue<>(() -> new ItemStack(Items.STICK));
     @SuppressWarnings("ConstantConditions")
-    private final LazyValue<BellBlockEntity> tile = new LazyValue<>(() -> new BellBlockEntity(BlockPos.ZERO, null));
+    private final LazyValue<BellBlockEntity> tile = new LazyValue<>(() -> new BellBlockEntity(BlockPos.ZERO, Blocks.BELL.defaultBlockState()));
     private BlockEntityRenderer<BellBlockEntity> tileRender = null;
 
     private final ModelPart grayscaleModel;
@@ -70,7 +70,6 @@ public class RenderBell extends BlockEntityWithoutLevelRenderer {
             if (mc.level != null) {
                 BellBlockEntity tile = this.tile.get();
                 tile.setLevel(mc.level);
-                tile.blockState = Blocks.BELL.defaultBlockState();
                 tile.clickDirection = Direction.EAST;
                 if (mc.player == null || mc.player.getUseItemRemainingTicks() <= 0) {
                     tile.ticks = 0;
