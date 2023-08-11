@@ -67,6 +67,13 @@ public abstract class BellBase extends ItemBase {
     }
 
     @Override
+    public void onUseTick(@Nonnull Level level, @Nonnull LivingEntity livingEntity, @Nonnull ItemStack stack, int remainingUseDuration) {
+        if (remainingUseDuration % 4 == 0 && remainingUseDuration != 0) {
+            level.playSound(null, livingEntity.blockPosition(), SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 2.0F, 1.0F);
+        }
+    }
+
+    @Override
     public int getUseDuration(@Nonnull ItemStack stack) {
         return UtilitiXConfig.HandBells.ringTime;
     }
