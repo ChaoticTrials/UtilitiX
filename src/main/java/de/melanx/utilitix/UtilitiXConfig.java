@@ -52,6 +52,9 @@ public class UtilitiXConfig {
     @Config("Items in world which have mending collect xp orbs to get repaired")
     public static boolean betterMending = true;
 
+    @Config("Illusioners will appear in raids")
+    public static boolean illusionerInRaid = true;
+
     @Group("Config options for rails and minecarts")
     public static class Track {
 

@@ -50,8 +50,6 @@ public final class UtilitiX extends ModXRegistration {
         MinecraftForge.EVENT_BUS.register(new BetterMending());
         MinecraftForge.EVENT_BUS.addGenericListener(LevelChunk.class, SlimyCapability::attach);
 
-        Raid.RaiderType.create("utilitix_illusioner", EntityType.ILLUSIONER, new int[]{0, 5, 0, 2, 0, 2, 0, 3});
-
         DatagenSystem.create(this, system -> {
             system.addDataProvider(BlockStateProvider::new);
             system.addDataProvider(ItemModelProvider::new);
@@ -63,7 +61,9 @@ public final class UtilitiX extends ModXRegistration {
 
     @Override
     protected void setup(FMLCommonSetupEvent event) {
-        // NO-OP
+        if (UtilitiXConfig.illusionerInRaid) {
+            Raid.RaiderType.create("utilitix_illusioner", EntityType.ILLUSIONER, new int[]{0, 5, 0, 2, 0, 2, 0, 3});
+        }
     }
 
     @Override
