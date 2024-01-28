@@ -15,6 +15,6 @@ public class LootTableProvider extends BlockLootProviderBase {
 
     @Override
     protected void setup() {
-        this.drops(ModBlocks.experienceCrystal, this.copyNBT("Xp"));
+        this.drops(ModBlocks.experienceCrystal, this.noSilk(), this.copyNBT("Xp"));
     }
 }

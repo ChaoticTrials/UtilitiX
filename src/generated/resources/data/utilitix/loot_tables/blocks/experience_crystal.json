@@ -10,45 +10,21 @@
       ],
       "entries": [
         {
-          "type": "minecraft:alternatives",
-          "children": [
+          "type": "minecraft:item",
+          "functions": [
             {
-              "type": "minecraft:item",
-              "conditions": [
+              "function": "minecraft:copy_nbt",
+              "ops": [
                 {
-                  "condition": "minecraft:match_tool",
-                  "predicate": {
-                    "enchantments": [
-                      {
-                        "enchantment": "minecraft:silk_touch",
-                        "levels": {
-                          "min": 1
-                        }
-                      }
-                    ]
-                  }
+                  "op": "replace",
+                  "source": "Xp",
+                  "target": "BlockEntityTag.Xp"
                 }
               ],
-              "name": "utilitix:experience_crystal"
-            },
-            {
-              "type": "minecraft:item",
-              "functions": [
-                {
-                  "function": "minecraft:copy_nbt",
-                  "ops": [
-                    {
-                      "op": "replace",
-                      "source": "Xp",
-                      "target": "BlockEntityTag.Xp"
-                    }
-                  ],
-                  "source": "block_entity"
-                }
-              ],
-              "name": "utilitix:experience_crystal"
+              "source": "block_entity"
             }
-          ]
+          ],
+          "name": "utilitix:experience_crystal"
         }
       ],
       "name": "main",

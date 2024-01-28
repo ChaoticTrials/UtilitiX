@@ -1,11 +1,11 @@
 modLoader = "javafml"
-loaderVersion = "[42,)"
+loaderVersion="[${fml},)"
 license = "Apache License 2.0"
 issueTrackerURL = "https://www.github.com/MelanX/UtilitiX/issues/"
 
 [[mods]]
 modId = "utilitix"
-version = "${file.jarVersion}"
+version="${version}"
 displayName = "UtilitiX"
 updateJSONURL = "https://assets.melanx.de/updates/utilitix.json"
 displayURL = "www.curseforge.com/members/melanx/"
@@ -18,14 +18,14 @@ A lot of items, nice to have
 [[dependencies.utilitix]]
     modId = "forge"
     mandatory = true
-    versionRange = "[42,)"
+    versionRange="[${forge},)"
     ordering = "NONE"
     side = "BOTH"
 
 [[dependencies.utilitix]]
     modId = "minecraft"
     mandatory = true
-    versionRange = "[1.19.1, 1.20)"
+    versionRange="[${minecraft},)"
     ordering = "NONE"
     side = "BOTH"
 
