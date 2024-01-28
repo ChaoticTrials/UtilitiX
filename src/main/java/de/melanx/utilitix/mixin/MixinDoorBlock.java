@@ -46,7 +46,7 @@ public abstract class MixinDoorBlock {
         BlockPos neighborPos = pos.relative(hinge == DoorHingeSide.LEFT ? facing.getClockWise() : facing.getCounterClockWise());
 
         BlockState neighborState = level.getBlockState(neighborPos);
-        if (!(neighborState.getBlock() instanceof DoorBlock) && !neighborState.is(BlockTags.DOORS) || neighborState.getValue(DoorBlock.OPEN) != open || isWoodenDoor(neighborState)) {
+        if (!(neighborState.getBlock() instanceof DoorBlock) && !neighborState.is(BlockTags.DOORS) || neighborState.getValue(DoorBlock.OPEN) != open || !isWoodenDoor(neighborState)) {
             return;
         }
 
