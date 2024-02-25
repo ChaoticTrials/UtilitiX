@@ -222,7 +222,7 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
         BlockPos targetPos = pos.relative(face);
         int i = level.getSignal(targetPos, face);
         if (i >= 15) {
-            return i;
+            return 15;
         } else {
             BlockState targetState = level.getBlockState(targetPos);
             return Math.max(i, targetState.is(Blocks.REDSTONE_WIRE) ? targetState.getValue(BlockStateProperties.POWER) : 0);
