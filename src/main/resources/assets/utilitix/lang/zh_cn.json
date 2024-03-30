@@ -115,7 +115,7 @@
   "jei.utilitix.gilding": "镀金",
 
   "utilitix.map_saved": "此处保存的地图：%s",
-  "utilitix.compat.quark.disable_piston_logic_replacement": "在夸克常规设置中禁用“使用活塞逻辑替换”以正确使用它。",
+  "utilitix.compat.zeta.disable_piston_logic_replacement": "在夸克常规设置中禁用“使用活塞逻辑替换”以正确使用它。",
 
   "jade.utilitix.experience_crystal.level": "等级：",
   "jade.utilitix.experience_crystal.xp": "XP 点数：",

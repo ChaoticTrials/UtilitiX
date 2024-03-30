@@ -1,7 +1,6 @@
 package de.melanx.utilitix.mixin;
 
 import de.melanx.utilitix.UtilitiXConfig;
-import de.melanx.utilitix.compat.quark.QuarkCompat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
@@ -18,6 +17,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.ModList;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -27,6 +27,7 @@ import static net.minecraft.world.level.block.DoorBlock.isWoodenDoor;
 @Mixin(DoorBlock.class)
 public abstract class MixinDoorBlock {
 
+    @Unique
     private static boolean HANDLE_DOOR = false;
 
     @Inject(
@@ -34,7 +35,7 @@ public abstract class MixinDoorBlock {
             at = @At(value = "RETURN")
     )
     public void openSecondDoor(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
-        if (cir.getReturnValue() == InteractionResult.PASS || !UtilitiXConfig.doubleDoor || HANDLE_DOOR || (ModList.get().isLoaded("quark") && !QuarkCompat.useDoorOpening())) {
+        if (cir.getReturnValue() == InteractionResult.PASS || !UtilitiXConfig.doubleDoor || HANDLE_DOOR || ModList.get().isLoaded("quark")) {
             return;
         }
 

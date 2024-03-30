@@ -115,7 +115,7 @@
   "jei.utilitix.gilding": "Gilding",
 
   "utilitix.map_saved": "Saved map here: %s",
-  "utilitix.compat.quark.disable_piston_logic_replacement": "Disable \"Use Piston Logic Replacement\" in quark general settings to use this properly.",
+  "utilitix.compat.zeta.disable_piston_logic_replacement": "Disable \"Use Piston Logic Replacement\" in Zeta general settings to use this properly.",
 
   "jade.utilitix.experience_crystal.level": "Level: ",
   "jade.utilitix.experience_crystal.xp": "XP points: ",

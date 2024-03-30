@@ -1,6 +1,6 @@
 package de.melanx.utilitix.content.slime;
 
-import de.melanx.utilitix.compat.quark.QuarkCompat;
+import de.melanx.utilitix.compat.zeta.ZetaCompat;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -54,8 +54,8 @@ public class ItemGlueBall extends ItemBase {
 
     @Override
     public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level level, @Nonnull List<Component> tooltips, @Nonnull TooltipFlag isAdvanced) {
-        if (ModList.get().isLoaded("quark")) {
-            Component warning = QuarkCompat.warningForGlue();
+        if (ModList.get().isLoaded("zeta")) {
+            Component warning = ZetaCompat.warningForGlue();
             if (warning != null) {
                 tooltips.add(warning);
             }
