@@ -229,7 +229,7 @@ public class EventListener {
         ItemStack stack = event.getItemStack();
 
         if (GildingArmorRecipe.isGilded(stack)) {
-            event.getToolTip().add(2, GILDED);
+            event.getToolTip().add(Math.min(event.getToolTip().size() - 1, 1), GILDED);
         }
     }
 
