@@ -33,7 +33,6 @@ public class ModItems {
     public static final Item linkedCrystal = new ItemLinkedCrystal(UtilitiX.getInstance(), new Item.Properties().stacksTo(8));
     public static final Item gildingCrystal = new ItemBase(UtilitiX.getInstance(), new Item.Properties().stacksTo(16));
     public static final Item minecartTinkerer = new ItemMinecartTinkerer(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
-    @SuppressWarnings("ConstantConditions")
     public static final Item diamondShears = new ShearsItem(new Item.Properties().stacksTo(1).durability(1486));
     public static final Item mobYoinker = new ItemMobYoinker(new Item.Properties().stacksTo(1));
     public static final Item oakShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.OAK, new Item.Properties().stacksTo(1));
@@ -46,4 +45,5 @@ public class ModItems {
     public static final Item mangroveShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.MANGROVE, new Item.Properties().stacksTo(1));
     public static final Item bambooShulkerRaft = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.BAMBOO, new Item.Properties().stacksTo(1));
     public static final Item ancientCompass = new AncientCompass(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
+    public static final Item organicFertilizer = new ItemBase(UtilitiX.getInstance(), new Item.Properties());
 }
