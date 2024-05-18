@@ -55,8 +55,11 @@ public class DimmableRedstoneLamp extends BlockBase {
         if (flag != level.hasNeighborSignal(pos)) {
             if (flag) {
                 level.scheduleTick(pos, this, 4);
+                return;
             }
-        } else if (state.getValue(SIGNAL) != signal) {
+        }
+
+        if (state.getValue(SIGNAL) != signal) {
             level.setBlock(pos, state.setValue(SIGNAL, signal), Block.UPDATE_CLIENTS);
         }
     }
