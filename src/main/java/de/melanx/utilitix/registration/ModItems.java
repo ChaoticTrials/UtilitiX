@@ -45,5 +45,4 @@ public class ModItems {
     public static final Item mangroveShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.MANGROVE, new Item.Properties().stacksTo(1));
     public static final Item bambooShulkerRaft = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.BAMBOO, new Item.Properties().stacksTo(1));
     public static final Item ancientCompass = new AncientCompass(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
-    public static final Item organicFertilizer = new ItemBase(UtilitiX.getInstance(), new Item.Properties());
 }
