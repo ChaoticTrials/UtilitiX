@@ -70,6 +70,15 @@ public class BlockExperienceCrystal extends MenuBlockBE<TileExperienceCrystal, C
 
     @SuppressWarnings("deprecation")
     @Override
+    public void onPlace(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState oldState, boolean movedByPiston) {
+        super.onPlace(state, level, pos, oldState, movedByPiston);
+        if (level.getBlockEntity(pos) instanceof TileExperienceCrystal crystal) {
+            crystal.setDispatchable();
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
     public void entityInside(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Entity entity) {
         if (entity instanceof ExperienceOrb orb) {
             if (!level.isClientSide) {

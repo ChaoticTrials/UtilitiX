@@ -7,7 +7,6 @@ import de.melanx.utilitix.util.XPUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -42,9 +41,7 @@ public class ScreenExperienceCrystal extends AbstractContainerScreen<ContainerMe
     @Override
     public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(guiGraphics);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, GUI);
         guiGraphics.blit(GUI, this.relX, this.relY, 0, 0, this.imageWidth, this.imageHeight);
 
         Button hoveredButton = this.getHoveredButton(mouseX, mouseY);
