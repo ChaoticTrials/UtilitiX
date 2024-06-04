@@ -55,15 +55,11 @@ public record ClickScreenButton(BlockPos pos, ScreenExperienceCrystal.Button but
                         player.giveExperiencePoints(-i);
                     }
                     case ADD_ALL -> {
-                        int xp = tile.addXp(playerXP);
+                        int xp = tile.addXp(playerXP < 0 ? Integer.MAX_VALUE : playerXP);
                         player.giveExperiencePoints(-xp);
                     }
-                    case SUB_ONE -> {
-                        normalizeSubtraction(player, tile, 1);
-                    }
-                    case SUB_TEN -> {
-                        normalizeSubtraction(player, tile, 10);
-                    }
+                    case SUB_ONE -> normalizeSubtraction(player, tile, 1);
+                    case SUB_TEN -> normalizeSubtraction(player, tile, 10);
                     case SUB_ALL -> {
                         int xp = tile.subtractXp(Integer.MAX_VALUE);
                         player.giveExperiencePoints(xp);

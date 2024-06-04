@@ -51,12 +51,10 @@ public class DimmableRedstoneLamp extends BlockBase {
 
     private void updatePowerStrength(BlockState state, Level level, BlockPos pos) {
         int signal = level.getBestNeighborSignal(pos);
-        boolean flag = state.getValue(SIGNAL) > 0;
-        if (flag != level.hasNeighborSignal(pos)) {
-            if (flag) {
-                level.scheduleTick(pos, this, 4);
-                return;
-            }
+        boolean hasSignal = state.getValue(SIGNAL) > 0;
+        if (hasSignal != level.hasNeighborSignal(pos) && hasSignal) {
+            level.scheduleTick(pos, this, 4);
+            return;
         }
 
         if (state.getValue(SIGNAL) != signal) {
