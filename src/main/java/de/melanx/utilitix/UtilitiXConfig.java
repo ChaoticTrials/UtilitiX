@@ -33,6 +33,19 @@ public class UtilitiXConfig {
         public static int notifyRadius = 24;
     }
 
+    @Group
+    public static class Backpack {
+
+        @Config("The initial size of a backpack")
+        @IntRange(min = 1, max = 154)
+        public static int slotSize = 9;
+
+        @Config({"The maximum size of a backpack when merging with other backpacks",
+                "Beyond this number, backpacks cannot be merged"})
+        @IntRange(min = 1, max = 154)
+        public static int maxSize = 54;
+    }
+
     @Config({
             "A list of armor stand rotations for armor stands with arms.",
             "You can cycle through these with a piece of flint."

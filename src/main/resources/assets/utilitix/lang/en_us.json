@@ -31,6 +31,8 @@
   "item.utilitix.hand_bell": "Hand Bell",
   "item.utilitix.gilding_crystal": "Gilding Crystal",
   "item.utilitix.mob_bell": "Mob Bell",
+  "item.utilitix.backpack": "Backpack",
+  "item.utilitix.backpack.slots": "%s slots",
   "item.utilitix.quiver": "Quiver",
   "item.utilitix.tiny_coal": "Tiny Coal",
   "item.utilitix.tiny_charcoal": "Tiny Charcoal",
@@ -56,6 +58,7 @@
   "item.utilitix.ancient_compass": "Ancient Compass",
 
   "screen.utilitix.experience_crystal": "Experience Crystal",
+  "screen.utilitix.backpack": "Backpack",
   "screen.utilitix.quiver": "Quiver",
   "screen.utilitix.advanced_brewery": "Advanced Brewery",
   "screen.utilitix.minecart_tinkerer": "Minecart Label",
@@ -120,6 +123,9 @@
   "jade.utilitix.experience_crystal.level": "Level: ",
   "jade.utilitix.experience_crystal.xp": "XP points: ",
   "jade.utilitix.glue_information": "Sticky side",
+
+  "key.categories.utilitix": "UtilitiX",
+  "key.utilitix.open_backpack": "Open Backpack",
 
   "config.jade.plugin_utilitix.advanced_brewery": "Advanced Brewery",
   "config.jade.plugin_utilitix.crude_furnace": "Crude Furnace",

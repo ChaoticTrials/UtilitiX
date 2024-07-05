@@ -3,11 +3,14 @@ package de.melanx.utilitix;
 import de.melanx.utilitix.content.gildingarmor.GildingArmorRecipe;
 import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.content.slime.StickyChunk;
+import de.melanx.utilitix.network.OpenCurioBackpack;
 import de.melanx.utilitix.network.StickyChunkRequest;
 import de.melanx.utilitix.registration.ModItems;
+import de.melanx.utilitix.registration.ModKeys;
 import de.melanx.utilitix.util.MobUtil;
 import de.melanx.utilitix.util.XPUtils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -42,6 +45,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.event.LootTableLoadEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -276,6 +280,16 @@ public class EventListener {
                     .add(LootItem.lootTableItem(Items.AIR)
                             .setWeight(31))
                     .build());
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @SubscribeEvent
+    public void onLevelTick(TickEvent.LevelTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            while (ModKeys.OPEN_BACKPACK.get().consumeClick() && Minecraft.getInstance().screen == null) {
+                UtilitiX.getNetwork().channel.sendToServer(new OpenCurioBackpack());
+            }
         }
     }
 }

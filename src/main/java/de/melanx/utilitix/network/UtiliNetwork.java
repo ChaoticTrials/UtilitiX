@@ -12,7 +12,7 @@ public class UtiliNetwork extends NetworkX {
 
     @Override
     protected Protocol getProtocol() {
-        return Protocol.of("7");
+        return Protocol.of("8");
     }
 
     @Override
@@ -20,6 +20,7 @@ public class UtiliNetwork extends NetworkX {
         this.registerGame(NetworkDirection.PLAY_TO_SERVER, new StickyChunkRequest.Serializer(), () -> StickyChunkRequest.Handler::new);
         this.registerGame(NetworkDirection.PLAY_TO_SERVER, new PistonCartModeCycle.Serializer(), () -> PistonCartModeCycle.Handler::new);
         this.registerGame(NetworkDirection.PLAY_TO_SERVER, new ClickScreenButton.Serializer(), () -> ClickScreenButton.Handler::new);
+        this.registerGame(NetworkDirection.PLAY_TO_SERVER, new OpenCurioBackpack.Serializer(), () -> OpenCurioBackpack.Handler::new);
 
         this.registerGame(NetworkDirection.PLAY_TO_CLIENT, new StickyChunkUpdate.Serializer(), () -> StickyChunkUpdate.Handler::new);
         this.registerGame(NetworkDirection.PLAY_TO_CLIENT, new ItemEntityRepaired.Serializer(), () -> ItemEntityRepaired.Handler::new);

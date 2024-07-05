@@ -3,6 +3,7 @@ package de.melanx.utilitix.registration;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.content.AncientCompass;
 import de.melanx.utilitix.content.ArmedStand;
+import de.melanx.utilitix.content.backpack.ItemBackpack;
 import de.melanx.utilitix.content.bell.ItemHandBell;
 import de.melanx.utilitix.content.bell.ItemMobBell;
 import de.melanx.utilitix.content.brewery.ItemFailedPotion;
@@ -26,6 +27,7 @@ public class ModItems {
     public static final Item tinyCharcoal = new ItemBurnable(UtilitiX.getInstance(), new Item.Properties(), 200);
     public static final Item handBell = new ItemHandBell(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
     public static final Item mobBell = new ItemMobBell(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
+    public static final Item backpack = new ItemBackpack(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
     public static final Item quiver = new Quiver(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
     public static final Item failedPotion = new ItemFailedPotion(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
     public static final Item armedStand = new ArmedStand(new Item.Properties().stacksTo(16));
