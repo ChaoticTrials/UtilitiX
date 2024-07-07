@@ -12,7 +12,6 @@ import de.melanx.utilitix.data.*;
 import de.melanx.utilitix.network.UtiliNetwork;
 import de.melanx.utilitix.registration.ModCreativeTab;
 import de.melanx.utilitix.registration.ModEntities;
-import de.melanx.utilitix.registration.ModKeys;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.registries.Registries;
@@ -20,7 +19,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -52,7 +50,6 @@ public final class UtilitiX extends ModXRegistration {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(SlimyCapability::registerCapability);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ModCreativeTab::onCreateTabs);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerStuff);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerKey);
 
         MinecraftForge.EVENT_BUS.register(new EventListener());
         MinecraftForge.EVENT_BUS.register(new BetterMending());
@@ -83,10 +80,6 @@ public final class UtilitiX extends ModXRegistration {
 
     private void registerStuff(RegisterEvent event) {
         event.register(Registries.MENU, this.resource("backpack"), () -> BackpackMenu.TYPE);
-    }
-
-    private void registerKey(RegisterKeyMappingsEvent event) {
-        event.register(ModKeys.OPEN_BACKPACK.get());
     }
 
     @Nonnull
