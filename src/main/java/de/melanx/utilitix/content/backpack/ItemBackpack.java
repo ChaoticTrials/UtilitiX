@@ -159,7 +159,7 @@ public class ItemBackpack extends ItemBase implements DyeableLeatherItem {
         }
 
         CompoundTag items = tag.getCompound("Items");
-        if (!items.contains("Size", Tag.TAG_INT)) {
+        if (!items.contains("Size", Tag.TAG_ANY_NUMERIC)) {
             return UtilitiXConfig.Backpack.slotSize;
         }
 
