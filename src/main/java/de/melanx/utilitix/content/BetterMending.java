@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -17,6 +18,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.PacketDistributor;
+
+import java.util.List;
 
 public class BetterMending {
 
@@ -37,21 +40,21 @@ public class BetterMending {
 
     private void moveExps(Level level, Iterable<Entity> entities) {
         if (!UtilitiXConfig.betterMending) return;
-        for (var entity : entities) {
+        for (Entity entity : entities) {
             if (!(entity instanceof ItemEntity item)) {
                 continue;
             }
 
-            var stack = item.getItem();
-            if (stack.getDamageValue() == 0 || stack.getEnchantmentLevel(Enchantments.MENDING) == 0) {
+            ItemStack stack = item.getItem();
+            if (stack.getDamageValue() <= 0 || stack.getEnchantmentLevel(Enchantments.MENDING) <= 0) {
                 continue;
             }
 
-            var xps = level.getEntitiesOfClass(ExperienceOrb.class, BoundingBoxUtils.expand(item, 7));
-            for (var orb : xps) {
-                var vector = new Vec3(item.getX() - orb.getX(), item.getY() + (orb.getEyeHeight() / 2) - orb.getY(), item.getZ() - orb.getZ());
+            List<ExperienceOrb> xps = level.getEntitiesOfClass(ExperienceOrb.class, BoundingBoxUtils.expand(item, 7));
+            for (ExperienceOrb orb : xps) {
+                Vec3 vector = new Vec3(item.getX() - orb.getX(), item.getY() + (orb.getEyeHeight() / 2) - orb.getY(), item.getZ() - orb.getZ());
                 if (vector.lengthSqr() < 0.2 && !level.isClientSide) {
-                    var i = Math.min((int) (orb.getValue() * stack.getXpRepairRatio()), stack.getDamageValue());
+                    int i = Math.min((int) (orb.getValue() * stack.getXpRepairRatio()), stack.getDamageValue());
                     stack.setDamageValue(stack.getDamageValue() - i);
                     orb.remove(Entity.RemovalReason.KILLED);
 
@@ -60,7 +63,7 @@ public class BetterMending {
                         break;
                     }
                 } else {
-                    var scale = 1 - (vector.length() / 8);
+                    double scale = 1 - (vector.length() / 8);
                     orb.setDeltaMovement(orb.getDeltaMovement().add(vector.normalize().scale(scale * scale * 0.1)));
                 }
             }
