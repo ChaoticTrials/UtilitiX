@@ -17,7 +17,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.tags.ITag;
@@ -31,10 +30,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class TileExperienceCrystal extends BlockEntityBase implements TickingBlock, IFluidTank, IFluidHandler {
+public class TileExperienceCrystal extends BlockEntityBase implements TickingBlock, IFluidHandler {
 
     public static int MB_PER_XP = 20;
     private int xp;
+    private Integer tankCount;
 
     public TileExperienceCrystal(BlockEntityType<?> blockEntityTypeIn, BlockPos pos, BlockState state) {
         super(blockEntityTypeIn, pos, state);
@@ -114,53 +114,44 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
         return super.getCapability(capability, side);
     }
 
-    @Nonnull
-    @Override
-    public FluidStack getFluid() {
-        return xpFluid()
-                .map(fluid -> new FluidStack(fluid, this.xp * MB_PER_XP))
-                .orElse(FluidStack.EMPTY);
-    }
-
-    @Override
-    public int getFluidAmount() {
-        if (this.xp > Integer.MAX_VALUE / MB_PER_XP) {
-            return Integer.MAX_VALUE;
-        }
-
-        return this.xp * MB_PER_XP;
-    }
-
-    @Override
-    public int getCapacity() {
-        if (UtilitiXConfig.ExperienceCrystal.maxXp > Integer.MAX_VALUE / MB_PER_XP) {
-            return Integer.MAX_VALUE;
-        }
-
-        return UtilitiXConfig.ExperienceCrystal.maxXp * MB_PER_XP;
-    }
-
-    @Override
-    public boolean isFluidValid(FluidStack stack) {
-        return XPUtils.XP_FLUID_TAGS
-                .stream()
-                .anyMatch(p -> getFluidTag(p).contains(stack.getFluid()));
-    }
-
     @Override
     public int getTanks() {
-        return 1;
+        if (this.tankCount == null) {
+            long totalMb = (long) UtilitiXConfig.ExperienceCrystal.maxXp * MB_PER_XP;
+            this.tankCount = (int) (totalMb / Integer.MAX_VALUE);
+            if (totalMb % Integer.MAX_VALUE != 0) {
+                this.tankCount++;
+            }
+        }
+
+        return this.tankCount;
     }
 
     @Nonnull
     @Override
     public FluidStack getFluidInTank(int tank) {
-        return this.getFluid();
+        int xpForTank = this.getXpForTank(tank);
+        return xpFluid()
+                .map(fluid -> new FluidStack(fluid, xpForTank))
+                .orElse(FluidStack.EMPTY);
     }
 
     @Override
     public int getTankCapacity(int tank) {
-        return this.getCapacity();
+        long totalMb = (long) UtilitiXConfig.ExperienceCrystal.maxXp * MB_PER_XP;
+        int maxCapacityPerTank = Integer.MAX_VALUE;
+
+        if (tank < this.getTanks() - 1) {
+            return maxCapacityPerTank;
+        }
+
+        return (int) (totalMb - ((long) maxCapacityPerTank * tank));
+    }
+
+    public boolean isFluidValid(@Nonnull FluidStack stack) {
+        return XPUtils.XP_FLUID_TAGS
+                .stream()
+                .anyMatch(p -> getFluidTag(p).contains(stack.getFluid()));
     }
 
     @Override
@@ -175,41 +166,84 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
         }
 
         // we need to make sure we are only adding / subbing xp in increments of MB_PER_XP
-        int xpAccepted = Math.min(this.getCapacity() - this.getFluidAmount(), resource.getAmount()) / MB_PER_XP;
-        if (action.execute()) {
-            xpAccepted = this.addXp(xpAccepted);
+        int xpToAdd = resource.getAmount() / MB_PER_XP;
+        int totalXpAdded = 0;
+
+        for (int tank = 0; tank < getTanks(); tank++) {
+            int tankCapacity = getTankCapacity(tank);
+            int xpInTank = getXpForTank(tank);
+            int xpCanAdd = Math.min(xpToAdd, (tankCapacity / MB_PER_XP) - xpInTank);
+
+            if (xpCanAdd > 0) {
+                xpToAdd -= xpCanAdd;
+                totalXpAdded += xpCanAdd;
+                if (action.execute()) {
+                    this.addXp(xpCanAdd);
+                }
+            }
+
+            if (xpToAdd <= 0) {
+                break;
+            }
         }
 
-        return xpAccepted * MB_PER_XP;
+        return totalXpAdded * MB_PER_XP;
     }
 
     @Nonnull
     @Override
     public FluidStack drain(int maxDrain, IFluidHandler.FluidAction action) {
-        return this.drain(new FluidStack(this.getFluid(), maxDrain), action);
+        return this.drain(new FluidStack(this.getFluidInTank(0), maxDrain), action);
     }
 
     @Nonnull
     @Override
     public FluidStack drain(FluidStack resource, IFluidHandler.FluidAction action) {
-        if (!this.isFluidValid(resource) || resource.getAmount() == 0 || this.getFluidAmount() == 0) {
+        if (!this.isFluidValid(resource) || resource.getAmount() == 0 || this.getFluidInTank(0).isEmpty()) {
             return FluidStack.EMPTY;
         }
 
-        // we need to make sure we are only adding / subbing xp in increments of MB_PER_XP
-        int xpToDrain = Math.min(this.getFluidAmount(), resource.getAmount()) / MB_PER_XP;
-        FluidStack result = new FluidStack(resource.getFluid(), xpToDrain * MB_PER_XP);
-        if (action.execute()) {
-            this.subtractXp(xpToDrain);
+        int xpToDrain = resource.getAmount() / MB_PER_XP;
+        int totalXpDrained = 0;
+
+        for (int tank = getTanks() - 1; tank >= 0; tank--) {
+            int xpInTank = getXpForTank(tank);
+            int xpCanDrain = Math.min(xpToDrain, xpInTank);
+
+            if (xpCanDrain > 0) {
+                xpToDrain -= xpCanDrain;
+                totalXpDrained += xpCanDrain;
+                if (action.execute()) {
+                    this.subtractXp(xpCanDrain);
+                }
+            }
+
+            if (xpToDrain <= 0) {
+                break;
+            }
         }
 
-        return result;
+        return new FluidStack(resource.getFluid(), totalXpDrained * MB_PER_XP);
     }
 
     @Nonnull
     private static ITag<Fluid> getFluidTag(TagKey<Fluid> tag) {
         return Objects.requireNonNull(ForgeRegistries.FLUIDS.tags())
                 .getTag(tag);
+    }
+
+    private int getXpForTank(int tank) {
+        long fluidXp = (long) this.xp * MB_PER_XP;
+
+        if (tank <= fluidXp / Integer.MAX_VALUE) {
+            return this.getTankCapacity(tank);
+        }
+
+        for (int i = tank - 1; i > 0; i--) {
+            fluidXp = fluidXp - getXpForTank(i);
+        }
+
+        return (int) fluidXp;
     }
 
     // returns true if any of the xp fluid tags
