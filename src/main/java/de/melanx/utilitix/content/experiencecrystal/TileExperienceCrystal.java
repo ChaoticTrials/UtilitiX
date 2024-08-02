@@ -131,7 +131,7 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
     @Override
     public FluidStack getFluidInTank(int tank) {
         int xpForTank = this.getXpForTank(tank);
-        return xpFluid()
+        return xpForTank <= 0 ? FluidStack.EMPTY : xpFluid()
                 .map(fluid -> new FluidStack(fluid, xpForTank))
                 .orElse(FluidStack.EMPTY);
     }
@@ -235,15 +235,20 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
     private int getXpForTank(int tank) {
         long fluidXp = (long) this.xp * MB_PER_XP;
 
-        if (tank <= fluidXp / Integer.MAX_VALUE) {
-            return this.getTankCapacity(tank);
+        if (tank == 0) {
+            return fluidXp < Integer.MAX_VALUE ? (int) fluidXp : this.getTankCapacity(tank);
         }
 
-        for (int i = tank - 1; i > 0; i--) {
-            fluidXp = fluidXp - getXpForTank(i);
+        long xpRemaining = fluidXp;
+        for (int i = 0; i < tank; i++) {
+            if (xpRemaining < Integer.MAX_VALUE) {
+                return 0;
+            }
+
+            xpRemaining -= Integer.MAX_VALUE;
         }
 
-        return (int) fluidXp;
+        return (int) Math.min(xpRemaining, this.getTankCapacity(tank));
     }
 
     // returns true if any of the xp fluid tags
