@@ -236,6 +236,10 @@ public class ItemBackpack extends ItemBase implements DyeableLeatherItem {
             count++;
         }
 
+        if (count == 0) {
+            return;
+        }
+
         int r = total[0] / count;
         int g = total[1] / count;
         int b = total[2] / count;
