@@ -47,7 +47,6 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
         this.shaped(ModBlocks.dimmableRedstoneLamp, 4, " L ", "LRL", " L ", 'L', Blocks.REDSTONE_LAMP, 'R', Tags.Items.DUSTS_REDSTONE);
         //noinspection ConstantConditions
         this.shapeless(UtilitiX.getInstance().resource(ForgeRegistries.BLOCKS.getKey(Blocks.REDSTONE_LAMP).getPath() + "_revert"), Blocks.REDSTONE_LAMP, ModBlocks.dimmableRedstoneLamp);
-        this.shaped(ModItems.backpack, "SLS", "LCL", "LLL", 'L', Tags.Items.LEATHER, 'S', Tags.Items.STRING, 'C', Tags.Items.CHESTS_WOODEN);
     }
 
     private void createTinyCoalRecipe(ItemLike coal, ItemLike tinyCoal) {

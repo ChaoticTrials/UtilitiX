@@ -25,7 +25,7 @@ public class ModTagProvider extends CommonTagsProviderBase {
         this.block(ModBlockTags.RAIL_POWER_SOURCES).add(Blocks.REDSTONE_TORCH, Blocks.REDSTONE_WALL_TORCH, ModBlocks.weakRedstoneTorch, ModBlocks.weakRedstoneTorch.wallTorch);
         this.block(BlockTags.WALLS).add(ModBlocks.stoneWall);
 
-        this.item(ModItemTags.CURIOS_BACK).add(ModItems.backpack);
+        this.item(ModItemTags.CURIOS_BACK).add(ModItems.backpack); // todo remove in 1.21
         this.item(ModItemTags.BOTTLES).addTag(ModItemTags.POTIONS);
         this.item(ModItemTags.POTIONS).add(Items.POTION, Items.SPLASH_POTION, Items.LINGERING_POTION);
         this.item(ModItemTags.BOTTLES).add(Items.GLASS_BOTTLE, ModItems.failedPotion);

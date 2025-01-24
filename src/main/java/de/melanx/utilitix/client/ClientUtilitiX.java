@@ -22,7 +22,7 @@ public class ClientUtilitiX {
 
     private void registerItemColors(RegisterColorHandlersEvent.Item event) {
         event.register((stack, tintIndex) -> tintIndex == 1 ? 0xFF000000 | ItemMobBell.getColor(stack) : 0xFFFFFFFF, ModItems.mobBell);
-        event.register(((stack, tintIndex) -> tintIndex != 0 ? -1 : ((DyeableLeatherItem) stack.getItem()).getColor(stack)), ModItems.backpack);
+        event.register(((stack, tintIndex) -> tintIndex != 0 ? -1 : ((DyeableLeatherItem) stack.getItem()).getColor(stack)), ModItems.backpack); // todo remove in 1.21
     }
 
     private void registerKey(RegisterKeyMappingsEvent event) {

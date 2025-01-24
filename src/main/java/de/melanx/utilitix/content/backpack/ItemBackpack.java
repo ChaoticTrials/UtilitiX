@@ -21,6 +21,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.tuple.Pair;
+import org.moddingx.libx.annotation.meta.RemoveIn;
 import org.moddingx.libx.base.ItemBase;
 import org.moddingx.libx.inventory.BaseItemStackHandler;
 import org.moddingx.libx.mod.ModX;
@@ -33,6 +34,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
+@Deprecated(forRemoval = true)
+@RemoveIn(minecraft = "1.21")
 public class ItemBackpack extends ItemBase implements DyeableLeatherItem {
 
     public static final Predicate<ItemStack> SLOT_VALIDATOR = item -> !(item.getItem() instanceof ItemBackpack);
