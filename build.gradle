@@ -8,7 +8,6 @@ buildscript {
 }
 
 apply from: 'https://moddingx.github.io/ModUtils/v5/mod.gradle'
-apply plugin: 'org.moddingx.modgradle.cursedep'
 
 apply plugin: 'maven-publish'
 mod['version'] = getVersion(mod.minecraft + "-" + mod.base_version, new URL(mod.remote_maven + "/" + group.replace('.', '/') + "/" + name + "/maven-metadata.xml"))
@@ -37,16 +36,10 @@ repositories {
         url = "https://maven.theillusivec4.top/"
     }
 
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = "Modrinth"
-                url = "https://api.modrinth.com/maven"
-            }
-        }
-        forRepositories(fg.repository) // Only add this if you're using ForgeGradle, otherwise remove this line
-        filter {
-            includeGroup "maven.modrinth"
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
         }
     }
 }
@@ -58,18 +51,16 @@ dependencies {
     implementation fg.deobf("mezz.jei:jei-1.20.1-forge:15.0.0.12")
 
     implementation fg.deobf("top.theillusivec4.curios:curios-forge:5.9.1+1.20.1")
-    implementation curse.mod(324717, 4681833) // Jade 1.20-forge-11.4.3
+    implementation fg.deobf("curse.maven:jade-324717:4681833") // Jade 1.20-forge-11.4.3
 
 //    runtimeOnly fg.deobf("de.melanx:RecipePrinter:1.18.2-3.2.0")
 
     // for testing
     compileOnly fg.deobf("org.violetmoon.quark:Quark:4.0-beta-432.3267")
     compileOnly fg.deobf("org.violetmoon.zeta:Zeta:1.0-11.48")
-    runtimeOnly curse.mod(443900, 4916633) // Pipez 1.20.1-1.2.5
-    runtimeOnly curse.mod(254241, 5131447) // mob_grinding_utils-1.20.1-1.1.0
-    runtimeOnly curse.mod(240633, 5979609) // Inventory Sorter - 1.20.1-23.0.8
-    compileOnly curse.mod(400085, 4509436) // Upgraded Netherite - 1.19.4-5.3.0.1
-    compileOnly curse.mod(566700, 4509434) // Upgraded Core - 1.19.4-4.3.0.1
+    runtimeOnly fg.deobf("curse.maven:Pipez-443900:4916633") // Pipez 1.20.1-1.2.5
+    runtimeOnly fg.deobf("curse.maven:mob_grinding_utils-254241:5131447") // mob_grinding_utils-1.20.1-1.1.0
+    runtimeOnly fg.deobf("curse.maven:InventorySorter-240633:5979609") // Inventory Sorter - 1.20.1-23.0.8
 }
 
 publishing {
@@ -96,6 +87,7 @@ publishing {
     }
     repositories {
         maven {
+            name 'melanx'
             url mod.remote_maven
             credentials(PasswordCredentials)
         }
