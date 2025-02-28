@@ -35,6 +35,7 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
     public static int MB_PER_XP = 20;
     private int xp;
     private Integer tankCount;
+    private Fluid cachedXpFluid = null;
 
     public TileExperienceCrystal(BlockEntityType<?> blockEntityTypeIn, BlockPos pos, BlockState state) {
         super(blockEntityTypeIn, pos, state);
@@ -131,7 +132,7 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
     @Override
     public FluidStack getFluidInTank(int tank) {
         int xpForTank = this.getXpForTank(tank);
-        return xpForTank <= 0 ? FluidStack.EMPTY : xpFluid()
+        return xpForTank <= 0 ? FluidStack.EMPTY : this.xpFluid()
                 .map(fluid -> new FluidStack(fluid, xpForTank))
                 .orElse(FluidStack.EMPTY);
     }
@@ -258,11 +259,21 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
                 .anyMatch(tag -> !getFluidTag(tag).isEmpty());
     }
 
-    public static Optional<Fluid> xpFluid() {
-        //noinspection DataFlowIssue
-        return XPUtils.XP_FLUID_TAGS
-                .stream()
-                .flatMap(tag -> getFluidTag(tag).stream())
-                .min(Comparator.comparing(ForgeRegistries.FLUIDS::getKey));
+    public Optional<Fluid> xpFluid() {
+        if (this.cachedXpFluid == null) {
+            //noinspection DataFlowIssue
+            this.cachedXpFluid = XPUtils.XP_FLUID_TAGS
+                    .stream()
+                    .flatMap(tag -> getFluidTag(tag).stream())
+                    .filter(tag -> UtilitiXConfig.ExperienceCrystal.fluidXp.isPresent() && ForgeRegistries.FLUIDS.getKey(tag).equals(UtilitiXConfig.ExperienceCrystal.fluidXp.get()))
+                    .findFirst()
+                    .or(() -> XPUtils.XP_FLUID_TAGS
+                            .stream()
+                            .flatMap(tag -> getFluidTag(tag).stream())
+                            .min(Comparator.comparing(ForgeRegistries.FLUIDS::getKey)))
+                    .orElse(null);
+        }
+
+        return Optional.ofNullable(this.cachedXpFluid);
     }
 }

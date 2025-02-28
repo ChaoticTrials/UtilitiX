@@ -2,6 +2,7 @@ package de.melanx.utilitix;
 
 import com.google.common.collect.ImmutableList;
 import de.melanx.utilitix.util.ArmorStandRotation;
+import net.minecraft.resources.ResourceLocation;
 import org.moddingx.libx.annotation.config.RegisterConfig;
 import org.moddingx.libx.config.Config;
 import org.moddingx.libx.config.Group;
@@ -10,6 +11,7 @@ import org.moddingx.libx.config.validate.IntRange;
 import org.moddingx.libx.util.data.ResourceList;
 
 import java.util.List;
+import java.util.Optional;
 
 @RegisterConfig(value = "common")
 public class UtilitiXConfig {
@@ -85,6 +87,9 @@ public class UtilitiXConfig {
         @Config("Maximum experience which can be stored")
         @IntRange(min = 0)
         public static int maxXp = Integer.MAX_VALUE;
+
+        @Config("A ResourceLocation for a fluid xp fluid. If it exists in the tag #forge:experience or #forge:xpjuice, the crystal will always store this type of fluid xp")
+        public static Optional<ResourceLocation> fluidXp = Optional.empty();
     }
 
     @Config("List of items which are allowed to be planted when despawn on correct soil")
