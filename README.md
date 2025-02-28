@@ -1,11 +1,11 @@
 # UtilitiX
 A lot of items, nice to have
 
-[![Curseforge](http://cf.way2muchnoise.eu/versions/For%20MC_463703_all.svg)](https://www.curseforge.com/minecraft/mc-mods/utilitix)
-[![CurseForge](http://cf.way2muchnoise.eu/full_463703_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/utilitix)
+[![Modrinth](https://badges.moddingx.org/modrinth/versions/MMMWYsjm)](https://modrinth.com/mod/utilitix)
+[![Modrinth](https://badges.moddingx.org/modrinth/downloads/MMMWYsjm)](https://modrinth.com/mod/utilitix)
 
-[![Modrinth](https://img.shields.io/modrinth/game-versions/MMMWYsjm?color=00AF5C&label=modrinth&logo=modrinth)](https://modrinth.com/mod/utilitix)
-[![Modrinth](https://img.shields.io/modrinth/dt/MMMWYsjm?color=00AF5C&logo=modrinth)](https://modrinth.com/mod/utilitix)
+[![CurseForge](https://badges.moddingx.org/curseforge/versions/463703)](https://www.curseforge.com/minecraft/mc-mods/utilitix)
+[![CurseForge](https://badges.moddingx.org/curseforge/downloads/463703)](https://www.curseforge.com/minecraft/mc-mods/utilitix)
 
 # Planned features
 ## Utility
