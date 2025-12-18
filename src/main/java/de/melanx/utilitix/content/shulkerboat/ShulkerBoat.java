@@ -106,20 +106,35 @@ public class ShulkerBoat extends ChestBoat {
         ItemContainerContents containerContents = ItemContainerContents.fromItems(this.getItemStacks());
 
         if (containerContents != ItemContainerContents.EMPTY) {
-            drop.set(DataComponents.CONTAINER, containerContents); // todo check
+            drop.set(DataComponents.CONTAINER, containerContents);
         }
 
         if (this.hasCustomName()) {
-            //noinspection ConstantConditions
             drop.set(DataComponents.CUSTOM_NAME, this.getCustomName());
         }
 
         this.spawnAtLocation(drop);
     }
 
+    @Nonnull
+    @Override
+    public ItemStack getPickResult() {
+        ItemStack stack = new ItemStack(this.getDropItem());
+        ItemContainerContents containerContents = ItemContainerContents.fromItems(this.getItemStacks());
+
+        if (containerContents != ItemContainerContents.EMPTY) {
+            stack.set(DataComponents.CONTAINER, containerContents);
+        }
+
+        return stack;
+    }
+
     @Override
     public void remove(@Nonnull RemovalReason reason) {
+        if (!this.level().isClientSide && reason.shouldDestroy() && this.isLeashed()) {
+            this.dropLeash(true, true);
+        }
+
         this.setRemoved(reason);
-//        this.invalidateCaps(); todo check
     }
 }

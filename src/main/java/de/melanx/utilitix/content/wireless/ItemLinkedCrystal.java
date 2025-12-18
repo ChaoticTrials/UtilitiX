@@ -64,11 +64,7 @@ public class ItemLinkedCrystal extends ItemBase {
     }
     
     @Nullable
-    public static UUID getId(ItemStack stack) { // todo check if getOrDefault(redstoneId, null) works
-        if (stack.has(ModDataComponentTypes.redstoneId)) {
-            return stack.get(ModDataComponentTypes.redstoneId);
-        }
-
-        return null;
+    public static UUID getId(ItemStack stack) {
+        return stack.get(ModDataComponentTypes.redstoneId);
     }
 }

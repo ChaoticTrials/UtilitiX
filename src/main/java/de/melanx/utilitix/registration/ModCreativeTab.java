@@ -1,12 +1,7 @@
 package de.melanx.utilitix.registration;
 
-import de.melanx.utilitix.UtilitiX;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.moddingx.libx.annotation.registration.RegisterClass;
 import org.moddingx.libx.creativetab.CreativeTabX;
@@ -19,21 +14,9 @@ public class ModCreativeTab extends CreativeTabX {
         super(mod);
     }
 
-    private static ResourceKey<CreativeModeTab> getTabForItem(Item item) {
-        if (item == ModItems.quiver) {
-            return null;
-        }
-
-        if (item == ModBlocks.stoneWall.asItem()) {
-            return CreativeModeTabs.BUILDING_BLOCKS;
-        }
-
-        return ResourceKey.create(Registries.CREATIVE_MODE_TAB, UtilitiX.getInstance().resource("utilitix_tab"));
-    }
-
     @Override
     protected void addItems(TabContext ctx) {
-        this.addModItems(ctx); // todo use getTabForItem
+        this.addModItems(ctx);
     }
 
     @Override

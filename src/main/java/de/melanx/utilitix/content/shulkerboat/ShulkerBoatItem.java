@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -63,10 +64,15 @@ public class ShulkerBoatItem extends ItemBase {
             }
 
             if (!level.isClientSide) {
+                if (stack.has(DataComponents.CONTAINER)) {
+                    ItemContainerContents itemContainerContents = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+                    itemContainerContents.copyInto(boat.getItemStacks());
+                }
+
                 if (stack.has(DataComponents.CUSTOM_NAME)) {
                     boat.setCustomName(stack.getHoverName());
                 }
-//                ContainerHelper.loadAllItems(stack.getOrCreateTag().getCompound("Items"), boat.getItemStacks()); todo
+
                 level.addFreshEntity(boat);
                 level.gameEvent(player, GameEvent.ENTITY_PLACE, hitResult.getLocation());
                 if (!player.getAbilities().instabuild) {
@@ -82,7 +88,7 @@ public class ShulkerBoatItem extends ItemBase {
     }
 
     @Override
-    public boolean canFitInsideContainerItems() {
+    public boolean canFitInsideContainerItems(@Nonnull ItemStack stack) {
         return false;
     }
 }

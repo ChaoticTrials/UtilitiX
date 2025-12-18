@@ -98,7 +98,7 @@ public class EventListener {
         }
     }
 
-    // TODO wait for https://github.com/MinecraftForge/MinecraftForge/pull/7715
+    // TODO wait for https://github.com/MinecraftForge/MinecraftForge/pull/8322
 //    @SubscribeEvent
 //    public void onBowFindAmmo(PlayerFindProjectileEvent event) {
 //        if (event.getFoundAmmo().isEmpty()) {

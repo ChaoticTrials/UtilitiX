@@ -48,12 +48,6 @@ public class Cart extends AbstractMinecart {
         return false;
     }
 
-//    @Nonnull
-//    @Override
-//    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-//        return NetworkHooks.getEntitySpawningPacket(this);
-//    } todo ?
-
     public static <T extends Cart> CartType<T> type(String id, EntityType.EntityFactory<T> factory) {
         return type(id, factory, new Item.Properties().stacksTo(1));
     }

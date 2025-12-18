@@ -98,5 +98,9 @@ public class ItemMobYoinker extends ItemBase {
                     buffer.writeNbt(data.entityData);
                 }, buffer -> new MobData(buffer.readUtf(), buffer.readNbt())
         );
+
+        public EntityType<?> getEntityType() {
+            return EntityType.byString(this.entityType).orElse(null);
+        }
     }
 }

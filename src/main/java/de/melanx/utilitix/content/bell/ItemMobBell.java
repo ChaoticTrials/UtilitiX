@@ -5,11 +5,11 @@ import de.melanx.utilitix.registration.ModDataComponentTypes;
 import de.melanx.utilitix.util.MobUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.TooltipFlag;
 import org.moddingx.libx.mod.ModX;
 
@@ -30,8 +30,7 @@ public class ItemMobBell extends BellBase {
 
         ItemMobYoinker.MobData mobData = stack.get(ModDataComponentTypes.mobData);
 
-        String s = mobData.entityType();
-        return EntityType.getKey(entity.getType()).equals(ResourceLocation.tryParse(s));
+        return entity.getType() == mobData.getEntityType();
     }
 
     @Override
@@ -47,14 +46,14 @@ public class ItemMobBell extends BellBase {
     }
     
     public static int getColor(ItemStack stack) {
-//        if (stack.getTag() != null && stack.getTag().contains(MobUtil.ENTITY_TYPE_TAG, Tag.TAG_STRING)) { todo
-//            ResourceLocation rl = ResourceLocation.tryParse(stack.getTag().getString(MobUtil.ENTITY_TYPE_TAG));
-//            EntityType<?> entityType = rl == null ? null : ForgeRegistries.ENTITY_TYPES.getValue(rl);
-//            SpawnEggItem egg = entityType == null ? null : ForgeSpawnEggItem.fromEntityType(entityType);
-//            if (egg != null) {
-//                return Objects.requireNonNull(egg).getColor(0);
-//            }
-//        }
+        if (stack.has(ModDataComponentTypes.mobData)) {
+            ItemMobYoinker.MobData mobData = stack.get(ModDataComponentTypes.mobData);
+            //noinspection DataFlowIssue
+            EntityType<?> entityType = mobData.getEntityType();
+            if (entityType != null && SpawnEggItem.byId(entityType) instanceof SpawnEggItem egg) {
+                return egg.getColor(0);
+            }
+        }
 
         return 0xFFFFFF;
     }
