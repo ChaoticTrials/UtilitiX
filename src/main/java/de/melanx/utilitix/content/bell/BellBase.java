@@ -2,9 +2,6 @@ package de.melanx.utilitix.content.bell;
 
 import de.melanx.utilitix.UtilitiXConfig;
 import de.melanx.utilitix.data.enchantments.EnchantmentProvider;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -24,36 +21,16 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.fml.ModList;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import org.moddingx.libx.base.ItemBase;
 import org.moddingx.libx.mod.ModX;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.function.Consumer;
 
 public abstract class BellBase extends ItemBase {
 
     public BellBase(ModX mod, Item.Properties properties) {
         super(mod, properties);
-    }
-
-    @Override
-    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        consumer.accept(new IClientItemExtensions() {
-            @Nonnull
-            @Override
-            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                return new RenderBell(new BlockEntityRendererProvider.Context(
-                        Minecraft.getInstance().getBlockEntityRenderDispatcher(),
-                        Minecraft.getInstance().getBlockRenderer(),
-                        Minecraft.getInstance().getItemRenderer(),
-                        Minecraft.getInstance().getEntityRenderDispatcher(),
-                        Minecraft.getInstance().getEntityModels(),
-                        Minecraft.getInstance().font
-                ));
-            }
-        });
     }
 
     @Override

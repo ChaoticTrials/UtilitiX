@@ -1,7 +1,5 @@
 package de.melanx.utilitix.block;
 
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -19,7 +17,6 @@ import net.minecraft.world.phys.HitResult;
 import org.moddingx.libx.mod.ModX;
 import org.moddingx.libx.registration.Registerable;
 import org.moddingx.libx.registration.RegistrationContext;
-import org.moddingx.libx.registration.SetupContext;
 
 import javax.annotation.Nonnull;
 
@@ -47,12 +44,6 @@ public class WeakRedstoneTorch extends RedstoneTorchBlock implements Registerabl
     }
 
     @Override
-    public void setupClient(SetupContext ctx) { // todo
-        ItemBlockRenderTypes.setRenderLayer(this, RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(this.wallTorch, RenderType.cutout());
-    }
-
-    @Override
     public void animateTick(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull RandomSource rand) {
         // stop redstone particles
     }
@@ -66,8 +57,9 @@ public class WeakRedstoneTorch extends RedstoneTorchBlock implements Registerabl
             this.torch = WeakRedstoneTorch.this;
         }
 
+        @Nonnull
         @Override
-        public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+        public ItemStack getCloneItemStack(@Nonnull BlockState state, @Nonnull HitResult target, @Nonnull LevelReader level, @Nonnull BlockPos pos, @Nonnull Player player) {
             return new ItemStack(WeakRedstoneTorch.this.item);
         }
 

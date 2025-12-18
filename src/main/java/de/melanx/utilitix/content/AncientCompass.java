@@ -3,16 +3,11 @@ package de.melanx.utilitix.content;
 import com.mojang.datafixers.util.Pair;
 import de.melanx.utilitix.registration.ModDataComponentTypes;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.renderer.item.CompassItemPropertyFunction;
-import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -24,18 +19,13 @@ import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.common.WorldWorkerManager;
 import org.moddingx.libx.base.ItemBase;
 import org.moddingx.libx.mod.ModX;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
-import java.util.function.Consumer;
 
 public class AncientCompass extends ItemBase {
 
@@ -87,24 +77,6 @@ public class AncientCompass extends ItemBase {
         }
 
         return !this.biomeSearcher.hasWork() && this.biomeSearcher.pair != null && this.biomeSearcher.pair.getFirst() != pos;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void initializeClient(@Nonnull Consumer<IClientItemExtensions> consumer) {
-        ItemProperties.register(this, ResourceLocation.withDefaultNamespace("angle"), new CompassItemPropertyFunction((level, stack, entity) -> {
-            if (!stack.has(ModDataComponentTypes.ancientCityPos) || !stack.has(ModDataComponentTypes.ancientCityLevel)) {
-                return null;
-            }
-
-            return GlobalPos.of(
-                    ResourceKey.create(
-                            Registries.DIMENSION,
-                            Objects.requireNonNull(ResourceLocation.tryParse(Objects.requireNonNull(stack.get(ModDataComponentTypes.ancientCityLevel)).toString()))
-                    ),
-                    Objects.requireNonNull(stack.get(ModDataComponentTypes.ancientCityPos))
-            );
-        }));
     }
 
     @Override

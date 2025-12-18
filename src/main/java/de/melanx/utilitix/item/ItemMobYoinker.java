@@ -5,7 +5,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.registration.ModDataComponentTypes;
 import de.melanx.utilitix.util.MobUtil;
-import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -20,23 +19,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import org.moddingx.libx.base.ItemBase;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 public class ItemMobYoinker extends ItemBase {
 
     public ItemMobYoinker(Properties properties) {
         super(UtilitiX.getInstance(), properties);
-    }
-
-    @Override
-    public void initializeClient(@Nonnull Consumer<IClientItemExtensions> consumer) { // todo check
-        ItemProperties.register(this, UtilitiX.getInstance().resource("filled"), ((stack, level, entity, seed) -> stack.getOrDefault(ModDataComponentTypes.filled, false) ? 1.0F : 0.0F));
     }
 
     @Nonnull
