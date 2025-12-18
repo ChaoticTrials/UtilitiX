@@ -35,7 +35,7 @@ jobs:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           username: Endermite
           avatar-url: https://cdn.discordapp.com/avatars/1254781618196054108/724c24e2324939a8c8cfd17fb55f76e8.webp?size=256
-          embed-title: "Skyblock Builder"
+          embed-title: "UtilitiX"
           embed-url: "https://github.com/ChaoticTrials/UtilitiX/actions/runs/${{ github.run_id }}"
           embed-description: "A new build has been completed on the `update/1.21.x` branch! [View build details](https://github.com/ChaoticTrials/UtilitiX/actions/runs/${{ github.run_id }})"
           embed-author-name: "Endermite"
