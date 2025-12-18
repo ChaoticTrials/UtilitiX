@@ -1,7 +1,11 @@
 package de.melanx.utilitix.content.track.rails;
 
+import com.mojang.serialization.MapCodec;
+import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.block.ModProperties;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.BaseRailBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import org.moddingx.libx.mod.ModX;
@@ -9,6 +13,12 @@ import org.moddingx.libx.mod.ModX;
 import javax.annotation.Nonnull;
 
 public class BlockReinforcedRail extends BlockRail {
+
+    public static final MapCodec<BlockReinforcedRail> CODEC = Block.simpleCodec(BlockReinforcedRail::new);
+
+    public BlockReinforcedRail(Properties properties) {
+        this(UtilitiX.getInstance(), properties);
+    }
 
     public BlockReinforcedRail(ModX mod, Properties properties) {
         super(mod, true, properties);
@@ -22,5 +32,11 @@ public class BlockReinforcedRail extends BlockRail {
     @Override
     public Property<RailShape> getShapeProperty() {
         return ModProperties.RAIL_SHAPE_FLAT;
+    }
+
+    @Nonnull
+    @Override
+    protected MapCodec<? extends BaseRailBlock> codec() {
+        return CODEC;
     }
 }

@@ -2,6 +2,7 @@ package de.melanx.utilitix.content.crudefurnace;
 
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
@@ -19,8 +20,8 @@ public class CrudeFurnaceRecipeHelper {
         }
 
         RecipeManager rm = level.getRecipeManager();
-        SmeltingRecipe recipe = rm.getAllRecipesFor(RecipeType.SMELTING).stream()
-                .filter(r -> r.getIngredients().get(0).test(input))
+        RecipeHolder<SmeltingRecipe> recipe = rm.getAllRecipesFor(RecipeType.SMELTING).stream()
+                .filter(r -> r.value().getIngredients().get(0).test(input))
                 .findFirst().orElse(null);
 
         if (recipe == null) {
@@ -31,9 +32,9 @@ public class CrudeFurnaceRecipeHelper {
                 || RecipeHelper.isItemValidInput(rm, RecipeType.SMOKING, input)) {
             // Recipe already has a special type of furnace
             return null;
-        } else {
-            return new ModifiedRecipe(level.registryAccess(), recipe);
         }
+
+        return new ModifiedRecipe(level.registryAccess(), recipe);
     }
 
     public static class ModifiedRecipe {
@@ -41,13 +42,14 @@ public class CrudeFurnaceRecipeHelper {
         private final float xp;
         private final int burnTime;
         private final ItemStack output;
-        private final SmeltingRecipe originalRecipe;
+        private final RecipeHolder<SmeltingRecipe> originalRecipe;
 
-        ModifiedRecipe(RegistryAccess registryAccess, SmeltingRecipe recipe) {
+        ModifiedRecipe(RegistryAccess registryAccess, RecipeHolder<SmeltingRecipe> recipeHolder) {
+            SmeltingRecipe recipe = recipeHolder.value();
             this.xp = recipe.getExperience() / 2;
             this.burnTime = recipe.getCookingTime() / 2;
             this.output = recipe.getResultItem(registryAccess);
-            this.originalRecipe = recipe;
+            this.originalRecipe = recipeHolder;
         }
 
         public float getXp() {
@@ -62,7 +64,7 @@ public class CrudeFurnaceRecipeHelper {
             return this.output;
         }
 
-        public SmeltingRecipe getOriginalRecipe() {
+        public RecipeHolder<SmeltingRecipe> getRecipeHolder() {
             return this.originalRecipe;
         }
     }

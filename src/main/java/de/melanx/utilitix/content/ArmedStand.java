@@ -46,8 +46,8 @@ public class ArmedStand extends ArmorStandItem {
 
         if (level.noCollision(null, box) && level.getEntities(null, box).isEmpty()) {
             if (level instanceof ServerLevel serverlevel) {
-                Consumer<ArmorStand> consumer = EntityType.createDefaultStackConfig(serverlevel, stack, context.getPlayer());
-                ArmorStand stand = EntityType.ARMOR_STAND.create(serverlevel, stack.getTag(), consumer, pos, MobSpawnType.SPAWN_EGG, true, true);
+                Consumer<ArmorStand> consumer = EntityType.createDefaultStackConfig(serverlevel, stack, context.getPlayer()); // todo check stack.getTag()
+                ArmorStand stand = EntityType.ARMOR_STAND.create(serverlevel, consumer, pos, MobSpawnType.SPAWN_EGG, true, true);
                 if (stand == null) {
                     return InteractionResult.FAIL;
                 }
@@ -72,7 +72,7 @@ public class ArmedStand extends ArmorStandItem {
         armorStand.getPersistentData().putBoolean("UtilitiXArmorStand", true);
         armorStand.getPersistentData().putInt("UtilitiXPoseIdx", 0);
         if (!UtilitiXConfig.armorStandPoses.isEmpty()) {
-            UtilitiXConfig.armorStandPoses.get(0).apply(armorStand);
+            UtilitiXConfig.armorStandPoses.getFirst().apply(armorStand);
         }
     }
 }

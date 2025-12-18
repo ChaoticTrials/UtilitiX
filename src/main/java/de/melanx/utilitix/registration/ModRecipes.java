@@ -6,7 +6,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import org.moddingx.libx.annotation.registration.Reg.Name;
 import org.moddingx.libx.annotation.registration.RegisterClass;
 
-@RegisterClass(registry = "RECIPE_SERIALIZERS")
+@RegisterClass(registry = "RECIPE_SERIALIZER")
 public class ModRecipes {
 
     @Name("brewery_serializer")

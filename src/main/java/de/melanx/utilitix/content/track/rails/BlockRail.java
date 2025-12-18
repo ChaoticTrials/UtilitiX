@@ -15,7 +15,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.RailShape;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.moddingx.libx.mod.ModX;
 import org.moddingx.libx.registration.Registerable;
 import org.moddingx.libx.registration.RegistrationContext;
@@ -49,11 +48,6 @@ public abstract class BlockRail extends BaseRailBlock implements Registerable {
     }
 
     @Override
-    public void initTracking(RegistrationContext ctx, TrackingCollector builder) throws ReflectiveOperationException {
-        builder.track(ForgeRegistries.ITEMS, BlockRail.class.getDeclaredField("item"));
-    }
-
-    @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(this.getShapeProperty());
         builder.add(BlockStateProperties.WATERLOGGED);
@@ -65,7 +59,6 @@ public abstract class BlockRail extends BaseRailBlock implements Registerable {
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
     public BlockState rotate(@Nonnull BlockState state, @Nonnull Rotation rotation) {
         return switch (rotation) {
             case CLOCKWISE_180 -> switch (state.getValue(this.getShapeProperty())) {
@@ -109,11 +102,10 @@ public abstract class BlockRail extends BaseRailBlock implements Registerable {
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
     public BlockState mirror(BlockState state, Mirror mirror) {
         RailShape railshape = state.getValue(this.getShapeProperty());
         switch (mirror) {
-            case LEFT_RIGHT:
+            case LEFT_RIGHT -> {
                 return switch (railshape) {
                     case ASCENDING_NORTH -> state.setValue(this.getShapeProperty(), RailShape.ASCENDING_SOUTH);
                     case ASCENDING_SOUTH -> state.setValue(this.getShapeProperty(), RailShape.ASCENDING_NORTH);
@@ -123,25 +115,17 @@ public abstract class BlockRail extends BaseRailBlock implements Registerable {
                     case NORTH_EAST -> state.setValue(this.getShapeProperty(), RailShape.SOUTH_EAST);
                     default -> super.mirror(state, mirror);
                 };
-            case FRONT_BACK:
+            }
+            case FRONT_BACK -> {
                 switch (railshape) {
-                    case ASCENDING_EAST:
-                        return state.setValue(this.getShapeProperty(), RailShape.ASCENDING_WEST);
-                    case ASCENDING_WEST:
-                        return state.setValue(this.getShapeProperty(), RailShape.ASCENDING_EAST);
-                    case ASCENDING_NORTH:
-                    case ASCENDING_SOUTH:
-                    default:
-                        break;
-                    case SOUTH_EAST:
-                        return state.setValue(this.getShapeProperty(), RailShape.SOUTH_WEST);
-                    case SOUTH_WEST:
-                        return state.setValue(this.getShapeProperty(), RailShape.SOUTH_EAST);
-                    case NORTH_WEST:
-                        return state.setValue(this.getShapeProperty(), RailShape.NORTH_EAST);
-                    case NORTH_EAST:
-                        return state.setValue(this.getShapeProperty(), RailShape.NORTH_WEST);
+                    case ASCENDING_EAST -> state.setValue(this.getShapeProperty(), RailShape.ASCENDING_WEST);
+                    case ASCENDING_WEST -> state.setValue(this.getShapeProperty(), RailShape.ASCENDING_EAST);
+                    case SOUTH_EAST -> state.setValue(this.getShapeProperty(), RailShape.SOUTH_WEST);
+                    case SOUTH_WEST -> state.setValue(this.getShapeProperty(), RailShape.SOUTH_EAST);
+                    case NORTH_WEST -> state.setValue(this.getShapeProperty(), RailShape.NORTH_EAST);
+                    case NORTH_EAST -> state.setValue(this.getShapeProperty(), RailShape.NORTH_WEST);
                 }
+            }
         }
 
         return super.mirror(state, mirror);
@@ -153,7 +137,7 @@ public abstract class BlockRail extends BaseRailBlock implements Registerable {
     }
 
     @Override
-    public boolean canMakeSlopes(BlockState state, BlockGetter level, BlockPos pos) {
+    public boolean canMakeSlopes(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos) {
         return this.hasSlopes;
     }
 }

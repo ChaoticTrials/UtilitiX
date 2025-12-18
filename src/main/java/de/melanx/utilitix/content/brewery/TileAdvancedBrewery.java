@@ -7,31 +7,27 @@ import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.registration.ModRecipeTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 import org.moddingx.libx.base.tile.BlockEntityBase;
 import org.moddingx.libx.base.tile.TickingBlock;
-import org.moddingx.libx.capability.ItemCapabilities;
 import org.moddingx.libx.crafting.RecipeHelper;
 import org.moddingx.libx.inventory.BaseItemStackHandler;
-import org.moddingx.libx.inventory.VanillaWrapper;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.Optional;
 
 //Ingredient-Slot: 0
 //Potion-Ingredient-Slot R: 1
@@ -46,10 +42,10 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickingBlock
     private int fuel = 0;
 
     private final BaseItemStackHandler inventory;
-    private final Container vanilla;
-    private final LazyOptional<IItemHandler> inventoryTop;
-    private final LazyOptional<IItemHandler> inventorySide;
-    private final LazyOptional<IItemHandler> inventoryBottom;
+    private final RecipeWrapper recipeInput;
+//    private final IItemHandler inventoryTop; todo
+//    private final IItemHandler inventorySide;
+//    private final IItemHandler inventoryBottom;
 
     public TileAdvancedBrewery(BlockEntityType<?> blockEntityTypeIn, BlockPos pos, BlockState state) {
         super(blockEntityTypeIn, pos, state);
@@ -63,10 +59,10 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickingBlock
                 .validator(stack -> stack.getItem() == Items.BLAZE_POWDER, 4)
                 .slotLimit(1, 1, 2, 3)
                 .build();
-        this.vanilla = new VanillaWrapper(this.inventory, this::setChanged);
-        this.inventoryTop = ItemCapabilities.create(this::getInventory, slot -> false, (slot, stack) -> slot == 0 || slot == 3).cast();
-        this.inventorySide = ItemCapabilities.create(this::getInventory, slot -> false, (slot, stack) -> slot == 1 || slot == 2 || slot == 4).cast();
-        this.inventoryBottom = ItemCapabilities.create(this::getInventory, slot -> slot == 0 || slot == 1 || slot == 2, (slot, stack) -> false).cast();
+        this.recipeInput = new RecipeWrapper(this.inventory);
+//        this.inventoryTop = ItemCapabilities.create(this::getInventory, slot -> false, (slot, stack) -> slot == 0 || slot == 3).cast(); todo
+//        this.inventorySide = ItemCapabilities.create(this::getInventory, slot -> false, (slot, stack) -> slot == 1 || slot == 2 || slot == 4).cast();
+//        this.inventoryBottom = ItemCapabilities.create(this::getInventory, slot -> slot == 0 || slot == 1 || slot == 2, (slot, stack) -> false).cast();
     }
 
     @Override
@@ -83,18 +79,19 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickingBlock
                     this.setDispatchable();
                 }
             }
-            BreweryRecipe recipe = this.level.getRecipeManager().getRecipeFor(ModRecipeTypes.BREWERY, this.vanilla, this.level).orElse(null);
-            if ((this.fuel <= 0 || recipe == null) && this.brewTime > 0) {
+
+            Optional<RecipeHolder<BreweryRecipe>> recipe = this.level.getRecipeManager().getRecipeFor(ModRecipeTypes.BREWERY, this.recipeInput, this.level);
+            if ((this.fuel <= 0 || recipe.isEmpty()) && this.brewTime > 0) {
                 this.brewTime = 0;
                 this.setChanged();
                 this.setDispatchable();
-            } else if (recipe != null && this.fuel >= 0) {
+            } else if (recipe.isPresent() && this.fuel >= 0) {
                 if (this.brewTime <= 0) {
                     this.setDispatchable();
                 }
                 this.brewTime = Mth.clamp(this.brewTime + 1, 0, MAX_BREW_TIME);
                 if (this.brewTime >= MAX_BREW_TIME) {
-                    PotionOutput output = recipe.getPotionResult(this.vanilla);
+                    PotionOutput output = recipe.get().value().getPotionResult(recipeInput);
                     if (output == null || output.getMain().isEmpty()) {
                         this.consumeItem(3);
                     } else {
@@ -158,22 +155,22 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickingBlock
         }
     }
 
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            if (side == null) {
-                return LazyOptional.of(this::getInventory).cast();
-            }
-            return switch (side) {
-                case DOWN -> this.inventoryBottom.cast();
-                case UP -> this.inventoryTop.cast();
-                default -> this.inventorySide.cast();
-            };
-        } else {
-            return super.getCapability(cap, side);
-        }
-    }
+//    @Nonnull todo
+//    @Override
+//    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+//        if (cap == ForgeCapabilities.ITEM_HANDLER) {
+//            if (side == null) {
+//                return LazyOptional.of(this::getInventory).cast();
+//            }
+//            return switch (side) {
+//                case DOWN -> this.inventoryBottom.cast();
+//                case UP -> this.inventoryTop.cast();
+//                default -> this.inventorySide.cast();
+//            };
+//        } else {
+//            return super.getCapability(cap, side);
+//        }
+//    }
 
     @Nonnull
     public IItemHandlerModifiable getInventory() {
@@ -193,41 +190,41 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickingBlock
         return this.fuel;
     }
 
-
     @Override
-    public void load(@Nonnull CompoundTag nbt) {
-        super.load(nbt);
-        this.inventory.deserializeNBT(nbt.getCompound("Inventory"));
-        this.brewTime = nbt.getInt("brewTime");
-        this.fuel = nbt.getInt("fuel");
+    protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        this.inventory.deserializeNBT(registries, tag.getCompound("Inventory"));
+        this.brewTime = tag.getInt("brewTime");
+        this.fuel = tag.getInt("fuel");
     }
 
     @Override
-    public void saveAdditional(CompoundTag compound) {
-        compound.put("Inventory", this.inventory.serializeNBT());
-        compound.putInt("brewTime", this.brewTime);
-        compound.putInt("fuel", this.fuel);
+    protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.put("Inventory", this.inventory.serializeNBT(registries));
+        tag.putInt("brewTime", this.brewTime);
+        tag.putInt("fuel", this.fuel);
+    }
+
+    @Override
+    public void handleUpdateTag(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider lookupProvider) {
+        if (this.level != null && this.level.isClientSide) {
+            super.handleUpdateTag(tag, lookupProvider);
+            this.inventory.deserializeNBT(lookupProvider, tag.getCompound("Inventory"));
+            this.brewTime = tag.getInt("brewTime");
+            this.fuel = tag.getInt("fuel");
+        }
     }
 
     @Nonnull
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag nbt = super.getUpdateTag();
+    public CompoundTag getUpdateTag(@Nonnull HolderLookup.Provider registries) {
+        CompoundTag tag = super.getUpdateTag(registries);
         if (this.level != null && !this.level.isClientSide) {
-            nbt.put("Inventory", this.inventory.serializeNBT());
-            nbt.putInt("brewTime", this.brewTime);
-            nbt.putInt("fuel", this.fuel);
+            tag.put("Inventory", this.inventory.serializeNBT(registries));
+            tag.putInt("brewTime", this.brewTime);
+            tag.putInt("fuel", this.fuel);
         }
-        return nbt;
-    }
-
-    @Override
-    public void handleUpdateTag(@Nonnull CompoundTag nbt) {
-        if (this.level != null && this.level.isClientSide) {
-            super.handleUpdateTag(nbt);
-            this.inventory.deserializeNBT(nbt.getCompound("Inventory"));
-            this.brewTime = nbt.getInt("brewTime");
-            this.fuel = nbt.getInt("fuel");
-        }
+        return tag;
     }
 }

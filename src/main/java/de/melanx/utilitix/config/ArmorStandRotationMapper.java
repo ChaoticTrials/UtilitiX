@@ -3,6 +3,7 @@ package de.melanx.utilitix.config;
 import com.google.gson.JsonObject;
 import de.melanx.utilitix.util.ArmorStandRotation;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import org.moddingx.libx.annotation.config.RegisterMapper;
 import org.moddingx.libx.config.gui.ConfigEditor;
 import org.moddingx.libx.config.mapper.ValueMapper;
@@ -32,13 +33,11 @@ public class ArmorStandRotationMapper implements ValueMapper<ArmorStandRotation,
     }
 
     @Override
-    public ArmorStandRotation fromNetwork(FriendlyByteBuf buffer) {
-        return ArmorStandRotation.read(buffer);
-    }
-
-    @Override
-    public void toNetwork(ArmorStandRotation value, FriendlyByteBuf buffer) {
-        value.write(buffer);
+    public StreamCodec<? super FriendlyByteBuf, ArmorStandRotation> streamCodec() {
+        return StreamCodec.of(
+                (buffer, value) -> value.write(buffer),
+                ArmorStandRotation::read
+        );
     }
 
     @Override

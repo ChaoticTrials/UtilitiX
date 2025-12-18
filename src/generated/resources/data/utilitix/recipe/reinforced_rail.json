@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "i": {
+      "tag": "c:ingots/iron"
+    },
+    "l": {
+      "tag": "c:gems/lapis"
+    },
+    "s": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "pattern": [
+    "i i",
+    "lsl",
+    "i i"
+  ],
+  "result": {
+    "count": 16,
+    "id": "utilitix:reinforced_rail"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "anvil_cost": 1,
+  "description": {
+    "translate": "enchantment.utilitix.bell_range"
+  },
+  "max_cost": {
+    "base": 20,
+    "per_level_above_first": 9
+  },
+  "max_level": 3,
+  "min_cost": {
+    "base": 15,
+    "per_level_above_first": 9
+  },
+  "slots": [
+    "hand"
+  ],
+  "supported_items": [
+    "utilitix:hand_bell",
+    "utilitix:mob_bell"
+  ],
+  "weight": 1
+}

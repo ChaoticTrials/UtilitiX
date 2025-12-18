@@ -3,17 +3,21 @@ package de.melanx.utilitix.content.slime;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.network.StickyChunkUpdate;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.network.PacketDistributor;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StickyChunk {
+public class StickyChunk implements INBTSerializable<CompoundTag> {
 
     @Nullable
     private LevelChunk chunk;
@@ -62,7 +66,7 @@ public class StickyChunk {
     public void sync() {
         if (this.chunk != null && !this.chunk.getLevel().isClientSide) {
             this.chunk.setUnsaved(true);
-            UtilitiX.getNetwork().channel.send(PacketDistributor.TRACKING_CHUNK.with(() -> this.chunk), new StickyChunkUpdate(this.chunk.getPos(), this));
+            PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) this.chunk.getLevel(), this.chunk.getPos(), new StickyChunkUpdate.Message(this.chunk.getPos(), this));
         }
     }
     
@@ -136,7 +140,17 @@ public class StickyChunk {
         this.sections.putAll(networkChunk.sections);
         networkChunk.sections.clear();
     }
-    
+
+    @Override
+    public CompoundTag serializeNBT(@Nonnull HolderLookup.Provider provider) {
+        return this.write();
+    }
+
+    @Override
+    public void deserializeNBT(@Nonnull HolderLookup.Provider provider, @Nonnull CompoundTag nbt) {
+        this.read(nbt);
+    }
+
     public interface ChunkAction {
 
         @Nullable

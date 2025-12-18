@@ -15,9 +15,9 @@ import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.RailShape;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
 import org.moddingx.libx.datagen.DatagenContext;
 import org.moddingx.libx.datagen.provider.model.BlockStateProviderBase;
 
@@ -25,13 +25,13 @@ import java.util.function.Supplier;
 
 public class BlockStateProvider extends BlockStateProviderBase {
 
-    public static final ResourceLocation LINKED_REPEATER_PARENT = new ResourceLocation(UtilitiX.getInstance().modid, "block/linked_repeater_base");
+    public static final ResourceLocation LINKED_REPEATER_PARENT = ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "block/linked_repeater_base");
 
-    public static final ResourceLocation TEXTURE_REPEATER_OFF = new ResourceLocation("minecraft", "block/repeater");
-    public static final ResourceLocation TEXTURE_REPEATER_ON = new ResourceLocation("minecraft", "block/repeater_on");
+    public static final ResourceLocation TEXTURE_REPEATER_OFF = ResourceLocation.fromNamespaceAndPath("minecraft", "block/repeater");
+    public static final ResourceLocation TEXTURE_REPEATER_ON = ResourceLocation.fromNamespaceAndPath("minecraft", "block/repeater_on");
 
-    public static final ResourceLocation TEXTURE_TORCH_OFF = new ResourceLocation("minecraft", "block/redstone_torch_off");
-    public static final ResourceLocation TEXTURE_TORCH_ON = new ResourceLocation("minecraft", "block/redstone_torch");
+    public static final ResourceLocation TEXTURE_TORCH_OFF = ResourceLocation.fromNamespaceAndPath("minecraft", "block/redstone_torch_off");
+    public static final ResourceLocation TEXTURE_TORCH_ON = ResourceLocation.fromNamespaceAndPath("minecraft", "block/redstone_torch");
 
     public BlockStateProvider(DatagenContext context) {
         super(context);
@@ -41,8 +41,8 @@ public class BlockStateProvider extends BlockStateProviderBase {
     protected void setup() {
         this.manualState(ModBlocks.weakRedstoneTorch);
         this.manualState(ModBlocks.weakRedstoneTorch.wallTorch);
-        this.manualModel(ModBlocks.experienceCrystal);
-        this.manualModel(ModBlocks.advancedBrewery);
+//        this.manualModel(ModBlocks.experienceCrystal); todo
+//        this.manualModel(ModBlocks.advancedBrewery);
     }
 
     @Override
@@ -90,13 +90,13 @@ public class BlockStateProvider extends BlockStateProviderBase {
 //            if (block.getStateContainer().getProperties().contains(BlockStateProperties.RAIL_SHAPE)) {
 //                VariantBlockStateBuilder builder = this.getVariantBuilder(block);
 //                ModelFile modelStraight = this.models().withExistingParent(id.getPath(), STRAIGHT_RAIL_PARENT)
-//                        .texture("rail", new ResourceLocation(id.getNamespace(), "block/" + id.getPath()));
+//                        .texture("rail", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath()));
 //                ModelFile modelCorner = this.models().withExistingParent(id.getPath() + "_corner", CURVED_RAIL_PARENT)
-//                        .texture("rail", new ResourceLocation(id.getNamespace(), "block/" + id.getPath() + "_corner"));
+//                        .texture("rail", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath() + "_corner"));
 //                ModelFile modelRaisedNE = this.models().withExistingParent(id.getPath() + "_ascending_ne", RAISED_RAIL_NE_PARENT)
-//                        .texture("rail", new ResourceLocation(id.getNamespace(), "block/" + id.getPath()));
+//                        .texture("rail", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath()));
 //                ModelFile modelRaisedSW = this.models().withExistingParent(id.getPath() + "_ascending_sw", RAISED_RAIL_SW_PARENT)
-//                        .texture("rail", new ResourceLocation(id.getNamespace(), "block/" + id.getPath()));
+//                        .texture("rail", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath()));
 //                builder.partialState().with(BlockStateProperties.RAIL_SHAPE, RailShape.NORTH_SOUTH).addModels(new ConfiguredModel(modelStraight, 0, 0, false));
 //                builder.partialState().with(BlockStateProperties.RAIL_SHAPE, RailShape.EAST_WEST).addModels(new ConfiguredModel(modelStraight, 0, 90, false));
 //                builder.partialState().with(BlockStateProperties.RAIL_SHAPE, RailShape.ASCENDING_EAST).addModels(new ConfiguredModel(modelRaisedNE, 0, 90, false));
@@ -110,18 +110,18 @@ public class BlockStateProvider extends BlockStateProviderBase {
 //            } else if (block.getStateContainer().getProperties().contains(BlockStateProperties.RAIL_SHAPE_STRAIGHT)) {
 //                VariantBlockStateBuilder builder = this.getVariantBuilder(block);
 //                ModelFile modelStraight = this.models().withExistingParent(id.getPath(), STRAIGHT_RAIL_PARENT)
-//                        .texture("rail", new ResourceLocation(id.getNamespace(), "block/" + id.getPath()));
+//                        .texture("rail", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath()));
 //                ModelFile modelRaisedNE = this.models().withExistingParent(id.getPath() + "_ascending_ne", RAISED_RAIL_NE_PARENT)
-//                        .texture("rail", new ResourceLocation(id.getNamespace(), "block/" + id.getPath()));
+//                        .texture("rail", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath()));
 //                ModelFile modelRaisedSW = this.models().withExistingParent(id.getPath() + "_ascending_sw", RAISED_RAIL_SW_PARENT)
-//                        .texture("rail", new ResourceLocation(id.getNamespace(), "block/" + id.getPath()));
+//                        .texture("rail", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath()));
 //                if (block.getStateContainer().getProperties().contains(BlockStateProperties.POWERED)) {
 //                    ModelFile modelStraightPowered = this.models().withExistingParent(id.getPath() + "_on", STRAIGHT_RAIL_PARENT)
-//                            .texture("rail", new ResourceLocation(id.getNamespace(), "block/" + id.getPath() + "_on"));
+//                            .texture("rail", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath() + "_on"));
 //                    ModelFile modelRaisedNEPowered = this.models().withExistingParent(id.getPath() + "_ascending_ne_on", RAISED_RAIL_NE_PARENT)
-//                            .texture("rail", new ResourceLocation(id.getNamespace(), "block/" + id.getPath() + "_on"));
+//                            .texture("rail", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath() + "_on"));
 //                    ModelFile modelRaisedSWPowered = this.models().withExistingParent(id.getPath() + "_ascending_sw_on", RAISED_RAIL_SW_PARENT)
-//                            .texture("rail", new ResourceLocation(id.getNamespace(), "block/" + id.getPath() + "_on"));
+//                            .texture("rail", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath() + "_on"));
 //                    builder.partialState().with(BlockStateProperties.RAIL_SHAPE_STRAIGHT, RailShape.NORTH_SOUTH).with(BlockStateProperties.POWERED, false).addModels(new ConfiguredModel(modelStraight, 0, 0, false));
 //                    builder.partialState().with(BlockStateProperties.RAIL_SHAPE_STRAIGHT, RailShape.EAST_WEST).with(BlockStateProperties.POWERED, false).addModels(new ConfiguredModel(modelStraight, 0, 90, false));
 //                    builder.partialState().with(BlockStateProperties.RAIL_SHAPE_STRAIGHT, RailShape.ASCENDING_EAST).with(BlockStateProperties.POWERED, false).addModels(new ConfiguredModel(modelRaisedNE, 0, 90, false));
@@ -143,7 +143,7 @@ public class BlockStateProvider extends BlockStateProviderBase {
 //                    builder.partialState().with(BlockStateProperties.RAIL_SHAPE_STRAIGHT, RailShape.ASCENDING_SOUTH).addModels(new ConfiguredModel(modelRaisedSW, 0, 0, false));
 //                }
 //            }
-        } else if (block == ModBlocks.crudeFurnace) {
+        } else if (/*block == ModBlocks.crudeFurnace todo */ false) {
             VariantBlockStateBuilder builder = this.getVariantBuilder(block);
             ModelFile modelOn = this.models().orientable(id.getPath() + "_on",
                     this.modLoc("block/" + id.getPath() + "_side"),
@@ -188,18 +188,18 @@ public class BlockStateProvider extends BlockStateProviderBase {
 
     @Override
     protected ModelFile defaultModel(ResourceLocation id, Block block) {
-        if (block == ModBlocks.linkedRepeater || block instanceof BaseRailBlock || block == ModBlocks.crudeFurnace) {
+        if (block == ModBlocks.linkedRepeater || block instanceof BaseRailBlock /* todo|| block == ModBlocks.crudeFurnace*/) {
             return null;
         } else if (block instanceof ComparatorRedirector) {
-            ResourceLocation top = new ResourceLocation(UtilitiX.getInstance().modid, "block/comparator_redirector_top");
-            ResourceLocation bottom = new ResourceLocation(UtilitiX.getInstance().modid, "block/comparator_redirector_bottom");
+            ResourceLocation top = ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "block/comparator_redirector_top");
+            ResourceLocation bottom = ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "block/comparator_redirector_bottom");
             if (((ComparatorRedirector) block).direction == Direction.DOWN) {
                 ResourceLocation tmp = top;
                 top = bottom;
                 bottom = tmp;
             }
             return this.models().cubeBottomTop(id.getPath(),
-                    new ResourceLocation(UtilitiX.getInstance().modid, "block/comparator_redirector_side"),
+                    ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "block/comparator_redirector_side"),
                     top, bottom
             );
         } else {

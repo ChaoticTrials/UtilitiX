@@ -2,6 +2,7 @@ package de.melanx.utilitix.content.brewery;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -24,9 +25,9 @@ import java.util.List;
 
 public class ItemFailedPotion extends ItemBase {
 
-    private static final List<MobEffect> VERY_LONG_POTIONS = ImmutableList.of(MobEffects.BAD_OMEN, MobEffects.UNLUCK);
-    private static final List<MobEffect> LONG_POTIONS = ImmutableList.of(MobEffects.MOVEMENT_SLOWDOWN, MobEffects.POISON, MobEffects.HUNGER, MobEffects.WEAKNESS);
-    private static final List<MobEffect> SHORT_POTIONS = ImmutableList.of(MobEffects.CONFUSION, MobEffects.BLINDNESS, MobEffects.LEVITATION);
+    private static final List<Holder<MobEffect>> VERY_LONG_POTIONS = ImmutableList.of(MobEffects.BAD_OMEN, MobEffects.UNLUCK);
+    private static final List<Holder<MobEffect>> LONG_POTIONS = ImmutableList.of(MobEffects.MOVEMENT_SLOWDOWN, MobEffects.POISON, MobEffects.HUNGER, MobEffects.WEAKNESS);
+    private static final List<Holder<MobEffect>> SHORT_POTIONS = ImmutableList.of(MobEffects.CONFUSION, MobEffects.BLINDNESS, MobEffects.LEVITATION);
 
     public ItemFailedPotion(ModX mod, Properties properties) {
         super(mod, properties);
@@ -62,7 +63,7 @@ public class ItemFailedPotion extends ItemBase {
     }
 
     @Override
-    public int getUseDuration(@Nonnull ItemStack stack) {
+    public int getUseDuration(@Nonnull ItemStack stack, @Nonnull LivingEntity entity) {
         return 32;
     }
 

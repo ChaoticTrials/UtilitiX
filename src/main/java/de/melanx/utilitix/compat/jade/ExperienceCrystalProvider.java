@@ -34,7 +34,7 @@ public class ExperienceCrystalProvider implements IBlockComponentProvider, IServ
         }
 
         int xp = accessor.getServerData().getInt("Xp");
-        IElementHelper helper = tooltip.getElementHelper();
+        IElementHelper helper = IElementHelper.get();
         tooltip.add(helper.smallItem(XP_BOTTLE));
         if (accessor.getServerData().getBoolean("ShowDetails")) {
             tooltip.append(helper.text(Component.translatable("jade.utilitix.experience_crystal.xp")).translate(ElementHelper.SMALL_ITEM_OFFSET));

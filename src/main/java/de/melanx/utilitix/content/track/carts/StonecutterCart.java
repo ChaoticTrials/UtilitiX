@@ -55,10 +55,10 @@ public class StonecutterCart extends Cart {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(MODE, StonecutterCartMode.TOP);
-        this.entityData.define(IN_REVERSE, false);
+    protected void defineSynchedData(@Nonnull SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(MODE, StonecutterCartMode.TOP);
+        builder.define(IN_REVERSE, false);
     }
 
     @Override
@@ -78,8 +78,8 @@ public class StonecutterCart extends Cart {
     }
 
     @Override
-    public void onRemovedFromWorld() {
-        super.onRemovedFromWorld();
+    public void onRemovedFromLevel() {
+        super.onRemovedFromLevel();
         if (this.breakingBlock != null) {
             this.level().destroyBlockProgress(this.getId(), this.breakingBlock, -1);
         }
@@ -204,8 +204,8 @@ public class StonecutterCart extends Cart {
         if (this.mode != this.entityData.get(MODE)) {
             this.entityData.set(MODE, this.mode);
         }
-        this.breakingBlock = NbtUtils.readBlockPos(compound.getCompound("BreakPos"));
-        this.lastSuccess = NbtUtils.readBlockPos(compound.getCompound("LastSuccessfulBreak"));
+        this.breakingBlock = NbtUtils.readBlockPos(compound, "BreakPos").orElse(null);
+        this.lastSuccess = NbtUtils.readBlockPos(compound, "LastSuccessfulBreak").orElse(null);
         this.breakProgress = compound.getInt("BreakProgress");
         if (compound.contains("StoredMotion", Tag.TAG_COMPOUND)) {
             CompoundTag motionNbt = compound.getCompound("StoredMotion");

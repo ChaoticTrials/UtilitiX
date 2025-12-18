@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "minecraft:bell"
+    },
+    "s": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "pattern": [
+    " s",
+    "sb"
+  ],
+  "result": {
+    "count": 1,
+    "id": "utilitix:hand_bell"
+  }
+}

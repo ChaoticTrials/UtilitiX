@@ -7,31 +7,29 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nonnull;
 
 public class ScreenCrudeFurnace extends AbstractContainerScreen<ContainerMenuCrudeFurnace> {
 
-    private static final ResourceLocation GUI = new ResourceLocation("minecraft", "textures/gui/container/furnace.png");
+    private static final ResourceLocation GUI = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/gui/container/furnace.png");
 
     public int relX;
     public int relY;
 
     public ScreenCrudeFurnace(ContainerMenuCrudeFurnace menu, Inventory inv, Component title) {
         super(menu, inv, title);
-        MinecraftForge.EVENT_BUS.addListener(this::onGuiInit);
     }
 
-    private void onGuiInit(ScreenEvent.Init event) {
-        this.relX = (event.getScreen().width - this.imageWidth) / 2;
-        this.relY = (event.getScreen().height - this.imageHeight) / 2;
+    @Override
+    protected void init() {
+        this.relX = (this.width - this.imageWidth) / 2;
+        this.relY = (this.height - this.imageHeight) / 2;
     }
 
     @Override
     public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics);
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }

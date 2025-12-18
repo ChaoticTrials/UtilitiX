@@ -1,9 +1,0 @@
-{
-  "type": "utilitix:brewery_serializer",
-  "action": {
-    "type": "clone"
-  },
-  "input": {
-    "item": "minecraft:netherite_scrap"
-  }
-}

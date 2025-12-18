@@ -8,7 +8,6 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import mezz.jei.common.Constants;
 import mezz.jei.common.platform.IPlatformRecipeHelper;
 import mezz.jei.common.platform.Services;
 import mezz.jei.library.util.RecipeUtil;
@@ -21,18 +20,17 @@ import javax.annotation.Nonnull;
 
 public class GildingCategory implements IRecipeCategory<SmithingTransformRecipe> {
 
-    private final IDrawable background;
     private final IDrawable icon;
 
     public GildingCategory(IGuiHelper helper) {
-        this.background = helper.createDrawable(Constants.RECIPE_GUI_VANILLA, 0, 168, 108, 18);
+        // todo remove this.background = helper.createDrawable(Constants.RECIPE_GUI_VANILLA, 0, 168, 108, 18);
         this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Blocks.SMITHING_TABLE));
     }
 
     @Nonnull
     @Override
     public RecipeType<SmithingTransformRecipe> getRecipeType() {
-        return RecipeTypes.GILDING;
+        return UtiliJei.GILDING_RECIPE;
     }
 
     @Nonnull
@@ -41,10 +39,14 @@ public class GildingCategory implements IRecipeCategory<SmithingTransformRecipe>
         return Component.translatable("jei.utilitix.gilding");
     }
 
-    @Nonnull
     @Override
-    public IDrawable getBackground() {
-        return this.background;
+    public int getWidth() {
+        return 108;
+    }
+
+    @Override
+    public int getHeight() {
+        return 18;
     }
 
     @Nonnull

@@ -37,7 +37,7 @@ public class AdvancedBreweryProvider implements IBlockComponentProvider, IServer
         int fuel = tag.getInt("fuel");
         int time = tag.getInt("time");
 
-        IElementHelper helper = tooltip.getElementHelper();
+        IElementHelper helper = IElementHelper.get();
 
         tooltip.add(helper.smallItem(BLAZE_POWDER));
         tooltip.append(helper.text(Component.translatable(Integer.toString(fuel))));

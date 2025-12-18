@@ -1,6 +1,5 @@
 package de.melanx.utilitix.content.brewery;
 
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,11 +12,10 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.moddingx.libx.base.tile.MenuBlockBE;
 import org.moddingx.libx.block.RotationShape;
-import org.moddingx.libx.menu.BlockEntityMenu;
 import org.moddingx.libx.mod.ModX;
 import org.moddingx.libx.registration.SetupContext;
 
@@ -33,15 +31,14 @@ public class BlockAdvancedBrewery extends MenuBlockBE<TileAdvancedBrewery, Conta
     }
 
     public BlockAdvancedBrewery(ModX mod, Properties properties, Item.Properties itemProperties) {
-        super(mod, TileAdvancedBrewery.class, BlockEntityMenu.createMenuType(ContainerMenuAdvancedBrewery::new), properties, itemProperties);
+        super(mod, TileAdvancedBrewery.class, /*todo*/null, properties, itemProperties);
         this.registerDefaultState(this.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void registerClient(SetupContext ctx) {
+    public void setupClient(SetupContext ctx) {
         BlockEntityRenderers.register(this.getBlockEntityType(), context -> new BesrAdvancedBrewery());
-        MenuScreens.register(this.menu, ScreenAdvancedBrewery::new);
     }
 
     @Nullable
@@ -56,7 +53,6 @@ public class BlockAdvancedBrewery extends MenuBlockBE<TileAdvancedBrewery, Conta
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public int getLightBlock(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos) {
         return 0;
     }
@@ -67,14 +63,12 @@ public class BlockAdvancedBrewery extends MenuBlockBE<TileAdvancedBrewery, Conta
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean useShapeForLightOcclusion(@Nonnull BlockState state) {
         return true;
     }
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
         return SHAPE.getShape(state.getValue(BlockStateProperties.HORIZONTAL_FACING));
     }

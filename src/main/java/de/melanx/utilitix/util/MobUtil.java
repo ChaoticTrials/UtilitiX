@@ -1,6 +1,8 @@
 package de.melanx.utilitix.util;
 
 import de.melanx.utilitix.UtilitiX;
+import de.melanx.utilitix.item.ItemMobYoinker;
+import de.melanx.utilitix.registration.ModDataComponentTypes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -16,6 +18,7 @@ import org.moddingx.libx.util.data.ResourceList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.Optional;
 
 public class MobUtil {
@@ -28,29 +31,26 @@ public class MobUtil {
     public static boolean storeEntityData(Player player, InteractionHand hand, LivingEntity entity, ResourceList denylist, boolean typeKeyOnly) {
         String entityKey = entity.getEncodeId();
         ItemStack stack = player.getItemInHand(hand);
-        CompoundTag nbt = stack.getOrCreateTag().copy();
-        if (entityKey == null || entityKey.equals(nbt.getString(MobUtil.ENTITY_TYPE_TAG))) {
+        ItemMobYoinker.MobData mobData = stack.get(ModDataComponentTypes.mobData);
+        if (entityKey == null || (mobData != null && entityKey.equals(mobData.entityType()))) {
             return false;
         }
 
-        if (!denylist.test(new ResourceLocation(entityKey))) {
+        if (!denylist.test(ResourceLocation.tryParse(entityKey))) {
             player.displayClientMessage(DENYLISTED_MOB, true);
             return false;
         }
 
-        nbt.putString(ENTITY_TYPE_TAG, entityKey);
-        if (!typeKeyOnly) {
-            nbt.put(MobUtil.ENTITY_DATA_TAG, entity.saveWithoutId(new CompoundTag()));
-        }
+        ItemMobYoinker.MobData newMobData = new ItemMobYoinker.MobData(entityKey, !typeKeyOnly ? entity.saveWithoutId(new CompoundTag()) : new CompoundTag());
 
         if (stack.getCount() > 1) {
             stack.shrink(1);
             ItemStack copyStack = stack.copy();
             copyStack.setCount(1);
-            copyStack.setTag(nbt);
+            copyStack.set(ModDataComponentTypes.mobData, newMobData);
             player.addItem(copyStack);
         } else {
-            stack.setTag(nbt);
+            stack.set(ModDataComponentTypes.mobData, newMobData);
             player.setItemInHand(hand, stack);
         }
 
@@ -60,7 +60,11 @@ public class MobUtil {
 
     @Nullable
     public static MutableComponent getCurrentMob(ItemStack stack) {
-        String s = stack.getOrCreateTag().getString(MobUtil.ENTITY_TYPE_TAG);
+        if (!stack.has(ModDataComponentTypes.mobData)) {
+            return null;
+        }
+
+        String s = Objects.requireNonNull(stack.get(ModDataComponentTypes.mobData)).entityType();
         Optional<EntityType<?>> entityType = EntityType.byString(s);
 
         return entityType.map(MobUtil::getCurrentMob).orElse(null);

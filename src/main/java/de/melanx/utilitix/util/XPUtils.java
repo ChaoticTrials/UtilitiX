@@ -11,8 +11,8 @@ import java.util.Set;
 public class XPUtils {
 
     public static final Set<TagKey<Fluid>> XP_FLUID_TAGS = Set.of(
-            TagKey.create(Registries.FLUID, new ResourceLocation("forge", "experience")),
-            TagKey.create(Registries.FLUID, new ResourceLocation("forge", "xpjuice"))
+            TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath("forge", "experience")),
+            TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath("forge", "xpjuice"))
     );
 
     public static int getXpBarCap(int level) {

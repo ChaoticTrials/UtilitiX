@@ -4,14 +4,14 @@ import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.Level;
@@ -19,16 +19,12 @@ import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.moddingx.libx.base.tile.BlockEntityBase;
 import org.moddingx.libx.base.tile.TickingBlock;
-import org.moddingx.libx.capability.ItemCapabilities;
 import org.moddingx.libx.inventory.BaseItemStackHandler;
+import org.moddingx.libx.inventory.FilterItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,11 +32,11 @@ import java.util.List;
 
 public class TileCrudeFurnace extends BlockEntityBase implements TickingBlock {
 
-    private final Object2IntOpenHashMap<ResourceLocation> recipes = new Object2IntOpenHashMap<>();
+    private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
     private final BaseItemStackHandler inventory;
-    private final LazyOptional<IItemHandler> fuel;
-    private final LazyOptional<IItemHandler> input;
-    private final LazyOptional<IItemHandler> output;
+    private final IItemHandler fuel;
+    private final IItemHandler input;
+    private final IItemHandler output;
     private CrudeFurnaceRecipeHelper.ModifiedRecipe recipe;
     private int maxFuelTime;
     private int fuelTime;
@@ -51,7 +47,7 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickingBlock {
     public TileCrudeFurnace(BlockEntityType<?> blockEntityTypeIn, BlockPos pos, BlockState state) {
         super(blockEntityTypeIn, pos, state);
         this.inventory = BaseItemStackHandler.builder(5)
-                .validator(stack -> ForgeHooks.getBurnTime(stack, RecipeType.SMELTING) > 0, 0)
+                .validator(stack -> stack.getBurnTime(RecipeType.SMELTING) > 0, 0)
                 .validator(stack -> this.level != null && CrudeFurnaceRecipeHelper.getResult(this.level, stack) != null, 1)
                 .output(2)
                 .contentsChanged(() -> {
@@ -60,20 +56,10 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickingBlock {
                     this.update = true;
                 })
                 .build();
-        this.fuel = ItemCapabilities.create(this::getInventory, slot -> false, (slot, stack) -> slot == 0).cast();
-        this.input = ItemCapabilities.create(this::getInventory, slot -> false, (slot, stack) -> slot == 1).cast();
-        this.output = ItemCapabilities.create(this::getInventory, slot -> slot == 2, (slot, stack) -> false).cast();
-    }
 
-    private boolean isItemValid(int slot, ItemStack stack) {
-        if (slot == 0) {
-            return ForgeHooks.getBurnTime(stack, RecipeType.SMELTING) > 0;
-        }
-        if (slot == 1) {
-            return this.level != null && CrudeFurnaceRecipeHelper.getResult(this.level, stack) != null;
-        }
-
-        return false;
+        this.fuel = new FilterItemHandler(this.inventory, slot -> false, (slot, stack) -> slot == 0);
+        this.input = new FilterItemHandler(this.inventory, slot -> false, (slot, stack) -> slot == 1);
+        this.output = new FilterItemHandler(this.inventory, slot -> slot == 2, (slot, stack) -> false);
     }
 
     @Override
@@ -97,7 +83,7 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickingBlock {
                     this.burnTime = 0;
                     this.inventory.getUnrestricted().extractItem(1, 1, false);
                     this.inventory.getUnrestricted().insertItem(2, result.copy(), false);
-                    this.setRecipeUsed(this.recipe.getOriginalRecipe());
+                    this.setRecipeUsed(this.recipe.getRecipeHolder());
                     this.updateRecipe();
                     this.setDispatchable();
                 }
@@ -109,7 +95,7 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickingBlock {
             }
 
             if (this.recipe != null && this.fuelTime <= 0) {
-                this.fuelTime = ForgeHooks.getBurnTime(this.inventory.getStackInSlot(0), RecipeType.SMELTING) / 2;
+                this.fuelTime = this.inventory.getStackInSlot(0).getBurnTime(RecipeType.SMELTING) / 2;
                 this.maxFuelTime = this.fuelTime;
                 this.inventory.getUnrestricted().extractItem(0, 1, false);
                 this.setDispatchable();
@@ -145,22 +131,22 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickingBlock {
         return this.burnTime != 0 && this.recipe != null && this.recipe.getBurnTime() != 0 ? this.burnTime * 24 / this.recipe.getBurnTime() : 0;
     }
 
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            if (side == null) {
-                return LazyOptional.of(this::getInventory).cast();
-            }
-            return switch (side) {
-                case NORTH, EAST, SOUTH, WEST -> this.fuel.cast();
-                case UP -> this.input.cast();
-                case DOWN -> this.output.cast();
-            };
-        } else {
-            return super.getCapability(cap, side);
-        }
-    }
+//    @Nonnull
+//    @Override
+//    public <T> LazyOptional<T> getCapability(@Nonnull BlockCapability<T> cap, @Nullable Direction side) {
+//        if (cap == Capabilities.ItemHandler.BLOCK) {
+//            if (side == null) {
+//                return LazyOptional.of(this::getInventory).cast();
+//            }
+//            return switch (side) {
+//                case NORTH, EAST, SOUTH, WEST -> this.fuel.cast();
+//                case UP -> this.input.cast();
+//                case DOWN -> this.output.cast();
+//            };
+//        } else {
+//            return super.getCapability(cap, side);
+//        }
+//    }
 
     @Nonnull
     public IItemHandlerModifiable getInventory() {
@@ -176,27 +162,32 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickingBlock {
         return this.recipe;
     }
 
-    public void setRecipeUsed(@Nullable Recipe<?> recipe) {
+    public void setRecipeUsed(@Nullable RecipeHolder<?> recipe) {
         if (recipe != null) {
-            ResourceLocation id = recipe.getId();
-            this.recipes.addTo(id, 1);
+            ResourceLocation id = recipe.id();
+            this.recipesUsed.addTo(id, 1);
         }
     }
 
     // [Vanilla copy start]
     public void unlockRecipes(Player player) {
-        List<Recipe<?>> recipes = this.grantStoredRecipeExperience(player.level(), player.position());
+        List<RecipeHolder<?>> recipes = this.grantStoredRecipeExperience(player.level(), player.position());
         player.awardRecipes(recipes);
-        this.recipes.clear();
+        this.recipesUsed.clear();
     }
 
-    public List<Recipe<?>> grantStoredRecipeExperience(Level level, Vec3 pos) {
-        List<Recipe<?>> list = Lists.newArrayList();
+    public List<RecipeHolder<?>> grantStoredRecipeExperience(Level level, Vec3 pos) {
+        List<RecipeHolder<?>> list = Lists.newArrayList();
 
-        for (Object2IntMap.Entry<ResourceLocation> entry : this.recipes.object2IntEntrySet()) {
-            level.getRecipeManager().byKey(entry.getKey()).ifPresent((recipe) -> {
-                list.add(recipe);
-                splitAndSpawnExperience(level, pos, entry.getIntValue(), (new CrudeFurnaceRecipeHelper.ModifiedRecipe(level.registryAccess(), (SmeltingRecipe) recipe)).getXp());
+        for (Object2IntMap.Entry<ResourceLocation> entry : this.recipesUsed.object2IntEntrySet()) {
+            level.getRecipeManager().byKey(entry.getKey()).ifPresent(holder -> {
+                if (holder.value() instanceof SmeltingRecipe) {
+                    @SuppressWarnings("unchecked")
+                    RecipeHolder<SmeltingRecipe> smelt = (RecipeHolder<SmeltingRecipe>) holder;
+                    splitAndSpawnExperience(level, pos, entry.getIntValue(),
+                            new CrudeFurnaceRecipeHelper.ModifiedRecipe(level.registryAccess(), smelt).getXp()
+                    );
+                }
             });
         }
 
@@ -225,61 +216,61 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickingBlock {
     // [Vanilla copy end]
 
     @Override
-    public void load(@Nonnull CompoundTag nbt) {
-        super.load(nbt);
-        this.inventory.deserializeNBT(nbt.getCompound("Inventory"));
-        this.burnTime = nbt.getInt("burnTime");
-        this.fuelTime = nbt.getInt("fuelTime");
-        this.maxFuelTime = nbt.getInt("maxFuelTime");
+    public void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        this.inventory.deserializeNBT(registries, tag.getCompound("Inventory"));
+        this.burnTime = tag.getInt("burnTime");
+        this.fuelTime = tag.getInt("fuelTime");
+        this.maxFuelTime = tag.getInt("maxFuelTime");
 
-        CompoundTag recipes = nbt.getCompound("RecipesUsed");
+        CompoundTag recipes = tag.getCompound("RecipesUsed");
         for (String s : recipes.getAllKeys()) {
-            this.recipes.put(new ResourceLocation(s), recipes.getInt(s));
+            this.recipesUsed.put(ResourceLocation.tryParse(s), recipes.getInt(s));
         }
     }
 
     @Override
-    public void saveAdditional(@Nonnull CompoundTag compound) {
-        compound.put("Inventory", this.inventory.serializeNBT());
-        compound.putInt("burnTime", this.burnTime);
-        compound.putInt("fuelTime", this.fuelTime);
-        compound.putInt("maxFuelTime", this.maxFuelTime);
+    public void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
+        tag.put("Inventory", this.inventory.serializeNBT(registries));
+        tag.putInt("burnTime", this.burnTime);
+        tag.putInt("fuelTime", this.fuelTime);
+        tag.putInt("maxFuelTime", this.maxFuelTime);
 
         CompoundTag recipes = new CompoundTag();
-        this.recipes.forEach((id, xp) -> recipes.putInt(id.toString(), xp));
-        compound.put("RecipesUsed", recipes);
+        this.recipesUsed.forEach((id, xp) -> recipes.putInt(id.toString(), xp));
+        tag.put("RecipesUsed", recipes);
     }
 
     @Nonnull
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag nbt = super.getUpdateTag();
+    public CompoundTag getUpdateTag(@Nonnull HolderLookup.Provider registries) {
+        CompoundTag nbt = super.getUpdateTag(registries);
         if (this.level != null && !this.level.isClientSide) {
-            nbt.put("Inventory", this.inventory.serializeNBT());
+            nbt.put("Inventory", this.inventory.serializeNBT(registries));
             nbt.putInt("burnTime", this.burnTime);
             nbt.putInt("fuelTime", this.fuelTime);
             nbt.putInt("maxFuelTime", this.maxFuelTime);
 
             CompoundTag recipes = nbt.getCompound("RecipesUsed");
             for (String s : recipes.getAllKeys()) {
-                this.recipes.put(new ResourceLocation(s), recipes.getInt(s));
+                this.recipesUsed.put(ResourceLocation.tryParse(s), recipes.getInt(s));
             }
         }
         return nbt;
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag nbt) {
+    public void handleUpdateTag(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         if (this.level != null && this.level.isClientSide) {
-            super.handleUpdateTag(nbt);
-            this.inventory.deserializeNBT(nbt.getCompound("Inventory"));
-            this.burnTime = nbt.getInt("burnTime");
-            this.fuelTime = nbt.getInt("fuelTime");
-            this.maxFuelTime = nbt.getInt("maxFuelTime");
+            super.handleUpdateTag(tag, registries);
+            this.inventory.deserializeNBT(registries, tag.getCompound("Inventory"));
+            this.burnTime = tag.getInt("burnTime");
+            this.fuelTime = tag.getInt("fuelTime");
+            this.maxFuelTime = tag.getInt("maxFuelTime");
 
             CompoundTag recipes = new CompoundTag();
-            this.recipes.forEach((id, xp) -> recipes.putInt(id.toString(), xp));
-            nbt.put("RecipesUsed", recipes);
+            this.recipesUsed.forEach((id, xp) -> recipes.putInt(id.toString(), xp));
+            tag.put("RecipesUsed", recipes);
         }
     }
 }

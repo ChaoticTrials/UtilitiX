@@ -33,7 +33,7 @@ public class ShulkerBoatRenderer extends BoatRenderer {
     public ShulkerBoatRenderer(EntityRendererProvider.Context context) {
         super(context, true);
         this.boatResources = Stream.of(Boat.Type.values()).collect(ImmutableMap.toImmutableMap(type -> type, type -> {
-            ResourceLocation location = new ResourceLocation("minecraft", "textures/entity/boat/" + type.getName() + ".png");
+            ResourceLocation location = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/entity/boat/" + type.getName() + ".png");
             ModelPart modelPart = context.bakeLayer(ModelLayers.createBoatModelName(type));
             ListModel<Boat> model = type == Boat.Type.BAMBOO ? new RaftModel(modelPart) : new BoatModel(modelPart);
             return Pair.of(location, model);
@@ -44,7 +44,7 @@ public class ShulkerBoatRenderer extends BoatRenderer {
     @Override
     public void render(@Nonnull Boat boat, float entityYaw, float partialTick, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource buffer, int packedLight) {
         super.render(boat, entityYaw, partialTick, poseStack, buffer, packedLight);
-        RenderType renderType = this.shulkerModel.renderType(new ResourceLocation("minecraft", "textures/" + Sheets.DEFAULT_SHULKER_TEXTURE_LOCATION.texture().getPath() + ".png"));
+        RenderType renderType = this.shulkerModel.renderType(ResourceLocation.fromNamespaceAndPath("minecraft", "textures/" + Sheets.DEFAULT_SHULKER_TEXTURE_LOCATION.texture().getPath() + ".png"));
         VertexConsumer vertexConsumer = buffer.getBuffer(renderType);
         poseStack.pushPose();
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - entityYaw));
@@ -59,7 +59,7 @@ public class ShulkerBoatRenderer extends BoatRenderer {
         poseStack.scale(0.8f, 0.8f, 0.8f);
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
-        this.shulkerModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        this.shulkerModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
     }
 

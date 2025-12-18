@@ -1,5 +1,7 @@
 package de.melanx.utilitix.content.track.rails;
 
+import com.mojang.serialization.MapCodec;
+import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.block.ModProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -7,6 +9,8 @@ import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseRailBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.RailShape;
@@ -17,7 +21,12 @@ import javax.annotation.Nullable;
 
 public class BlockCrossingRail extends BlockRail {
 
+    public static final MapCodec<BlockCrossingRail> CODEC = Block.simpleCodec(BlockCrossingRail::new);
     public final boolean reinforced;
+
+    public BlockCrossingRail(Properties properties) {
+        this(UtilitiX.getInstance(), false, properties);
+    }
 
     public BlockCrossingRail(ModX mod, boolean reinforced, Properties properties) {
         super(mod, false, properties);
@@ -54,5 +63,10 @@ public class BlockCrossingRail extends BlockRail {
     @Override
     public float getRailMaxSpeed(BlockState state, Level level, BlockPos pos, AbstractMinecart cart) {
         return this.reinforced ? 0.7f : 0.4f;
+    }
+
+    @Override
+    protected MapCodec<? extends BaseRailBlock> codec() {
+        return CODEC;
     }
 }

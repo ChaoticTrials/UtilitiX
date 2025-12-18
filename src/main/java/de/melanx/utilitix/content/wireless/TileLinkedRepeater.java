@@ -4,6 +4,7 @@ import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -25,14 +26,15 @@ public class TileLinkedRepeater extends BlockEntityBase {
     }
 
     @Override
-    public void load(@Nonnull CompoundTag nbt) {
-        super.load(nbt);
-        this.link = ItemStack.of(nbt.getCompound("Link"));
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        ItemStack.parse(registries, tag.getCompound("Link")).ifPresent(stack -> this.link = stack.copy());
     }
 
     @Override
-    public void saveAdditional(@Nonnull CompoundTag compound) {
-        compound.put("Link", this.link.serializeNBT());
+    protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.put("Link", this.link.save(registries));
     }
 
     public ItemStack getLink() {

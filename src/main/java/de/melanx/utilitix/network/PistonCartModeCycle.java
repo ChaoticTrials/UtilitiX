@@ -1,56 +1,54 @@
 package de.melanx.utilitix.network;
 
+import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.content.track.carts.PistonCart;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartMode;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.network.registration.HandlerThread;
 import org.moddingx.libx.network.PacketHandler;
-import org.moddingx.libx.network.PacketSerializer;
 
-import java.util.function.Supplier;
+import javax.annotation.Nonnull;
 
-public record PistonCartModeCycle(int id) {
+public class PistonCartModeCycle extends PacketHandler<PistonCartModeCycle.Message> {
 
-    public static class Handler implements PacketHandler<PistonCartModeCycle> {
+    public static final CustomPacketPayload.Type<PistonCartModeCycle.Message> TYPE = new CustomPacketPayload.Type<>(UtilitiX.getInstance().resource("piston_cart_mode_cycle"));
 
-        @Override
-        public Target target() {
-            return Target.MAIN_THREAD;
+    public PistonCartModeCycle() {
+        super(TYPE, PacketFlow.SERVERBOUND, PistonCartModeCycle.Message.CODEC, HandlerThread.MAIN);
+    }
+
+    @Override
+    public void handle(Message msg, IPayloadContext ctx) {
+        if (!(ctx.player() instanceof ServerPlayer sender)) {
+            return;
         }
 
-        @Override
-        public boolean handle(PistonCartModeCycle msg, Supplier<NetworkEvent.Context> ctx) {
-            ServerPlayer sender = ctx.get().getSender();
-            if (sender != null) {
-                Entity entity = sender.level().getEntity(msg.id());
-                if (entity instanceof PistonCart) {
-                    int modeIdx = ((PistonCart) entity).getMode().ordinal();
-                    PistonCartMode[] modes = PistonCartMode.values();
-                    ((PistonCart) entity).setMode(modes[(modeIdx + 1) % modes.length]);
-                }
-            }
-
-            return true;
+        Entity entity = sender.level().getEntity(msg.id());
+        if (entity instanceof PistonCart) {
+            int modeIdx = ((PistonCart) entity).getMode().ordinal();
+            PistonCartMode[] modes = PistonCartMode.values();
+            ((PistonCart) entity).setMode(modes[(modeIdx + 1) % modes.length]);
         }
     }
 
-    public static class Serializer implements PacketSerializer<PistonCartModeCycle> {
+    public record Message(int id) implements CustomPacketPayload {
 
-        @Override
-        public Class<PistonCartModeCycle> messageClass() {
-            return PistonCartModeCycle.class;
-        }
+        public static final StreamCodec<RegistryFriendlyByteBuf, Message> CODEC = StreamCodec.of(
+                (buffer, msg) -> {
+                    buffer.writeInt(msg.id);
+                }, buffer -> new Message(buffer.readInt())
+        );
 
+        @Nonnull
         @Override
-        public void encode(PistonCartModeCycle msg, FriendlyByteBuf buffer) {
-            buffer.writeInt(msg.id);
-        }
-
-        @Override
-        public PistonCartModeCycle decode(FriendlyByteBuf buffer) {
-            return new PistonCartModeCycle(buffer.readInt());
+        public Type<? extends CustomPacketPayload> type() {
+            return PistonCartModeCycle.TYPE;
         }
     }
 }

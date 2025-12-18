@@ -3,16 +3,15 @@ package de.melanx.utilitix;
 import de.melanx.utilitix.content.gildingarmor.GildingArmorRecipe;
 import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.content.slime.StickyChunk;
-import de.melanx.utilitix.network.OpenCurioBackpack;
 import de.melanx.utilitix.network.StickyChunkRequest;
+import de.melanx.utilitix.registration.ModAttachmentTypes;
 import de.melanx.utilitix.registration.ModItems;
-import de.melanx.utilitix.registration.ModKeys;
 import de.melanx.utilitix.util.MobUtil;
 import de.melanx.utilitix.util.XPUtils;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -41,30 +40,32 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.event.LootTableLoadEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.item.ItemExpireEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.event.level.ChunkEvent;
-import net.minecraftforge.event.level.ExplosionEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.common.ItemAbilities;
+import net.neoforged.neoforge.event.LootTableLoadEvent;
+import net.neoforged.neoforge.event.entity.item.ItemExpireEvent;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.ChunkEvent;
+import net.neoforged.neoforge.event.level.ExplosionEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Set;
 
+@EventBusSubscriber(modid = "utilitix")
 public class EventListener {
 
     private static final MutableComponent GILDED = Component.translatable("tooltip.utilitix.gilded").withStyle(ChatFormatting.GOLD);
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
+    public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
         Player player = event.getEntity();
 
         if (player.isShiftKeyDown() && event.getTarget() instanceof LivingEntity target) {
@@ -133,7 +134,7 @@ public class EventListener {
 //    }
 
     @SubscribeEvent
-    public void entityInteract(PlayerInteractEvent.EntityInteractSpecific event) {
+    public static void entityInteract(PlayerInteractEvent.EntityInteractSpecific event) {
         if (event.getTarget() instanceof ArmorStand && event.getTarget().getPersistentData().getBoolean("UtilitiXArmorStand")) {
             if (event.getItemStack().getItem() == Items.FLINT && event.getEntity().isShiftKeyDown()) {
                 ArmorStand entity = (ArmorStand) event.getTarget();
@@ -150,14 +151,14 @@ public class EventListener {
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
-    public void loadChunk(ChunkEvent.Load event) {
+    public static void loadChunk(ChunkEvent.Load event) {
         if (event.getLevel().isClientSide()) {
-            UtilitiX.getNetwork().channel.sendToServer(new StickyChunkRequest(event.getChunk().getPos()));
+            PacketDistributor.sendToServer(new StickyChunkRequest.Message(event.getChunk().getPos()));
         }
     }
 
     @SubscribeEvent
-    public void neighbourChange(BlockEvent.NeighborNotifyEvent event) {
+    public static void neighbourChange(BlockEvent.NeighborNotifyEvent event) {
         if (!event.getLevel().isClientSide() && event.getLevel() instanceof Level level) {
             for (Direction dir : Direction.values()) {
                 BlockPos thePos = event.getPos().relative(dir);
@@ -175,9 +176,10 @@ public class EventListener {
                     return;
                 }
             }
+
             LevelChunk chunk = level.getChunkAt(event.getPos());
             //noinspection ConstantConditions
-            StickyChunk glue = chunk.getCapability(SlimyCapability.STICKY_CHUNK).orElse(null);
+            StickyChunk glue = chunk.getExistingDataOrNull(ModAttachmentTypes.stickyChunk);
             //noinspection ConstantConditions
             if (glue != null) {
                 int x = event.getPos().getX() & 0xF;
@@ -198,14 +200,14 @@ public class EventListener {
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
-    public void onItemDespawn(ItemExpireEvent event) {
+    public static void onItemDespawn(ItemExpireEvent event) {
         ItemEntity entity = event.getEntity();
         Level level = entity.getCommandSenderWorld();
         if (!level.isClientSide) {
             BlockPos pos = entity.blockPosition();
             ItemStack stack = entity.getItem();
             if (stack.getItem() instanceof BlockItem item && (item.getBlock() instanceof CropBlock || item.getBlock() instanceof SaplingBlock)) {
-                if (!UtilitiXConfig.plantsOnDespawn.test(ForgeRegistries.ITEMS.getKey(item))) {
+                if (!UtilitiXConfig.plantsOnDespawn.test(BuiltInRegistries.ITEM.getKey(item))) {
                     return;
                 }
 
@@ -229,7 +231,7 @@ public class EventListener {
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public void onRenderTooltip(ItemTooltipEvent event) {
+    public static void onRenderTooltip(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
 
         if (GildingArmorRecipe.isGilded(stack)) {
@@ -238,14 +240,14 @@ public class EventListener {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onExplosionStart(ExplosionEvent.Start event) {
+    public static void onExplosionStart(ExplosionEvent.Start event) {
         if (event.isCanceled()) {
             return;
         }
 
         Explosion explosion = event.getExplosion();
 
-        if (explosion.getExploder() instanceof Creeper creeper) {
+        if (explosion.getDirectSourceEntity() instanceof Creeper creeper) {
             float health = creeper.getHealth();
             float maxHealth = creeper.getMaxHealth();
 
@@ -254,24 +256,24 @@ public class EventListener {
     }
 
     private static final Set<ResourceLocation> AIOTBOTANIA_FLATTEN_ALLOWED = Set.of(
-            new ResourceLocation("aiotbotania", "livingwood_aiot"),
-            new ResourceLocation("aiotbotania", "livingrock_aiot"),
-            new ResourceLocation("aiotbotania", "manasteel_aiot"),
-            new ResourceLocation("aiotbotania", "elementium_aiot"),
-            new ResourceLocation("aiotbotania", "terra_aiot"),
-            new ResourceLocation("aiotbotania", "alfsteel_aiot")
+            ResourceLocation.fromNamespaceAndPath("aiotbotania", "livingwood_aiot"),
+            ResourceLocation.fromNamespaceAndPath("aiotbotania", "livingrock_aiot"),
+            ResourceLocation.fromNamespaceAndPath("aiotbotania", "manasteel_aiot"),
+            ResourceLocation.fromNamespaceAndPath("aiotbotania", "elementium_aiot"),
+            ResourceLocation.fromNamespaceAndPath("aiotbotania", "terra_aiot"),
+            ResourceLocation.fromNamespaceAndPath("aiotbotania", "alfsteel_aiot")
     );
 
     @SubscribeEvent
-    public void onBlockToolInteraction(BlockEvent.BlockToolModificationEvent event) {
-        if (event.getToolAction() == ToolActions.SHOVEL_FLATTEN && event.getPlayer() != null && event.getPlayer().isCrouching()
-                && (!ModList.get().isLoaded("aiotbotania") || !AIOTBOTANIA_FLATTEN_ALLOWED.contains(ForgeRegistries.ITEMS.getKey(event.getHeldItemStack().getItem())))) {
+    public static void onBlockToolInteraction(BlockEvent.BlockToolModificationEvent event) {
+        if (event.getItemAbility() == ItemAbilities.SHOVEL_FLATTEN && event.getPlayer() != null && event.getPlayer().isCrouching()
+                && (!ModList.get().isLoaded("aiotbotania") || !AIOTBOTANIA_FLATTEN_ALLOWED.contains(BuiltInRegistries.ITEM.getKey(event.getHeldItemStack().getItem())))) {
             event.setCanceled(true);
         }
     }
 
     @SubscribeEvent
-    public void addLayers(LootTableLoadEvent event) {
+    public static void addLayers(LootTableLoadEvent event) {
         LootTable table = event.getTable();
         if (table.getLootTableId().equals(BuiltInLootTables.SIMPLE_DUNGEON)) {
             table.addPool(LootPool.lootPool()
@@ -283,13 +285,8 @@ public class EventListener {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public void onLevelTick(TickEvent.LevelTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            while (ModKeys.OPEN_BACKPACK.get().consumeClick() && Minecraft.getInstance().screen == null) {
-                UtilitiX.getNetwork().channel.sendToServer(new OpenCurioBackpack());
-            }
-        }
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+//        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlocks.experienceCrystal.getBlockEntityType(), (blockEntity, direction) -> blockEntity); // todo + check TileExperienceCrystal#validXpFluidIsPresent
     }
 }

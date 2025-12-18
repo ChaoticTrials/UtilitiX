@@ -4,6 +4,7 @@ import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.registration.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -28,19 +29,24 @@ public class WirelessStorage extends SavedData {
     public static final String ID = UtilitiX.getInstance().modid + "_wireless";
 
     public static WirelessStorage get(Level level) {
-        if (!level.isClientSide) {
-            DimensionDataStorage storage = ((ServerLevel) level).getServer().overworld().getDataStorage();
-            return storage.computeIfAbsent(nbt -> new WirelessStorage().load(nbt), WirelessStorage::new, ID);
-        } else {
+        if (!(level instanceof ServerLevel)) {
             return new WirelessStorage();
         }
+
+        DimensionDataStorage storage = level.getServer().overworld().getDataStorage();
+        return storage.computeIfAbsent(WirelessStorage.factory(), ID);
+    }
+
+    public static SavedData.Factory<WirelessStorage> factory() {
+        return new SavedData.Factory<>(WirelessStorage::new, WirelessStorage::load);
     }
 
     private final Map<UUID, Map<GlobalPos, Integer>> signals = new HashMap<>();
 
     @Nonnull
-    public WirelessStorage load(@Nonnull CompoundTag nbt) {
-        this.signals.clear();
+    public static WirelessStorage load(@Nonnull CompoundTag nbt, HolderLookup.Provider registries) {
+        WirelessStorage storage = new WirelessStorage();
+        storage.signals.clear();
         ListTag list = nbt.getList("Signals", Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
             CompoundTag tag = list.getCompound(i);
@@ -57,15 +63,15 @@ public class WirelessStorage extends SavedData {
                     UtilitiX.getInstance().logger.warn("Invalid level loaded", e);
                 }
             }
-            this.signals.put(uid, signalMap);
+            storage.signals.put(uid, signalMap);
         }
 
-        return this;
+        return storage;
     }
 
     @Nonnull
     @Override
-    public CompoundTag save(@Nonnull CompoundTag compound) {
+    public CompoundTag save(@Nonnull CompoundTag compound, @Nonnull HolderLookup.Provider registries) {
         ListTag list = new ListTag();
         for (Map.Entry<UUID, Map<GlobalPos, Integer>> entry : this.signals.entrySet()) {
             CompoundTag tag = new CompoundTag();

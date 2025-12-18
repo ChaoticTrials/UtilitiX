@@ -1,6 +1,7 @@
 package de.melanx.utilitix.content.slime;
 
 import de.melanx.utilitix.compat.zeta.ZetaCompat;
+import de.melanx.utilitix.registration.ModAttachmentTypes;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -9,14 +10,12 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
 import org.moddingx.libx.base.ItemBase;
 import org.moddingx.libx.mod.ModX;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemGlueBall extends ItemBase {
@@ -30,7 +29,7 @@ public class ItemGlueBall extends ItemBase {
     public InteractionResult useOn(@Nonnull UseOnContext context) {
         LevelChunk chunk = context.getLevel().getChunkAt(context.getClickedPos());
         //noinspection ConstantConditions
-        StickyChunk glue = chunk.getCapability(SlimyCapability.STICKY_CHUNK).orElse(null);
+        StickyChunk glue = chunk.getData(ModAttachmentTypes.stickyChunk);
         //noinspection ConstantConditions
         if (glue != null) {
             int x = context.getClickedPos().getX() & 0xF;
@@ -39,6 +38,7 @@ public class ItemGlueBall extends ItemBase {
             Direction face = context.getPlayer() != null && context.getPlayer().isShiftKeyDown() ? context.getClickedFace().getOpposite() : context.getClickedFace();
             if (!glue.get(x, y, z, face) && SlimyCapability.canGlue(context.getLevel(), context.getClickedPos(), face)) {
                 if (!context.getLevel().isClientSide) {
+                    glue.attach(chunk);
                     glue.set(x, y, z, face, true);
                     chunk.setUnsaved(true);
                     if (context.getPlayer() == null || !context.getPlayer().getAbilities().instabuild) {
@@ -49,15 +49,16 @@ public class ItemGlueBall extends ItemBase {
                 return InteractionResult.sidedSuccess(context.getLevel().isClientSide);
             }
         }
+
         return super.useOn(context);
     }
 
     @Override
-    public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level level, @Nonnull List<Component> tooltips, @Nonnull TooltipFlag isAdvanced) {
+    public void appendHoverText(@Nonnull ItemStack stack, @Nonnull TooltipContext context, @Nonnull List<Component> tooltipComponents, @Nonnull TooltipFlag tooltipFlag) {
         if (ModList.get().isLoaded("zeta")) {
             Component warning = ZetaCompat.warningForGlue();
             if (warning != null) {
-                tooltips.add(warning);
+                tooltipComponents.add(warning);
             }
         }
     }

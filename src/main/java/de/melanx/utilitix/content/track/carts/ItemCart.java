@@ -1,8 +1,9 @@
 package de.melanx.utilitix.content.track.carts;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.tags.BlockTags;
@@ -19,6 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import org.moddingx.libx.base.ItemBase;
 import org.moddingx.libx.mod.ModX;
 import org.moddingx.libx.registration.Registerable;
+import org.moddingx.libx.registration.RegistrationContext;
 import org.moddingx.libx.registration.SetupContext;
 
 import javax.annotation.Nonnull;
@@ -33,7 +35,12 @@ public class ItemCart extends ItemBase implements Registerable {
     }
 
     @Override
-    public void registerCommon(SetupContext ctx) {
+    public void registerAdditional(RegistrationContext ctx, EntryCollector builder) {
+        Registerable.super.registerAdditional(ctx, builder);
+    }
+
+    @Override
+    public void setupCommon(SetupContext ctx) {
         ctx.enqueue(() -> DispenserBlock.registerBehavior(this, this.dispenseBehaviour));
     }
 
@@ -62,7 +69,7 @@ public class ItemCart extends ItemBase implements Registerable {
                 cart.xo = pos.getX() + 0.5;
                 cart.yo = pos.getY() + (rail.isAscending() ? 0.5625 : 0.0625);
                 cart.zo = pos.getZ() + 0.5;
-                if (stack.hasCustomHoverName()) {
+                if (stack.has(DataComponents.CUSTOM_NAME)) {
                     cart.setCustomName(stack.getHoverName());
                 }
                 level.addFreshEntity(cart);
@@ -81,12 +88,12 @@ public class ItemCart extends ItemBase implements Registerable {
         @Nonnull
         @Override
         public ItemStack execute(@Nonnull BlockSource source, @Nonnull ItemStack stack) {
-            Direction dir = source.getBlockState().getValue(DispenserBlock.FACING);
-            Level world = source.getLevel();
-            double x = source.x() + (dir.getStepX() * 1.125);
-            double y = Math.floor(source.y()) + dir.getStepY();
-            double z = source.z() + (dir.getStepZ() * 1.125);
-            BlockPos target = source.getPos().relative(dir);
+            Direction dir = source.state().getValue(DispenserBlock.FACING);
+            Level world = source.level();
+            double x = source.pos().getX() + (dir.getStepX() * 1.125);
+            double y = (double) source.pos().getY() + dir.getStepY();
+            double z = source.pos().getZ() + (dir.getStepZ() * 1.125);
+            BlockPos target = source.pos().relative(dir);
             BlockState targetState = world.getBlockState(target);
             RailShape rail = targetState.getBlock() instanceof BaseRailBlock ? ((BaseRailBlock) targetState.getBlock()).getRailDirection(targetState, world, target, null) : RailShape.NORTH_SOUTH;
             double yOffset;
@@ -111,7 +118,7 @@ public class ItemCart extends ItemBase implements Registerable {
             cart.xo = x;
             cart.yo = y + yOffset;
             cart.zo = z;
-            if (stack.hasCustomHoverName()) {
+            if (stack.has(DataComponents.CUSTOM_NAME)) {
                 cart.setCustomName(stack.getHoverName());
             }
             world.addFreshEntity(cart);
@@ -121,7 +128,7 @@ public class ItemCart extends ItemBase implements Registerable {
 
         @Override
         protected void playSound(BlockSource source) {
-            source.getLevel().levelEvent(1000, source.getPos(), 0);
+            source.level().levelEvent(1000, source.pos(), 0);
         }
     };
 }

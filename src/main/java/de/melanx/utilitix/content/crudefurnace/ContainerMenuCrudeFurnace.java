@@ -6,8 +6,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.items.SlotItemHandler;
+import net.neoforged.neoforge.event.EventHooks;
+import net.neoforged.neoforge.items.SlotItemHandler;
 import org.moddingx.libx.menu.BlockEntityMenu;
 
 import javax.annotation.Nonnull;
@@ -15,8 +15,8 @@ import javax.annotation.Nullable;
 
 public class ContainerMenuCrudeFurnace extends BlockEntityMenu<TileCrudeFurnace> {
 
-    public ContainerMenuCrudeFurnace(@Nullable MenuType<? extends BlockEntityMenu<?>> type, int windowId, Level level, BlockPos pos, Inventory playerContainer, Player player) {
-        super(type, windowId, level, pos, playerContainer, player, 2, 3);
+    public ContainerMenuCrudeFurnace(@Nullable MenuType<? extends BlockEntityMenu<?>> type, int windowId, Level level, BlockPos pos, Player player, Inventory inventory) {
+        super(type, windowId, level, pos, player, inventory, 2, 3);
 
         this.addSlot(new SlotItemHandler(this.blockEntity.getInventory(), 0, 56, 53));
         this.addSlot(new SlotItemHandler(this.blockEntity.getInventory(), 1, 56, 17));
@@ -67,7 +67,7 @@ public class ContainerMenuCrudeFurnace extends BlockEntityMenu<TileCrudeFurnace>
             }
 
             this.removeCount = 0;
-            ForgeEventFactory.firePlayerSmeltedEvent(this.player, stack);
+            EventHooks.firePlayerSmeltedEvent(this.player, stack);
         }
     }
 }

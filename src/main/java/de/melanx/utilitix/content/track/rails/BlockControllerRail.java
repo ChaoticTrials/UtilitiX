@@ -5,10 +5,9 @@ import com.mojang.datafixers.util.Function3;
 import de.melanx.utilitix.registration.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
@@ -21,13 +20,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.moddingx.libx.menu.GenericMenu;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.moddingx.libx.mod.ModX;
 import org.moddingx.libx.registration.RegistrationContext;
 
@@ -62,19 +57,9 @@ public abstract class BlockControllerRail<T extends TileControllerRail> extends 
         builder.register(Registries.BLOCK_ENTITY_TYPE, this.beType);
     }
 
-    @Override
-    public void initTracking(RegistrationContext ctx, TrackingCollector builder) throws ReflectiveOperationException {
-        builder.track(ForgeRegistries.BLOCK_ENTITY_TYPES, BlockControllerRail.class.getDeclaredField("beType"));
-    }
-
     @Nonnull
     @Override
-    public abstract Property<RailShape> getShapeProperty();
-
-    @Nonnull
-    @Override
-    @SuppressWarnings("deprecation")
-    public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hitResult) {
         ItemStack held = player.getItemInHand(hand);
         if (!held.isEmpty() && held.getItem() == ModItems.minecartTinkerer && player.isShiftKeyDown()) {
             if (!level.isClientSide && player instanceof ServerPlayer) {
@@ -94,11 +79,13 @@ public abstract class BlockControllerRail<T extends TileControllerRail> extends 
                     }
                 };
                 handler.setStackInSlot(0, tile.getFilterStack().copy());
-                GenericMenu.open((ServerPlayer) player, handler, Component.translatable("screen.utilitix.minecart_tinkerer"), null);
+//                GenericMenu.open((ServerPlayer) player, handler, Component.translatable("screen.utilitix.minecart_tinkerer"), null); todo
             }
-            return InteractionResult.sidedSuccess(level.isClientSide);
+
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
-        return super.use(state, level, pos, player, hand, hit);
+
+        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Override
@@ -128,7 +115,7 @@ public abstract class BlockControllerRail<T extends TileControllerRail> extends 
     }
 
     @Override
-    public float getRailMaxSpeed(BlockState state, Level level, BlockPos pos, AbstractMinecart cart) {
+    public float getRailMaxSpeed(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull AbstractMinecart cart) {
         return this.reinforced ? 0.7f : 0.4f;
     }
 }

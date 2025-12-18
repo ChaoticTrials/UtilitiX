@@ -2,8 +2,7 @@ package de.melanx.utilitix.content.shulkerboat;
 
 import de.melanx.utilitix.registration.ModEntities;
 import de.melanx.utilitix.registration.ModItems;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.ContainerHelper;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
@@ -14,6 +13,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ShulkerBoxMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -103,20 +103,23 @@ public class ShulkerBoat extends ChestBoat {
     @Override
     public void destroy(@Nonnull DamageSource source) {
         ItemStack drop = new ItemStack(this.getDropItem());
-        CompoundTag itemTag = drop.getOrCreateTag();
-        CompoundTag items = new CompoundTag();
-        ContainerHelper.saveAllItems(items, this.getItemStacks());
-        itemTag.put("Items", items);
+        ItemContainerContents containerContents = ItemContainerContents.fromItems(this.getItemStacks());
+
+        if (containerContents != ItemContainerContents.EMPTY) {
+            drop.set(DataComponents.CONTAINER, containerContents); // todo check
+        }
+
         if (this.hasCustomName()) {
             //noinspection ConstantConditions
-            itemTag.putString("CustomName", this.getCustomName().getString());
+            drop.set(DataComponents.CUSTOM_NAME, this.getCustomName());
         }
+
         this.spawnAtLocation(drop);
     }
 
     @Override
     public void remove(@Nonnull RemovalReason reason) {
         this.setRemoved(reason);
-        this.invalidateCaps();
+//        this.invalidateCaps(); todo check
     }
 }

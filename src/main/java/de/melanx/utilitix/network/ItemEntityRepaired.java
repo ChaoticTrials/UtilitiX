@@ -1,53 +1,53 @@
 package de.melanx.utilitix.network;
 
+import de.melanx.utilitix.UtilitiX;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.network.registration.HandlerThread;
 import org.moddingx.libx.network.PacketHandler;
-import org.moddingx.libx.network.PacketSerializer;
 
-import java.util.function.Supplier;
+import javax.annotation.Nonnull;
 
-public record ItemEntityRepaired(int id) {
+public class ItemEntityRepaired extends PacketHandler<ItemEntityRepaired.Message> {
 
-    public static class Handler implements PacketHandler<ItemEntityRepaired> {
+    public static final CustomPacketPayload.Type<ItemEntityRepaired.Message> TYPE = new CustomPacketPayload.Type<>(UtilitiX.getInstance().resource("item_entity_repaired"));
 
-        @Override
-        public Target target() {
-            return Target.MAIN_THREAD;
+    protected ItemEntityRepaired() {
+        super(TYPE, PacketFlow.CLIENTBOUND, Message.CODEC, HandlerThread.MAIN);
+    }
+
+    @Override
+    public void handle(Message msg, IPayloadContext ctx) {
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level == null) {
+            return;
         }
 
-        @Override
-        public boolean handle(ItemEntityRepaired msg, Supplier<NetworkEvent.Context> ctx) {
-            ClientLevel level = Minecraft.getInstance().level;
-            if (level == null) return true;
-            Entity item = level.getEntity(msg.id());
-            if (item instanceof ItemEntity) {
-                ((ItemEntity) item).getItem().setDamageValue(0);
-            }
-
-            return true;
+        Entity item = level.getEntity(msg.id());
+        if (item instanceof ItemEntity) {
+            ((ItemEntity) item).getItem().setDamageValue(0);
         }
     }
 
-    public static class Serializer implements PacketSerializer<ItemEntityRepaired> {
+    public record Message(int id) implements CustomPacketPayload {
 
-        @Override
-        public Class<ItemEntityRepaired> messageClass() {
-            return ItemEntityRepaired.class;
-        }
+        public static final StreamCodec<RegistryFriendlyByteBuf, Message> CODEC = StreamCodec.of(
+                (buffer, msg) -> {
+                    buffer.writeInt(msg.id);
+                }, buffer -> new Message(buffer.readInt())
+        );
 
+        @Nonnull
         @Override
-        public void encode(ItemEntityRepaired msg, FriendlyByteBuf buffer) {
-            buffer.writeInt(msg.id);
-        }
-
-        @Override
-        public ItemEntityRepaired decode(FriendlyByteBuf buffer) {
-            return new ItemEntityRepaired(buffer.readInt());
+        public Type<? extends CustomPacketPayload> type() {
+            return ItemEntityRepaired.TYPE;
         }
     }
 }

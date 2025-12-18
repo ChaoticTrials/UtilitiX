@@ -3,9 +3,9 @@ package de.melanx.utilitix.data.state;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.RailShape;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
 import org.moddingx.libx.datagen.provider.model.BlockStateProviderBase;
 
 import javax.annotation.Nullable;
@@ -13,10 +13,10 @@ import java.util.function.UnaryOperator;
 
 public class RailState {
 
-    public static final ResourceLocation STRAIGHT_RAIL_PARENT = new ResourceLocation("minecraft", "block/rail_flat");
-    public static final ResourceLocation RAISED_RAIL_NE_PARENT = new ResourceLocation("minecraft", "block/template_rail_raised_ne");
-    public static final ResourceLocation RAISED_RAIL_SW_PARENT = new ResourceLocation("minecraft", "block/template_rail_raised_sw");
-    public static final ResourceLocation CURVED_RAIL_PARENT = new ResourceLocation("minecraft", "block/rail_curved");
+    public static final ResourceLocation STRAIGHT_RAIL_PARENT = ResourceLocation.fromNamespaceAndPath("minecraft", "block/rail_flat");
+    public static final ResourceLocation RAISED_RAIL_NE_PARENT = ResourceLocation.fromNamespaceAndPath("minecraft", "block/template_rail_raised_ne");
+    public static final ResourceLocation RAISED_RAIL_SW_PARENT = ResourceLocation.fromNamespaceAndPath("minecraft", "block/template_rail_raised_sw");
+    public static final ResourceLocation CURVED_RAIL_PARENT = ResourceLocation.fromNamespaceAndPath("minecraft", "block/rail_curved");
 
     public final Property<RailShape> shapeProperty;
     @Nullable
@@ -137,7 +137,7 @@ public class RailState {
         }
         if (needsModel) {
             return provider.models().withExistingParent(id.getPath() + modelId, parent)
-                    .texture("rail", new ResourceLocation(id.getNamespace(), "block/" + id.getPath() + textureId))
+                    .texture("rail", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath() + textureId))
                     .renderType("cutout");
         } else {
             return null;

@@ -1,30 +1,25 @@
 package de.melanx.utilitix.data.recipe;
 
-import com.google.gson.JsonObject;
 import de.melanx.utilitix.recipe.EffectTransformer;
-import de.melanx.utilitix.registration.ModRecipes;
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.advancements.Criterion;
+import net.minecraft.data.recipes.RecipeBuilder;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.function.Consumer;
 
-public class BreweryRecipeBuilder {
+public class BreweryRecipeBuilder implements RecipeBuilder {
 
     @Nullable
     private Ingredient input;
     @Nullable
     private EffectTransformer transformer;
 
-    private BreweryRecipeBuilder() {
-
-    }
+    private BreweryRecipeBuilder() {}
 
     public static BreweryRecipeBuilder breweryRecipe() {
         return new BreweryRecipeBuilder();
@@ -54,53 +49,73 @@ public class BreweryRecipeBuilder {
         return this;
     }
 
-    public void build(Consumer<FinishedRecipe> consumerIn, ResourceLocation id) {
+//    public void build(Consumer<FinishedRecipe> consumerIn, ResourceLocation id) { todo
+//
+//    }
+
+    @Override
+    public RecipeBuilder unlockedBy(String name, Criterion<?> criterion) {
+        return null;
+    }
+
+    @Override
+    public RecipeBuilder group(@Nullable String groupName) {
+        return null;
+    }
+
+    @Override
+    public Item getResult() {
+        return null;
+    }
+
+    @Override
+    public void save(RecipeOutput recipeOutput, ResourceLocation id) {
         if (this.transformer == null) {
             throw new IllegalStateException("Can't build Advanced Brewery Recipe without action.");
         }
-        consumerIn.accept(new Recipe(new ResourceLocation(id.getNamespace(), "utilitix_brewery/" + id.getPath()), this.input, this.transformer));
+//        recipeOutput.accept(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "utilitix_brewery/" + id.getPath()), this.input, this.transformer); todo
     }
 
-    private record Recipe(ResourceLocation id,
-                          @Nullable Ingredient input,
-                          EffectTransformer transformer) implements FinishedRecipe {
-
-        private Recipe(ResourceLocation id, @Nullable Ingredient input, EffectTransformer transformer) {
-            this.id = id;
-            this.input = input;
-            this.transformer = transformer;
-        }
-
-        @Nonnull
-        @Override
-        public ResourceLocation getId() {
-            return this.id;
-        }
-
-        @Override
-        public void serializeRecipeData(@Nonnull JsonObject json) {
-            if (this.input != null) {
-                json.add("input", this.input.toJson());
-            }
-            json.add("action", this.transformer.serialize());
-        }
-
-        @Nonnull
-        @Override
-        public RecipeSerializer<?> getType() {
-            return ModRecipes.BREWERY_SERIALIZER;
-        }
-
-        @Nullable
-        @Override
-        public JsonObject serializeAdvancement() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public ResourceLocation getAdvancementId() {
-            return null;
-        }
-    }
+//    private record Recipe(ResourceLocation id, todo
+//                          @Nullable Ingredient input,
+//                          EffectTransformer transformer) implements FinishedRecipe {
+//
+//        private Recipe(ResourceLocation id, @Nullable Ingredient input, EffectTransformer transformer) {
+//            this.id = id;
+//            this.input = input;
+//            this.transformer = transformer;
+//        }
+//
+//        @Nonnull
+//        @Override
+//        public ResourceLocation getId() {
+//            return this.id;
+//        }
+//
+//        @Override
+//        public void serializeRecipeData(@Nonnull JsonObject json) {
+//            if (this.input != null) {
+//                json.add("input", this.input.toJson());
+//            }
+//            json.add("action", this.transformer.serialize());
+//        }
+//
+//        @Nonnull
+//        @Override
+//        public RecipeSerializer<?> getType() {
+//            return ModRecipes.BREWERY_SERIALIZER;
+//        }
+//
+//        @Nullable
+//        @Override
+//        public JsonObject serializeAdvancement() {
+//            return null;
+//        }
+//
+//        @Nullable
+//        @Override
+//        public ResourceLocation getAdvancementId() {
+//            return null;
+//        }
+//    }
 }

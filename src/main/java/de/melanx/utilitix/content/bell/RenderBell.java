@@ -87,15 +87,14 @@ public class RenderBell extends BlockEntityWithoutLevelRenderer {
                 poseStack.mulPose(Axis.XP.rotationDegrees(180));
                 poseStack.translate(-0.475, -1.6, -1);
                 if (stack.getItem() == ModItems.mobBell) {
-                    float[] color = ItemMobBell.getFloatColor(stack);
-                    float ringRotation = -(Mth.sin(tile.ticks + mc.getFrameTime() / (float) Math.PI) / (4 + (tile.ticks + Minecraft.getInstance().getFrameTime()) / 3f));
+                    int color = ItemMobBell.getColor(stack);
+                    float ringRotation = -(Mth.sin(tile.ticks + mc.getFrameTimeNs() / (float) Math.PI) / (4 + (tile.ticks + Minecraft.getInstance().getFrameTimeNs()) / 3f));
                     this.grayscaleModel.xRot = 0;
                     this.grayscaleModel.zRot = tile.shaking ? ringRotation : 0;
                     VertexConsumer ivertexconsumer = GRAY_BELL_MATERIAL.buffer(buffer, RenderType::entitySolid);
-                    this.grayscaleModel.render(poseStack, ivertexconsumer, light, OverlayTexture.NO_OVERLAY,
-                            color[0], color[1], color[2], 1);
+                    this.grayscaleModel.render(poseStack, ivertexconsumer, light, OverlayTexture.NO_OVERLAY, color);
                 } else {
-                    this.tileRender.render(tile, mc.getFrameTime(), poseStack, buffer,
+                    this.tileRender.render(tile, mc.getFrameTimeNs(), poseStack, buffer,
                             LightTexture.pack(15, 15), OverlayTexture.NO_OVERLAY);
                 }
                 poseStack.popPose();

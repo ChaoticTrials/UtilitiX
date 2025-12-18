@@ -2,7 +2,6 @@ package de.melanx.utilitix.content.track;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -10,11 +9,12 @@ import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.moddingx.libx.base.ItemBase;
-import org.moddingx.libx.menu.GenericMenu;
 import org.moddingx.libx.mod.ModX;
+
+import javax.annotation.Nonnull;
 
 public class ItemMinecartTinkerer extends ItemBase {
 
@@ -23,7 +23,7 @@ public class ItemMinecartTinkerer extends ItemBase {
     }
 
     @Override
-    public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
+    public boolean onLeftClickEntity(@Nonnull ItemStack stack, @Nonnull Player player, @Nonnull Entity entity) {
         if (entity instanceof AbstractMinecart) {
             Level level = player.level();
             if (!level.isClientSide && player instanceof ServerPlayer) {
@@ -42,25 +42,26 @@ public class ItemMinecartTinkerer extends ItemBase {
                     }
                 };
                 handler.setStackInSlot(0, getLabelStack((AbstractMinecart) entity));
-                GenericMenu.open((ServerPlayer) player, handler, Component.translatable("screen.utilitix.minecart_tinkerer"), null);
+//                GenericMenu.open((ServerPlayer) player, handler, Component.translatable("screen.utilitix.minecart_tinkerer"), null); todo
             }
+
             return true;
         }
         return false;
     }
 
     @Override
-    public boolean doesSneakBypassUse(ItemStack stack, LevelReader level, BlockPos pos, Player player) {
+    public boolean doesSneakBypassUse(@Nonnull ItemStack stack, @Nonnull LevelReader level, @Nonnull BlockPos pos, @Nonnull Player player) {
         return true;
     }
 
     public static ItemStack getLabelStack(AbstractMinecart entity) {
         CompoundTag nbt = entity.getPersistentData();
-        return ItemStack.of(nbt.getCompound("utilitix_minecart_label_item"));
+        return ItemStack.parse(entity.registryAccess(), nbt).orElse(ItemStack.EMPTY);
     }
 
     public static void setLabelStack(AbstractMinecart entity, ItemStack stack) {
         CompoundTag nbt = entity.getPersistentData();
-        nbt.put("utilitix_minecart_label_item", stack.save(new CompoundTag()));
+        nbt.put("utilitix_minecart_label_item", stack.save(entity.registryAccess(), new CompoundTag()));
     }
 }

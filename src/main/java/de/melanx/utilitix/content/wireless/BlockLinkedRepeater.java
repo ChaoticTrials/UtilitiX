@@ -8,7 +8,7 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -28,15 +28,14 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.ticks.TickPriority;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.ForgeEventFactory;
+import net.neoforged.neoforge.event.EventHooks;
 import org.moddingx.libx.base.tile.BlockBE;
 import org.moddingx.libx.mod.ModX;
 import org.moddingx.libx.registration.SetupContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.EnumSet;
 import java.util.UUID;
 
 public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
@@ -57,8 +56,7 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void registerClient(SetupContext ctx) {
+    public void setupCommon(SetupContext ctx) {
         BlockEntityRenderers.register(this.getBlockEntityType(), context -> new BesrLinkedRepeater());
     }
 
@@ -79,8 +77,7 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
-    public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hitResult) {
         if (!level.isClientSide) {
             TileLinkedRepeater tile = this.getBlockEntity(level, pos);
             ItemStack link = tile.getLink();
@@ -94,11 +91,12 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
                     tile.setLink(held.split(1));
                     player.setItemInHand(hand, held);
                 } else {
-                    return InteractionResult.FAIL;
+                    return ItemInteractionResult.FAIL;
                 }
             }
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+
+        return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override
@@ -123,31 +121,26 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
         return SHAPE;
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean canSurvive(@Nonnull BlockState state, @Nonnull LevelReader level, BlockPos pos) {
         return canSupportRigidBlock(level, pos.below());
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public int getDirectSignal(BlockState blockState, @Nonnull BlockGetter blockAccess, @Nonnull BlockPos pos, @Nonnull Direction side) {
         return blockState.getSignal(blockAccess, pos, side);
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public int getSignal(BlockState blockState, @Nonnull BlockGetter blockAccess, @Nonnull BlockPos pos, @Nonnull Direction side) {
         return blockState.getValue(BlockStateProperties.HORIZONTAL_FACING) == side ? blockState.getValue(BlockStateProperties.POWER) : 0;
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public void neighborChanged(BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockPos fromPos, boolean isMoving) {
         if (state.canSurvive(level, pos)) {
             this.updateState(level, pos, state);
@@ -160,13 +153,12 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean isSignalSource(@Nonnull BlockState state) {
         return true;
     }
 
     @Override
-    public boolean canConnectRedstone(BlockState state, BlockGetter level, BlockPos pos, @Nullable Direction direction) {
+    public boolean canConnectRedstone(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nullable Direction direction) {
         return this.isSignalSource(state) && direction != null && direction.getAxis() == state.getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis();
     }
 
@@ -178,7 +170,6 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public void onPlace(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState oldState, boolean isMoving) {
         this.notifyNeighbors(level, pos, state);
     }
@@ -195,7 +186,6 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource rand) {
         UUID uid = this.getBlockEntity(level, pos).getLinkId();
         int input = inputStrength(level, state, pos);
@@ -212,8 +202,10 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
     private void notifyNeighbors(Level level, BlockPos pos, BlockState state) {
         Direction face = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
         BlockPos target = pos.relative(face.getOpposite());
-        if (ForgeEventFactory.onNeighborNotify(level, pos, level.getBlockState(pos), java.util.EnumSet.of(face.getOpposite()), false).isCanceled())
+        if (EventHooks.onNeighborNotify(level, pos, level.getBlockState(pos), EnumSet.of(face.getOpposite()), false).isCanceled()) {
             return;
+        }
+
         level.neighborChanged(target, this, pos);
         level.updateNeighborsAtExceptFromFacing(target, this, face);
     }

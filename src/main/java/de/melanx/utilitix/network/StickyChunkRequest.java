@@ -1,63 +1,62 @@
 package de.melanx.utilitix.network;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.content.slime.StickyChunk;
+import de.melanx.utilitix.registration.ModAttachmentTypes;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.network.registration.HandlerThread;
 import org.moddingx.libx.network.PacketHandler;
-import org.moddingx.libx.network.PacketSerializer;
 
-import java.util.function.Supplier;
+import javax.annotation.Nonnull;
+import java.util.Optional;
 
-public record StickyChunkRequest(ChunkPos pos) {
+public class StickyChunkRequest extends PacketHandler<StickyChunkRequest.Message> {
 
-    public static class Handler implements PacketHandler<StickyChunkRequest> {
+    public static final CustomPacketPayload.Type<Message> TYPE = new CustomPacketPayload.Type<>(UtilitiX.getInstance().resource("sticky_chunk_request"));
 
-        @Override
-        public Target target() {
-            return Target.MAIN_THREAD;
+    protected StickyChunkRequest() {
+        super(TYPE, PacketFlow.SERVERBOUND, Message.CODEC, HandlerThread.MAIN);
+    }
+
+    @Override
+    public void handle(Message msg, IPayloadContext ctx) {
+        if (!(ctx.player() instanceof ServerPlayer sender)) {
+            return;
         }
 
-        @Override
-        public boolean handle(StickyChunkRequest msg, Supplier<NetworkEvent.Context> ctx) {
-            ServerPlayer sender = ctx.get().getSender();
-            //noinspection deprecation
-            if (sender != null && sender.level().hasChunkAt(new BlockPos(msg.pos().getMinBlockX(), 0, msg.pos().getMinBlockZ()))) {
-                LevelChunk chunk = sender.level().getChunk(msg.pos().x, msg.pos().z);
-                //noinspection ConstantConditions
-                if (chunk != null && chunk.loaded) {
-                    LazyOptional<StickyChunk> cap = chunk.getCapability(SlimyCapability.STICKY_CHUNK);
-                    cap.ifPresent(value -> UtilitiX.getNetwork().channel.send(PacketDistributor.PLAYER.with(() -> sender), new StickyChunkUpdate(msg.pos(), value)));
-                }
+        //noinspection deprecation
+        if (sender.level().hasChunkAt(new BlockPos(msg.pos().getMinBlockX(), 0, msg.pos().getMinBlockZ()))) {
+            LevelChunk chunk = sender.level().getChunk(msg.pos().x, msg.pos().z);
+            //noinspection ConstantConditions
+            if (chunk != null && chunk.loaded) {
+                Optional<StickyChunk> stickyChunk = sender.level().getExistingData(ModAttachmentTypes.stickyChunk);
+                stickyChunk.ifPresent(value -> PacketDistributor.sendToPlayer(sender, new StickyChunkUpdate.Message(msg.pos(), value)));
             }
-
-            return true;
         }
     }
 
-    public static class Serializer implements PacketSerializer<StickyChunkRequest> {
+    public record Message(ChunkPos pos) implements CustomPacketPayload {
 
-        @Override
-        public Class<StickyChunkRequest> messageClass() {
-            return StickyChunkRequest.class;
-        }
+        public static final StreamCodec<RegistryFriendlyByteBuf, Message> CODEC = StreamCodec.of(
+                (buffer, msg) -> {
+                    buffer.writeInt(msg.pos.x);
+                    buffer.writeInt(msg.pos.z);
+                }, buffer -> new Message(new ChunkPos(buffer.readInt(), buffer.readInt()))
+        );
 
+        @Nonnull
         @Override
-        public void encode(StickyChunkRequest msg, FriendlyByteBuf buffer) {
-            buffer.writeInt(msg.pos.x);
-            buffer.writeInt(msg.pos.z);
-        }
-
-        @Override
-        public StickyChunkRequest decode(FriendlyByteBuf buffer) {
-            return new StickyChunkRequest(new ChunkPos(buffer.readInt(), buffer.readInt()));
+        public Type<? extends CustomPacketPayload> type() {
+            return StickyChunkRequest.TYPE;
         }
     }
 }

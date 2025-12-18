@@ -1,6 +1,7 @@
 package de.melanx.utilitix.content;
 
 import com.mojang.datafixers.util.Pair;
+import de.melanx.utilitix.registration.ModDataComponentTypes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.item.CompassItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -9,7 +10,6 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -24,16 +24,16 @@ import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraftforge.common.WorldWorkerManager;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.common.WorldWorkerManager;
 import org.moddingx.libx.base.ItemBase;
 import org.moddingx.libx.mod.ModX;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -50,14 +50,10 @@ public class AncientCompass extends ItemBase {
     @Override
     public void inventoryTick(@Nonnull ItemStack stack, @Nonnull Level level, @Nonnull Entity entity, int itemSlot, boolean isSelected) {
         if (!level.isClientSide) {
-            BlockPos pos = null;
-            CompoundTag tag = stack.getOrCreateTag();
-            if (tag.contains("AncientCityPos")) {
-                pos = BlockPos.of(tag.getLong("AncientCityPos"));
-            }
+            BlockPos pos = stack.get(ModDataComponentTypes.ancientCityPos);
 
             ServerLevel serverLevel = (ServerLevel) level;
-            if (((this.positionChanged(pos) && !this.isSearching) || !tag.getString("AncientCityLevel").equals(level.dimension().location().toString())) && level.getGameTime() % 20 == 0) {
+            if (((this.positionChanged(pos) && !this.isSearching) || !level.dimension().location().equals(stack.get(ModDataComponentTypes.ancientCityLevel))) && level.getGameTime() % 20 == 0) {
                 this.isSearching = true;
 
                 if (this.biomeSearcher != null) {
@@ -73,13 +69,13 @@ public class AncientCompass extends ItemBase {
 
                 if (this.biomeSearcher.pair != null) {
                     if (this.biomeSearcher.pair.getFirst() != pos) {
-                        tag.putLong("AncientCityPos", this.biomeSearcher.pair.getFirst().asLong());
+                        stack.set(ModDataComponentTypes.ancientCityPos, this.biomeSearcher.pair.getFirst());
                     }
 
-                    tag.putString("AncientCityLevel", level.dimension().location().toString());
+                    stack.set(ModDataComponentTypes.ancientCityLevel, level.dimension().location());
                 } else {
-                    tag.remove("AncientCityPos");
-                    tag.remove("AncientCityLevel");
+                    stack.remove(ModDataComponentTypes.ancientCityPos);
+                    stack.remove(ModDataComponentTypes.ancientCityLevel);
                 }
             }
         }
@@ -96,18 +92,24 @@ public class AncientCompass extends ItemBase {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void initializeClient(@Nonnull Consumer<IClientItemExtensions> consumer) {
-        ItemProperties.register(this, new ResourceLocation("angle"), new CompassItemPropertyFunction((level, stack, entity) -> {
-            if (!stack.getOrCreateTag().contains("AncientCityPos") || !stack.getOrCreateTag().contains("AncientCityLevel")) {
+        ItemProperties.register(this, ResourceLocation.withDefaultNamespace("angle"), new CompassItemPropertyFunction((level, stack, entity) -> {
+            if (!stack.has(ModDataComponentTypes.ancientCityPos) || !stack.has(ModDataComponentTypes.ancientCityLevel)) {
                 return null;
             }
 
-            return GlobalPos.of(ResourceKey.create(Registries.DIMENSION, new ResourceLocation(stack.getOrCreateTag().getString("AncientCityLevel"))), BlockPos.of(stack.getOrCreateTag().getLong("AncientCityPos")));
+            return GlobalPos.of(
+                    ResourceKey.create(
+                            Registries.DIMENSION,
+                            Objects.requireNonNull(ResourceLocation.tryParse(Objects.requireNonNull(stack.get(ModDataComponentTypes.ancientCityLevel)).toString()))
+                    ),
+                    Objects.requireNonNull(stack.get(ModDataComponentTypes.ancientCityPos))
+            );
         }));
     }
 
     @Override
-    public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level level, List<Component> tooltips, @Nonnull TooltipFlag isAdvanced) {
-        tooltips.add(TOOLTIP);
+    public void appendHoverText(@Nonnull ItemStack stack, @Nonnull TooltipContext context, List<Component> tooltipComponents, @Nonnull TooltipFlag tooltipFlag) {
+        tooltipComponents.add(TOOLTIP);
     }
 
     public static class BiomeSearcher implements WorldWorkerManager.IWorker {

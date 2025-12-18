@@ -1,61 +1,61 @@
 package de.melanx.utilitix.recipe;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.melanx.utilitix.registration.ModRecipeTypes;
 import de.melanx.utilitix.registration.ModRecipes;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Container;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BreweryRecipe implements Recipe<Container> {
+public class BreweryRecipe implements Recipe<RecipeWrapper> {
 
-    private final ResourceLocation id;
     @Nullable
     private final Ingredient input;
     private final EffectTransformer transformer;
 
-    public BreweryRecipe(ResourceLocation id, @Nullable Ingredient input, EffectTransformer transformer) {
-        this.id = id;
+    public BreweryRecipe(@Nullable Ingredient input, EffectTransformer transformer) {
         this.input = input;
         this.transformer = transformer;
     }
 
     @Override
-    public boolean matches(@Nonnull Container inv, @Nonnull Level level) {
-        if (inv.getContainerSize() == 5) {
-            ItemStack mainInput = inv.getItem(0);
+    public boolean matches(@Nonnull RecipeWrapper recipeWrapper, @Nonnull Level level) {
+        if (recipeWrapper.size() == 5) {
+            ItemStack mainInput = recipeWrapper.getItem(0);
             if (this.input == null && !mainInput.isEmpty() || this.input != null && !this.input.test(mainInput)) {
                 return false;
             }
-            return this.transformer.canTransform(new PotionInput(inv.getItem(3), inv.getItem(1), inv.getItem(2)));
+            return this.transformer.canTransform(new PotionInput(recipeWrapper.getItem(3), recipeWrapper.getItem(1), recipeWrapper.getItem(2)));
         }
         return false;
     }
 
     @Nullable
-    public PotionOutput getPotionResult(@Nonnull Container inv) {
-        if (inv.getContainerSize() == 5) {
-            return this.transformer.transform(new PotionInput(inv.getItem(3), inv.getItem(1), inv.getItem(2)));
+    public PotionOutput getPotionResult(@Nonnull RecipeWrapper recipeWrapper) {
+        if (recipeWrapper.size() == 5) {
+            return this.transformer.transform(new PotionInput(recipeWrapper.getItem(3), recipeWrapper.getItem(1), recipeWrapper.getItem(2)));
         }
+
         return null;
     }
 
     @Nonnull
     @Override
-    public ItemStack assemble(@Nonnull Container inv, @Nonnull RegistryAccess registry) {
-        PotionOutput output = this.getPotionResult(inv);
-        return output == null ? inv.getItem(3).copy() : output.getMain();
+    public ItemStack assemble(@Nonnull RecipeWrapper recipeWrapper, @Nonnull HolderLookup.Provider registry) {
+        PotionOutput output = this.getPotionResult(recipeWrapper);
+        return output == null ? recipeWrapper.getItem(3).copy() : output.getMain();
     }
 
     @Override
@@ -65,7 +65,7 @@ public class BreweryRecipe implements Recipe<Container> {
 
     @Nonnull
     @Override
-    public ItemStack getResultItem(@Nonnull RegistryAccess registry) {
+    public ItemStack getResultItem(@Nonnull HolderLookup.Provider registry) {
         return this.transformer.output();
     }
 
@@ -82,12 +82,6 @@ public class BreweryRecipe implements Recipe<Container> {
     @Override
     public boolean isSpecial() {
         return true;
-    }
-
-    @Nonnull
-    @Override
-    public ResourceLocation getId() {
-        return this.id;
     }
 
     public EffectTransformer getAction() {
@@ -108,35 +102,44 @@ public class BreweryRecipe implements Recipe<Container> {
 
     public static class Serializer implements RecipeSerializer<BreweryRecipe> {
 
-        @Nonnull
-        @Override
-        public BreweryRecipe fromJson(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
-            Ingredient input = null;
-            if (json.has("input")) {
-                input = Ingredient.fromJson(json.getAsJsonObject("input"));
-            }
-            EffectTransformer transformer = EffectTransformer.deserialize(json.getAsJsonObject("action"));
-            return new BreweryRecipe(recipeId, input, transformer);
-        }
+        public static final MapCodec<BreweryRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                        Ingredient.CODEC.fieldOf("input").forGetter(recipe -> recipe.input),
+                        EffectTransformer.DIRECT_CODEC.fieldOf("action").forGetter(BreweryRecipe::getAction)
+                )
+                .apply(instance, BreweryRecipe::new));
 
-        @Nullable
-        @Override
-        public BreweryRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
+        public static final StreamCodec<RegistryFriendlyByteBuf, BreweryRecipe> STREAM_CODEC = StreamCodec.of(
+                BreweryRecipe.Serializer::toNetwork, BreweryRecipe.Serializer::fromNetwork
+        );
+
+        public static BreweryRecipe fromNetwork(@Nonnull RegistryFriendlyByteBuf buffer) {
             Ingredient input = null;
             if (buffer.readBoolean()) {
-                input = Ingredient.fromNetwork(buffer);
+                input = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
             }
             EffectTransformer transformer = EffectTransformer.read(buffer);
-            return new BreweryRecipe(recipeId, input, transformer);
+
+            return new BreweryRecipe(input, transformer);
         }
 
-        @Override
-        public void toNetwork(@Nonnull FriendlyByteBuf buffer, @Nonnull BreweryRecipe recipe) {
+        public static void toNetwork(@Nonnull RegistryFriendlyByteBuf buffer, @Nonnull BreweryRecipe recipe) {
             buffer.writeBoolean(recipe.input != null);
             if (recipe.input != null) {
-                recipe.input.toNetwork(buffer);
+                Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.input);
             }
             recipe.transformer.write(buffer);
+        }
+
+        @Nonnull
+        @Override
+        public MapCodec<BreweryRecipe> codec() {
+            return CODEC;
+        }
+
+        @Nonnull
+        @Override
+        public StreamCodec<RegistryFriendlyByteBuf, BreweryRecipe> streamCodec() {
+            return STREAM_CODEC;
         }
     }
 }

@@ -3,6 +3,7 @@ package de.melanx.utilitix.content.slime;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.melanx.utilitix.Textures;
 import de.melanx.utilitix.config.ClientConfig;
+import de.melanx.utilitix.registration.ModAttachmentTypes;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -17,7 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.moddingx.libx.render.RenderHelperBlock;
 import org.moddingx.libx.render.RenderHelperLevel;
 
@@ -43,7 +44,7 @@ public class SlimeRender {
                         ChunkPos pos = chunk.getPos();
                         if (clip.isVisible(new AABB(pos.getMinBlockX(), level.getMinBuildHeight(), pos.getMinBlockZ(), pos.getMaxBlockX() + 1, level.getMaxBuildHeight() + 1, pos.getMaxBlockZ() + 1))) {
                             //noinspection ConstantConditions
-                            StickyChunk data = chunk.getCapability(SlimyCapability.STICKY_CHUNK).orElse(null);
+                            StickyChunk data = chunk.getExistingDataOrNull(ModAttachmentTypes.stickyChunk);
                             //noinspection ConstantConditions
                             if (data != null) {
                                 data.foreach(renderChunk(event.getCamera(), clip, poseStack, pos, chunk, slime));

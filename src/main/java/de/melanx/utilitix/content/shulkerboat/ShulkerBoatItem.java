@@ -1,7 +1,7 @@
 package de.melanx.utilitix.content.shulkerboat;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -63,10 +63,10 @@ public class ShulkerBoatItem extends ItemBase {
             }
 
             if (!level.isClientSide) {
-                if (stack.hasCustomHoverName()) {
+                if (stack.has(DataComponents.CUSTOM_NAME)) {
                     boat.setCustomName(stack.getHoverName());
                 }
-                ContainerHelper.loadAllItems(stack.getOrCreateTag().getCompound("Items"), boat.getItemStacks());
+//                ContainerHelper.loadAllItems(stack.getOrCreateTag().getCompound("Items"), boat.getItemStacks()); todo
                 level.addFreshEntity(boat);
                 level.gameEvent(player, GameEvent.ENTITY_PLACE, hitResult.getLocation());
                 if (!player.getAbilities().instabuild) {

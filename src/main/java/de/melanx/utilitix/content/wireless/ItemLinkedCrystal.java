@@ -1,5 +1,6 @@
 package de.melanx.utilitix.content.wireless;
 
+import de.melanx.utilitix.registration.ModDataComponentTypes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -43,7 +44,7 @@ public class ItemLinkedCrystal extends ItemBase {
         } else {
             if (!level.isClientSide) {
                 ItemStack stack = held.copy();
-                stack.getOrCreateTag().putUUID("redstone_id", UUID.randomUUID());
+                stack.set(ModDataComponentTypes.redstoneId, UUID.randomUUID());
                 player.drop(stack, false);
             }
             player.setItemInHand(hand, ItemStack.EMPTY);
@@ -52,26 +53,22 @@ public class ItemLinkedCrystal extends ItemBase {
     }
 
     @Override
-    public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level level, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flag) {
-        super.appendHoverText(stack, level, tooltip, flag);
-        UUID uid = getId(stack);
+    public void appendHoverText(@Nonnull ItemStack stack, @Nonnull TooltipContext context, @Nonnull List<Component> tooltipComponents, @Nonnull TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+        UUID uid = ItemLinkedCrystal.getId(stack);
         if (uid == null) {
-            tooltip.add(Component.translatable("tooltip.utilitix.invalid_link").withStyle(ChatFormatting.RED));
+            tooltipComponents.add(Component.translatable("tooltip.utilitix.invalid_link").withStyle(ChatFormatting.RED));
         } else {
-            tooltip.add(Component.translatable("tooltip.utilitix.valid_link", Component.literal(uid.toString()).withStyle(ChatFormatting.GREEN)).withStyle(ChatFormatting.RED));
+            tooltipComponents.add(Component.translatable("tooltip.utilitix.valid_link", Component.literal(uid.toString()).withStyle(ChatFormatting.GREEN)).withStyle(ChatFormatting.RED));
         }
     }
     
     @Nullable
-    public static UUID getId(ItemStack stack) {
-        if (!stack.hasTag()) {
-            return null;
-        } else {
-            try {
-                return stack.getOrCreateTag().getUUID("redstone_id");
-            } catch (Exception e) {
-                return null;
-            }
+    public static UUID getId(ItemStack stack) { // todo check if getOrDefault(redstoneId, null) works
+        if (stack.has(ModDataComponentTypes.redstoneId)) {
+            return stack.get(ModDataComponentTypes.redstoneId);
         }
+
+        return null;
     }
 }

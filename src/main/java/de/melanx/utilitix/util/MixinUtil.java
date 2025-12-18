@@ -1,7 +1,7 @@
 package de.melanx.utilitix.util;
 
-import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.content.slime.StickyChunk;
+import de.melanx.utilitix.registration.ModAttachmentTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -26,7 +26,7 @@ public class MixinUtil {
         if (level != null && pos != null && glueData != null) {
             LevelChunk chunk = level.getChunkAt(pos);
             //noinspection ConstantConditions
-            StickyChunk glue = chunk.getCapability(SlimyCapability.STICKY_CHUNK).orElse(null);
+            StickyChunk glue = level.getExistingDataOrNull(ModAttachmentTypes.stickyChunk);
             //noinspection ConstantConditions
             if (glue != null) {
                 int x = pos.getX() & 0xF;

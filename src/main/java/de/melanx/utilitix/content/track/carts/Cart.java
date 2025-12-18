@@ -4,8 +4,6 @@ import de.melanx.utilitix.UtilitiX;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
@@ -13,10 +11,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.moddingx.libx.base.ItemBase;
 import org.moddingx.libx.registration.Registerable;
 import org.moddingx.libx.registration.RegistrationContext;
@@ -52,11 +48,11 @@ public class Cart extends AbstractMinecart {
         return false;
     }
 
-    @Nonnull
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
-    }
+//    @Nonnull
+//    @Override
+//    public Packet<ClientGamePacketListener> getAddEntityPacket() {
+//        return NetworkHooks.getEntitySpawningPacket(this);
+//    } todo ?
 
     public static <T extends Cart> CartType<T> type(String id, EntityType.EntityFactory<T> factory) {
         return type(id, factory, new Item.Properties().stacksTo(1));
@@ -107,14 +103,8 @@ public class Cart extends AbstractMinecart {
         }
 
         @Override
-        public void initTracking(RegistrationContext ctx, TrackingCollector builder) throws ReflectiveOperationException {
-            builder.track(ForgeRegistries.ENTITY_TYPES, DefaultCartType.class.getDeclaredField("type"));
-            builder.track(ForgeRegistries.ITEMS, DefaultCartType.class.getDeclaredField("item"));
-        }
-
-        @Override
         @OnlyIn(Dist.CLIENT)
-        public void registerClient(SetupContext ctx) {
+        public void setupClient(SetupContext ctx) {
             EntityRenderers.register(this.type, context -> new MinecartRendererX<>(context, ModelLayers.MINECART));
         }
     }

@@ -9,8 +9,9 @@ import de.melanx.utilitix.registration.ModSerializers;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -38,8 +39,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.RailShape;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.network.connection.ConnectionType;
 import org.apache.commons.lang3.tuple.Pair;
 import org.moddingx.libx.inventory.BaseItemStackHandler;
 
@@ -71,9 +72,9 @@ public class PistonCart extends Cart {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(MODE, PistonCartMode.IDLE);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(MODE, PistonCartMode.IDLE);
     }
 
     @Override
@@ -126,12 +127,12 @@ public class PistonCart extends Cart {
 
                 @Override
                 public AbstractContainerMenu createMenu(int containerId, @Nonnull Inventory inventory, @Nonnull Player player) {
-                    FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+                    RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), PistonCart.this.registryAccess(), ConnectionType.NEOFORGE); // todo check if neoforge is correct
                     buffer.writeInt(PistonCart.this.getId());
                     return PistonCartContainerMenu.TYPE.create(containerId, inventory, buffer);
                 }
             };
-            NetworkHooks.openScreen((ServerPlayer) player, containerProvider, buffer -> buffer.writeInt(PistonCart.this.getId()));
+//            NetworkHooks.openScreen((ServerPlayer) player, containerProvider, buffer -> buffer.writeInt(PistonCart.this.getId())); todo
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
     }
@@ -327,9 +328,10 @@ public class PistonCart extends Cart {
     @Override
     protected void readAdditionalSaveData(@Nonnull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.railIn.deserializeNBT(compound.getCompound("RailInput"));
-        this.torchIn.deserializeNBT(compound.getCompound("TorchIn"));
-        this.railOut.deserializeNBT(compound.getCompound("RailOut"));
+        RegistryAccess registryAccess = this.registryAccess();
+        this.railIn.deserializeNBT(registryAccess, compound.getCompound("RailInput"));
+        this.torchIn.deserializeNBT(registryAccess, compound.getCompound("TorchIn"));
+        this.railOut.deserializeNBT(registryAccess, compound.getCompound("RailOut"));
         String modeName = compound.getString("Mode");
         try {
             this.mode = PistonCartMode.valueOf(modeName);
@@ -344,9 +346,10 @@ public class PistonCart extends Cart {
     @Override
     protected void addAdditionalSaveData(@Nonnull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.put("RailInput", this.railIn.serializeNBT());
-        compound.put("TorchIn", this.torchIn.serializeNBT());
-        compound.put("RailOut", this.railOut.serializeNBT());
+        RegistryAccess registryAccess = this.registryAccess();
+        compound.put("RailInput", this.railIn.serializeNBT(registryAccess));
+        compound.put("TorchIn", this.torchIn.serializeNBT(registryAccess));
+        compound.put("RailOut", this.railOut.serializeNBT(registryAccess));
         compound.putString("Mode", this.mode.name());
     }
 }

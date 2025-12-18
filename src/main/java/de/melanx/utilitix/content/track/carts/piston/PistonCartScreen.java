@@ -12,15 +12,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
 import java.awt.Color;
 
 public class PistonCartScreen extends AbstractContainerScreen<PistonCartContainerMenu> {
 
-    public static final ResourceLocation TEXTURE = new ResourceLocation(UtilitiX.getInstance().modid, "textures/container/piston_cart.png");
+    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "textures/container/piston_cart.png");
 
     private int relX;
     private int relY;
@@ -29,17 +28,17 @@ public class PistonCartScreen extends AbstractContainerScreen<PistonCartContaine
         super(menu, inv, title);
         this.imageWidth = 176;
         this.imageHeight = 186;
-        MinecraftForge.EVENT_BUS.addListener(this::onGuiInit);
     }
 
-    private void onGuiInit(ScreenEvent.Init event) {
-        this.relX = (event.getScreen().width - this.imageWidth) / 2;
-        this.relY = (event.getScreen().height - this.imageHeight) / 2;
+    @Override
+    protected void init() {
+        this.relX = (this.width - this.imageWidth) / 2;
+        this.relY = (this.height - this.imageHeight) / 2;
     }
 
     @Override
     public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics);
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
@@ -71,7 +70,7 @@ public class PistonCartScreen extends AbstractContainerScreen<PistonCartContaine
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
             if (mouseX >= this.relX + 65 && mouseX <= this.relX + 111 && mouseY >= this.relY + 18 && mouseY <= this.relY + 34 && this.menu.entity != null) {
-                UtilitiX.getNetwork().channel.sendToServer(new PistonCartModeCycle(this.menu.entity.getId()));
+                PacketDistributor.sendToServer(new PistonCartModeCycle.Message(this.menu.entity.getId()));
                 Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
                 return true;
             }

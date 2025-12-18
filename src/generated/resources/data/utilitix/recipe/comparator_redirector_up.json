@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "i": {
+      "tag": "c:ingots/iron"
+    },
+    "s": {
+      "tag": "c:cobblestones"
+    },
+    "t": {
+      "item": "minecraft:redstone_torch"
+    }
+  },
+  "pattern": [
+    "sis",
+    "s s",
+    "sts"
+  ],
+  "result": {
+    "count": 1,
+    "id": "utilitix:comparator_redirector_up"
+  }
+}

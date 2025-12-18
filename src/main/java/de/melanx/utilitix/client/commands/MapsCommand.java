@@ -10,14 +10,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.MapRenderer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.MapItem;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.FMLPaths;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -45,12 +47,10 @@ public class MapsCommand {
             return 0;
         }
 
-        if (MapItem.getMapId(stack) == null) {
+        MapId mapId = stack.get(DataComponents.MAP_ID);
+        if (mapId == null) {
             return 0;
         }
-
-        //noinspection ConstantConditions
-        int mapId = MapItem.getMapId(stack);
 
         MapItemSavedData data = MapItem.getSavedData(stack, player.level());
         if (data == null) {

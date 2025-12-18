@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "minecraft:minecart"
+    },
+    "i": {
+      "item": "minecraft:piston"
+    }
+  },
+  "pattern": [
+    "i",
+    "c"
+  ],
+  "result": {
+    "count": 1,
+    "id": "utilitix:piston_cart"
+  }
+}

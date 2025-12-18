@@ -14,9 +14,8 @@ import snownee.jade.api.IServerDataProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
 import snownee.jade.api.ui.IElementHelper;
-import snownee.jade.impl.ui.ProgressArrowElement;
 
-public class CrudeFurnaceProvider implements IBlockComponentProvider, IServerDataProvider<BlockAccessor> {
+public class CrudeFurnaceProvider implements IBlockComponentProvider, IServerDataProvider<BlockAccessor> { // todo StreamServerDataProvider
 
     public static final ResourceLocation UID = UtilitiX.getInstance().resource("crude_furnace");
     public static final CrudeFurnaceProvider INSTANCE = new CrudeFurnaceProvider();
@@ -37,18 +36,19 @@ public class CrudeFurnaceProvider implements IBlockComponentProvider, IServerDat
             return;
         }
 
+
         ListTag items = accessor.getServerData().getList("Items", Tag.TAG_COMPOUND);
         NonNullList<ItemStack> inventory = NonNullList.withSize(3, ItemStack.EMPTY);
         for (int i = 0; i < items.size(); i++) {
-            inventory.set(i, ItemStack.of(items.getCompound(i)));
+//            inventory.set(i, ItemStack.of(items.getCompound(i)));
         }
 
-        IElementHelper helper = tooltip.getElementHelper();
+        IElementHelper helper = IElementHelper.get();
         int total = accessor.getServerData().getInt("maxTime");
 
         tooltip.add(helper.item(inventory.get(0)));
         tooltip.append(helper.item(inventory.get(1)));
-        tooltip.append(new ProgressArrowElement((float) progress / total));
+//        tooltip.append(new ProgressArrowElement((float) progress / total));
         tooltip.append(helper.item(inventory.get(2)));
     }
 
@@ -57,12 +57,12 @@ public class CrudeFurnaceProvider implements IBlockComponentProvider, IServerDat
         TileCrudeFurnace furnace = (TileCrudeFurnace) accessor.getBlockEntity();
         ListTag items = new ListTag();
         for (int i = 0; i < 3; i++) {
-            items.add(furnace.getInventory().getStackInSlot(i).serializeNBT());
+//            items.add(furnace.getInventory().getStackInSlot(i).serializeNBT()); todo
         }
 
         data.put("Items", items);
         CompoundTag furnaceTag = new CompoundTag();
-        furnace.saveAdditional(furnaceTag);
+//        furnace.saveAdditional(furnaceTag); todo
         data.putInt("burnTime", furnaceTag.getInt("burnTime"));
         data.putInt("maxTime", furnace.getRecipe() != null ? furnace.getRecipe().getBurnTime() : 0);
     }

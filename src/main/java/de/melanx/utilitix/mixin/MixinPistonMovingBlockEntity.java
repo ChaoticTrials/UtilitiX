@@ -1,7 +1,7 @@
 package de.melanx.utilitix.mixin;
 
-import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.content.slime.StickyChunk;
+import de.melanx.utilitix.registration.ModAttachmentTypes;
 import de.melanx.utilitix.util.MixinUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -32,7 +32,7 @@ public class MixinPistonMovingBlockEntity {
             BlockPos fromPos = pos.relative(blockEntity.isExtending() ? blockEntity.getDirection().getOpposite() : blockEntity.getDirection());
             LevelChunk chunk = level.getChunkAt(fromPos);
             //noinspection ConstantConditions
-            StickyChunk glue = chunk.getCapability(SlimyCapability.STICKY_CHUNK).orElse(null);
+            StickyChunk glue = chunk.getExistingDataOrNull(ModAttachmentTypes.stickyChunk);
             //noinspection ConstantConditions
             if (glue != null) {
                 int x = fromPos.getX() & 0xF;

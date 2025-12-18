@@ -1,31 +1,10 @@
-import org.w3c.dom.Document
-import org.w3c.dom.NodeList
-
-import javax.xml.parsers.DocumentBuilderFactory
-
-buildscript {
-    apply from: 'https://moddingx.github.io/ModUtils/v5/buildscript.gradle', to: buildscript
+plugins {
+    id 'org.moddingx.modgradle.meta' version '5.0.4'
 }
-
-apply from: 'https://moddingx.github.io/ModUtils/v5/mod.gradle'
-
-apply plugin: 'maven-publish'
-mod['version'] = getVersion(mod.minecraft + "-" + mod.base_version, new URL(mod.remote_maven + "/" + group.replace('.', '/') + "/" + name + "/maven-metadata.xml"))
-project.version = mod.version
-
-println "Java: ${System.getProperty('java.version')}   JVM: ${System.getProperty('java.vm.version')}(${System.getProperty('java.vendor')})   Arch: ${System.getProperty('os.arch')}"
-println "Mod: ${project.name}(${mod.modid})   Group: ${project.group}   Version: ${project.version}"
-println "Minecraft: ${mod.minecraft}   Target: java${mod.java}" + (mod.mixin ? "   Mixin: ${mod.mixin_version}" : '')
-println ''
 
 repositories {
     maven {
-        name = "BlameJared"
-        url = "https://maven.blamejared.com/"
-    }
-    maven {
-        name = "LibX"
-        url = "https://maven.melanx.de/"
+        url = "https://modmaven.dev/"
     }
     maven {
         name = "ModdingX"
@@ -35,7 +14,6 @@ repositories {
         name = "Curios"
         url = "https://maven.theillusivec4.top/"
     }
-
     maven {
         url "https://www.cursemaven.com"
         content {
@@ -44,80 +22,74 @@ repositories {
     }
 }
 
-dependencies {
-    annotationProcessor fg.deobf("org.moddingx:LibX:1.20.1-5.0.1")
+var dev = System.getenv('IS_DEV')?.toBoolean() ?: false
+var baseVersion = '21.1'
+var libxVersion = '1.21.1-6.0.6'
+var jeiVersion = '19.25.0.324'
+var curiosVersion = '9.5.1+1.21.1'
+var jadeVersion = '6853386' // 1.21.1-NeoForge-15.10.3
 
-    implementation fg.deobf("org.moddingx:LibX:1.20.1-5.0.1")
-    implementation fg.deobf("mezz.jei:jei-1.20.1-forge:15.0.0.12")
-
-    implementation fg.deobf("top.theillusivec4.curios:curios-forge:5.9.1+1.20.1")
-    implementation fg.deobf("curse.maven:jade-324717:4681833") // Jade 1.20-forge-11.4.3
-
-//    runtimeOnly fg.deobf("de.melanx:RecipePrinter:1.18.2-3.2.0")
-
-    // for testing
-    compileOnly fg.deobf("org.violetmoon.quark:Quark:4.0-beta-432.3267")
-    compileOnly fg.deobf("org.violetmoon.zeta:Zeta:1.0-11.48")
-    runtimeOnly fg.deobf("curse.maven:Pipez-443900:4916633") // Pipez 1.20.1-1.2.5
-    runtimeOnly fg.deobf("curse.maven:mob_grinding_utils-254241:5131447") // mob_grinding_utils-1.20.1-1.1.0
-    runtimeOnly fg.deobf("curse.maven:InventorySorter-240633:5979609") // Inventory Sorter - 1.20.1-23.0.8
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId = project.group
-            artifactId = project.name
-            version = project.version
-            artifact(jar) {
-                builtBy project.provider { project.tasks.named('reobfJar') }
-            }
-            if (mod.sources) {
-                artifact(sourceJar)
-            }
-            pom {
-                licenses {
-                    license {
-                        name = mod.license
-                        url = mod.license_url.toString()
-                    }
-                }
-            }
+mod.configure {
+    modid 'utilitix'
+    group 'de.melanx'
+    versioning {
+        if (dev) {
+            def gitCommitHash = ['git', 'rev-parse', 'HEAD'].execute().text.trim()
+            constant baseVersion + (gitCommitHash ? "-${gitCommitHash}" : '')
+        } else {
+            base baseVersion
+            maven 'https://maven.melanx.de/release'
         }
     }
-    repositories {
+
+    neoforge project.hasProperty('neo_version') ? project.neo_version : "${baseVersion}.213"
+
+    license 'The Apache License, Version 2.0'
+    github 'ChaoticTrials/UtilitiX'
+
+    artifacts {
+        sources {
+            publishToRepositories()
+        }
+    }
+
+    changelog {
+        def lines = defaultChangelog.toString().split('\n')
+        def filteredChangelog = lines.findAll { !it.startsWith('- [[meta]') }.join('\n')
+
+        return filteredChangelog
+    }
+
+
+    publishing {
         maven {
             name 'melanx'
-            url mod.remote_maven
+            url 'https://maven.melanx.de/release'
             credentials(PasswordCredentials)
         }
     }
-}
-publish.dependsOn('reobfJar')
 
-
-private static String getVersion(String baseVersion, URL url) {
-    try {
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-
-        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(connection.getInputStream());
-        NodeList versionNodes = doc.getElementsByTagName("version");
-
-        String latestVersion = null;
-        for (int i = 0; i < versionNodes.getLength(); i++) {
-            String version = versionNodes.item(i).getTextContent();
-            if (version.startsWith(baseVersion)) {
-                latestVersion = version;
-            }
+    upload {
+        all {
+            type 'beta'
+            require 'libx'
+            optional 'jade'
+            optional 'jei'
         }
-
-        if (latestVersion == null) {
-            return baseVersion + ".0";
+        curseforge {
+            projectId 463703
         }
-
-        return baseVersion + "." + (Integer.parseInt(latestVersion.substring(latestVersion.lastIndexOf('.') + 1)) + 1);
-    } catch (Exception e) {
-        throw new RuntimeException(e);
+        modrinth {
+            projectId 'MMMWYsjm'
+        }
     }
+}
+
+dependencies {
+    annotationProcessor "org.moddingx:LibX:${libxVersion}"
+
+    implementation "org.moddingx:LibX:${libxVersion}"
+    implementation "mezz.jei:jei-1.${baseVersion}-neoforge:${jeiVersion}"
+    implementation "top.theillusivec4.curios:curios-neoforge:${curiosVersion}"
+    implementation "curse.maven:jade-324717:${jadeVersion}"
 }

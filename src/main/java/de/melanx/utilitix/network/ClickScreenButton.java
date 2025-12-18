@@ -1,73 +1,72 @@
 package de.melanx.utilitix.network;
 
+import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.content.experiencecrystal.ScreenExperienceCrystal;
 import de.melanx.utilitix.content.experiencecrystal.TileExperienceCrystal;
 import de.melanx.utilitix.util.XPUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.network.registration.HandlerThread;
 import org.moddingx.libx.network.PacketHandler;
-import org.moddingx.libx.network.PacketSerializer;
 
-import java.util.function.Supplier;
+import javax.annotation.Nonnull;
 
-public record ClickScreenButton(BlockPos pos, ScreenExperienceCrystal.Button button) {
+public class ClickScreenButton extends PacketHandler<ClickScreenButton.Message> {
 
-    public static class Handler implements PacketHandler<ClickScreenButton> {
+    public static final CustomPacketPayload.Type<Message> TYPE = new CustomPacketPayload.Type<>(UtilitiX.getInstance().resource("click_screen_button"));
 
-        @Override
-        public Target target() {
-            return Target.MAIN_THREAD;
+    public ClickScreenButton() {
+        super(TYPE, PacketFlow.SERVERBOUND, Message.CODEC, HandlerThread.MAIN);
+    }
+
+    @Override
+    public void handle(Message msg, IPayloadContext ctx) {
+        if (!(ctx.player() instanceof ServerPlayer player)) {
+            return;
         }
 
-        @Override
-        public boolean handle(ClickScreenButton msg, Supplier<NetworkEvent.Context> ctx) {
-            ServerPlayer player = ctx.get().getSender();
-            if (player == null) {
-                return true;
-            }
+        ServerLevel level = (ServerLevel) player.level();
+        ScreenExperienceCrystal.Button button = msg.button;
+        BlockEntity be = level.getBlockEntity(msg.pos);
 
-            ServerLevel level = (ServerLevel) player.level();
-            ScreenExperienceCrystal.Button button = msg.button;
-            BlockEntity be = level.getBlockEntity(msg.pos);
+        if (be instanceof TileExperienceCrystal tile) {
+            int playerXP = XPUtils.getExpPoints(player.experienceLevel, player.experienceProgress);
 
-            if (be instanceof TileExperienceCrystal tile) {
-                int playerXP = XPUtils.getExpPoints(player.experienceLevel, player.experienceProgress);
-
-                switch (button) {
-                    case ADD_ONE -> {
-                        normalizeAddition(player, tile);
-                        int xp = XPUtils.getXpBarCap(player.experienceLevel - 1);
-                        int i = tile.addXp(xp);
-                        player.giveExperiencePoints(-i);
+            switch(button) {
+                case ADD_ONE -> {
+                    normalizeAddition(player, tile);
+                    int xp = XPUtils.getXpBarCap(player.experienceLevel - 1);
+                    int i = tile.addXp(xp);
+                    player.giveExperiencePoints(-i);
+                }
+                case ADD_TEN -> {
+                    normalizeAddition(player, tile);
+                    int xp = 0;
+                    for (int i = 0; i < 10; i++) {
+                        xp += XPUtils.getXpBarCap(player.experienceLevel - 1 - i);
                     }
-                    case ADD_TEN -> {
-                        normalizeAddition(player, tile);
-                        int xp = 0;
-                        for (int i = 0; i < 10; i++) {
-                            xp += XPUtils.getXpBarCap(player.experienceLevel - 1 - i);
-                        }
-                        int i = tile.addXp(xp);
-                        player.giveExperiencePoints(-i);
-                    }
-                    case ADD_ALL -> {
-                        int xp = tile.addXp(playerXP < 0 ? Integer.MAX_VALUE : playerXP);
-                        player.giveExperiencePoints(-xp);
-                    }
-                    case SUB_ONE -> normalizeSubtraction(player, tile, 1);
-                    case SUB_TEN -> normalizeSubtraction(player, tile, 10);
-                    case SUB_ALL -> {
-                        int xp = tile.subtractXp(Integer.MAX_VALUE);
-                        player.giveExperiencePoints(xp);
-                    }
+                    int i = tile.addXp(xp);
+                    player.giveExperiencePoints(-i);
+                }
+                case ADD_ALL -> {
+                    int xp = tile.addXp(playerXP < 0 ? Integer.MAX_VALUE : playerXP);
+                    player.giveExperiencePoints(-xp);
+                }
+                case SUB_ONE -> normalizeSubtraction(player, tile, 1);
+                case SUB_TEN -> normalizeSubtraction(player, tile, 10);
+                case SUB_ALL -> {
+                    int xp = tile.subtractXp(Integer.MAX_VALUE);
+                    player.giveExperiencePoints(xp);
                 }
             }
-
-            return true;
         }
     }
 
@@ -89,22 +88,19 @@ public record ClickScreenButton(BlockPos pos, ScreenExperienceCrystal.Button but
         }
     }
 
-    public static class Serializer implements PacketSerializer<ClickScreenButton> {
+    public record Message(BlockPos pos, ScreenExperienceCrystal.Button button) implements CustomPacketPayload {
 
-        @Override
-        public Class<ClickScreenButton> messageClass() {
-            return ClickScreenButton.class;
-        }
+        public static final StreamCodec<RegistryFriendlyByteBuf, Message> CODEC = StreamCodec.of(
+                (buffer, msg) -> {
+                    buffer.writeBlockPos(msg.pos);
+                    buffer.writeEnum(msg.button);
+                }, buffer -> new Message(buffer.readBlockPos(), buffer.readEnum(ScreenExperienceCrystal.Button.class))
+        );
 
+        @Nonnull
         @Override
-        public void encode(ClickScreenButton msg, FriendlyByteBuf buffer) {
-            buffer.writeBlockPos(msg.pos);
-            buffer.writeEnum(msg.button);
-        }
-
-        @Override
-        public ClickScreenButton decode(FriendlyByteBuf buffer) {
-            return new ClickScreenButton(buffer.readBlockPos(), buffer.readEnum(ScreenExperienceCrystal.Button.class));
+        public Type<? extends CustomPacketPayload> type() {
+            return ClickScreenButton.TYPE;
         }
     }
 }

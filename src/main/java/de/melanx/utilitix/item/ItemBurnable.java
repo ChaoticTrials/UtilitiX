@@ -5,6 +5,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import org.moddingx.libx.base.ItemBase;
 import org.moddingx.libx.mod.ModX;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class ItemBurnable extends ItemBase {
@@ -17,7 +18,7 @@ public class ItemBurnable extends ItemBase {
     }
 
     @Override
-    public int getBurnTime(ItemStack itemStack, @Nullable RecipeType<?> recipeType) {
+    public int getBurnTime(@Nonnull ItemStack itemStack, @Nullable RecipeType<?> recipeType) {
         return this.burnTime;
     }
 }

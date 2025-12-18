@@ -2,6 +2,7 @@ package de.melanx.utilitix.content.track.rails;
 
 import de.melanx.utilitix.content.track.carts.piston.PistonCartMode;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -27,9 +28,9 @@ public class TilePistonControllerRail extends TileControllerRail {
     }
 
     @Override
-    public void load(@Nonnull CompoundTag nbt) {
-        super.load(nbt);
-        String modeName = nbt.getString("Mode");
+    public void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        String modeName = tag.getString("Mode");
         try {
             this.mode = PistonCartMode.valueOf(modeName);
         } catch (IllegalArgumentException | NoSuchElementException e) {
@@ -38,7 +39,7 @@ public class TilePistonControllerRail extends TileControllerRail {
     }
 
     @Override
-    public void saveAdditional(CompoundTag nbt) {
+    public void saveAdditional(CompoundTag nbt, @Nonnull HolderLookup.Provider registries) {
         nbt.putString("Mode", this.mode.name());
     }
 }

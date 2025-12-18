@@ -1,5 +1,7 @@
 package de.melanx.utilitix.content.track.rails;
 
+import com.mojang.serialization.MapCodec;
+import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.block.ModProperties;
 import de.melanx.utilitix.content.track.ItemMinecartTinkerer;
 import de.melanx.utilitix.content.track.TrackUtil;
@@ -10,6 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -23,6 +26,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BlockFilterRail extends BlockControllerRail<TileFilterRail> {
+
+    public static final MapCodec<BlockFilterRail> CODEC = Block.simpleCodec(BlockFilterRail::new);
+
+    public BlockFilterRail(Properties properties) {
+        this(UtilitiX.getInstance(), false, properties);
+    }
 
     public BlockFilterRail(ModX mod, boolean reinforced, Properties properties) {
         super(mod, TileFilterRail::new, reinforced, properties);
@@ -68,9 +77,10 @@ public class BlockFilterRail extends BlockControllerRail<TileFilterRail> {
         if (filterCart.isEmpty()) return baseShape;
         ItemStack filterThis = this.getTile(level, pos).getFilterStack();
         if (filterThis.isEmpty()) return baseShape;
-        if (!ItemStack.isSameItemSameTags(filterThis, filterCart)) {
+        if (!ItemStack.isSameItemSameComponents(filterThis, filterCart)) {
             return baseShape;
         }
+
         boolean reverse = state.getValue(ModProperties.REVERSE);
         boolean side = state.getValue(ModProperties.RAIL_SIDE);
         if (baseShape == RailShape.NORTH_SOUTH) {
@@ -94,5 +104,10 @@ public class BlockFilterRail extends BlockControllerRail<TileFilterRail> {
                 return RailShape.SOUTH_EAST;
             }
         }
+    }
+
+    @Override
+    protected MapCodec<? extends BaseRailBlock> codec() {
+        return CODEC;
     }
 }

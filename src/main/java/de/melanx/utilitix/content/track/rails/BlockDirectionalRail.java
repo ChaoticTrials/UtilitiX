@@ -1,5 +1,7 @@
 package de.melanx.utilitix.content.track.rails;
 
+import com.mojang.serialization.MapCodec;
+import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.block.ModProperties;
 import de.melanx.utilitix.content.track.TrackUtil;
 import de.melanx.utilitix.content.track.carts.Cart;
@@ -20,7 +22,13 @@ import org.moddingx.libx.mod.ModX;
 
 import javax.annotation.Nonnull;
 
-public abstract class BlockDirectionalRail extends BlockPoweredRail {
+public class BlockDirectionalRail extends BlockPoweredRail {
+
+    public static final MapCodec<BlockDirectionalRail> CODEC = Block.simpleCodec(BlockDirectionalRail::new);
+
+    public BlockDirectionalRail(Properties properties) {
+        this(UtilitiX.getInstance(), 0.4D, properties);
+    }
 
     public BlockDirectionalRail(ModX mod, double maxRailSpeed, Properties properties) {
         super(mod, maxRailSpeed, properties);
@@ -51,7 +59,7 @@ public abstract class BlockDirectionalRail extends BlockPoweredRail {
     }
 
     @Override
-    public void onMinecartPass(BlockState state, Level level, BlockPos pos, AbstractMinecart cart) {
+    public void onMinecartPass(BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull AbstractMinecart cart) {
         if (state.getValue(BlockStateProperties.POWERED)) {
             Direction dir = TrackUtil.getFace(state.getValue(this.getShapeProperty()), state.getValue(ModProperties.REVERSE));
             Vec3 motion = cart.getDeltaMovement();

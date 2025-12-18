@@ -9,15 +9,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nonnull;
 import java.awt.Color;
 
 public class ScreenAdvancedBrewery extends AbstractContainerScreen<ContainerMenuAdvancedBrewery> {
 
-    public static final ResourceLocation TEXTURE = new ResourceLocation(UtilitiX.getInstance().modid, "textures/container/advanced_brewery.png");
+    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "textures/container/advanced_brewery.png");
     private static final int[] BUBBLE_SIZES = new int[]{29, 24, 20, 16, 11, 6, 0};
 
     private int relX;
@@ -25,17 +23,17 @@ public class ScreenAdvancedBrewery extends AbstractContainerScreen<ContainerMenu
 
     public ScreenAdvancedBrewery(ContainerMenuAdvancedBrewery menu, Inventory inv, Component title) {
         super(menu, inv, title);
-        MinecraftForge.EVENT_BUS.addListener(this::onGuiInit);
     }
 
-    private void onGuiInit(ScreenEvent.Init event) {
-        this.relX = (event.getScreen().width - this.imageWidth) / 2;
-        this.relY = (event.getScreen().height - this.imageHeight) / 2;
+    @Override
+    protected void init() {
+        this.relX = (this.width - this.imageWidth) / 2;
+        this.relY = (this.height - this.imageHeight) / 2;
     }
 
     @Override
     public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics);
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }

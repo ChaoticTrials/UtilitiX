@@ -4,8 +4,12 @@ import de.melanx.utilitix.UtilitiXConfig;
 import de.melanx.utilitix.util.BoundingBoxUtils;
 import de.melanx.utilitix.util.XPUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.level.Level;
@@ -13,21 +17,15 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.tags.ITag;
-import org.jetbrains.annotations.Nullable;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.moddingx.libx.base.tile.BlockEntityBase;
 import org.moddingx.libx.base.tile.TickingBlock;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 public class TileExperienceCrystal extends BlockEntityBase implements TickingBlock, IFluidHandler {
@@ -49,28 +47,29 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
     }
 
     @Override
-    public void load(@Nonnull CompoundTag nbt) {
-        super.load(nbt);
-        this.xp = nbt.getInt("Xp");
+    protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        this.xp = tag.getInt("Xp");
     }
 
     @Override
-    public void saveAdditional(@Nonnull CompoundTag compound) {
-        compound.putInt("Xp", this.xp);
+    protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putInt("Xp", this.xp);
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag nbt) {
-        super.handleUpdateTag(nbt);
-        this.xp = nbt.getInt("Xp");
+    public void handleUpdateTag(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider lookupProvider) {
+        super.handleUpdateTag(tag, lookupProvider);
+        this.xp = tag.getInt("Xp");
     }
 
     @Nonnull
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag nbt = super.getUpdateTag();
-        nbt.putInt("Xp", this.xp);
-        return nbt;
+    public CompoundTag getUpdateTag(@Nonnull HolderLookup.Provider registries) {
+        CompoundTag tag = super.getUpdateTag(registries);
+        tag.putInt("Xp", this.xp);
+        return tag;
     }
 
     public int getXp() {
@@ -103,16 +102,6 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
             double scale = 1 - (vector.length() / 8);
             orb.setDeltaMovement(orb.getDeltaMovement().add(vector.normalize().scale(scale * scale * 0.1)));
         }
-    }
-
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction side) {
-        if (validXpFluidIsPresent() && capability == ForgeCapabilities.FLUID_HANDLER) {
-            return LazyOptional.of(() -> this).cast();
-        }
-
-        return super.getCapability(capability, side);
     }
 
     @Override
@@ -150,9 +139,8 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
     }
 
     public boolean isFluidValid(@Nonnull FluidStack stack) {
-        return XPUtils.XP_FLUID_TAGS
-                .stream()
-                .anyMatch(p -> getFluidTag(p).contains(stack.getFluid()));
+        Holder.Reference<Fluid> holder = stack.getFluid().builtInRegistryHolder();
+        return XPUtils.XP_FLUID_TAGS.stream().anyMatch(holder::is);
     }
 
     @Override
@@ -161,7 +149,7 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
     }
 
     @Override
-    public int fill(FluidStack resource, IFluidHandler.FluidAction action) {
+    public int fill(@Nonnull FluidStack resource, @Nonnull IFluidHandler.FluidAction action) {
         if (!this.isFluidValid(resource)) {
             return 0;
         }
@@ -193,13 +181,13 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
 
     @Nonnull
     @Override
-    public FluidStack drain(int maxDrain, IFluidHandler.FluidAction action) {
-        return this.drain(new FluidStack(this.getFluidInTank(0), maxDrain), action);
+    public FluidStack drain(int maxDrain, @Nonnull IFluidHandler.FluidAction action) {
+        return this.drain(new FluidStack(this.getFluidInTank(0).getFluid(), maxDrain), action);
     }
 
     @Nonnull
     @Override
-    public FluidStack drain(FluidStack resource, IFluidHandler.FluidAction action) {
+    public FluidStack drain(@Nonnull FluidStack resource, @Nonnull IFluidHandler.FluidAction action) {
         if (!this.isFluidValid(resource) || resource.getAmount() == 0 || this.getFluidInTank(0).isEmpty()) {
             return FluidStack.EMPTY;
         }
@@ -228,9 +216,8 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
     }
 
     @Nonnull
-    private static ITag<Fluid> getFluidTag(TagKey<Fluid> tag) {
-        return Objects.requireNonNull(ForgeRegistries.FLUIDS.tags())
-                .getTag(tag);
+    private static Iterable<Holder<Fluid>> getFluidTag(TagKey<Fluid> tag) {
+        return BuiltInRegistries.FLUID.getTagOrEmpty(tag);
     }
 
     private int getXpForTank(int tank) {
@@ -256,24 +243,46 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
     public static boolean validXpFluidIsPresent() {
         return XPUtils.XP_FLUID_TAGS
                 .stream()
-                .anyMatch(tag -> !getFluidTag(tag).isEmpty());
+                .anyMatch(tag -> !TileExperienceCrystal.getFluidTag(tag).iterator().hasNext());
     }
 
     public Optional<Fluid> xpFluid() {
         if (this.cachedXpFluid == null) {
-            //noinspection DataFlowIssue
             this.cachedXpFluid = XPUtils.XP_FLUID_TAGS
                     .stream()
-                    .flatMap(tag -> getFluidTag(tag).stream())
-                    .filter(tag -> UtilitiXConfig.ExperienceCrystal.fluidXp.isPresent() && ForgeRegistries.FLUIDS.getKey(tag).equals(UtilitiXConfig.ExperienceCrystal.fluidXp.get()))
+                    .map(TileExperienceCrystal::getFluidTag)
+                    .flatMap(holders -> this.fluidsFromTag(holders).stream())
+                    .filter(this::isConfiguredFluid)
                     .findFirst()
+                    .map(Holder::value)
                     .or(() -> XPUtils.XP_FLUID_TAGS
                             .stream()
-                            .flatMap(tag -> getFluidTag(tag).stream())
-                            .min(Comparator.comparing(ForgeRegistries.FLUIDS::getKey)))
+                            .map(TileExperienceCrystal::getFluidTag)
+                            .flatMap(holders -> this.fluidsFromTag(holders).stream())
+                            .filter(h -> h.unwrapKey().isPresent())
+                            .min(Comparator.comparing(h -> h.unwrapKey().get().location()))
+                            .map(Holder::value))
                     .orElse(null);
         }
 
         return Optional.ofNullable(this.cachedXpFluid);
+    }
+
+    private List<Holder<Fluid>> fluidsFromTag(Iterable<Holder<Fluid>> fluidHolders) {
+        List<Holder<Fluid>> fluids = new ArrayList<>();
+        for (Holder<Fluid> fluidHolder : fluidHolders) {
+            fluids.add(fluidHolder);
+        }
+
+        return fluids;
+    }
+
+    private boolean isConfiguredFluid(Holder<Fluid> fluidHolder) {
+        Optional<ResourceLocation> configuredXp = UtilitiXConfig.ExperienceCrystal.fluidXp;
+        return configuredXp.isPresent()
+                && fluidHolder.unwrapKey()
+                .map(ResourceKey::location)
+                .filter(configuredXp.get()::equals)
+                .isPresent();
     }
 }

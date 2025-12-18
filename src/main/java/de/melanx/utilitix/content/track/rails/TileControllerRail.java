@@ -1,6 +1,7 @@
 package de.melanx.utilitix.content.track.rails;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -18,14 +19,15 @@ public class TileControllerRail extends BlockEntityBase {
     }
 
     @Override
-    public void load(@Nonnull CompoundTag nbt) {
-        super.load(nbt);
-        this.filterStack = ItemStack.of(nbt.getCompound("FilterStack"));
+    protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        ItemStack.parse(registries, tag.getCompound("FilterStack")).ifPresent(stack -> this.filterStack = stack.copy());
     }
 
     @Override
-    public void saveAdditional(CompoundTag compound) {
-        compound.put("FilterStack", this.filterStack.save(new CompoundTag()));
+    protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.put("FilterStack", this.filterStack.save(registries));
     }
 
     public ItemStack getFilterStack() {

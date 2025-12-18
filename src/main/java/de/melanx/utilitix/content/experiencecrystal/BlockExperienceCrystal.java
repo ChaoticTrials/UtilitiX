@@ -1,16 +1,14 @@
 package de.melanx.utilitix.content.experiencecrystal;
 
-import de.melanx.utilitix.registration.ModBlocks;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -23,16 +21,17 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.moddingx.libx.base.tile.MenuBlockBE;
 import org.moddingx.libx.block.DirectionShape;
+import org.moddingx.libx.menu.type.AdvancedMenuType;
 import org.moddingx.libx.mod.ModX;
-import org.moddingx.libx.registration.SetupContext;
+import org.moddingx.libx.registration.RegistrationContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class BlockExperienceCrystal extends MenuBlockBE<TileExperienceCrystal, ContainerMenuExperienceCrystal> {
 
@@ -58,13 +57,12 @@ public class BlockExperienceCrystal extends MenuBlockBE<TileExperienceCrystal, C
             box(1, 0.05, 1, 15, 1, 15)
     ));
 
-    public BlockExperienceCrystal(ModX mod, MenuType<ContainerMenuExperienceCrystal> menutype, Properties properties) {
-        super(mod, TileExperienceCrystal.class, menutype, properties);
+    public BlockExperienceCrystal(ModX mod, AdvancedMenuType<ContainerMenuExperienceCrystal, BlockPos> menu, Properties properties) {
+        super(mod, TileExperienceCrystal.class, menu, properties);
     }
 
     @Override
-    public void registerClient(SetupContext ctx) {
-        MenuScreens.register(ModBlocks.experienceCrystal.menu, ScreenExperienceCrystal::new);
+    public void registerClientAdditional(RegistrationContext ctx, EntryCollector builder) {
         ItemBlockRenderTypes.setRenderLayer(this, RenderType.translucent());
     }
 
@@ -120,17 +118,15 @@ public class BlockExperienceCrystal extends MenuBlockBE<TileExperienceCrystal, C
     }
 
     private boolean useFluidItem(BlockEntity blockEntity, Player player, InteractionHand hand, Level level, BlockPos pos, BlockHitResult hitResult) {
-        IFluidHandler handler = blockEntity.getCapability(ForgeCapabilities.FLUID_HANDLER, hitResult.getDirection())
-                .resolve()
-                .orElse(null);
+        Optional<IFluidHandler> handler = FluidUtil.getFluidHandler(level, pos, hitResult.getDirection());
 
         // Shouldn't happen but if there's no tank pass
-        if (handler == null) {
+        if (handler.isEmpty()) {
             return false;
         }
 
         // If the user isn't holding an item or if the tank is empty pass
-        if (player.getItemInHand(hand).isEmpty() && !handler.getFluidInTank(0).isEmpty()) {
+        if (player.getItemInHand(hand).isEmpty() && !handler.get().getFluidInTank(0).isEmpty()) {
             return false;
         }
 
@@ -140,10 +136,10 @@ public class BlockExperienceCrystal extends MenuBlockBE<TileExperienceCrystal, C
 
     @Nonnull
     @Override
-    public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hitResult) {
         // ignore client side
-        if (level.isClientSide || !this.useFluidItem(this.getBlockEntity(level, pos), player, hand, level, pos, hit))
-            return super.use(state, level, pos, player, hand, hit);
-        return InteractionResult.SUCCESS;
+        if (level.isClientSide || !this.useFluidItem(this.getBlockEntity(level, pos), player, hand, level, pos, hitResult))
+            return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+        return ItemInteractionResult.SUCCESS;
     }
 }

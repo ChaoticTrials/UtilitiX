@@ -13,8 +13,9 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -23,24 +24,24 @@ import java.awt.Color;
 
 public class ScreenExperienceCrystal extends AbstractContainerScreen<ContainerMenuExperienceCrystal> {
 
-    private static final ResourceLocation GUI = new ResourceLocation(UtilitiX.getInstance().modid, "textures/container/experience_crystal.png");
+    private static final ResourceLocation GUI = ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "textures/container/experience_crystal.png");
     public int relX;
     public int relY;
 
     public ScreenExperienceCrystal(ContainerMenuExperienceCrystal menu, Inventory inv, Component title) {
         super(menu, inv, title);
         this.imageHeight = 176;
-        MinecraftForge.EVENT_BUS.addListener(this::onGuiInit);
+        NeoForge.EVENT_BUS.addListener(this::onGuiInit);
     }
 
-    private void onGuiInit(ScreenEvent.Init event) {
+    private void onGuiInit(ScreenEvent.Init.Pre event) {
         this.relX = (event.getScreen().width - this.imageWidth) / 2;
         this.relY = (event.getScreen().height - this.imageHeight) / 2;
     }
 
     @Override
     public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics);
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         guiGraphics.blit(GUI, this.relX, this.relY, 0, 0, this.imageWidth, this.imageHeight);
 
@@ -100,15 +101,11 @@ public class ScreenExperienceCrystal extends AbstractContainerScreen<ContainerMe
             Button pressed = this.getHoveredButton((int) mouseX, (int) mouseY);
             if (pressed != null) {
                 Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
-                UtilitiX.getNetwork().channel.sendToServer(new ClickScreenButton(this.menu.getPos(), pressed));
+                PacketDistributor.sendToServer(new ClickScreenButton.Message(this.menu.getPos(), pressed));
             }
         }
-        return super.mouseClicked(mouseX, mouseY, button);
-    }
 
-    @Override
-    public boolean isPauseScreen() {
-        return false;
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     public enum Button {
