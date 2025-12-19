@@ -3,7 +3,6 @@ package de.melanx.utilitix.network;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.content.slime.StickyChunk;
 import de.melanx.utilitix.registration.ModAttachmentTypes;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -28,8 +27,8 @@ public class StickyChunkUpdate extends PacketHandler<StickyChunkUpdate.Message> 
 
     @Override
     public void handle(StickyChunkUpdate.Message msg, IPayloadContext ctx) {
-        Level level = Minecraft.getInstance().level;
-        if (level == null) {
+        Level level = ctx.player().level();
+        if (!level.isClientSide) {
             this.sendWarning(msg);
             return;
         }
