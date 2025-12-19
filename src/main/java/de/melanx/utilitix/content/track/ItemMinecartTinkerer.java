@@ -56,12 +56,12 @@ public class ItemMinecartTinkerer extends ItemBase {
     }
 
     public static ItemStack getLabelStack(AbstractMinecart entity) {
-        CompoundTag nbt = entity.getPersistentData();
-        return ItemStack.parse(entity.registryAccess(), nbt).orElse(ItemStack.EMPTY);
+        CompoundTag tag = entity.getPersistentData();
+        return ItemStack.parse(entity.registryAccess(), tag).orElse(ItemStack.EMPTY);
     }
 
     public static void setLabelStack(AbstractMinecart entity, ItemStack stack) {
-        CompoundTag nbt = entity.getPersistentData();
-        nbt.put("utilitix_minecart_label_item", stack.save(entity.registryAccess(), new CompoundTag()));
+        CompoundTag tag = entity.getPersistentData();
+        tag.put("utilitix_minecart_label_item", stack.save(entity.registryAccess(), new CompoundTag()));
     }
 }

@@ -51,12 +51,15 @@ public class MixinPistonStructureResolver {
     private void addBranchingBlocks(BlockPos fromPos, CallbackInfoReturnable<Boolean> cir) {
         // We call this in any case. If it's a regular sticky block, do vanilla logic
         // if not, add direction-specific branching
-        Level level = ((PistonStructureResolver) (Object) this).level;
+        PistonStructureResolver pistonStructureResolver = (PistonStructureResolver) (Object) this;
+        Level level = pistonStructureResolver.level;
+
         if (!level.getBlockState(fromPos).isStickyBlock()) {
             // We need our own logic here
             LevelChunk chunk = level.getChunkAt(fromPos);
             //noinspection ConstantConditions
             StickyChunk glue = chunk.getExistingDataOrNull(ModAttachmentTypes.stickyChunk);
+
             //noinspection ConstantConditions
             if (glue != null) {
                 int x = fromPos.getX() & 0xF;
@@ -64,13 +67,15 @@ public class MixinPistonStructureResolver {
                 int z = fromPos.getZ() & 0xF;
                 for (Direction dir : Direction.values()) {
                     if (glue.get(x, y, z, dir)) {
-                        if (!MixinUtil.addDirectionBranchingBlocks((PistonStructureResolver) (Object) this, fromPos, dir)) {
+                        if (!MixinUtil.addDirectionBranchingBlocks(pistonStructureResolver, fromPos, dir)) {
                             cir.setReturnValue(false);
+
                             return;
                         }
                     }
                 }
             }
+
             cir.setReturnValue(true);
         }
     }

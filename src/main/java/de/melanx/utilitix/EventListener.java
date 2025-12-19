@@ -1,19 +1,15 @@
 package de.melanx.utilitix;
 
-import de.melanx.utilitix.content.gildingarmor.GildingArmorRecipe;
 import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.content.slime.StickyChunk;
-import de.melanx.utilitix.network.StickyChunkRequest;
 import de.melanx.utilitix.registration.ModAttachmentTypes;
 import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.util.MobUtil;
 import de.melanx.utilitix.util.XPUtils;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -40,8 +36,6 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
@@ -50,19 +44,14 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.event.entity.item.ItemExpireEvent;
-import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Set;
 
 @EventBusSubscriber(modid = "utilitix")
 public class EventListener {
-
-    private static final MutableComponent GILDED = Component.translatable("tooltip.utilitix.gilded").withStyle(ChatFormatting.GOLD);
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
@@ -150,14 +139,6 @@ public class EventListener {
     }
 
     @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
-    public static void loadChunk(ChunkEvent.Load event) {
-        if (event.getLevel().isClientSide()) {
-            PacketDistributor.sendToServer(new StickyChunkRequest.Message(event.getChunk().getPos()));
-        }
-    }
-
-    @SubscribeEvent
     public static void neighbourChange(BlockEvent.NeighborNotifyEvent event) {
         if (!event.getLevel().isClientSide() && event.getLevel() instanceof Level level) {
             for (Direction dir : Direction.values()) {
@@ -226,16 +207,6 @@ public class EventListener {
                     UtilitiX.getInstance().logger.warn("Tried to place {} but was prevented.", item);
                 }
             }
-        }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
-    public static void onRenderTooltip(ItemTooltipEvent event) {
-        ItemStack stack = event.getItemStack();
-
-        if (GildingArmorRecipe.isGilded(stack)) {
-            event.getToolTip().add(Math.min(event.getToolTip().size() - 1, 1), GILDED);
         }
     }
 

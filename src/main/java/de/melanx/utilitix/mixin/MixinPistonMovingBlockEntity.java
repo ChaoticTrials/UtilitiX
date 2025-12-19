@@ -4,6 +4,7 @@ import de.melanx.utilitix.content.slime.StickyChunk;
 import de.melanx.utilitix.registration.ModAttachmentTypes;
 import de.melanx.utilitix.util.MixinUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
@@ -20,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinPistonMovingBlockEntity {
 
     @Unique
-    private Byte glueData;
+    private Byte utilitiX$glueData;
 
     @Inject(
             method = "tick",
@@ -28,7 +29,7 @@ public class MixinPistonMovingBlockEntity {
     )
     private static void tick(Level level, BlockPos pos, BlockState state, PistonMovingBlockEntity blockEntity, CallbackInfo ci) {
         //noinspection ConstantConditions
-        if (((MixinPistonMovingBlockEntity) (Object) blockEntity).glueData == null) {
+        if (((MixinPistonMovingBlockEntity) (Object) blockEntity).utilitiX$glueData == null) {
             BlockPos fromPos = pos.relative(blockEntity.isExtending() ? blockEntity.getDirection().getOpposite() : blockEntity.getDirection());
             LevelChunk chunk = level.getChunkAt(fromPos);
             //noinspection ConstantConditions
@@ -39,7 +40,7 @@ public class MixinPistonMovingBlockEntity {
                 int y = fromPos.getY();
                 int z = fromPos.getZ() & 0xF;
                 //noinspection ConstantConditions
-                ((MixinPistonMovingBlockEntity) (Object) blockEntity).glueData = glue.getData(x, y, z);
+                ((MixinPistonMovingBlockEntity) (Object) blockEntity).utilitiX$glueData = glue.getData(x, y, z);
                 glue.clearData(x, y, z);
                 chunk.setUnsaved(true);
             }
@@ -56,7 +57,7 @@ public class MixinPistonMovingBlockEntity {
     )
     private static void afterSetBlockState(Level level, BlockPos pos, BlockState state, PistonMovingBlockEntity blockEntity, CallbackInfo ci) {
         //noinspection ConstantConditions
-        MixinUtil.afterSetBlockState(level, pos, ((MixinPistonMovingBlockEntity) (Object) blockEntity).glueData);
+        MixinUtil.afterSetBlockState(level, pos, ((MixinPistonMovingBlockEntity) (Object) blockEntity).utilitiX$glueData);
     }
 
     @Inject(
@@ -71,16 +72,16 @@ public class MixinPistonMovingBlockEntity {
         PistonMovingBlockEntity blockEntity = ((PistonMovingBlockEntity) (Object) this);
         Level level = blockEntity.getLevel();
         BlockPos pos = blockEntity.getBlockPos();
-        MixinUtil.afterSetBlockState(level, pos, this.glueData);
+        MixinUtil.afterSetBlockState(level, pos, this.utilitiX$glueData);
     }
 
     @Inject(
-            method = "load",
+            method = "loadAdditional",
             at = @At("RETURN")
     )
-    public void read(CompoundTag nbt, CallbackInfo ci) {
-        if (nbt.contains("utilitix_glue_data", Tag.TAG_ANY_NUMERIC)) {
-            this.glueData = nbt.getByte("utilitix_glue_data");
+    public void read(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
+        if (tag.contains("utilitix_glue_data", Tag.TAG_ANY_NUMERIC)) {
+            this.utilitiX$glueData = tag.getByte("utilitix_glue_data");
         }
     }
 
@@ -88,9 +89,9 @@ public class MixinPistonMovingBlockEntity {
             method = "saveAdditional",
             at = @At("HEAD")
     )
-    public void write(CompoundTag nbt, CallbackInfo ci) {
-        if (this.glueData != null) {
-            nbt.putByte("utilitix_glue_data", this.glueData);
+    public void write(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
+        if (this.utilitiX$glueData != null) {
+            tag.putByte("utilitix_glue_data", this.utilitiX$glueData);
         }
     }
 }

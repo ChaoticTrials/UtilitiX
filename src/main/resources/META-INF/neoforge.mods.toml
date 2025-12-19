@@ -35,3 +35,6 @@ type = "required"
 versionRange = "[1.21.1-6.0.1,)"
 ordering = "NONE"
 side = "BOTH"
+
+[[mixins]]
+config = "${mod.modid}.mixins.json"

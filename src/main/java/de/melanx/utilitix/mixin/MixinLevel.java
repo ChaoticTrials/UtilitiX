@@ -19,13 +19,16 @@ public abstract class MixinLevel {
     )
     public void updateComparatorOutputLevel(BlockPos pos, Block block, CallbackInfo ci) {
         if (!(block instanceof ComparatorRedirector)) {
-            BlockState up = ((Level) (Object) this).getBlockState(pos.above());
+            Level level = (Level) (Object) this;
+
+            BlockState up = level.getBlockState(pos.above());
             if (up.getBlock() instanceof ComparatorRedirector) {
-                ((Level) (Object) this).updateNeighbourForOutputSignal(pos.above(), up.getBlock());
+                level.updateNeighbourForOutputSignal(pos.above(), up.getBlock());
             }
-            BlockState down = ((Level) (Object) this).getBlockState(pos.below());
+
+            BlockState down = level.getBlockState(pos.below());
             if (down.getBlock() instanceof ComparatorRedirector) {
-                ((Level) (Object) this).updateNeighbourForOutputSignal(pos.below(), down.getBlock());
+                level.updateNeighbourForOutputSignal(pos.below(), down.getBlock());
             }
         }
     }

@@ -1,12 +1,14 @@
 package de.melanx.utilitix.content.gildingarmor;
 
 import com.mojang.serialization.MapCodec;
+import de.melanx.utilitix.client.ClientProxy;
 import de.melanx.utilitix.registration.ModDataComponentTypes;
 import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.registration.ModRecipes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.ItemStack;
@@ -15,11 +17,14 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SmithingRecipeInput;
 import net.minecraft.world.item.crafting.SmithingTransformRecipe;
 import net.minecraft.world.level.Level;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
 
 import javax.annotation.Nonnull;
 
 public class GildingArmorRecipe extends SmithingTransformRecipe {
 
+    public static final GildingArmorRecipe INSTANCE = new GildingArmorRecipe();
     private static final int ARMOR_SLOT_ID = 1;
     private static final int ADDITION_SLOT_ID = 2;
 
@@ -70,11 +75,22 @@ public class GildingArmorRecipe extends SmithingTransformRecipe {
     }
 
     public static boolean canGild(ArmorItem armor, ItemStack stack) {
-        if (armor.getMaterial() == ArmorMaterials.GOLD) return false;
-        try {
-//            Player player = DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player); todo
-//            return !armor.makesPiglinsNeutral(stack, player);
+        if (armor.getMaterial() == ArmorMaterials.GOLD) {
             return false;
+        }
+
+        try {
+            Player player = null;
+            if (FMLEnvironment.dist == Dist.CLIENT) {
+                try {
+                    player = ClientProxy.getClientPlayer();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            //noinspection DataFlowIssue
+            return !armor.makesPiglinsNeutral(stack, player);
         } catch (NullPointerException e) {
             return false;
         }
@@ -85,13 +101,13 @@ public class GildingArmorRecipe extends SmithingTransformRecipe {
         @Nonnull
         @Override
         public MapCodec<GildingArmorRecipe> codec() {
-            return MapCodec.unit(GildingArmorRecipe::new);
+            return MapCodec.unit(() -> GildingArmorRecipe.INSTANCE);
         }
 
         @Nonnull
         @Override
         public StreamCodec<RegistryFriendlyByteBuf, GildingArmorRecipe> streamCodec() {
-            return StreamCodec.unit(new GildingArmorRecipe());
+            return StreamCodec.unit(GildingArmorRecipe.INSTANCE);
         }
     }
 }
