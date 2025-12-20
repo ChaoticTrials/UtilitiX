@@ -1,7 +1,8 @@
 package de.melanx.utilitix.recipe;
 
-import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.*;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import de.melanx.utilitix.recipe.brewery.*;
 import de.melanx.utilitix.registration.ModRecipeTypes;
 import de.melanx.utilitix.registration.ModRecipes;
 import net.minecraft.core.HolderLookup;
@@ -18,10 +19,12 @@ import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public class BreweryRecipe implements Recipe<RecipeWrapper> {
 
-    @Nullable
     private final Ingredient input;
     private final EffectTransformer transformer;
 
@@ -76,6 +79,7 @@ public class BreweryRecipe implements Recipe<RecipeWrapper> {
         if (this.input != null) {
             nnl.add(this.input);
         }
+
         return nnl;
     }
 
@@ -100,13 +104,96 @@ public class BreweryRecipe implements Recipe<RecipeWrapper> {
         return ModRecipes.BREWERY_SERIALIZER;
     }
 
+    public Optional<Ingredient> getInput() {
+        return Optional.ofNullable(this.input);
+    }
+
     public static class Serializer implements RecipeSerializer<BreweryRecipe> {
 
+        private static <T> MapCodec<T> errorMapCodec(String message) {
+            return new MapCodec<>() {
+                @Override
+                public <U> Stream<U> keys(DynamicOps<U> ops) {
+                    return Stream.empty();
+                }
+
+                @Override
+                public <U> DataResult<T> decode(DynamicOps<U> ops, MapLike<U> input) {
+                    return DataResult.error(() -> message);
+                }
+
+                @Override
+                public <U> RecordBuilder<U> encode(T input, DynamicOps<U> ops, RecordBuilder<U> prefix) {
+                    return prefix.withErrorsFrom(DataResult.error(() -> message));
+                }
+            };
+        }
+
+        private static String actionType(EffectTransformer transformer) {
+            if (transformer instanceof Apply) return "apply";
+            if (transformer instanceof Merge) return "merge";
+            if (transformer instanceof Upgrade) return "upgrade";
+            if (transformer instanceof Clone) return "clone";
+            throw new IllegalStateException("Unknown EffectTransformer: " + transformer.getClass().getName());
+        }
+
+        private static MapCodec<? extends EffectTransformer> actionCodec(String type) {
+            return switch(type.toLowerCase(Locale.ROOT)) {
+                case "apply" -> Apply.CODEC;
+                case "merge" -> Merge.CODEC;
+                case "upgrade" -> Upgrade.CODEC;
+                case "clone" -> Clone.CODEC;
+                default -> errorMapCodec("Unknown effect transformer type: " + type);
+            };
+        }
+
+        private static final MapCodec<EffectTransformer> ACTION_CODEC =
+                Codec.STRING.dispatchMap("type", Serializer::actionType, Serializer::actionCodec);
+
+        private static final Codec<EffectTransformer> DIRECT_ACTION_CODEC = ACTION_CODEC.codec();
+
+        private static final StreamCodec<RegistryFriendlyByteBuf, EffectTransformer> ACTION_STREAM_CODEC = StreamCodec.of(
+                Serializer::toNetworkAction, Serializer::fromNetworkAction
+        );
+
+        private static EffectTransformer fromNetworkAction(@Nonnull RegistryFriendlyByteBuf buffer) {
+            byte id = buffer.readByte();
+            return switch(id) {
+                case 0 -> Apply.STREAM_CODEC.decode(buffer);
+                case 1 -> Merge.STREAM_CODEC.decode(buffer);
+                case 2 -> Upgrade.STREAM_CODEC.decode(buffer);
+                case 3 -> Clone.STREAM_CODEC.decode(buffer);
+                default -> throw new IllegalStateException("Invalid packet: Unknown effect transformer type: " + id);
+            };
+        }
+
+        private static void toNetworkAction(@Nonnull RegistryFriendlyByteBuf buffer, @Nonnull EffectTransformer transformer) {
+            switch(transformer) {
+                case Apply apply -> {
+                    buffer.writeByte(0);
+                    Apply.STREAM_CODEC.encode(buffer, apply);
+                }
+                case Merge merge -> {
+                    buffer.writeByte(1);
+                    Merge.STREAM_CODEC.encode(buffer, merge);
+                }
+                case Upgrade upgrade -> {
+                    buffer.writeByte(2);
+                    Upgrade.STREAM_CODEC.encode(buffer, upgrade);
+                }
+                case Clone clone -> {
+                    buffer.writeByte(3);
+                    Clone.STREAM_CODEC.encode(buffer, clone);
+                }
+                default -> throw new IllegalStateException("Unknown EffectTransformer: " + transformer.getClass().getName());
+            }
+        }
+
         public static final MapCodec<BreweryRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                        Ingredient.CODEC.fieldOf("input").forGetter(recipe -> recipe.input),
-                        EffectTransformer.DIRECT_CODEC.fieldOf("action").forGetter(BreweryRecipe::getAction)
+                        Ingredient.CODEC.optionalFieldOf("input").forGetter(BreweryRecipe::getInput),
+                        DIRECT_ACTION_CODEC.fieldOf("action").forGetter(BreweryRecipe::getAction)
                 )
-                .apply(instance, BreweryRecipe::new));
+                .apply(instance, (input, action) -> new BreweryRecipe(input.orElse(null), action)));
 
         public static final StreamCodec<RegistryFriendlyByteBuf, BreweryRecipe> STREAM_CODEC = StreamCodec.of(
                 BreweryRecipe.Serializer::toNetwork, BreweryRecipe.Serializer::fromNetwork
@@ -117,7 +204,8 @@ public class BreweryRecipe implements Recipe<RecipeWrapper> {
             if (buffer.readBoolean()) {
                 input = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
             }
-            EffectTransformer transformer = EffectTransformer.read(buffer);
+
+            EffectTransformer transformer = ACTION_STREAM_CODEC.decode(buffer);
 
             return new BreweryRecipe(input, transformer);
         }
@@ -127,7 +215,8 @@ public class BreweryRecipe implements Recipe<RecipeWrapper> {
             if (recipe.input != null) {
                 Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.input);
             }
-            recipe.transformer.write(buffer);
+
+            ACTION_STREAM_CODEC.encode(buffer, recipe.transformer);
         }
 
         @Nonnull

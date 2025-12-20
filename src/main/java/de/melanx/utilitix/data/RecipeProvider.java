@@ -1,10 +1,20 @@
 package de.melanx.utilitix.data;
 
 import de.melanx.utilitix.UtilitiX;
+import de.melanx.utilitix.data.recipe.BreweryRecipeBuilder;
+import de.melanx.utilitix.recipe.brewery.Apply;
+import de.melanx.utilitix.recipe.brewery.Clone;
+import de.melanx.utilitix.recipe.brewery.Merge;
+import de.melanx.utilitix.recipe.brewery.Upgrade;
 import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.registration.ModRegisterables;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
@@ -132,35 +142,35 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
 //                'b', Items.SMOOTH_STONE,
 //                'i', Tags.Items.INGOTS_IRON,
 //                'g', Tags.Items.INGOTS_GOLD);
-//        BreweryRecipeBuilder.breweryRecipe() todo
-//                .input(Items.GOLDEN_APPLE)
-//                .action(new EffectTransformer.Apply(
-//                        Component.translatable("item." + UtilitiX.getInstance().modid + ".apple_juice").withStyle(ChatFormatting.GREEN),
-//                        new MobEffectInstance(MobEffects.REGENERATION, 100, 1),
-//                        new MobEffectInstance(MobEffects.ABSORPTION, 2400, 0)
-//                ))
-//                .build(this.consumer(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "apple_juice"));
-//        BreweryRecipeBuilder.breweryRecipe()
-//                .input(Items.ENCHANTED_GOLDEN_APPLE)
-//                .action(new EffectTransformer.Apply(
-//                        Component.translatable("item." + UtilitiX.getInstance().modid + ".god_apple_juice").withStyle(ChatFormatting.GREEN),
-//                        new MobEffectInstance(MobEffects.REGENERATION, 400, 1),
-//                        new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 6000, 0),
-//                        new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 6000, 0),
-//                        new MobEffectInstance(MobEffects.ABSORPTION, 2400, 3)
-//                ))
-//                .build(this.consumer(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "god_apple_juice"));
-//        BreweryRecipeBuilder.breweryRecipe()
-//                .action(new EffectTransformer.Merge(1))
-//                .build(this.consumer(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "merge"));
-//        BreweryRecipeBuilder.breweryRecipe()
-//                .input(Items.NETHERITE_SCRAP)
-//                .action(new EffectTransformer.Clone())
-//                .build(this.consumer(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "clone"));
-//        BreweryRecipeBuilder.breweryRecipe()
-//                .input(Items.POPPED_CHORUS_FRUIT)
-//                .action(new EffectTransformer.Upgrade(2))
-//                .build(this.consumer(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "upgrade"));
+        BreweryRecipeBuilder.breweryRecipe()
+                .input(Items.GOLDEN_APPLE)
+                .action(new Apply(
+                        Component.translatable("item." + UtilitiX.getInstance().modid + ".apple_juice").withStyle(ChatFormatting.GREEN),
+                        new MobEffectInstance(MobEffects.REGENERATION, 100, 1),
+                        new MobEffectInstance(MobEffects.ABSORPTION, 2400, 0)
+                ))
+                .save(this.output(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "apple_juice"));
+        BreweryRecipeBuilder.breweryRecipe()
+                .input(Items.ENCHANTED_GOLDEN_APPLE)
+                .action(new Apply(
+                        Component.translatable("item." + UtilitiX.getInstance().modid + ".god_apple_juice").withStyle(ChatFormatting.GREEN),
+                        new MobEffectInstance(MobEffects.REGENERATION, 400, 1),
+                        new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 6000, 0),
+                        new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 6000, 0),
+                        new MobEffectInstance(MobEffects.ABSORPTION, 2400, 3)
+                ))
+                .save(this.output(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "god_apple_juice"));
+        BreweryRecipeBuilder.breweryRecipe()
+                .action(new Merge(1))
+                .save(this.output(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "merge"));
+        BreweryRecipeBuilder.breweryRecipe()
+                .input(Items.NETHERITE_SCRAP)
+                .action(new Clone())
+                .save(this.output(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "clone"));
+        BreweryRecipeBuilder.breweryRecipe()
+                .input(Items.POPPED_CHORUS_FRUIT)
+                .action(new Upgrade(2))
+                .save(this.output(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "upgrade"));
     }
 
     private void createRailRecipes() {

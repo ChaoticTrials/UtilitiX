@@ -1,6 +1,7 @@
 package de.melanx.utilitix.data.recipe;
 
-import de.melanx.utilitix.recipe.EffectTransformer;
+import de.melanx.utilitix.recipe.BreweryRecipe;
+import de.melanx.utilitix.recipe.brewery.EffectTransformer;
 import net.minecraft.advancements.Criterion;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -10,6 +11,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BreweryRecipeBuilder implements RecipeBuilder {
@@ -37,6 +39,7 @@ public class BreweryRecipeBuilder implements RecipeBuilder {
         if (this.input != null) {
             throw new IllegalStateException("Advanced Brewery Recipes can only take one input.");
         }
+
         this.input = input;
         return this;
     }
@@ -45,77 +48,40 @@ public class BreweryRecipeBuilder implements RecipeBuilder {
         if (this.transformer != null) {
             throw new IllegalStateException("Advanced Brewery Recipes can only take one effect transformer.");
         }
+
         this.transformer = transformer;
         return this;
     }
 
-//    public void build(Consumer<FinishedRecipe> consumerIn, ResourceLocation id) { todo
-//
-//    }
-
+    @Nonnull
     @Override
-    public RecipeBuilder unlockedBy(String name, Criterion<?> criterion) {
-        return null;
+    public RecipeBuilder unlockedBy(@Nonnull String name, @Nonnull Criterion<?> criterion) {
+        return this;
     }
 
+    @Nonnull
     @Override
     public RecipeBuilder group(@Nullable String groupName) {
-        return null;
+        return this;
     }
 
+    @Nonnull
     @Override
     public Item getResult() {
-        return null;
-    }
-
-    @Override
-    public void save(RecipeOutput recipeOutput, ResourceLocation id) {
         if (this.transformer == null) {
             throw new IllegalStateException("Can't build Advanced Brewery Recipe without action.");
         }
-//        recipeOutput.accept(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "utilitix_brewery/" + id.getPath()), this.input, this.transformer); todo
+
+        return this.transformer.output().getItem();
     }
 
-//    private record Recipe(ResourceLocation id, todo
-//                          @Nullable Ingredient input,
-//                          EffectTransformer transformer) implements FinishedRecipe {
-//
-//        private Recipe(ResourceLocation id, @Nullable Ingredient input, EffectTransformer transformer) {
-//            this.id = id;
-//            this.input = input;
-//            this.transformer = transformer;
-//        }
-//
-//        @Nonnull
-//        @Override
-//        public ResourceLocation getId() {
-//            return this.id;
-//        }
-//
-//        @Override
-//        public void serializeRecipeData(@Nonnull JsonObject json) {
-//            if (this.input != null) {
-//                json.add("input", this.input.toJson());
-//            }
-//            json.add("action", this.transformer.serialize());
-//        }
-//
-//        @Nonnull
-//        @Override
-//        public RecipeSerializer<?> getType() {
-//            return ModRecipes.BREWERY_SERIALIZER;
-//        }
-//
-//        @Nullable
-//        @Override
-//        public JsonObject serializeAdvancement() {
-//            return null;
-//        }
-//
-//        @Nullable
-//        @Override
-//        public ResourceLocation getAdvancementId() {
-//            return null;
-//        }
-//    }
+    @Override
+    public void save(@Nonnull RecipeOutput recipeOutput, @Nonnull ResourceLocation id) {
+        if (this.transformer == null) {
+            throw new IllegalStateException("Can't build Advanced Brewery Recipe without action.");
+        }
+
+        BreweryRecipe breweryRecipe = new BreweryRecipe(this.input, this.transformer);
+        recipeOutput.accept(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "utilitix_brewery/" + id.getPath()), breweryRecipe, null);
+    }
 }

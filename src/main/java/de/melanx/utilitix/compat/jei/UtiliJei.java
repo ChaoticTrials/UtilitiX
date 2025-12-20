@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import de.melanx.utilitix.content.brewery.ScreenAdvancedBrewery;
 import de.melanx.utilitix.content.gildingarmor.GildingArmorRecipe;
 import de.melanx.utilitix.recipe.BreweryRecipe;
-import de.melanx.utilitix.recipe.EffectTransformer;
+import de.melanx.utilitix.recipe.brewery.Apply;
 import de.melanx.utilitix.registration.*;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -63,7 +63,7 @@ public class UtiliJei implements IModPlugin {
         ClientLevel level = Minecraft.getInstance().level;
         RecipeManager recipes = Objects.requireNonNull(level).getRecipeManager();
         List<BreweryRecipe> simpleBrewery = recipes.getAllRecipesFor(ModRecipeTypes.BREWERY).stream()
-                .filter(r -> r.value().getAction() instanceof EffectTransformer.Apply)
+                .filter(r -> r.value().getAction() instanceof Apply)
                 .map(RecipeHolder::value)
                 .collect(Collectors.toList());
         registration.addRecipes(BREWING_RECIPE, simpleBrewery);
