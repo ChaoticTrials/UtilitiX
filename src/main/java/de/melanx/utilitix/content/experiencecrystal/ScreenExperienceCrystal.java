@@ -1,6 +1,5 @@
 package de.melanx.utilitix.content.experiencecrystal;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.network.ClickScreenButton;
 import de.melanx.utilitix.util.XPUtils;
@@ -13,8 +12,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
-import net.neoforged.neoforge.client.event.ScreenEvent;
-import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -25,32 +22,20 @@ import java.awt.Color;
 public class ScreenExperienceCrystal extends AbstractContainerScreen<ContainerMenuExperienceCrystal> {
 
     private static final ResourceLocation GUI = ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "textures/container/experience_crystal.png");
-    public int relX;
-    public int relY;
 
     public ScreenExperienceCrystal(ContainerMenuExperienceCrystal menu, Inventory inv, Component title) {
         super(menu, inv, title);
         this.imageHeight = 176;
-        NeoForge.EVENT_BUS.addListener(this::onGuiInit);
-    }
-
-    private void onGuiInit(ScreenEvent.Init.Pre event) {
-        this.relX = (event.getScreen().width - this.imageWidth) / 2;
-        this.relY = (event.getScreen().height - this.imageHeight) / 2;
     }
 
     @Override
     public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        guiGraphics.blit(GUI, this.relX, this.relY, 0, 0, this.imageWidth, this.imageHeight);
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
 
         Button hoveredButton = this.getHoveredButton(mouseX, mouseY);
         for (Button button : Button.values()) {
             this.renderButton(guiGraphics, button, hoveredButton == button);
         }
-
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
 
         for (Button button : Button.values()) {
@@ -68,25 +53,26 @@ public class ScreenExperienceCrystal extends AbstractContainerScreen<ContainerMe
 
     @Override
     protected void renderBg(@Nonnull GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-        guiGraphics.blit(GUI, this.relX + (this.imageWidth / 2 - 50), this.relY + 49, 0, this.imageHeight + 40, 100, 7);
+        guiGraphics.blit(GUI, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(GUI, this.leftPos + (this.imageWidth / 2 - 50), this.topPos + 49, 0, this.imageHeight + 40, 100, 7);
         Pair<Integer, Float> xp = XPUtils.getLevelExp(this.menu.getBlockEntity().getXp());
-        guiGraphics.blit(GUI, this.relX + (this.imageWidth / 2 - 49), this.relY + 50, 0, this.imageHeight + 47, (int) (xp.getRight() * 98), 5);
+        guiGraphics.blit(GUI, this.leftPos + (this.imageWidth / 2 - 49), this.topPos + 50, 0, this.imageHeight + 47, (int) (xp.getRight() * 98), 5);
         MutableComponent s = Component.literal(String.valueOf(xp.getLeft()));
         int width = this.font.width(s.getString());
-        guiGraphics.drawString(this.font, s.getString(), this.relX + ((float) this.imageWidth / 2) - ((float) width / 2), this.relY + 40, Color.DARK_GRAY.getRGB(), false);
+        guiGraphics.drawString(this.font, s.getString(), this.leftPos + ((float) this.imageWidth / 2) - ((float) width / 2), this.topPos + 40, Color.DARK_GRAY.getRGB(), false);
     }
 
     public void renderButton(GuiGraphics guiGraphics, Button button, boolean mouseHovered) {
-        int xButton = this.relX + button.x;
-        int yButton = this.relY + button.y;
+        int xButton = this.leftPos + button.x;
+        int yButton = this.topPos + button.y;
         guiGraphics.blit(GUI, xButton, yButton, button.offset, mouseHovered ? this.imageHeight + 20 : this.imageHeight, 20, 20);
     }
 
     @Nullable
     private Button getHoveredButton(int x, int y) {
         for (Button button : Button.values()) {
-            int xButton = this.relX + button.x;
-            int yButton = this.relY + button.y;
+            int xButton = this.leftPos + button.x;
+            int yButton = this.topPos + button.y;
             if (x >= xButton && x < xButton + 20 && y >= yButton && y < yButton + 20) {
                 return button;
             }

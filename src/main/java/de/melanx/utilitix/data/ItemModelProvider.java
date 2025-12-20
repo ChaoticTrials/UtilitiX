@@ -29,24 +29,24 @@ public class ItemModelProvider extends ItemModelProviderBase {
 
     @Override
     protected void defaultItem(ResourceLocation id, Item item) {
-        if (item instanceof BellBase) {
-            super.defaultItem(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath() + "_item"), item);
-        } else if (item instanceof ItemMobYoinker) {
-            this.withExistingParent(id.getPath(), GENERATED)
+        switch(item) {
+            case BellBase bellBase ->
+                    super.defaultItem(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath() + "_item"), bellBase);
+            case ItemMobYoinker itemMobYoinker -> this.withExistingParent(id.getPath(), GENERATED)
                     .texture("layer0", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "item/" + id.getPath())).override()
                     .predicate(UtilitiX.getInstance().resource("filled"), 1)
                     .model(this.withExistingParent(id.getPath() + "_filled", GENERATED)
                             .texture("layer0", "item/" + id.getPath() + "_filled")).end();
-        } else if (item instanceof AncientCompass) {
-            for (int i = 0; i < 32; ++i) {
-                if (i != 16) {
-                    String name = id.getPath() + String.format("_%02d", i);
-                    this.withExistingParent(name, GENERATED)
-                            .texture("layer0", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "item/" + name));
+            case AncientCompass ancientCompass -> {
+                for (int i = 0; i < 32; ++i) {
+                    if (i != 16) {
+                        String name = id.getPath() + String.format("_%02d", i);
+                        this.withExistingParent(name, GENERATED)
+                                .texture("layer0", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "item/" + name));
+                    }
                 }
             }
-        } else {
-            super.defaultItem(id, item);
+            case null, default -> super.defaultItem(id, item);
         }
     }
 

@@ -1,7 +1,5 @@
 package de.melanx.utilitix.content.experiencecrystal;
 
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
@@ -25,9 +23,7 @@ import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.moddingx.libx.base.tile.MenuBlockBE;
 import org.moddingx.libx.block.DirectionShape;
-import org.moddingx.libx.menu.type.AdvancedMenuType;
 import org.moddingx.libx.mod.ModX;
-import org.moddingx.libx.registration.RegistrationContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -57,16 +53,10 @@ public class BlockExperienceCrystal extends MenuBlockBE<TileExperienceCrystal, C
             box(1, 0.05, 1, 15, 1, 15)
     ));
 
-    public BlockExperienceCrystal(ModX mod, AdvancedMenuType<ContainerMenuExperienceCrystal, BlockPos> menu, Properties properties) {
-        super(mod, TileExperienceCrystal.class, menu, properties);
+    public BlockExperienceCrystal(ModX mod, Properties properties) {
+        super(mod, TileExperienceCrystal.class, ContainerMenuExperienceCrystal.TYPE, properties);
     }
 
-    @Override
-    public void registerClientAdditional(RegistrationContext ctx, EntryCollector builder) {
-        ItemBlockRenderTypes.setRenderLayer(this, RenderType.translucent());
-    }
-
-    @SuppressWarnings("deprecation")
     @Override
     public void onPlace(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
@@ -75,20 +65,19 @@ public class BlockExperienceCrystal extends MenuBlockBE<TileExperienceCrystal, C
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void entityInside(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Entity entity) {
-        if (entity instanceof ExperienceOrb orb) {
-            if (!level.isClientSide) {
-                TileExperienceCrystal tile = this.getBlockEntity(level, pos);
-                int xpValue = orb.value;
-                int added = tile.addXp(xpValue);
-                if (added == xpValue) {
-                    entity.remove(Entity.RemovalReason.KILLED);
-                } else {
-                    orb.value -= added;
-                }
-            }
+        if (!(entity instanceof ExperienceOrb orb) || level.isClientSide) {
+            return;
+        }
+
+        TileExperienceCrystal tile = this.getBlockEntity(level, pos);
+        int xpValue = orb.value;
+        int added = tile.addXp(xpValue);
+        if (added == xpValue) {
+            entity.remove(Entity.RemovalReason.KILLED);
+        } else {
+            orb.value -= added;
         }
     }
 
@@ -105,14 +94,12 @@ public class BlockExperienceCrystal extends MenuBlockBE<TileExperienceCrystal, C
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
         return SHAPE.getShape(state.getValue(BlockStateProperties.FACING));
     }
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
     public VoxelShape getCollisionShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
         return COLLISION_SHAPE.getShape(state.getValue(BlockStateProperties.FACING));
     }
@@ -137,7 +124,6 @@ public class BlockExperienceCrystal extends MenuBlockBE<TileExperienceCrystal, C
     @Nonnull
     @Override
     protected ItemInteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hitResult) {
-        // ignore client side
         if (level.isClientSide || !this.useFluidItem(this.getBlockEntity(level, pos), player, hand, level, pos, hitResult))
             return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
         return ItemInteractionResult.SUCCESS;

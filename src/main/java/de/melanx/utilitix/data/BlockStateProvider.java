@@ -41,7 +41,7 @@ public class BlockStateProvider extends BlockStateProviderBase {
     protected void setup() {
         this.manualState(ModBlocks.weakRedstoneTorch);
         this.manualState(ModBlocks.weakRedstoneTorch.wallTorch);
-//        this.manualModel(ModBlocks.experienceCrystal); todo
+        this.manualModel(ModBlocks.experienceCrystal);
         this.manualModel(ModBlocks.advancedBrewery);
     }
 
@@ -188,9 +188,11 @@ public class BlockStateProvider extends BlockStateProviderBase {
 
     @Override
     protected ModelFile defaultModel(ResourceLocation id, Block block) {
-        if (block == ModBlocks.linkedRepeater || block instanceof BaseRailBlock /* todo|| block == ModBlocks.crudeFurnace*/) {
+        if (block == ModBlocks.linkedRepeater || block instanceof BaseRailBlock || block == ModBlocks.crudeFurnace) {
             return null;
-        } else if (block instanceof ComparatorRedirector) {
+        }
+
+        if (block instanceof ComparatorRedirector) {
             ResourceLocation top = ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "block/comparator_redirector_top");
             ResourceLocation bottom = ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "block/comparator_redirector_bottom");
             if (((ComparatorRedirector) block).direction == Direction.DOWN) {
@@ -198,12 +200,13 @@ public class BlockStateProvider extends BlockStateProviderBase {
                 top = bottom;
                 bottom = tmp;
             }
+
             return this.models().cubeBottomTop(id.getPath(),
                     ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "block/comparator_redirector_side"),
                     top, bottom
             );
-        } else {
-            return super.defaultModel(id, block);
         }
+
+        return super.defaultModel(id, block);
     }
 }

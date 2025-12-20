@@ -8,6 +8,9 @@ import de.melanx.utilitix.content.brewery.TileAdvancedBrewery;
 import de.melanx.utilitix.content.crudefurnace.BlockCrudeFurnace;
 import de.melanx.utilitix.content.crudefurnace.ContainerMenuCrudeFurnace;
 import de.melanx.utilitix.content.crudefurnace.TileCrudeFurnace;
+import de.melanx.utilitix.content.experiencecrystal.BlockExperienceCrystal;
+import de.melanx.utilitix.content.experiencecrystal.ContainerMenuExperienceCrystal;
+import de.melanx.utilitix.content.experiencecrystal.TileExperienceCrystal;
 import de.melanx.utilitix.content.track.rails.*;
 import de.melanx.utilitix.content.wireless.BlockLinkedRepeater;
 import net.minecraft.core.Direction;
@@ -18,6 +21,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.RailShape;
+import net.minecraft.world.level.material.MapColor;
 import org.moddingx.libx.annotation.registration.RegisterClass;
 import org.moddingx.libx.base.BlockBase;
 import org.moddingx.libx.base.tile.MenuBlockBE;
@@ -62,6 +66,6 @@ public class ModBlocks {
             return ModProperties.RAIL_SHAPE_FLAT_STRAIGHT;
         }
     };
-    //    public static final MenuBlockBE<TileExperienceCrystal, ContainerMenuExperienceCrystal> experienceCrystal = new BlockExperienceCrystal(UtilitiX.getInstance(), , BlockBehaviour.Properties.ofLegacyCopy(Blocks.STONE).mapColor(MapColor.COLOR_BLACK).strength(3, 7));
+    public static final MenuBlockBE<TileExperienceCrystal, ContainerMenuExperienceCrystal> experienceCrystal = new BlockExperienceCrystal(UtilitiX.getInstance(), BlockBehaviour.Properties.ofLegacyCopy(Blocks.STONE).mapColor(MapColor.COLOR_LIGHT_GREEN).strength(3, 7));
     public static final Block stoneWall = new StoneWallBlock(BlockBehaviour.Properties.ofLegacyCopy(Blocks.STONE), new Item.Properties());
 }

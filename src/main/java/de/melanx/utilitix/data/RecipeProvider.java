@@ -79,14 +79,14 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
                 'g', Tags.Items.INGOTS_GOLD,
                 'm', Items.PHANTOM_MEMBRANE);
         this.shapeless(ModItems.glueBall, 4, Tags.Items.SLIME_BALLS, Tags.Items.SLIME_BALLS);
-//        this.shaped(ModBlocks.experienceCrystal,
-//                "geg",
-//                "exe",
-//                "ccc",
-//                'g', Blocks.LIME_STAINED_GLASS,
-//                'e', Tags.Items.GEMS_EMERALD,
-//                'x', Items.EXPERIENCE_BOTTLE,
-//                'c', Items.BLACK_CONCRETE); todo
+        this.shaped(ModBlocks.experienceCrystal,
+                "geg",
+                "exe",
+                "ccc",
+                'g', Blocks.LIME_STAINED_GLASS,
+                'e', Tags.Items.GEMS_EMERALD,
+                'x', Items.EXPERIENCE_BOTTLE,
+                'c', Items.BLACK_CONCRETE);
         this.shaped(ModBlocks.crudeFurnace,
                 "C C",
                 "SFS",

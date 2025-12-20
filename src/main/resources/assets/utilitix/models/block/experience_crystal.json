@@ -1,6 +1,7 @@
 {
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
+	"render_type": "translucent",
 	"ambientocclusion": false,
 	"textures": {
 		"base": "block/black_concrete",
