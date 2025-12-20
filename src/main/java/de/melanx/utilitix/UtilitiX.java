@@ -10,12 +10,9 @@ import de.melanx.utilitix.network.UtiliNetwork;
 import de.melanx.utilitix.registration.ModCreativeTab;
 import de.melanx.utilitix.registration.ModEntities;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.raid.Raid;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.common.asm.enumextension.EnumProxy;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -25,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.function.Supplier;
 
 @Mod("utilitix")
 public final class UtilitiX extends ModXRegistration {
@@ -62,13 +58,7 @@ public final class UtilitiX extends ModXRegistration {
 
     @Override
     protected void setup(FMLCommonSetupEvent event) {
-        if (UtilitiXConfig.illusionerInRaid) {
-            // todo check
-            new EnumProxy<>(
-                    Raid.RaiderType.class,
-                    (Supplier<EntityType<?>>) () -> EntityType.ILLUSIONER, new int[]{0, 5, 0, 2, 0, 2, 0, 3}
-            );
-        }
+        // NO-OP
     }
 
     @Override
