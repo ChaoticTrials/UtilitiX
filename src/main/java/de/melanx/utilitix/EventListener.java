@@ -3,6 +3,7 @@ package de.melanx.utilitix;
 import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.content.slime.StickyChunk;
 import de.melanx.utilitix.registration.ModAttachmentTypes;
+import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.util.MobUtil;
 import de.melanx.utilitix.util.XPUtils;
@@ -40,6 +41,7 @@ import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.event.LootTableLoadEvent;
@@ -246,7 +248,7 @@ public class EventListener {
     @SubscribeEvent
     public static void addLayers(LootTableLoadEvent event) {
         LootTable table = event.getTable();
-        if (table.getLootTableId().equals(BuiltInLootTables.SIMPLE_DUNGEON)) {
+        if (table.getLootTableId().equals(BuiltInLootTables.SIMPLE_DUNGEON.location())) {
             table.addPool(LootPool.lootPool()
                     .setRolls(ConstantValue.exactly(1))
                     .add(LootItem.lootTableItem(ModItems.ancientCompass))
@@ -258,6 +260,17 @@ public class EventListener {
 
     @SubscribeEvent
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlocks.advancedBrewery.getBlockEntityType(), (be, side) -> {
+            if (side == null) {
+                return be.getInventory();
+            }
+
+            return switch(side) {
+                case DOWN -> be.inventoryBottom;
+                case UP -> be.inventoryTop;
+                default -> be.inventorySide;
+            };
+        });
 //        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlocks.experienceCrystal.getBlockEntityType(), (blockEntity, direction) -> blockEntity); // todo + check TileExperienceCrystal#validXpFluidIsPresent
     }
 }

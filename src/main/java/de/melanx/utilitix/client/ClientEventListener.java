@@ -3,6 +3,8 @@ package de.melanx.utilitix.client;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.client.commands.MapsCommand;
 import de.melanx.utilitix.content.bell.RenderBell;
+import de.melanx.utilitix.content.brewery.ContainerMenuAdvancedBrewery;
+import de.melanx.utilitix.content.brewery.ScreenAdvancedBrewery;
 import de.melanx.utilitix.content.gildingarmor.GildingArmorRecipe;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartContainerMenu;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartScreen;
@@ -60,6 +62,7 @@ public class ClientEventListener {
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(PistonCartContainerMenu.TYPE, PistonCartScreen::new);
+        event.register(ContainerMenuAdvancedBrewery.TYPE, ScreenAdvancedBrewery::new);
 //        event.register(BlockEntityMenu.createMenuType(ContainerMenuAdvancedBrewery::new), ScreenAdvancedBrewery::new); todo
 //        event.register(BlockEntityMenu.createMenuType(ContainerMenuExperienceCrystal::new), ScreenExperienceCrystal::new);
     }

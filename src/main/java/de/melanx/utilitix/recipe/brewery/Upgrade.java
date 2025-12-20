@@ -15,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class Upgrade extends EffectTransformer {
 
@@ -35,8 +36,11 @@ public class Upgrade extends EffectTransformer {
 
     @Override
     public boolean canTransform(PotionInput input) {
-        return input.testEffectsMain(list -> list.customEffects().size() == 1 && list.customEffects().getFirst().getAmplifier() < this.maxLevel)
-                && input.getIn1().isEmpty() && input.getIn2().isEmpty();
+        return input.getIn1().isEmpty() && input.getIn2().isEmpty() &&
+                input.testEffectsMain(potionContents -> {
+                    List<MobEffectInstance> effects = this.getEffects(potionContents);
+                    return effects.size() == 1 && effects.getFirst().getAmplifier() < this.maxLevel;
+                });
     }
 
     @Override
@@ -47,11 +51,16 @@ public class Upgrade extends EffectTransformer {
     @Nullable
     @Override
     public PotionOutput transform(PotionInput input) {
-        if (input.getEffectsMain() == null || input.getEffectsMain().customEffects().isEmpty()) {
+        if (input.getEffectsMain() == null) {
             return null;
         }
 
-        MobEffectInstance old = input.getEffectsMain().customEffects().getFirst();
+        List<MobEffectInstance> effects = this.getEffects(input.getEffectsMain());
+        if (effects.isEmpty()) {
+            return null;
+        }
+
+        MobEffectInstance old = effects.getFirst();
         ItemStack newStack = EffectTransformer.create(
                 input.getMain().getItem(),
                 ImmutableList.of(new MobEffectInstance(

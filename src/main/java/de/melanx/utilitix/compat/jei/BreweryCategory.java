@@ -39,7 +39,7 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
     public BreweryCategory(IGuiHelper guiHelper) {
         ResourceLocation location = ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "textures/container/advanced_brewery.png");
         this.background = guiHelper.drawableBuilder(location, 55, 15, 64, 60).addPadding(1, 0, 0, 50).build(); // todo remove
-        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, ModBlocks.comparatorRedirectorUp.asItem().getDefaultInstance()/*new ItemStack(ModBlocks.advancedBrewery) todo*/);
+        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.advancedBrewery));
         this.localizedName = Component.translatable("screen.utilitix.advanced_brewery");
         this.arrow = guiHelper.drawableBuilder(location, 176, 0, 9, 28).buildAnimated(400, IDrawableAnimated.StartDirection.TOP, false);
         ITickTimer bubblesTickTimer = new BubbleTimer(guiHelper);

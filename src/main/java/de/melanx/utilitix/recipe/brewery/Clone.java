@@ -19,7 +19,7 @@ public class Clone extends EffectTransformer {
 
     @Override
     public boolean canTransform(PotionInput input) {
-        return input.testEffectsMain(list -> !list.customEffects().isEmpty()) && input.getIn1().is(ModItemTags.POTIONS)
+        return input.testEffectsMain(potionContents -> !this.getEffects(potionContents).isEmpty()) && input.getIn1().is(ModItemTags.POTIONS)
                 && input.getEffects1() == null && input.getIn2().is(ModItemTags.POTIONS)
                 && input.getEffects2() == null;
     }

@@ -77,10 +77,10 @@ public class PotionInput {
             PotionContents potionContents = stack.get(DataComponents.POTION_CONTENTS);
 
             if (potionContents != null && potionContents.hasEffects() && !potionContents.is(Potions.AWKWARD)) {
-                return null;
+                return potionContents;
             }
 
-            return potionContents;
+            return null;
         }
 
         return PotionContents.EMPTY;

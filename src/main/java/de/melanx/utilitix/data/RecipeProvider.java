@@ -134,14 +134,14 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
     }
 
     private void createBreweryRecipes() {
-//        this.shaped(ModBlocks.advancedBrewery, todo
-//                " g ",
-//                "isi",
-//                "bbb",
-//                's', Items.BREWING_STAND,
-//                'b', Items.SMOOTH_STONE,
-//                'i', Tags.Items.INGOTS_IRON,
-//                'g', Tags.Items.INGOTS_GOLD);
+        this.shaped(ModBlocks.advancedBrewery,
+                " g ",
+                "isi",
+                "bbb",
+                's', Items.BREWING_STAND,
+                'b', Items.SMOOTH_STONE,
+                'i', Tags.Items.INGOTS_IRON,
+                'g', Tags.Items.INGOTS_GOLD);
         BreweryRecipeBuilder.breweryRecipe()
                 .input(Items.GOLDEN_APPLE)
                 .action(new Apply(

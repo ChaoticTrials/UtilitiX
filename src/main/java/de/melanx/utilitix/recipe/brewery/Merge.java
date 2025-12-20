@@ -43,7 +43,7 @@ public class Merge extends EffectTransformer {
     @Override
     public boolean canTransform(PotionInput input) {
         return input.getMain().getItem() == Items.GLASS_BOTTLE && input.getIn1().getItem() == input.getIn2().getItem()
-                && input.testEffects1(list -> !list.customEffects().isEmpty()) && input.testEffects2(list -> !list.customEffects().isEmpty());
+                && input.testEffects1(potionContents -> !this.getEffects(potionContents).isEmpty()) && input.testEffects2(list -> !this.getEffects(list).isEmpty());
     }
 
     @Override
@@ -56,12 +56,12 @@ public class Merge extends EffectTransformer {
     public PotionOutput transform(PotionInput input) {
         List<MobEffectInstance> merged = new ArrayList<>();
         if (input.getEffects1() != null) {
-            for (MobEffectInstance effect : input.getEffects1().customEffects()) {
+            for (MobEffectInstance effect : this.getEffects(input.getEffects1())) {
                 this.addMergedEffectToList(effect.getEffect(), merged, input.getEffects1(), input.getEffects2());
             }
         }
         if (input.getEffects2() != null) {
-            for (MobEffectInstance effect : input.getEffects2().customEffects()) {
+            for (MobEffectInstance effect : this.getEffects(input.getEffects2())) {
                 this.addMergedEffectToList(effect.getEffect(), merged, input.getEffects1(), input.getEffects2());
             }
         }
@@ -79,7 +79,7 @@ public class Merge extends EffectTransformer {
         return failMultiplier;
     }
 
-    private void addMergedEffectToList(Holder<MobEffect> potion, List<MobEffectInstance> mergeList, @Nullable PotionContents list1, @Nullable PotionContents list2) {
+    private void addMergedEffectToList(Holder<MobEffect> potion, List<MobEffectInstance> mergeList, @Nullable PotionContents potionContents1, @Nullable PotionContents potionContents2) {
         for (MobEffectInstance effect : mergeList) {
             if (effect.getEffect() == potion)
                 return;
@@ -87,16 +87,18 @@ public class Merge extends EffectTransformer {
 
         MobEffectInstance effect1 = null;
         MobEffectInstance effect2 = null;
-        if (list1 != null) {
-            for (MobEffectInstance effect : list1.customEffects()) {
+
+        if (potionContents1 != null) {
+            for (MobEffectInstance effect : this.getEffects(potionContents1)) {
                 if (effect.getEffect() == potion) {
                     effect1 = effect;
                     break;
                 }
             }
         }
-        if (list2 != null) {
-            for (MobEffectInstance effect : list2.customEffects()) {
+
+        if (potionContents2 != null) {
+            for (MobEffectInstance effect : this.getEffects(potionContents2)) {
                 if (effect.getEffect() == potion) {
                     effect2 = effect;
                     break;

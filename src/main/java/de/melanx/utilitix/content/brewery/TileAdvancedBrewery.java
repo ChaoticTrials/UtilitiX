@@ -19,12 +19,14 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 import org.moddingx.libx.base.tile.BlockEntityBase;
 import org.moddingx.libx.base.tile.TickingBlock;
 import org.moddingx.libx.crafting.RecipeHelper;
 import org.moddingx.libx.inventory.BaseItemStackHandler;
+import org.moddingx.libx.inventory.FilterItemHandler;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -43,9 +45,9 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickingBlock
 
     private final BaseItemStackHandler inventory;
     private final RecipeWrapper recipeInput;
-//    private final IItemHandler inventoryTop; todo
-//    private final IItemHandler inventorySide;
-//    private final IItemHandler inventoryBottom;
+    public final IItemHandler inventoryTop;
+    public final IItemHandler inventorySide;
+    public final IItemHandler inventoryBottom;
 
     public TileAdvancedBrewery(BlockEntityType<?> blockEntityTypeIn, BlockPos pos, BlockState state) {
         super(blockEntityTypeIn, pos, state);
@@ -60,9 +62,10 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickingBlock
                 .slotLimit(1, 1, 2, 3)
                 .build();
         this.recipeInput = new RecipeWrapper(this.inventory);
-//        this.inventoryTop = ItemCapabilities.create(this::getInventory, slot -> false, (slot, stack) -> slot == 0 || slot == 3).cast(); todo
-//        this.inventorySide = ItemCapabilities.create(this::getInventory, slot -> false, (slot, stack) -> slot == 1 || slot == 2 || slot == 4).cast();
-//        this.inventoryBottom = ItemCapabilities.create(this::getInventory, slot -> slot == 0 || slot == 1 || slot == 2, (slot, stack) -> false).cast();
+
+        this.inventoryTop = new FilterItemHandler(this.inventory, slot -> false, (slot, stack) -> slot == 0 || slot == 3);
+        this.inventorySide = new FilterItemHandler(this.inventory, slot -> false, (slot, stack) -> slot == 1 || slot == 2 || slot == 4);
+        this.inventoryBottom = new FilterItemHandler(this.inventory, slot -> slot == 0 || slot == 1 || slot == 2, (slot, stack) -> false);
     }
 
     @Override
@@ -154,23 +157,6 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickingBlock
             }
         }
     }
-
-//    @Nonnull todo
-//    @Override
-//    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-//        if (cap == ForgeCapabilities.ITEM_HANDLER) {
-//            if (side == null) {
-//                return LazyOptional.of(this::getInventory).cast();
-//            }
-//            return switch (side) {
-//                case DOWN -> this.inventoryBottom.cast();
-//                case UP -> this.inventoryTop.cast();
-//                default -> this.inventorySide.cast();
-//            };
-//        } else {
-//            return super.getCapability(cap, side);
-//        }
-//    }
 
     @Nonnull
     public IItemHandlerModifiable getInventory() {

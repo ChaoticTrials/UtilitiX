@@ -84,7 +84,7 @@ public class Apply extends EffectTransformer {
     @Override
     public boolean canTransform(PotionInput input) {
         return input.getMain().is(ModItemTags.POTIONS)
-                && input.testEffectsMain(contents -> contents.customEffects().isEmpty())
+                && input.testEffectsMain(contents -> this.getEffects(contents).isEmpty())
                 && input.getIn1().isEmpty() && input.getIn2().isEmpty();
     }
 

@@ -2,6 +2,9 @@ package de.melanx.utilitix.registration;
 
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.block.*;
+import de.melanx.utilitix.content.brewery.BlockAdvancedBrewery;
+import de.melanx.utilitix.content.brewery.ContainerMenuAdvancedBrewery;
+import de.melanx.utilitix.content.brewery.TileAdvancedBrewery;
 import de.melanx.utilitix.content.track.rails.*;
 import de.melanx.utilitix.content.wireless.BlockLinkedRepeater;
 import net.minecraft.core.Direction;
@@ -14,13 +17,14 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import org.moddingx.libx.annotation.registration.RegisterClass;
 import org.moddingx.libx.base.BlockBase;
+import org.moddingx.libx.base.tile.MenuBlockBE;
 
 import javax.annotation.Nonnull;
 
 @RegisterClass(registry = "BLOCK", priority = 1)
 public class ModBlocks {
 
-    //    public static final MenuBlockBE<TileAdvancedBrewery, ContainerMenuAdvancedBrewery> advancedBrewery = new BlockAdvancedBrewery(UtilitiX.getInstance(), BlockBehaviour.Properties.ofLegacyCopy(Blocks.BREWING_STAND));
+    public static final MenuBlockBE<TileAdvancedBrewery, ContainerMenuAdvancedBrewery> advancedBrewery = new BlockAdvancedBrewery(UtilitiX.getInstance(), BlockBehaviour.Properties.ofLegacyCopy(Blocks.BREWING_STAND));
 //    public static final MenuBlockBE<TileCrudeFurnace, ContainerMenuCrudeFurnace> crudeFurnace = new BlockCrudeFurnace(UtilitiX.getInstance(), BlockEntityMenu.createMenuType(ContainerMenuCrudeFurnace::new), BlockBehaviour.Properties.ofLegacyCopy(Blocks.FURNACE));
     public static final BlockBase comparatorRedirectorUp = new ComparatorRedirector(UtilitiX.getInstance(), Direction.UP, BlockBehaviour.Properties.ofLegacyCopy(Blocks.OBSERVER));
     public static final BlockBase comparatorRedirectorDown = new ComparatorRedirector(UtilitiX.getInstance(), Direction.DOWN, BlockBehaviour.Properties.ofLegacyCopy(Blocks.OBSERVER));

@@ -69,7 +69,7 @@ public class UtiliJei implements IModPlugin {
         registration.addRecipes(BREWING_RECIPE, simpleBrewery);
         registration.addRecipes(GILDING_RECIPE, getGildingRecipes());
 
-//        registration.addIngredientInfo(new ItemStack(ModBlocks.advancedBrewery), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.advanced_brewery"), Component.translatable("description.utilitix.advanced_brewery.brewing"), Component.translatable("description.utilitix.advanced_brewery.merging"), Component.translatable("description.utilitix.advanced_brewery.upgrading"), Component.translatable("description.utilitix.advanced_brewery.cloning")); todo
+        registration.addIngredientInfo(new ItemStack(ModBlocks.advancedBrewery), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.advanced_brewery"), Component.translatable("description.utilitix.advanced_brewery.brewing"), Component.translatable("description.utilitix.advanced_brewery.merging"), Component.translatable("description.utilitix.advanced_brewery.upgrading"), Component.translatable("description.utilitix.advanced_brewery.cloning"));
         registration.addIngredientInfo(ImmutableList.of(new ItemStack(ModBlocks.comparatorRedirectorUp), new ItemStack(ModBlocks.comparatorRedirectorDown)), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.comparator_redirector"));
         registration.addIngredientInfo(new ItemStack(ModBlocks.weakRedstoneTorch), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.weak_redstone_torch"));
         registration.addIngredientInfo(ImmutableList.of(new ItemStack(ModItems.tinyCoal), new ItemStack(ModItems.tinyCharcoal)), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.tiny_coal"));
@@ -96,7 +96,7 @@ public class UtiliJei implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
-//        registration.addRecipeCatalyst(new ItemStack(ModBlocks.advancedBrewery), BREWING_RECIPE); todo
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.advancedBrewery), BREWING_RECIPE);
         registration.addRecipeCatalyst(new ItemStack(Blocks.SMITHING_TABLE), GILDING_RECIPE);
     }
 

@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 public class BlockAdvancedBrewery extends MenuBlockBE<TileAdvancedBrewery, ContainerMenuAdvancedBrewery> {
 
+
     public static final RotationShape SHAPE = new RotationShape(box(1, 0, 1, 15, 12, 13));
 
     public BlockAdvancedBrewery(ModX mod, Properties properties) {
@@ -31,7 +32,7 @@ public class BlockAdvancedBrewery extends MenuBlockBE<TileAdvancedBrewery, Conta
     }
 
     public BlockAdvancedBrewery(ModX mod, Properties properties, Item.Properties itemProperties) {
-        super(mod, TileAdvancedBrewery.class, /*todo*/null, properties, itemProperties);
+        super(mod, TileAdvancedBrewery.class, ContainerMenuAdvancedBrewery.TYPE, properties, itemProperties);
         this.registerDefaultState(this.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
     }
 

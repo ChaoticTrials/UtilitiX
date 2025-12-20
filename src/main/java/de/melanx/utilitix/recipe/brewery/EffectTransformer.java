@@ -10,6 +10,7 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class EffectTransformer {
@@ -22,6 +23,13 @@ public abstract class EffectTransformer {
 
     @Nullable
     public abstract PotionOutput transform(PotionInput input);
+
+    public List<MobEffectInstance> getEffects(PotionContents contents) {
+        List<MobEffectInstance> effects = new ArrayList<>();
+        contents.getAllEffects().forEach(effects::add);
+
+        return effects;
+    }
 
     /**
      * Create a potion-like stack with effects.
