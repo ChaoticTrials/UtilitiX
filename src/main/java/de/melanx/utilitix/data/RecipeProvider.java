@@ -86,14 +86,14 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
 //                'g', Blocks.LIME_STAINED_GLASS,
 //                'e', Tags.Items.GEMS_EMERALD,
 //                'x', Items.EXPERIENCE_BOTTLE,
-//                'c', Items.BLACK_CONCRETE);
-//        this.shaped(ModBlocks.crudeFurnace,
-//                "C C",
-//                "SFS",
-//                "SSS",
-//                'C', Tags.Items.STONES,
-//                'S', Tags.Items.COBBLESTONES,
-//                'F', Items.FURNACE); todo
+//                'c', Items.BLACK_CONCRETE); todo
+        this.shaped(ModBlocks.crudeFurnace,
+                "C C",
+                "SFS",
+                "SSS",
+                'C', Tags.Items.STONES,
+                'S', Tags.Items.COBBLESTONES,
+                'F', Items.FURNACE);
     }
 
     private void createRedstoneRecipes() {

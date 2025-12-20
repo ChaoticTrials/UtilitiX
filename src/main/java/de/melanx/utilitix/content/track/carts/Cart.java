@@ -99,7 +99,7 @@ public class Cart extends AbstractMinecart {
         @Override
         @OnlyIn(Dist.CLIENT)
         public void setupClient(SetupContext ctx) {
-            EntityRenderers.register(this.type, context -> new MinecartRendererX<>(context, ModelLayers.MINECART));
+            ctx.enqueue(() -> EntityRenderers.register(this.type, context -> new MinecartRendererX<>(context, ModelLayers.MINECART)));
         }
     }
 }

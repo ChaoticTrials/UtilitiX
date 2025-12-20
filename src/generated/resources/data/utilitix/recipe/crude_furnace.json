@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "c:stones"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    },
+    "S": {
+      "tag": "c:cobblestones"
+    }
+  },
+  "pattern": [
+    "C C",
+    "SFS",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "utilitix:crude_furnace"
+  }
+}

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -36,7 +37,7 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickingBlock {
     private final BaseItemStackHandler inventory;
     private final IItemHandler fuel;
     private final IItemHandler input;
-    private final IItemHandler output;
+    final IItemHandler output;
     private CrudeFurnaceRecipeHelper.ModifiedRecipe recipe;
     private int maxFuelTime;
     private int fuelTime;
@@ -131,22 +132,17 @@ public class TileCrudeFurnace extends BlockEntityBase implements TickingBlock {
         return this.burnTime != 0 && this.recipe != null && this.recipe.getBurnTime() != 0 ? this.burnTime * 24 / this.recipe.getBurnTime() : 0;
     }
 
-//    @Nonnull
-//    @Override
-//    public <T> LazyOptional<T> getCapability(@Nonnull BlockCapability<T> cap, @Nullable Direction side) {
-//        if (cap == Capabilities.ItemHandler.BLOCK) {
-//            if (side == null) {
-//                return LazyOptional.of(this::getInventory).cast();
-//            }
-//            return switch (side) {
-//                case NORTH, EAST, SOUTH, WEST -> this.fuel.cast();
-//                case UP -> this.input.cast();
-//                case DOWN -> this.output.cast();
-//            };
-//        } else {
-//            return super.getCapability(cap, side);
-//        }
-//    }
+    public static IItemHandler getCapability(TileCrudeFurnace be, Direction side) {
+        if (side == null) {
+            return be.getInventory();
+        }
+
+        return switch(side) {
+            case NORTH, EAST, SOUTH, WEST -> be.fuel;
+            case UP -> be.input;
+            case DOWN -> be.output;
+        };
+    }
 
     @Nonnull
     public IItemHandlerModifiable getInventory() {

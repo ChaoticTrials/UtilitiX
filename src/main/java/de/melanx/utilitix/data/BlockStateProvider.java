@@ -143,7 +143,7 @@ public class BlockStateProvider extends BlockStateProviderBase {
 //                    builder.partialState().with(BlockStateProperties.RAIL_SHAPE_STRAIGHT, RailShape.ASCENDING_SOUTH).addModels(new ConfiguredModel(modelRaisedSW, 0, 0, false));
 //                }
 //            }
-        } else if (/*block == ModBlocks.crudeFurnace todo */ false) {
+        } else if (block == ModBlocks.crudeFurnace) {
             VariantBlockStateBuilder builder = this.getVariantBuilder(block);
             ModelFile modelOn = this.models().orientable(id.getPath() + "_on",
                     this.modLoc("block/" + id.getPath() + "_side"),

@@ -158,6 +158,18 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickingBlock
         }
     }
 
+    public static IItemHandler getCapability(TileAdvancedBrewery be, Direction side) {
+        if (side == null) {
+            return be.getInventory();
+        }
+
+        return switch(side) {
+            case DOWN -> be.inventoryBottom;
+            case UP -> be.inventoryTop;
+            default -> be.inventorySide;
+        };
+    }
+
     @Nonnull
     public IItemHandlerModifiable getInventory() {
         return this.inventory;

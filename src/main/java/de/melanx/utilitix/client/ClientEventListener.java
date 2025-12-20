@@ -5,6 +5,8 @@ import de.melanx.utilitix.client.commands.MapsCommand;
 import de.melanx.utilitix.content.bell.RenderBell;
 import de.melanx.utilitix.content.brewery.ContainerMenuAdvancedBrewery;
 import de.melanx.utilitix.content.brewery.ScreenAdvancedBrewery;
+import de.melanx.utilitix.content.crudefurnace.ContainerMenuCrudeFurnace;
+import de.melanx.utilitix.content.crudefurnace.ScreenCrudeFurnace;
 import de.melanx.utilitix.content.gildingarmor.GildingArmorRecipe;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartContainerMenu;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartScreen;
@@ -63,8 +65,8 @@ public class ClientEventListener {
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(PistonCartContainerMenu.TYPE, PistonCartScreen::new);
         event.register(ContainerMenuAdvancedBrewery.TYPE, ScreenAdvancedBrewery::new);
-//        event.register(BlockEntityMenu.createMenuType(ContainerMenuAdvancedBrewery::new), ScreenAdvancedBrewery::new); todo
-//        event.register(BlockEntityMenu.createMenuType(ContainerMenuExperienceCrystal::new), ScreenExperienceCrystal::new);
+        event.register(ContainerMenuCrudeFurnace.TYPE, ScreenCrudeFurnace::new);
+//        event.register(BlockEntityMenu.createMenuType(ContainerMenuExperienceCrystal::new), ScreenExperienceCrystal::new);todo
     }
 
     @SubscribeEvent

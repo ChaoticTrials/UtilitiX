@@ -1,6 +1,8 @@
 package de.melanx.utilitix.content.crudefurnace;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
@@ -9,11 +11,18 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import org.moddingx.libx.menu.BlockEntityMenu;
+import org.moddingx.libx.menu.type.AdvancedMenuType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class ContainerMenuCrudeFurnace extends BlockEntityMenu<TileCrudeFurnace> {
+
+    public static final AdvancedMenuType<ContainerMenuCrudeFurnace, BlockPos> TYPE = AdvancedMenuType.create(ContainerMenuCrudeFurnace::new,
+            StreamCodec.of(
+                    (RegistryFriendlyByteBuf buf, BlockPos pos) -> buf.writeBlockPos(pos),
+                    buffer -> RegistryFriendlyByteBuf.readBlockPos(buffer)
+            ));
 
     public ContainerMenuCrudeFurnace(@Nullable MenuType<? extends BlockEntityMenu<?>> type, int windowId, Level level, BlockPos pos, Player player, Inventory inventory) {
         super(type, windowId, level, pos, player, inventory, 2, 3);
@@ -32,7 +41,7 @@ public class ContainerMenuCrudeFurnace extends BlockEntityMenu<TileCrudeFurnace>
         private int removeCount;
 
         public OutputSlot(Player player, TileCrudeFurnace tile, int index, int xPosition, int yPosition) {
-            super(tile.getUnrestricted(), index, xPosition, yPosition);
+            super(tile.output, index, xPosition, yPosition);
             this.player = player;
             this.tile = tile;
         }
@@ -68,6 +77,21 @@ public class ContainerMenuCrudeFurnace extends BlockEntityMenu<TileCrudeFurnace>
 
             this.removeCount = 0;
             EventHooks.firePlayerSmeltedEvent(this.player, stack);
+        }
+
+        @Override
+        public boolean mayPlace(@Nonnull ItemStack stack) {
+            return false;
+        }
+
+        @Override
+        public void set(@Nonnull ItemStack stack) {
+            // not allowed
+        }
+
+        @Override
+        public void initialize(@Nonnull ItemStack stack) {
+            // not allowed
         }
     }
 }

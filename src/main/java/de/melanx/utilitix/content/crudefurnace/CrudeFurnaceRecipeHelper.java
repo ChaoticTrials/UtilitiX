@@ -15,26 +15,30 @@ public class CrudeFurnaceRecipeHelper {
 
     @Nullable
     public static ModifiedRecipe getResult(Level level, ItemStack input) {
+        return CrudeFurnaceRecipeHelper.getResult(level.getRecipeManager(), level.registryAccess(), input);
+    }
+
+    @Nullable
+    public static ModifiedRecipe getResult(RecipeManager recipeManager, RegistryAccess registryAccess, ItemStack input) {
         if (input.isEmpty()) {
             return null;
         }
 
-        RecipeManager rm = level.getRecipeManager();
-        RecipeHolder<SmeltingRecipe> recipe = rm.getAllRecipesFor(RecipeType.SMELTING).stream()
-                .filter(r -> r.value().getIngredients().get(0).test(input))
+        RecipeHolder<SmeltingRecipe> recipe = recipeManager.getAllRecipesFor(RecipeType.SMELTING).stream()
+                .filter(r -> r.value().getIngredients().getFirst().test(input))
                 .findFirst().orElse(null);
 
         if (recipe == null) {
             return null;
         }
 
-        if (RecipeHelper.isItemValidInput(rm, RecipeType.BLASTING, input)
-                || RecipeHelper.isItemValidInput(rm, RecipeType.SMOKING, input)) {
+        if (RecipeHelper.isItemValidInput(recipeManager, RecipeType.BLASTING, input)
+                || RecipeHelper.isItemValidInput(recipeManager, RecipeType.SMOKING, input)) {
             // Recipe already has a special type of furnace
             return null;
         }
 
-        return new ModifiedRecipe(level.registryAccess(), recipe);
+        return new ModifiedRecipe(registryAccess, recipe);
     }
 
     public static class ModifiedRecipe {

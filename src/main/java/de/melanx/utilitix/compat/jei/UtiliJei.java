@@ -2,6 +2,8 @@ package de.melanx.utilitix.compat.jei;
 
 import com.google.common.collect.ImmutableList;
 import de.melanx.utilitix.content.brewery.ScreenAdvancedBrewery;
+import de.melanx.utilitix.content.crudefurnace.CrudeFurnaceRecipeHelper;
+import de.melanx.utilitix.content.crudefurnace.ScreenCrudeFurnace;
 import de.melanx.utilitix.content.gildingarmor.GildingArmorRecipe;
 import de.melanx.utilitix.recipe.BreweryRecipe;
 import de.melanx.utilitix.recipe.brewery.Apply;
@@ -17,17 +19,17 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.SmithingTransformRecipe;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.block.Blocks;
 import org.apache.commons.compress.utils.Lists;
 
@@ -43,6 +45,7 @@ public class UtiliJei implements IModPlugin {
     private static IJeiRuntime runtime = null;
     public static final RecipeType<BreweryRecipe> BREWING_RECIPE = RecipeType.create("utilitix", "advanced_brewery", BreweryRecipe.class);
     public static final RecipeType<SmithingTransformRecipe> GILDING_RECIPE = RecipeType.create("utilitix", "gilding", SmithingTransformRecipe.class);
+    public static final RecipeType<SmeltingRecipe> SMELTING_RECIPE = RecipeType.create("utilitix", "smelting", SmeltingRecipe.class);
 
     @Nonnull
     @Override
@@ -54,7 +57,8 @@ public class UtiliJei implements IModPlugin {
     public void registerCategories(@Nonnull IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(
                 new BreweryCategory(registration.getJeiHelpers().getGuiHelper()),
-                new GildingCategory(registration.getJeiHelpers().getGuiHelper())
+                new GildingCategory(registration.getJeiHelpers().getGuiHelper()),
+                new CrudeSmeltingCategory(registration.getJeiHelpers().getGuiHelper())
         );
     }
 
@@ -68,6 +72,7 @@ public class UtiliJei implements IModPlugin {
                 .collect(Collectors.toList());
         registration.addRecipes(BREWING_RECIPE, simpleBrewery);
         registration.addRecipes(GILDING_RECIPE, getGildingRecipes());
+        registration.addRecipes(SMELTING_RECIPE, getSmeltingRecipes(recipes, level.registryAccess()));
 
         registration.addIngredientInfo(new ItemStack(ModBlocks.advancedBrewery), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.advanced_brewery"), Component.translatable("description.utilitix.advanced_brewery.brewing"), Component.translatable("description.utilitix.advanced_brewery.merging"), Component.translatable("description.utilitix.advanced_brewery.upgrading"), Component.translatable("description.utilitix.advanced_brewery.cloning"));
         registration.addIngredientInfo(ImmutableList.of(new ItemStack(ModBlocks.comparatorRedirectorUp), new ItemStack(ModBlocks.comparatorRedirectorDown)), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.comparator_redirector"));
@@ -91,18 +96,20 @@ public class UtiliJei implements IModPlugin {
         registration.addIngredientInfo(ImmutableList.of(new ItemStack(ModBlocks.pistonControllerRail), new ItemStack(ModBlocks.reinforcedPistonControllerRail)), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.piston_controller_rail"));
         registration.addIngredientInfo(new ItemStack(ModRegisterables.stonecutterCart.item()), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.stonecutter_cart"));
         registration.addIngredientInfo(new ItemStack(ModRegisterables.anvilCart.item()), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.anvil_cart"));
-//        registration.addIngredientInfo(new ItemStack(ModBlocks.crudeFurnace), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.crude_furnace")); todo
+        registration.addIngredientInfo(new ItemStack(ModBlocks.crudeFurnace), VanillaTypes.ITEM_STACK, Component.translatable("description.utilitix.crude_furnace"));
     }
 
     @Override
     public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalyst(new ItemStack(ModBlocks.advancedBrewery), BREWING_RECIPE);
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.crudeFurnace), SMELTING_RECIPE);
         registration.addRecipeCatalyst(new ItemStack(Blocks.SMITHING_TABLE), GILDING_RECIPE);
     }
 
     @Override
     public void registerGuiHandlers(@Nonnull IGuiHandlerRegistration registration) {
         registration.addRecipeClickArea(ScreenAdvancedBrewery.class, 98, 17, 7, 26, BREWING_RECIPE);
+        registration.addRecipeClickArea(ScreenCrudeFurnace.class, 78, 32, 28, 23, SMELTING_RECIPE);
     }
 
     @Override
@@ -140,5 +147,18 @@ public class UtiliJei implements IModPlugin {
         }
 
         return Collections.unmodifiableList(recipes);
+    }
+
+    private static List<SmeltingRecipe> getSmeltingRecipes(RecipeManager recipes, RegistryAccess registryAccess) {
+        Registry<Item> items = registryAccess.registryOrThrow(Registries.ITEM);
+        List<SmeltingRecipe> crudingRecipes = new ArrayList<>();
+        for (Item item : items) {
+            CrudeFurnaceRecipeHelper.ModifiedRecipe result = CrudeFurnaceRecipeHelper.getResult(recipes, registryAccess, new ItemStack(item));
+            if (result != null) {
+                crudingRecipes.add(result.getRecipeHolder().value());
+            }
+        }
+
+        return crudingRecipes;
     }
 }

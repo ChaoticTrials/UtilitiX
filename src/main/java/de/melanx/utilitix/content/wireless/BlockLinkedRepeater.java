@@ -60,7 +60,7 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void setupClient(SetupContext ctx) {
-        BlockEntityRenderers.register(this.getBlockEntityType(), context -> new BesrLinkedRepeater());
+        ctx.enqueue(() -> BlockEntityRenderers.register(this.getBlockEntityType(), context -> new BesrLinkedRepeater()));
     }
 
     @Override

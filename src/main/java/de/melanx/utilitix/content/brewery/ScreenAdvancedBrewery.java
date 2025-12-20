@@ -55,7 +55,7 @@ public class ScreenAdvancedBrewery extends AbstractContainerScreen<ContainerMenu
     @Override
     protected void renderLabels(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY) {
         String s = this.title.getString();
-        guiGraphics.drawString(this.font, s, this.leftPos + (this.imageWidth / 2) - (this.font.width(s) / 2), this.topPos + 5, Color.DARK_GRAY.getRGB(), false);
-        guiGraphics.drawString(this.font, this.playerInventoryTitle, this.leftPos + 8, this.topPos + this.imageHeight - 94, Color.DARK_GRAY.getRGB(), false);
+        guiGraphics.drawString(this.font, s, (this.imageWidth / 2) - (this.font.width(s) / 2), 5, Color.DARK_GRAY.getRGB(), false);
+        guiGraphics.drawString(this.font, this.playerInventoryTitle, 8, this.imageHeight - 94, Color.DARK_GRAY.getRGB(), false);
     }
 }

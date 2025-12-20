@@ -1,5 +1,7 @@
 package de.melanx.utilitix;
 
+import de.melanx.utilitix.content.brewery.TileAdvancedBrewery;
+import de.melanx.utilitix.content.crudefurnace.TileCrudeFurnace;
 import de.melanx.utilitix.content.slime.SlimyCapability;
 import de.melanx.utilitix.content.slime.StickyChunk;
 import de.melanx.utilitix.registration.ModAttachmentTypes;
@@ -260,17 +262,8 @@ public class EventListener {
 
     @SubscribeEvent
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlocks.advancedBrewery.getBlockEntityType(), (be, side) -> {
-            if (side == null) {
-                return be.getInventory();
-            }
-
-            return switch(side) {
-                case DOWN -> be.inventoryBottom;
-                case UP -> be.inventoryTop;
-                default -> be.inventorySide;
-            };
-        });
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlocks.advancedBrewery.getBlockEntityType(), TileAdvancedBrewery::getCapability);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlocks.crudeFurnace.getBlockEntityType(), TileCrudeFurnace::getCapability);
 //        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlocks.experienceCrystal.getBlockEntityType(), (blockEntity, direction) -> blockEntity); // todo + check TileExperienceCrystal#validXpFluidIsPresent
     }
 }

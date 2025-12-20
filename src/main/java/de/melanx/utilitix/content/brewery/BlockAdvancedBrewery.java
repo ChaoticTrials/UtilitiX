@@ -39,7 +39,7 @@ public class BlockAdvancedBrewery extends MenuBlockBE<TileAdvancedBrewery, Conta
     @Override
     @OnlyIn(Dist.CLIENT)
     public void setupClient(SetupContext ctx) {
-        BlockEntityRenderers.register(this.getBlockEntityType(), context -> new BesrAdvancedBrewery());
+        ctx.enqueue(() -> BlockEntityRenderers.register(this.getBlockEntityType(), context -> new BesrAdvancedBrewery()));
     }
 
     @Nullable

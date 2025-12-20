@@ -13,31 +13,18 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import org.moddingx.libx.base.tile.MenuBlockBE;
 import org.moddingx.libx.inventory.BaseItemStackHandler;
-import org.moddingx.libx.menu.type.AdvancedMenuType;
 import org.moddingx.libx.mod.ModX;
-import org.moddingx.libx.registration.SetupContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BlockCrudeFurnace extends MenuBlockBE<TileCrudeFurnace, ContainerMenuCrudeFurnace> {
 
-//    public static final AdvancedMenuType<ContainerMenuCrudeFurnace, Void> MENU_TYPE = AdvancedMenuType.create( todo
-//            ((menuType, windowId, level, blockPos, player, inventory) -> {
-//                return new ContainerMenuCrudeFurnace(menuType, windowId, level, , player, inventory);
-//            })
-//    );
-
-    public BlockCrudeFurnace(ModX mod, AdvancedMenuType<ContainerMenuCrudeFurnace, BlockPos> menu, Properties properties) {
-        super(mod, TileCrudeFurnace.class, menu, properties);
+    public BlockCrudeFurnace(ModX mod, Properties properties) {
+        super(mod, TileCrudeFurnace.class, ContainerMenuCrudeFurnace.TYPE, properties);
         this.registerDefaultState(this.defaultBlockState()
                 .setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH)
                 .setValue(AbstractFurnaceBlock.LIT, false));
-    }
-
-    @Override
-    public void setupCommon(SetupContext ctx) {
-//        MenuScreens.register(ModBlocks.crudeFurnace.menu, ScreenCrudeFurnace::new); todo
     }
 
     @Override

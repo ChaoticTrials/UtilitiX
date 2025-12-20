@@ -1,7 +1,7 @@
 package de.melanx.utilitix.content.brewery;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -16,7 +16,10 @@ import javax.annotation.Nullable;
 public class ContainerMenuAdvancedBrewery extends BlockEntityMenu<TileAdvancedBrewery> {
 
     public static final AdvancedMenuType<ContainerMenuAdvancedBrewery, BlockPos> TYPE = AdvancedMenuType.create(ContainerMenuAdvancedBrewery::new,
-            StreamCodec.of((buffer, value) -> FriendlyByteBuf.writeBlockPos(buffer, value), buffer -> FriendlyByteBuf.readBlockPos(buffer)));
+            StreamCodec.of(
+                    (RegistryFriendlyByteBuf buf, BlockPos pos) -> buf.writeBlockPos(pos),
+                    buffer -> RegistryFriendlyByteBuf.readBlockPos(buffer)
+            ));
 
     public ContainerMenuAdvancedBrewery(@Nullable MenuType<? extends BlockEntityMenu<?>> type, int windowId, Level level, BlockPos pos, Player player, Inventory playerContainer) {
         super(type, windowId, level, pos, player, playerContainer, 5, 5);
