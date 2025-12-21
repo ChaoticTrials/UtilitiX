@@ -48,10 +48,10 @@ public class BlockDirectionalRail extends BlockPoweredRail {
         builder.add(ModProperties.REVERSE);
     }
 
+    @Nonnull
     @Override
     public BlockState getStateForPlacement(@Nonnull BlockPlaceContext context) {
         BlockState state = super.getStateForPlacement(context);
-        if (state == null) return null;
         Direction direction = context.getHorizontalDirection();
         Pair<RailShape, Boolean> properties = TrackUtil.getForPlacement(direction);
         return state.setValue(this.getShapeProperty(), properties.getLeft())

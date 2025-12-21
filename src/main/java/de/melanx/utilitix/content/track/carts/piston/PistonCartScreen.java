@@ -21,19 +21,10 @@ public class PistonCartScreen extends AbstractContainerScreen<PistonCartContaine
 
     public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "textures/container/piston_cart.png");
 
-    private int relX;
-    private int relY;
-
     public PistonCartScreen(PistonCartContainerMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);
         this.imageWidth = 176;
         this.imageHeight = 186;
-    }
-
-    @Override
-    protected void init() {
-        this.relX = (this.width - this.imageWidth) / 2;
-        this.relY = (this.height - this.imageHeight) / 2;
     }
 
     @Override
@@ -48,17 +39,17 @@ public class PistonCartScreen extends AbstractContainerScreen<PistonCartContaine
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
-        guiGraphics.blit(TEXTURE, this.relX, this.relY, 0, 0, this.imageWidth, this.imageHeight);
-        if (mouseX >= this.relX + 65 && mouseX <= this.relX + 111 && mouseY >= this.relY + 18 && mouseY <= this.relY + 34) {
-            guiGraphics.blit(TEXTURE, this.relX + 64, this.relY + 17, 176, 0, 48, 18);
+        guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        if (mouseX >= this.leftPos + 65 && mouseX <= this.leftPos + 111 && mouseY >= this.topPos + 18 && mouseY <= this.topPos + 34) {
+            guiGraphics.blit(TEXTURE, this.leftPos + 64, this.topPos + 17, 176, 0, 48, 18);
         }
     }
 
     @Override
     protected void renderLabels(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY) {
         String s = this.title.getString();
-        guiGraphics.drawString(this.font, s, (float) ((this.imageWidth / 2) - (this.font.width(s) / 2)), 5, Color.DARK_GRAY.getRGB(), true);
-        guiGraphics.drawString(this.font, this.playerInventoryTitle, 8, this.imageHeight - 94, Color.DARK_GRAY.getRGB());
+        guiGraphics.drawString(this.font, s, (float) ((this.imageWidth / 2) - (this.font.width(s) / 2)), 5, Color.DARK_GRAY.getRGB(), false);
+        guiGraphics.drawString(this.font, this.playerInventoryTitle, 8, this.imageHeight - 94, Color.DARK_GRAY.getRGB(), false);
         if (this.menu.entity != null) {
             //noinspection ConstantConditions
             int modeStrWidth = this.font.width(this.menu.entity.getMode().name);
@@ -69,7 +60,7 @@ public class PistonCartScreen extends AbstractContainerScreen<PistonCartContaine
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
-            if (mouseX >= this.relX + 65 && mouseX <= this.relX + 111 && mouseY >= this.relY + 18 && mouseY <= this.relY + 34 && this.menu.entity != null) {
+            if (mouseX >= this.leftPos + 65 && mouseX <= this.leftPos + 111 && mouseY >= this.topPos + 18 && mouseY <= this.topPos + 34 && this.menu.entity != null) {
                 PacketDistributor.sendToServer(new PistonCartModeCycle.Message(this.menu.entity.getId()));
                 Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
                 return true;

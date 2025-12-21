@@ -26,15 +26,15 @@ public class TileLinkedRepeater extends BlockEntityBase {
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        ItemStack.parse(registries, tag.getCompound("Link")).ifPresent(stack -> this.link = stack.copy());
+        this.link = ItemStack.parseOptional(registries, tag.getCompound("Link")).copy();
     }
 
     @Override
     protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.put("Link", this.link.save(registries));
+        tag.put("Link", this.link.saveOptional(registries));
     }
 
     public ItemStack getLink() {

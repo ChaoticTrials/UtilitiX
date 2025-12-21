@@ -129,13 +129,12 @@ public class EventListener {
 
     @SubscribeEvent
     public static void entityInteract(PlayerInteractEvent.EntityInteractSpecific event) {
-        if (event.getTarget() instanceof ArmorStand && event.getTarget().getPersistentData().getBoolean("UtilitiXArmorStand")) {
+        if (event.getTarget() instanceof ArmorStand armorStand && event.getTarget().getPersistentData().getBoolean("UtilitiXArmorStand")) {
             if (event.getItemStack().getItem() == Items.FLINT && event.getEntity().isShiftKeyDown()) {
-                ArmorStand entity = (ArmorStand) event.getTarget();
                 if (UtilitiXConfig.armorStandPoses.size() >= 2) {
-                    int newIdx = (entity.getPersistentData().getInt("UtilitiXPoseIdx") + 1) % UtilitiXConfig.armorStandPoses.size();
-                    entity.getPersistentData().putInt("UtilitiXPoseIdx", newIdx);
-                    UtilitiXConfig.armorStandPoses.get(newIdx).apply(entity);
+                    int newIdx = (armorStand.getPersistentData().getInt("UtilitiXPoseIdx") + 1) % UtilitiXConfig.armorStandPoses.size();
+                    armorStand.getPersistentData().putInt("UtilitiXPoseIdx", newIdx);
+                    UtilitiXConfig.armorStandPoses.get(newIdx).apply(armorStand);
                 }
                 event.setCanceled(true);
                 event.setCancellationResult(InteractionResult.SUCCESS);

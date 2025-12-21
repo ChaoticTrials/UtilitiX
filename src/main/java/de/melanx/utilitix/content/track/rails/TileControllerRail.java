@@ -3,7 +3,6 @@ package de.melanx.utilitix.content.track.rails;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,17 +21,13 @@ public class TileControllerRail extends BlockEntityBase {
     @Override
     protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        if (tag.contains("FilterStack", Tag.TAG_COMPOUND)) {
-            ItemStack.parse(registries, tag.getCompound("FilterStack")).ifPresent(stack -> this.filterStack = stack.copy());
-        }
+        this.filterStack = ItemStack.parseOptional(registries, tag.getCompound("FilterStack")).copy();
     }
 
     @Override
     protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        if (!this.filterStack.isEmpty()) {
-            tag.put("FilterStack", this.filterStack.save(registries));
-        }
+        tag.put("FilterStack", this.filterStack.saveOptional(registries));
     }
 
     public ItemStack getFilterStack() {

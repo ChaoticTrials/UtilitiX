@@ -6,13 +6,10 @@ import de.melanx.utilitix.content.track.carts.piston.PistonCartMode;
 import de.melanx.utilitix.content.track.rails.BlockPistonControllerRail;
 import de.melanx.utilitix.registration.ModItemTags;
 import de.melanx.utilitix.registration.ModSerializers;
-import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
@@ -22,13 +19,10 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.DirectionalPlaceContext;
@@ -40,7 +34,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.network.connection.ConnectionType;
 import org.apache.commons.lang3.tuple.Pair;
 import org.moddingx.libx.inventory.BaseItemStackHandler;
 
@@ -116,25 +109,12 @@ public class PistonCart extends Cart {
     public InteractionResult interact(@Nonnull Player player, @Nonnull InteractionHand hand) {
         InteractionResult ret = super.interact(player, hand);
         if (ret.consumesAction()) return ret;
-        if (player instanceof ServerPlayer) {
-            MenuProvider containerProvider = new MenuProvider() {
 
-                @Nonnull
-                @Override
-                public Component getDisplayName() {
-                    return PistonCart.this.getDisplayName();
-                }
-
-                @Override
-                public AbstractContainerMenu createMenu(int containerId, @Nonnull Inventory inventory, @Nonnull Player player) {
-                    RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), PistonCart.this.registryAccess(), ConnectionType.NEOFORGE); // todo check if neoforge is correct
-                    buffer.writeInt(PistonCart.this.getId());
-                    return PistonCartContainerMenu.TYPE.create(containerId, inventory, buffer);
-                }
-            };
-//            NetworkHooks.openScreen((ServerPlayer) player, containerProvider, buffer -> buffer.writeInt(PistonCart.this.getId())); todo
+        if (!this.level().isClientSide && player instanceof ServerPlayer serverPlayer) {
+            PistonCartContainerMenu.TYPE.open(serverPlayer, this.getDisplayName(), this.getId());
         }
-        return InteractionResult.sidedSuccess(player.level().isClientSide);
+
+        return InteractionResult.sidedSuccess(this.level().isClientSide);
     }
 
     @Override

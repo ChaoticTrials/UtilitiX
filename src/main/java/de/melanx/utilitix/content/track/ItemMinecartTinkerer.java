@@ -3,7 +3,6 @@ package de.melanx.utilitix.content.track;
 import de.melanx.utilitix.content.track.tinkerer.MinecartTinkererMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -41,19 +40,11 @@ public class ItemMinecartTinkerer extends ItemBase {
 
     public static ItemStack getLabelStack(AbstractMinecart entity) {
         CompoundTag tag = entity.getPersistentData();
-        if (tag.contains("utilitix_minecart_label_item", Tag.TAG_COMPOUND)) {
-            return ItemStack.parse(entity.registryAccess(), tag.getCompound("utilitix_minecart_label_item")).orElse(ItemStack.EMPTY);
-        } else {
-            return ItemStack.EMPTY;
-        }
+        return ItemStack.parseOptional(entity.registryAccess(), tag.getCompound("utilitix_minecart_label_item"));
     }
 
     public static void setLabelStack(AbstractMinecart entity, ItemStack stack) {
         CompoundTag tag = entity.getPersistentData();
-        if (stack.isEmpty()) {
-            tag.remove("utilitix_minecart_label_item");
-        } else {
-            tag.put("utilitix_minecart_label_item", stack.save(entity.registryAccess(), new CompoundTag()));
-        }
+        tag.put("utilitix_minecart_label_item", stack.saveOptional(entity.registryAccess()));
     }
 }
