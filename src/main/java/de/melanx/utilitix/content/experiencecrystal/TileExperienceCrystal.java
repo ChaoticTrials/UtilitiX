@@ -2,11 +2,9 @@ package de.melanx.utilitix.content.experiencecrystal;
 
 import de.melanx.utilitix.UtilitiXConfig;
 import de.melanx.utilitix.util.BoundingBoxUtils;
-import de.melanx.utilitix.util.XPUtils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -17,13 +15,13 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.moddingx.libx.base.tile.BlockEntityBase;
 import org.moddingx.libx.base.tile.TickingBlock;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -104,6 +102,14 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
         }
     }
 
+    public static IFluidHandler getCapability(TileExperienceCrystal tile, Direction side) {
+        if (tile.xpFluid().isPresent()) {
+            return tile;
+        }
+
+        return null;
+    }
+
     @Override
     public int getTanks() {
         if (this.tankCount == null) {
@@ -139,8 +145,7 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
     }
 
     public boolean isFluidValid(@Nonnull FluidStack stack) {
-        Holder.Reference<Fluid> holder = stack.getFluid().builtInRegistryHolder();
-        return XPUtils.XP_FLUID_TAGS.stream().anyMatch(holder::is);
+        return stack.is(Tags.Fluids.EXPERIENCE);
     }
 
     @Override
@@ -239,42 +244,21 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
         return (int) Math.min(xpRemaining, this.getTankCapacity(tank));
     }
 
-    // returns true if any of the xp fluid tags
-    public static boolean validXpFluidIsPresent() {
-        return XPUtils.XP_FLUID_TAGS
-                .stream()
-                .anyMatch(tag -> !TileExperienceCrystal.getFluidTag(tag).iterator().hasNext());
-    }
-
     public Optional<Fluid> xpFluid() {
         if (this.cachedXpFluid == null) {
-            this.cachedXpFluid = XPUtils.XP_FLUID_TAGS
-                    .stream()
-                    .map(TileExperienceCrystal::getFluidTag)
-                    .flatMap(holders -> this.fluidsFromTag(holders).stream())
+            HolderSet.Named<Fluid> experienceFluids = this.level.registryAccess().registryOrThrow(Registries.FLUID).getOrCreateTag(Tags.Fluids.EXPERIENCE);
+            this.cachedXpFluid = experienceFluids.stream()
                     .filter(this::isConfiguredFluid)
-                    .findFirst()
                     .map(Holder::value)
-                    .or(() -> XPUtils.XP_FLUID_TAGS
-                            .stream()
-                            .map(TileExperienceCrystal::getFluidTag)
-                            .flatMap(holders -> this.fluidsFromTag(holders).stream())
-                            .filter(h -> h.unwrapKey().isPresent())
-                            .min(Comparator.comparing(h -> h.unwrapKey().get().location()))
-                            .map(Holder::value))
+                    .findFirst()
+                    .or(() -> experienceFluids.stream()
+                            .min(Comparator.comparing(l -> l.unwrapKey().get().toString()))
+                            .map(Holder::value)
+                    )
                     .orElse(null);
         }
 
         return Optional.ofNullable(this.cachedXpFluid);
-    }
-
-    private List<Holder<Fluid>> fluidsFromTag(Iterable<Holder<Fluid>> fluidHolders) {
-        List<Holder<Fluid>> fluids = new ArrayList<>();
-        for (Holder<Fluid> fluidHolder : fluidHolders) {
-            fluids.add(fluidHolder);
-        }
-
-        return fluids;
     }
 
     private boolean isConfiguredFluid(Holder<Fluid> fluidHolder) {

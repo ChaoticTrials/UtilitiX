@@ -35,19 +35,6 @@ public class UtilitiXConfig {
         public static int notifyRadius = 24;
     }
 
-    @Group
-    public static class Backpack {
-
-        @Config("The initial size of a backpack")
-        @IntRange(min = 1, max = 154)
-        public static int slotSize = 9;
-
-        @Config({"The maximum size of a backpack when merging with other backpacks",
-                "Beyond this number, backpacks cannot be merged"})
-        @IntRange(min = 1, max = 154)
-        public static int maxSize = 54;
-    }
-
     @Config({
             "A list of armor stand rotations for armor stands with arms.",
             "You can cycle through these with a piece of flint."
@@ -67,9 +54,6 @@ public class UtilitiXConfig {
     @Config("Items in world which have mending collect xp orbs to get repaired")
     public static boolean betterMending = true;
 
-    @Config("Illusioners will appear in raids")
-    public static boolean illusionerInRaid = true;
-
     @Group("Config options for rails and minecarts")
     public static class Track {
 
@@ -88,7 +72,7 @@ public class UtilitiXConfig {
         @IntRange(min = 0)
         public static int maxXp = Integer.MAX_VALUE;
 
-        @Config("A ResourceLocation for a fluid xp fluid. If it exists in the tag #forge:experience or #forge:xpjuice, the crystal will always store this type of fluid xp")
+        @Config("A ResourceLocation for an experience fluid. If it exists in the tag #c:experience, the crystal will always store this type of fluid xp")
         public static Optional<ResourceLocation> fluidXp = Optional.empty();
     }
 
@@ -108,7 +92,7 @@ public class UtilitiXConfig {
 
     @Config({"Size scale for exporting maps", "1 = 128x128px", "2 = 256x256px", "3 = 384x384px", "And so on, you got the pattern I hope"})
     @IntRange(min = 1)
-    public static int mapScale = 3;
+    public static int mapScale = 3; // todo client config
 
     @Config("Both doors open at the same time if connected")
     public static boolean doubleDoor = true;
