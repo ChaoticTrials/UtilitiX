@@ -54,10 +54,10 @@ public class BlockFilterRail extends BlockControllerRail<TileFilterRail> {
         builder.add(ModProperties.RAIL_SIDE);
     }
 
+    @Nonnull
     @Override
     public BlockState getStateForPlacement(@Nonnull BlockPlaceContext context) {
         BlockState state = super.getStateForPlacement(context);
-        if (state == null) return null;
         Direction direction = context.getHorizontalDirection();
         Pair<RailShape, Boolean> properties = TrackUtil.getForPlacement(direction);
         state = state.setValue(this.getShapeProperty(), properties.getLeft())
@@ -106,6 +106,7 @@ public class BlockFilterRail extends BlockControllerRail<TileFilterRail> {
         }
     }
 
+    @Nonnull
     @Override
     protected MapCodec<? extends BaseRailBlock> codec() {
         return CODEC;

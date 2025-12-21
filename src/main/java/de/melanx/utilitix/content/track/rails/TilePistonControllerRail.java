@@ -39,7 +39,7 @@ public class TilePistonControllerRail extends TileControllerRail {
     }
 
     @Override
-    public void saveAdditional(CompoundTag nbt, @Nonnull HolderLookup.Provider registries) {
+    public void saveAdditional(@Nonnull CompoundTag nbt, @Nonnull HolderLookup.Provider registries) {
         nbt.putString("Mode", this.mode.name());
     }
 }

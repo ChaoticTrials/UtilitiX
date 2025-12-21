@@ -8,18 +8,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.SlotItemHandler;
-import org.moddingx.libx.annotation.registration.Reg.Name;
-import org.moddingx.libx.annotation.registration.RegisterClass;
 import org.moddingx.libx.menu.EntityMenu;
 import org.moddingx.libx.menu.slot.OutputSlot;
 import org.moddingx.libx.menu.type.AdvancedMenuType;
 
 import javax.annotation.Nullable;
 
-@RegisterClass(registry = "MENU")
 public class PistonCartContainerMenu extends EntityMenu<PistonCart> {
 
-    @Name("piston_cart_container")
     public static final AdvancedMenuType<PistonCartContainerMenu, Integer> TYPE =
             AdvancedMenuType.create(PistonCartContainerMenu::new,
                     StreamCodec.of(

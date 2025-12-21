@@ -12,6 +12,8 @@ import de.melanx.utilitix.content.experiencecrystal.ScreenExperienceCrystal;
 import de.melanx.utilitix.content.gildingarmor.GildingArmorRecipe;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartContainerMenu;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartScreen;
+import de.melanx.utilitix.content.track.tinkerer.MinecartTinkererMenu;
+import de.melanx.utilitix.content.track.tinkerer.MinecartTinkererScreen;
 import de.melanx.utilitix.network.StickyChunkRequest;
 import de.melanx.utilitix.registration.ModDataComponentTypes;
 import de.melanx.utilitix.registration.ModItems;
@@ -69,6 +71,7 @@ public class ClientEventListener {
         event.register(ContainerMenuAdvancedBrewery.TYPE, ScreenAdvancedBrewery::new);
         event.register(ContainerMenuCrudeFurnace.TYPE, ScreenCrudeFurnace::new);
         event.register(ContainerMenuExperienceCrystal.TYPE, ScreenExperienceCrystal::new);
+        event.register(MinecartTinkererMenu.TYPE, MinecartTinkererScreen::new);
     }
 
     @SubscribeEvent

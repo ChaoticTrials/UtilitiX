@@ -2,6 +2,7 @@ package de.melanx.utilitix.content.track.rails;
 
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Function3;
+import de.melanx.utilitix.content.track.tinkerer.MinecartTinkererMenu;
 import de.melanx.utilitix.registration.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -21,8 +22,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import org.moddingx.libx.mod.ModX;
 import org.moddingx.libx.registration.RegistrationContext;
 
@@ -62,24 +61,8 @@ public abstract class BlockControllerRail<T extends TileControllerRail> extends 
     protected ItemInteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hitResult) {
         ItemStack held = player.getItemInHand(hand);
         if (!held.isEmpty() && held.getItem() == ModItems.minecartTinkerer && player.isShiftKeyDown()) {
-            if (!level.isClientSide && player instanceof ServerPlayer) {
-                TileControllerRail tile = this.getTile(level, pos);
-                IItemHandlerModifiable handler = new ItemStackHandler(1) {
-
-                    @Override
-                    public int getSlotLimit(int slot) {
-                        return 1;
-                    }
-
-                    @Override
-                    protected void onContentsChanged(int slot) {
-                        if (slot == 0) {
-                            tile.setFilterStack(this.getStackInSlot(0));
-                        }
-                    }
-                };
-                handler.setStackInSlot(0, tile.getFilterStack().copy());
-//                GenericMenu.open((ServerPlayer) player, handler, Component.translatable("screen.utilitix.minecart_tinkerer"), null); todo
+            if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+                MinecartTinkererMenu.open(serverPlayer, pos);
             }
 
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
