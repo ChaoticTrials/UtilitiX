@@ -1,6 +1,6 @@
 package de.melanx.utilitix.content;
 
-import de.melanx.utilitix.UtilitiXConfig;
+import de.melanx.utilitix.config.CommonConfig;
 import de.melanx.utilitix.network.ItemEntityRepaired;
 import de.melanx.utilitix.util.BoundingBoxUtils;
 import net.minecraft.client.Minecraft;
@@ -40,7 +40,7 @@ public class BetterMending {
     }
 
     private void moveExps(Level level, Iterable<Entity> entities) {
-        if (!UtilitiXConfig.betterMending) return;
+        if (!CommonConfig.betterMending) return;
         for (Entity entity : entities) {
             if (!(entity instanceof ItemEntity item)) {
                 continue;

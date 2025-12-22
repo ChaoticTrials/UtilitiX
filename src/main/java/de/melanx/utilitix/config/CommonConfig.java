@@ -1,4 +1,4 @@
-package de.melanx.utilitix;
+package de.melanx.utilitix.config;
 
 import com.google.common.collect.ImmutableList;
 import de.melanx.utilitix.util.ArmorStandRotation;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RegisterConfig(value = "common")
-public class UtilitiXConfig {
+public class CommonConfig {
 
     @Group("Config values for the two bells, mob bell and hand bell")
     public static class HandBells {

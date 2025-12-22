@@ -5,7 +5,7 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.UtilitiXConfig;
+import de.melanx.utilitix.config.ClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.MapRenderer;
 import net.minecraft.commands.CommandSourceStack;
@@ -26,14 +26,14 @@ import java.nio.file.Path;
 
 public class MapsCommand {
 
-    private static final Path MAPS = FMLPaths.GAMEDIR.get().resolve("maps");
+    private static final Path MAPS_PATH = FMLPaths.GAMEDIR.get().resolve("maps");
 
     public static ArgumentBuilder<CommandSourceStack, ?> register() {
-        return Commands.literal("printmap")
-                .executes(MapsCommand::printmap);
+        return Commands.literal("print_map")
+                .executes(MapsCommand::printMap);
     }
 
-    private static int printmap(CommandContext<CommandSourceStack> command) throws CommandSyntaxException {
+    private static int printMap(CommandContext<CommandSourceStack> command) throws CommandSyntaxException {
         CommandSourceStack source = command.getSource();
         Entity entity = source.getEntityOrException();
 
@@ -61,8 +61,8 @@ public class MapsCommand {
         MapRenderer.MapInstance mapInstance = mapRenderer.getOrCreateMapInstance(mapId, data);
         NativeImage img = mapInstance.texture.getPixels();
 
-        if (!MAPS.toFile().exists() && !MAPS.toFile().mkdirs()) {
-            UtilitiX.getInstance().logger.warn("Could not create Maps directory: {}", MAPS);
+        if (!MAPS_PATH.toFile().exists() && !MAPS_PATH.toFile().mkdirs()) {
+            UtilitiX.getInstance().logger.warn("Could not create Maps directory: {}", MAPS_PATH);
             return 0;
         }
 
@@ -70,14 +70,14 @@ public class MapsCommand {
             return 0;
         }
 
-        if (UtilitiXConfig.mapScale != 1) {
-            img = MapsCommand.resize(data, img, UtilitiXConfig.mapScale);
+        if (ClientConfig.mapScale != 1) {
+            img = MapsCommand.resize(data, img, ClientConfig.mapScale);
         }
 
-        Path path = MAPS.resolve("map_" + mapId + ".png");
+        Path path = MAPS_PATH.resolve("map_" + mapId.id() + ".png");
         try {
             img.writeToFile(path);
-            player.sendSystemMessage(Component.translatable("utilitix.map_saved", path));
+            player.sendSystemMessage(Component.translatable("utilitix.map_saved", path.toString()));
             return 1;
         } catch (IOException e) {
             player.sendSystemMessage(Component.translatable("message.utilitix.map_save_command"));

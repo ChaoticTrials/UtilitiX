@@ -1,6 +1,6 @@
 package de.melanx.utilitix.content.experiencecrystal;
 
-import de.melanx.utilitix.UtilitiXConfig;
+import de.melanx.utilitix.config.CommonConfig;
 import de.melanx.utilitix.util.BoundingBoxUtils;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -75,7 +75,7 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
     }
 
     public int addXp(int xp) {
-        int add = Math.min(Math.max(0, xp), UtilitiXConfig.ExperienceCrystal.maxXp - this.xp);
+        int add = Math.min(Math.max(0, xp), CommonConfig.ExperienceCrystal.maxXp - this.xp);
         this.xp += add;
         this.setChanged();
         this.setDispatchable();
@@ -93,7 +93,7 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
     }
 
     private void moveExps(Level level, BlockPos pos) {
-        if (!UtilitiXConfig.ExperienceCrystal.pullOrbs || this.xp >= UtilitiXConfig.ExperienceCrystal.maxXp) return;
+        if (!CommonConfig.ExperienceCrystal.pullOrbs || this.xp >= CommonConfig.ExperienceCrystal.maxXp) return;
         List<ExperienceOrb> xps = level.getEntitiesOfClass(ExperienceOrb.class, BoundingBoxUtils.expand(new Vec3(pos.getX(), pos.getY(), pos.getZ()), 7));
         for (ExperienceOrb orb : xps) {
             Vec3 vector = new Vec3(pos.getX() - orb.getX() + 0.5, pos.getY() + (orb.getEyeHeight() / 2) - orb.getY(), pos.getZ() - orb.getZ() + 0.5);
@@ -113,7 +113,7 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
     @Override
     public int getTanks() {
         if (this.tankCount == null) {
-            long totalMb = (long) UtilitiXConfig.ExperienceCrystal.maxXp * MB_PER_XP;
+            long totalMb = (long) CommonConfig.ExperienceCrystal.maxXp * MB_PER_XP;
             this.tankCount = (int) (totalMb / Integer.MAX_VALUE);
             if (totalMb % Integer.MAX_VALUE != 0) {
                 this.tankCount++;
@@ -134,7 +134,7 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
 
     @Override
     public int getTankCapacity(int tank) {
-        long totalMb = (long) UtilitiXConfig.ExperienceCrystal.maxXp * MB_PER_XP;
+        long totalMb = (long) CommonConfig.ExperienceCrystal.maxXp * MB_PER_XP;
         int maxCapacityPerTank = Integer.MAX_VALUE;
 
         if (tank < this.getTanks() - 1) {
@@ -262,7 +262,7 @@ public class TileExperienceCrystal extends BlockEntityBase implements TickingBlo
     }
 
     private boolean isConfiguredFluid(Holder<Fluid> fluidHolder) {
-        Optional<ResourceLocation> configuredXp = UtilitiXConfig.ExperienceCrystal.fluidXp;
+        Optional<ResourceLocation> configuredXp = CommonConfig.ExperienceCrystal.fluidXp;
         return configuredXp.isPresent()
                 && fluidHolder.unwrapKey()
                 .map(ResourceKey::location)

@@ -1,6 +1,6 @@
 package de.melanx.utilitix.mixin;
 
-import de.melanx.utilitix.UtilitiXConfig;
+import de.melanx.utilitix.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
@@ -34,7 +34,7 @@ public abstract class MixinDoorBlock {
             at = @At(value = "RETURN")
     )
     public void openSecondDoor(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
-        if (cir.getReturnValue() == InteractionResult.PASS || !UtilitiXConfig.doubleDoor || HANDLE_DOOR || ModList.get().isLoaded("quark")) {
+        if (cir.getReturnValue() == InteractionResult.PASS || !CommonConfig.doubleDoor || HANDLE_DOOR || ModList.get().isLoaded("quark")) {
             return;
         }
 

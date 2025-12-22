@@ -1,5 +1,6 @@
 package de.melanx.utilitix;
 
+import de.melanx.utilitix.config.CommonConfig;
 import de.melanx.utilitix.content.brewery.TileAdvancedBrewery;
 import de.melanx.utilitix.content.crudefurnace.TileCrudeFurnace;
 import de.melanx.utilitix.content.experiencecrystal.TileExperienceCrystal;
@@ -66,7 +67,7 @@ public class EventListener {
             InteractionHand hand = event.getHand();
             ItemStack stack = player.getItemInHand(hand);
             if (stack.getItem() == ModItems.mobBell) {
-                if (MobUtil.storeEntityData(player, hand, target, UtilitiXConfig.HandBells.mobBellEntities, true)) {
+                if (MobUtil.storeEntityData(player, hand, target, CommonConfig.HandBells.mobBellEntities, true)) {
                     event.setCancellationResult(InteractionResult.SUCCESS);
                     event.setCanceled(true);
                 }
@@ -81,7 +82,7 @@ public class EventListener {
                     }
                 }
 
-                if (MobUtil.storeEntityData(player, hand, target, UtilitiXConfig.mobYoinkerEntities, false)) {
+                if (MobUtil.storeEntityData(player, hand, target, CommonConfig.mobYoinkerEntities, false)) {
                     player.giveExperiencePoints((int) -target.getHealth());
                     target.remove(Entity.RemovalReason.DISCARDED);
 
@@ -131,10 +132,10 @@ public class EventListener {
     public static void entityInteract(PlayerInteractEvent.EntityInteractSpecific event) {
         if (event.getTarget() instanceof ArmorStand armorStand && event.getTarget().getPersistentData().getBoolean("UtilitiXArmorStand")) {
             if (event.getItemStack().getItem() == Items.FLINT && event.getEntity().isShiftKeyDown()) {
-                if (UtilitiXConfig.armorStandPoses.size() >= 2) {
-                    int newIdx = (armorStand.getPersistentData().getInt("UtilitiXPoseIdx") + 1) % UtilitiXConfig.armorStandPoses.size();
+                if (CommonConfig.armorStandPoses.size() >= 2) {
+                    int newIdx = (armorStand.getPersistentData().getInt("UtilitiXPoseIdx") + 1) % CommonConfig.armorStandPoses.size();
                     armorStand.getPersistentData().putInt("UtilitiXPoseIdx", newIdx);
-                    UtilitiXConfig.armorStandPoses.get(newIdx).apply(armorStand);
+                    CommonConfig.armorStandPoses.get(newIdx).apply(armorStand);
                 }
                 event.setCanceled(true);
                 event.setCancellationResult(InteractionResult.SUCCESS);
@@ -192,7 +193,7 @@ public class EventListener {
             BlockPos pos = entity.blockPosition();
             ItemStack stack = entity.getItem();
             if (stack.getItem() instanceof BlockItem item && (item.getBlock() instanceof CropBlock || item.getBlock() instanceof SaplingBlock)) {
-                if (!UtilitiXConfig.plantsOnDespawn.test(BuiltInRegistries.ITEM.getKey(item))) {
+                if (!CommonConfig.plantsOnDespawn.test(BuiltInRegistries.ITEM.getKey(item))) {
                     return;
                 }
 

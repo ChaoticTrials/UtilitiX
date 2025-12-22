@@ -1,7 +1,7 @@
 package de.melanx.utilitix.util;
 
 import com.google.errorprone.annotations.DoNotCall;
-import de.melanx.utilitix.UtilitiXConfig;
+import de.melanx.utilitix.config.CommonConfig;
 import de.melanx.utilitix.registration.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,7 +14,7 @@ public class CoreUtil {
 
     @DoNotCall
     public static boolean shouldPreventWaterlogging(Player player) {
-        return UtilitiXConfig.crouchNoWaterlog && player != null && player.isShiftKeyDown();
+        return CommonConfig.crouchNoWaterlog && player != null && player.isShiftKeyDown();
     }
 
     @DoNotCall

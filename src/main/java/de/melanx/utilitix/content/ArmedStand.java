@@ -1,6 +1,6 @@
 package de.melanx.utilitix.content;
 
-import de.melanx.utilitix.UtilitiXConfig;
+import de.melanx.utilitix.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -71,8 +71,8 @@ public class ArmedStand extends ArmorStandItem {
         armorStand.setShowArms(true);
         armorStand.getPersistentData().putBoolean("UtilitiXArmorStand", true);
         armorStand.getPersistentData().putInt("UtilitiXPoseIdx", 0);
-        if (!UtilitiXConfig.armorStandPoses.isEmpty()) {
-            UtilitiXConfig.armorStandPoses.getFirst().apply(armorStand);
+        if (!CommonConfig.armorStandPoses.isEmpty()) {
+            CommonConfig.armorStandPoses.getFirst().apply(armorStand);
         }
     }
 }

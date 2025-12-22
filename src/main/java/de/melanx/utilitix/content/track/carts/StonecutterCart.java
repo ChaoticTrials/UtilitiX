@@ -1,6 +1,6 @@
 package de.melanx.utilitix.content.track.carts;
 
-import de.melanx.utilitix.UtilitiXConfig;
+import de.melanx.utilitix.config.CommonConfig;
 import de.melanx.utilitix.content.track.carts.stonecutter.StonecutterCartMode;
 import de.melanx.utilitix.registration.ModSerializers;
 import net.minecraft.core.BlockPos;
@@ -112,7 +112,7 @@ public class StonecutterCart extends Cart {
                 BlockState state = this.level().getBlockState(this.breakingBlock);
                 if (!state.isAir() && !state.canBeReplaced() && !state.is(BlockTags.RAILS)) {
                     float hardness = state.getDestroySpeed(this.level(), this.breakingBlock);
-                    if (hardness >= 0 && hardness <= UtilitiXConfig.Track.stonecutterMaxHardness) {
+                    if (hardness >= 0 && hardness <= CommonConfig.Track.stonecutterMaxHardness) {
                         this.breakProgress += Mth.clamp(5 - hardness, 1, 5);
                         if (this.breakProgress >= MAX_PROGRESS || hardness == 0) {
                             List<ItemStack> drops = null;

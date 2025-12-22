@@ -1,6 +1,6 @@
 package de.melanx.utilitix.content.bell;
 
-import de.melanx.utilitix.UtilitiXConfig;
+import de.melanx.utilitix.config.CommonConfig;
 import de.melanx.utilitix.data.enchantments.EnchantmentProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -52,15 +52,15 @@ public abstract class BellBase extends ItemBase {
 
     @Override
     public int getUseDuration(@Nonnull ItemStack stack, @Nonnull LivingEntity entity) {
-        return UtilitiXConfig.HandBells.ringTime;
+        return CommonConfig.HandBells.ringTime;
     }
 
     @Nonnull
     @Override
     public ItemStack finishUsingItem(@Nonnull ItemStack stack, @Nonnull Level level, @Nonnull LivingEntity entityLiving) {
-        double range = UtilitiXConfig.HandBells.glowRadius * (1 + stack.getEnchantmentLevel(level.registryAccess().holderOrThrow(EnchantmentProvider.BELL_RANGE)) * 0.25D);
+        double range = CommonConfig.HandBells.glowRadius * (1 + stack.getEnchantmentLevel(level.registryAccess().holderOrThrow(EnchantmentProvider.BELL_RANGE)) * 0.25D);
         List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(entityLiving.getX() - range, entityLiving.getY() - range, entityLiving.getZ() - range, entityLiving.getX() + range, entityLiving.getY() + range, entityLiving.getZ() + range), livingEntity -> this.entityFilter(livingEntity, stack));
-        entities.forEach(e -> e.addEffect(new MobEffectInstance(MobEffects.GLOWING, UtilitiXConfig.HandBells.glowTime)));
+        entities.forEach(e -> e.addEffect(new MobEffectInstance(MobEffects.GLOWING, CommonConfig.HandBells.glowTime)));
 
         return super.finishUsingItem(stack, level, entityLiving);
     }
@@ -84,7 +84,7 @@ public abstract class BellBase extends ItemBase {
 
         if (!level.isClientSide) {
             if (this.notifyNearbyEntities()) {
-                double range = UtilitiXConfig.HandBells.notifyRadius * (1 + stack.getEnchantmentLevel(level.registryAccess().holderOrThrow(EnchantmentProvider.BELL_RANGE)) * 0.25D);
+                double range = CommonConfig.HandBells.notifyRadius * (1 + stack.getEnchantmentLevel(level.registryAccess().holderOrThrow(EnchantmentProvider.BELL_RANGE)) * 0.25D);
                 List<LivingEntity> entities = entity.getCommandSenderWorld().getEntitiesOfClass(LivingEntity.class, new AABB(entity.getX() - range, entity.getY() - range, entity.getZ() - range, entity.getX() + range, entity.getY() + range, entity.getZ() + range));
                 for (LivingEntity e : entities) {
                     e.getBrain().setMemory(MemoryModuleType.HEARD_BELL_TIME, level.getGameTime());
