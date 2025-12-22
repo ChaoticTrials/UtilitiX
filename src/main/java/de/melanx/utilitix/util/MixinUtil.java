@@ -25,10 +25,11 @@ public class MixinUtil {
     public static void afterSetBlockState(Level level, BlockPos pos, Byte glueData) {
         if (level != null && pos != null && glueData != null) {
             LevelChunk chunk = level.getChunkAt(pos);
-            //noinspection ConstantConditions
-            StickyChunk glue = level.getExistingDataOrNull(ModAttachmentTypes.stickyChunk);
-            //noinspection ConstantConditions
+            // Sticky data is stored as an attachment on the chunk, not on the level.
+            // Create it if needed (glueData originates from a previously glued block).
+            StickyChunk glue = chunk.getData(ModAttachmentTypes.stickyChunk);
             if (glue != null) {
+                glue.attach(chunk);
                 int x = pos.getX() & 0xF;
                 int y = pos.getY();
                 int z = pos.getZ() & 0xF;

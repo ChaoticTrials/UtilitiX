@@ -38,7 +38,8 @@ public class StickyChunkRequest extends PacketHandler<StickyChunkRequest.Message
             LevelChunk chunk = sender.level().getChunk(msg.pos().x, msg.pos().z);
             //noinspection ConstantConditions
             if (chunk != null && chunk.loaded) {
-                Optional<StickyChunk> stickyChunk = sender.level().getExistingData(ModAttachmentTypes.stickyChunk);
+                // Sticky data is stored as an attachment on the chunk, not on the level.
+                Optional<StickyChunk> stickyChunk = chunk.getExistingData(ModAttachmentTypes.stickyChunk);
                 stickyChunk.ifPresent(value -> PacketDistributor.sendToPlayer(sender, new StickyChunkUpdate.Message(msg.pos(), value)));
             }
         }

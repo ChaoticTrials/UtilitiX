@@ -46,14 +46,11 @@ public class StickyChunkUpdate extends PacketHandler<StickyChunkUpdate.Message> 
             return;
         }
 
-        //noinspection ConstantConditions
-        StickyChunk glue = level.getData(ModAttachmentTypes.stickyChunk);
-        //noinspection ConstantConditions
-        if (glue == null) {
-            this.sendWarning(msg);
-            return;
-        }
-
+        // Sticky data is stored as an attachment on the chunk, not on the level.
+        // We create the attachment if needed so the client can render it afterwards.
+        StickyChunk glue = loaded.getData(ModAttachmentTypes.stickyChunk);
+        // Ensure the instance is attached to the owning chunk (needed for future syncs).
+        glue.attach(loaded);
         glue.loadFrom(msg.data());
     }
 
