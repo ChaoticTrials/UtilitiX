@@ -20,6 +20,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BetterMending {
@@ -41,11 +42,14 @@ public class BetterMending {
 
     private void moveExps(Level level, Iterable<Entity> entities) {
         if (!CommonConfig.betterMending) return;
+        List<ItemEntity> items = new ArrayList<>();
         for (Entity entity : entities) {
-            if (!(entity instanceof ItemEntity item)) {
-                continue;
+            if (entity instanceof ItemEntity item) {
+                items.add(item);
             }
+        }
 
+        for (ItemEntity item : items) {
             ItemStack stack = item.getItem();
             if (stack.getDamageValue() <= 0 || stack.getEnchantmentLevel(level.registryAccess().holderOrThrow(Enchantments.MENDING)) <= 0) {
                 continue;
@@ -57,12 +61,15 @@ public class BetterMending {
                 if (vector.lengthSqr() >= 0.2 || level.isClientSide) {
                     double scale = 1 - (vector.length() / 8);
                     orb.setDeltaMovement(orb.getDeltaMovement().add(vector.normalize().scale(scale * scale * 0.1)));
-                    return;
+                    continue;
                 }
 
                 int i = Math.min((int) (orb.getValue() * stack.getXpRepairRatio()), stack.getDamageValue());
                 stack.setDamageValue(stack.getDamageValue() - i);
-                orb.remove(Entity.RemovalReason.KILLED);
+                orb.value -= (int) (i / stack.getXpRepairRatio());
+                if (orb.value <= 0) {
+                    orb.discard();
+                }
 
                 if (!stack.isDamaged()) {
                     PacketDistributor.sendToPlayersTrackingEntity(item, new ItemEntityRepaired.Message(item.getId()));
