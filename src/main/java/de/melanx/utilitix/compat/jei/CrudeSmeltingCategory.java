@@ -27,7 +27,6 @@ public class CrudeSmeltingCategory implements IRecipeCategory<SmeltingRecipe> {
 
     public CrudeSmeltingCategory(IGuiHelper guiHelper) {
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.crudeFurnace));
-        ;
     }
 
     @Nonnull

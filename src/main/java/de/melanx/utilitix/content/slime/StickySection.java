@@ -98,7 +98,7 @@ public class StickySection {
 
     public void setStickies(byte[] data) {
         if (data.length != 4096) {
-            UtilitiX.getInstance().logger.error("Invalid size of sticky data for chunk section: " + data.length);
+            UtilitiX.getInstance().logger.error("Invalid size of sticky data for chunk section: {}", data.length);
             this.stickies = new byte[4096];
             System.arraycopy(data, 0, this.stickies, 0, 4096);
         } else {

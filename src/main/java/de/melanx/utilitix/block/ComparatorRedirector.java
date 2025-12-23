@@ -25,13 +25,11 @@ public class ComparatorRedirector extends BlockBase {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean hasAnalogOutputSignal(@Nonnull BlockState state) {
         return true;
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public int getAnalogOutputSignal(@Nonnull BlockState blockState, @Nonnull Level level, @Nonnull BlockPos pos) {
         BlockState target = level.getBlockState(pos.relative(this.direction.getOpposite()));
         if (target.getBlock() instanceof ComparatorRedirector) {

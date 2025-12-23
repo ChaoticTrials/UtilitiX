@@ -41,6 +41,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.IntStream;
 
 public class PistonCart extends Cart {
 
@@ -54,13 +55,13 @@ public class PistonCart extends Cart {
     public PistonCart(EntityType<?> type, Level level) {
         super(type, level);
         this.railIn = BaseItemStackHandler.builder(12)
-                .validator(stack -> stack.is(ItemTags.RAILS))
+                .validator(stack -> stack.is(ItemTags.RAILS), IntStream.range(0, 12).toArray())
                 .build();
         this.railOut = BaseItemStackHandler.builder(12)
-                .validator(stack -> stack.is(ItemTags.RAILS))
+                .validator(stack -> stack.is(ItemTags.RAILS), IntStream.range(0, 12).toArray())
                 .build();
-        this.torchIn = BaseItemStackHandler.builder(12)
-                .validator(stack -> stack.is(ModItemTags.RAIL_POWER_SOURCES))
+        this.torchIn = BaseItemStackHandler.builder(1)
+                .validator(stack -> stack.is(ModItemTags.RAIL_POWER_SOURCES), 0)
                 .build();
     }
 

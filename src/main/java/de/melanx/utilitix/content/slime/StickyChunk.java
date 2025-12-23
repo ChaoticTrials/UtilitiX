@@ -98,7 +98,7 @@ public class StickyChunk implements INBTSerializable<CompoundTag> {
         this.sections.clear();
         for (String key : nbt.getAllKeys()) {
             if (!nbt.contains(key, Tag.TAG_BYTE_ARRAY)) {
-                UtilitiX.getInstance().logger.error("Invalid chunk section value in sticky chunk for: " + key);
+                UtilitiX.getInstance().logger.error("Invalid chunk section value in sticky chunk for: {}", key);
                 continue;
             }
             try {
@@ -107,7 +107,7 @@ public class StickyChunk implements INBTSerializable<CompoundTag> {
                 section.setStickies(nbt.getByteArray(key));
                 this.sections.put(sectionId, section);
             } catch (NumberFormatException e) {
-                UtilitiX.getInstance().logger.error("Invalid chunk section id in sticky chunk: " + key);
+                UtilitiX.getInstance().logger.error("Invalid chunk section id in sticky chunk: {}", key);
             }
         }
     }

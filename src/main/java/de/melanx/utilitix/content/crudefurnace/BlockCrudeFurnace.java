@@ -32,13 +32,11 @@ public class BlockCrudeFurnace extends MenuBlockBE<TileCrudeFurnace, ContainerMe
         return false;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public boolean hasAnalogOutputSignal(@Nonnull BlockState state) {
         return true;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public int getAnalogOutputSignal(@Nonnull BlockState blockState, @Nonnull Level level, @Nonnull BlockPos pos) {
         BlockEntity tile = level.getBlockEntity(pos);

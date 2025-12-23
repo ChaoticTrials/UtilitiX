@@ -4,7 +4,7 @@ import de.melanx.utilitix.config.CommonConfig;
 import de.melanx.utilitix.content.brewery.TileAdvancedBrewery;
 import de.melanx.utilitix.content.crudefurnace.TileCrudeFurnace;
 import de.melanx.utilitix.content.experiencecrystal.TileExperienceCrystal;
-import de.melanx.utilitix.content.slime.SlimyCapability;
+import de.melanx.utilitix.content.slime.ItemGlueBall;
 import de.melanx.utilitix.content.slime.StickyChunk;
 import de.melanx.utilitix.registration.ModAttachmentTypes;
 import de.melanx.utilitix.registration.ModBlocks;
@@ -172,7 +172,7 @@ public class EventListener {
                 int y = event.getPos().getY();
                 int z = event.getPos().getZ() & 0xF;
                 for (Direction dir : Direction.values()) {
-                    if (glue.get(x, y, z, dir) && !SlimyCapability.canGlue(level, event.getPos(), dir)) {
+                    if (glue.get(x, y, z, dir) && !ItemGlueBall.canGlue(level, event.getPos(), dir)) {
                         glue.set(x, y, z, dir, false);
                         chunk.setUnsaved(true);
                         BlockPos targetPos = event.getPos().relative(dir);

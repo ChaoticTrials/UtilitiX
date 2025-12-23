@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.fml.ModList;
 import org.moddingx.libx.base.ItemBase;
@@ -44,7 +45,7 @@ public class ItemGlueBall extends ItemBase {
         int y = clickedPos.getY();
         int z = clickedPos.getZ() & 0xF;
         Direction face = context.getPlayer() != null && context.getPlayer().isShiftKeyDown() ? context.getClickedFace().getOpposite() : context.getClickedFace();
-        if (glue.get(x, y, z, face) || !SlimyCapability.canGlue(level, clickedPos, face)) {
+        if (glue.get(x, y, z, face) || !ItemGlueBall.canGlue(level, clickedPos, face)) {
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
 
@@ -72,5 +73,10 @@ public class ItemGlueBall extends ItemBase {
                 tooltipComponents.add(warning);
             }
         }
+    }
+
+    public static boolean canGlue(Level level, BlockPos pos, Direction side) {
+        BlockState state = level.getBlockState(pos);
+        return state.isFaceSturdy(level, pos, side) && !state.isStickyBlock() && state.getDestroySpeed(level, pos) >= 0;
     }
 }

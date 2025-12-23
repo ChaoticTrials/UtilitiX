@@ -54,30 +54,29 @@ public class CoreUtil {
         Block block = signalGetter.getBlockState(posDown).getBlock();
         if (block == ModBlocks.weakRedstoneTorch || block == ModBlocks.weakRedstoneTorch.wallTorch) {
             int power = signalGetter.getDirectSignal(pos.above(), Direction.UP);
-
             if (power >= 15) {
                 return power;
-            } else {
-                power = Math.max(power, signalGetter.getDirectSignal(pos.north(), Direction.NORTH));
-                if (power >= 15) {
-                    return power;
-                } else {
-                    power = Math.max(power, signalGetter.getDirectSignal(pos.south(), Direction.SOUTH));
-                    if (power >= 15) {
-                        return power;
-                    } else {
-                        power = Math.max(power, signalGetter.getDirectSignal(pos.west(), Direction.WEST));
-                        if (power >= 15) {
-                            return power;
-                        } else {
-                            power = Math.max(power, signalGetter.getDirectSignal(pos.east(), Direction.EAST));
-                            return power;
-                        }
-                    }
-                }
             }
-        } else {
-            return signalGetter.getDirectSignalTo(pos);
+
+            power = Math.max(power, signalGetter.getDirectSignal(pos.north(), Direction.NORTH));
+            if (power >= 15) {
+                return power;
+            }
+
+            power = Math.max(power, signalGetter.getDirectSignal(pos.south(), Direction.SOUTH));
+            if (power >= 15) {
+                return power;
+            }
+
+            power = Math.max(power, signalGetter.getDirectSignal(pos.west(), Direction.WEST));
+            if (power >= 15) {
+                return power;
+            }
+
+            power = Math.max(power, signalGetter.getDirectSignal(pos.east(), Direction.EAST));
+            return power;
         }
+
+        return signalGetter.getDirectSignalTo(pos);
     }
 }

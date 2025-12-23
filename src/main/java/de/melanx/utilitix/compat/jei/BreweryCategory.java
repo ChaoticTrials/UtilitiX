@@ -38,7 +38,7 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
 
     public BreweryCategory(IGuiHelper guiHelper) {
         ResourceLocation location = ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "textures/container/advanced_brewery.png");
-        this.background = guiHelper.drawableBuilder(location, 55, 15, 64, 60).addPadding(1, 0, 0, 50).build(); // todo remove
+        this.background = guiHelper.drawableBuilder(location, 55, 15, 64, 60).addPadding(1, 0, 0, 50).build();
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.advancedBrewery));
         this.localizedName = Component.translatable("screen.utilitix.advanced_brewery");
         this.arrow = guiHelper.drawableBuilder(location, 176, 0, 9, 28).buildAnimated(400, IDrawableAnimated.StartDirection.TOP, false);
@@ -62,12 +62,12 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
 
     @Override
     public int getWidth() {
-        return 64;
+        return 114;
     }
 
     @Override
     public int getHeight() {
-        return 60;
+        return 61;
     }
 
     @Nonnull
@@ -92,6 +92,7 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
 
     @Override
     public void draw(@Nonnull BreweryRecipe recipe, @Nonnull IRecipeSlotsView slotsView, @Nonnull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+        this.background.draw(guiGraphics, 0, 0);
         this.blazeHeat.draw(guiGraphics, 5, 30);
         this.bubbles.draw(guiGraphics, 8, 0);
         this.arrow.draw(guiGraphics, 42, 2);

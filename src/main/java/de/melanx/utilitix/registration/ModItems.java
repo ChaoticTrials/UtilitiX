@@ -13,6 +13,7 @@ import de.melanx.utilitix.content.wireless.ItemLinkedCrystal;
 import de.melanx.utilitix.item.ItemBurnable;
 import de.melanx.utilitix.item.ItemMobYoinker;
 import de.melanx.utilitix.item.Quiver;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ShearsItem;
@@ -33,7 +34,7 @@ public class ModItems {
     public static final Item linkedCrystal = new ItemLinkedCrystal(UtilitiX.getInstance(), new Item.Properties().stacksTo(8));
     public static final Item gildingCrystal = new ItemBase(UtilitiX.getInstance(), new Item.Properties().stacksTo(16));
     public static final Item minecartTinkerer = new ItemMinecartTinkerer(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
-    public static final Item diamondShears = new ShearsItem(new Item.Properties().stacksTo(1).durability(1486));
+    public static final Item diamondShears = new ShearsItem(new Item.Properties().stacksTo(1).durability(1486).component(DataComponents.TOOL, ShearsItem.createToolProperties()));
     public static final Item mobYoinker = new ItemMobYoinker(new Item.Properties().stacksTo(1));
     public static final Item oakShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.OAK, new Item.Properties().stacksTo(1));
     public static final Item spruceShulkerBoat = new ShulkerBoatItem(UtilitiX.getInstance(), Boat.Type.SPRUCE, new Item.Properties().stacksTo(1));
