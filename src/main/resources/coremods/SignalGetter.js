@@ -10,7 +10,7 @@ function initializeCoreMod() {
             'target': {
                 'type': 'METHOD',
                 'class': 'net.minecraft.world.level.SignalGetter',
-                'methodName': 'm_277086_',
+                'methodName': 'getBestNeighborSignal',
                 'methodDesc': '(Lnet/minecraft/core/BlockPos;)I'
             },
             'transformer': function (method) {

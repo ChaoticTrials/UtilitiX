@@ -10,7 +10,7 @@ function initializeCoreMod() {
             'target': {
                 'type': 'METHOD',
                 'class': 'net.minecraft.world.item.BucketItem',
-                'methodName': 'm_142073_',
+                'methodName': 'emptyContents',
                 'methodDesc': '(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/BlockHitResult;Lnet/minecraft/world/item/ItemStack;)Z'
             },
             'transformer': function (method) {
@@ -25,8 +25,8 @@ function initializeCoreMod() {
                         ASMAPI.log("DEBUG", "Found INVOKEINTERFACE at index " + i);
                         var methodInsn = insn;
                         if (methodInsn.owner == 'net/minecraft/world/level/block/LiquidBlockContainer'
-                            && methodInsn.name == ASMAPI.mapMethod('m_6044_')
-                            && methodInsn.desc == '(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/material/Fluid;)Z') {
+                            && methodInsn.name == ASMAPI.mapMethod('canPlaceLiquid')
+                            && methodInsn.desc == '(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/material/Fluid;)Z') {
                             ASMAPI.log("DEBUG", "Matched target method: " + methodInsn.name + methodInsn.desc);
                             var nextInsn = insn.getNext();
                             if (nextInsn != null && nextInsn.getOpcode() == Opcodes.IFEQ) {
