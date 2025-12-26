@@ -1,6 +1,7 @@
 package de.melanx.utilitix.content;
 
 import de.melanx.utilitix.config.CommonConfig;
+import de.melanx.utilitix.config.FeatureConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -11,6 +12,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.ArmorStandItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -74,5 +76,10 @@ public class ArmedStand extends ArmorStandItem {
         if (!CommonConfig.armorStandPoses.isEmpty()) {
             CommonConfig.armorStandPoses.getFirst().apply(armorStand);
         }
+    }
+
+    @Override
+    public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
+        return FeatureConfig.Misc.armedStand;
     }
 }

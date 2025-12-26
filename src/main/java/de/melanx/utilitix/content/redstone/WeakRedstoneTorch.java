@@ -1,10 +1,12 @@
-package de.melanx.utilitix.block;
+package de.melanx.utilitix.content.redstone;
 
+import de.melanx.utilitix.config.FeatureConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.StandingAndWallBlockItem;
@@ -34,7 +36,12 @@ public class WeakRedstoneTorch extends RedstoneTorchBlock implements Registerabl
         super(properties);
         this.mod = mod;
         this.wallTorch = new Wall(properties);
-        this.item = new StandingAndWallBlockItem(this, this.wallTorch, itemProperties, Direction.DOWN);
+        this.item = new StandingAndWallBlockItem(this, this.wallTorch, itemProperties, Direction.DOWN) {
+            @Override
+            public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
+                return WeakRedstoneTorch.this.isEnabled(enabledFeatures);
+            }
+        };
     }
 
     @Override
@@ -46,6 +53,11 @@ public class WeakRedstoneTorch extends RedstoneTorchBlock implements Registerabl
     @Override
     public void animateTick(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull RandomSource rand) {
         // stop redstone particles
+    }
+
+    @Override
+    public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
+        return FeatureConfig.Misc.Redstone.weakRedstoneTorch;
     }
 
     public class Wall extends RedstoneWallTorchBlock {
@@ -66,6 +78,11 @@ public class WeakRedstoneTorch extends RedstoneTorchBlock implements Registerabl
         @Override
         public void animateTick(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
             // stop redstone particles
+        }
+
+        @Override
+        public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
+            return this.torch.isEnabled(enabledFeatures);
         }
     }
 }

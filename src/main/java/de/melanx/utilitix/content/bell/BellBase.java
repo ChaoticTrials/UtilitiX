@@ -1,6 +1,7 @@
 package de.melanx.utilitix.content.bell;
 
 import de.melanx.utilitix.config.CommonConfig;
+import de.melanx.utilitix.config.FeatureConfig;
 import de.melanx.utilitix.data.enchantments.EnchantmentProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -14,6 +15,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -108,5 +110,10 @@ public abstract class BellBase extends ItemBase {
         if (ModList.get().isLoaded("emojiful")) {
             tooltipComponents.add(Component.literal(":DinkDonk:"));
         }
+    }
+
+    @Override
+    public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
+        return FeatureConfig.Items.handBells;
     }
 }

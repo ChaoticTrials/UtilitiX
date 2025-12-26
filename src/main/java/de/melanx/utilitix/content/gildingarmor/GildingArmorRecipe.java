@@ -2,6 +2,7 @@ package de.melanx.utilitix.content.gildingarmor;
 
 import com.mojang.serialization.MapCodec;
 import de.melanx.utilitix.client.ClientProxy;
+import de.melanx.utilitix.config.FeatureConfig;
 import de.melanx.utilitix.registration.ModDataComponentTypes;
 import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.registration.ModRecipes;
@@ -71,7 +72,7 @@ public class GildingArmorRecipe extends SmithingTransformRecipe {
     }
 
     public static boolean isGilded(ItemStack stack) {
-        return stack.getOrDefault(ModDataComponentTypes.gilded, false);
+        return stack.getOrDefault(ModDataComponentTypes.gilded, false) && FeatureConfig.Misc.InWorldChanges.gilding;
     }
 
     public static boolean canGild(ArmorItem armor, ItemStack stack) {

@@ -1,6 +1,7 @@
 package de.melanx.utilitix.content.slime;
 
 import de.melanx.utilitix.compat.zeta.ZetaCompat;
+import de.melanx.utilitix.config.FeatureConfig;
 import de.melanx.utilitix.registration.ModAttachmentTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
@@ -75,8 +77,13 @@ public class ItemGlueBall extends ItemBase {
         }
     }
 
+    @Override
+    public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
+        return FeatureConfig.Misc.InWorldChanges.glue;
+    }
+
     public static boolean canGlue(Level level, BlockPos pos, Direction side) {
         BlockState state = level.getBlockState(pos);
-        return state.isFaceSturdy(level, pos, side) && !state.isStickyBlock() && state.getDestroySpeed(level, pos) >= 0;
+        return FeatureConfig.Misc.InWorldChanges.glue && state.isFaceSturdy(level, pos, side) && !state.isStickyBlock() && state.getDestroySpeed(level, pos) >= 0;
     }
 }

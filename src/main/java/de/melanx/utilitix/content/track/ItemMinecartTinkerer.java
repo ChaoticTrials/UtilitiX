@@ -1,5 +1,6 @@
 package de.melanx.utilitix.content.track;
 
+import de.melanx.utilitix.config.FeatureConfig;
 import de.melanx.utilitix.content.track.tinkerer.MinecartTinkererMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -7,6 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -36,6 +38,11 @@ public class ItemMinecartTinkerer extends ItemBase {
     @Override
     public boolean doesSneakBypassUse(@Nonnull ItemStack stack, @Nonnull LevelReader level, @Nonnull BlockPos pos, @Nonnull Player player) {
         return true;
+    }
+
+    @Override
+    public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
+        return FeatureConfig.Transportation.moreRails || FeatureConfig.Transportation.moreMinecarts;
     }
 
     public static ItemStack getLabelStack(AbstractMinecart entity) {

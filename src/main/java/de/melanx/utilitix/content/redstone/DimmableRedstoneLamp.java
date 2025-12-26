@@ -1,8 +1,10 @@
-package de.melanx.utilitix.block;
+package de.melanx.utilitix.content.redstone;
 
+import de.melanx.utilitix.config.FeatureConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -33,7 +35,6 @@ public class DimmableRedstoneLamp extends BlockBase {
         return this.defaultBlockState().setValue(SIGNAL, context.getLevel().getSignal(context.getClickedPos(), context.getClickedFace()));
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void neighborChanged(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockPos fromPos, boolean isMoving) {
         if (!level.isClientSide) {
@@ -41,7 +42,6 @@ public class DimmableRedstoneLamp extends BlockBase {
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onPlace(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState oldState, boolean isMoving) {
         if (!oldState.is(state.getBlock()) && !level.isClientSide) {
@@ -62,7 +62,6 @@ public class DimmableRedstoneLamp extends BlockBase {
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void tick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
         if (state.getValue(SIGNAL) > 0 && !level.hasNeighborSignal(pos)) {
@@ -73,5 +72,10 @@ public class DimmableRedstoneLamp extends BlockBase {
     @Override
     protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(SIGNAL);
+    }
+
+    @Override
+    public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
+        return FeatureConfig.Misc.Redstone.dimmableLamps;
     }
 }

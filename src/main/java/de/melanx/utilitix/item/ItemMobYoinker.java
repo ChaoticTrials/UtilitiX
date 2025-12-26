@@ -3,6 +3,7 @@ package de.melanx.utilitix.item;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.melanx.utilitix.UtilitiX;
+import de.melanx.utilitix.config.FeatureConfig;
 import de.melanx.utilitix.registration.ModDataComponentTypes;
 import de.melanx.utilitix.util.MobUtil;
 import net.minecraft.nbt.CompoundTag;
@@ -15,6 +16,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
@@ -79,6 +81,11 @@ public class ItemMobYoinker extends ItemBase {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         MutableComponent component = MobUtil.getCurrentMob(stack);
         tooltipComponents.add(component != null ? component : MobUtil.NO_MOB);
+    }
+
+    @Override
+    public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
+        return FeatureConfig.Items.mobYoinker;
     }
 
     private static void reset(ItemStack stack) {

@@ -1,5 +1,6 @@
 package de.melanx.utilitix.content.shulkerboat;
 
+import de.melanx.utilitix.config.FeatureConfig;
 import de.melanx.utilitix.registration.ModEntities;
 import de.melanx.utilitix.registration.ModItems;
 import net.minecraft.core.component.DataComponents;
@@ -9,6 +10,9 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.entity.vehicle.ChestBoat;
+import net.minecraft.world.flag.FeatureElement;
+import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ShulkerBoxMenu;
 import net.minecraft.world.item.Item;
@@ -22,7 +26,7 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ShulkerBoat extends ChestBoat {
+public class ShulkerBoat extends ChestBoat implements FeatureElement {
 
     public ShulkerBoat(EntityType<? extends Boat> entityType, Level level) {
         super(entityType, level);
@@ -136,5 +140,16 @@ public class ShulkerBoat extends ChestBoat {
         }
 
         this.setRemoved(reason);
+    }
+
+    @Nonnull
+    @Override
+    public FeatureFlagSet requiredFeatures() {
+        return FeatureFlags.VANILLA_SET;
+    }
+
+    @Override
+    public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
+        return FeatureConfig.Transportation.shulkerBoats;
     }
 }

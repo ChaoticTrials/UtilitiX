@@ -1,5 +1,6 @@
-package de.melanx.utilitix.content.wireless;
+package de.melanx.utilitix.content.redstone.wireless;
 
+import de.melanx.utilitix.config.FeatureConfig;
 import de.melanx.utilitix.registration.ModDataComponentTypes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -7,6 +8,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -66,5 +68,10 @@ public class ItemLinkedCrystal extends ItemBase {
     @Nullable
     public static UUID getId(ItemStack stack) {
         return stack.get(ModDataComponentTypes.redstoneId);
+    }
+
+    @Override
+    public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
+        return FeatureConfig.Misc.Redstone.wirelessRedstone;
     }
 }

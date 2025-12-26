@@ -1,9 +1,9 @@
 package de.melanx.utilitix.data;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.block.ComparatorRedirector;
-import de.melanx.utilitix.block.DimmableRedstoneLamp;
 import de.melanx.utilitix.block.ModProperties;
+import de.melanx.utilitix.content.redstone.ComparatorRedirector;
+import de.melanx.utilitix.content.redstone.DimmableRedstoneLamp;
 import de.melanx.utilitix.data.state.RailState;
 import de.melanx.utilitix.registration.ModBlocks;
 import net.minecraft.core.Direction;

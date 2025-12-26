@@ -1,6 +1,7 @@
 package de.melanx.utilitix;
 
 import de.melanx.utilitix.config.CommonConfig;
+import de.melanx.utilitix.config.FeatureConfig;
 import de.melanx.utilitix.content.brewery.TileAdvancedBrewery;
 import de.melanx.utilitix.content.crudefurnace.TileCrudeFurnace;
 import de.melanx.utilitix.content.experiencecrystal.TileExperienceCrystal;
@@ -15,7 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -31,8 +32,6 @@ import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -43,18 +42,14 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.event.entity.item.ItemExpireEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
-
-import java.util.Set;
 
 @EventBusSubscriber(modid = "utilitix")
 public class EventListener {
@@ -188,12 +183,12 @@ public class EventListener {
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onItemDespawn(ItemExpireEvent event) {
         ItemEntity entity = event.getEntity();
-        Level level = entity.getCommandSenderWorld();
+        Level level = entity.level();
         if (!level.isClientSide) {
             BlockPos pos = entity.blockPosition();
             ItemStack stack = entity.getItem();
-            if (stack.getItem() instanceof BlockItem item && (item.getBlock() instanceof CropBlock || item.getBlock() instanceof SaplingBlock)) {
-                if (!CommonConfig.plantsOnDespawn.test(BuiltInRegistries.ITEM.getKey(item))) {
+            if (stack.getItem() instanceof BlockItem item && (item.getBlock().defaultBlockState().is(BlockTags.CROPS) || item.getBlock().defaultBlockState().is(BlockTags.SAPLINGS))) {
+                if (!FeatureConfig.Misc.InWorldChanges.plantsOnDespawn || !CommonConfig.plantsOnDespawn.test(BuiltInRegistries.ITEM.getKey(item))) {
                     return;
                 }
 
@@ -228,23 +223,6 @@ public class EventListener {
             float maxHealth = creeper.getMaxHealth();
 
             explosion.radius = explosion.radius * (health / maxHealth);
-        }
-    }
-
-    private static final Set<ResourceLocation> AIOTBOTANIA_FLATTEN_ALLOWED = Set.of(
-            ResourceLocation.fromNamespaceAndPath("aiotbotania", "livingwood_aiot"),
-            ResourceLocation.fromNamespaceAndPath("aiotbotania", "livingrock_aiot"),
-            ResourceLocation.fromNamespaceAndPath("aiotbotania", "manasteel_aiot"),
-            ResourceLocation.fromNamespaceAndPath("aiotbotania", "elementium_aiot"),
-            ResourceLocation.fromNamespaceAndPath("aiotbotania", "terra_aiot"),
-            ResourceLocation.fromNamespaceAndPath("aiotbotania", "alfsteel_aiot")
-    );
-
-    @SubscribeEvent
-    public static void onBlockToolInteraction(BlockEvent.BlockToolModificationEvent event) {
-        if (event.getItemAbility() == ItemAbilities.SHOVEL_FLATTEN && event.getPlayer() != null && event.getPlayer().isCrouching()
-                && (!ModList.get().isLoaded("aiotbotania") || !AIOTBOTANIA_FLATTEN_ALLOWED.contains(BuiltInRegistries.ITEM.getKey(event.getHeldItemStack().getItem())))) {
-            event.setCanceled(true);
         }
     }
 

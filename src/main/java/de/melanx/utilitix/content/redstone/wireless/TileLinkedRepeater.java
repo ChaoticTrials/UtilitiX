@@ -1,4 +1,4 @@
-package de.melanx.utilitix.content.wireless;
+package de.melanx.utilitix.content.redstone.wireless;
 
 import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModItems;

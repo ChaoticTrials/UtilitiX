@@ -1,18 +1,22 @@
 package de.melanx.utilitix.registration;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.block.*;
+import de.melanx.utilitix.block.ModProperties;
 import de.melanx.utilitix.content.brewery.BlockAdvancedBrewery;
 import de.melanx.utilitix.content.brewery.ContainerMenuAdvancedBrewery;
 import de.melanx.utilitix.content.brewery.TileAdvancedBrewery;
 import de.melanx.utilitix.content.crudefurnace.BlockCrudeFurnace;
 import de.melanx.utilitix.content.crudefurnace.ContainerMenuCrudeFurnace;
 import de.melanx.utilitix.content.crudefurnace.TileCrudeFurnace;
+import de.melanx.utilitix.content.decoration.StoneWallBlock;
 import de.melanx.utilitix.content.experiencecrystal.BlockExperienceCrystal;
 import de.melanx.utilitix.content.experiencecrystal.ContainerMenuExperienceCrystal;
 import de.melanx.utilitix.content.experiencecrystal.TileExperienceCrystal;
+import de.melanx.utilitix.content.redstone.ComparatorRedirector;
+import de.melanx.utilitix.content.redstone.DimmableRedstoneLamp;
+import de.melanx.utilitix.content.redstone.WeakRedstoneTorch;
+import de.melanx.utilitix.content.redstone.wireless.BlockLinkedRepeater;
 import de.melanx.utilitix.content.track.rails.*;
-import de.melanx.utilitix.content.wireless.BlockLinkedRepeater;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;

@@ -1,4 +1,4 @@
-package de.melanx.utilitix.content.wireless;
+package de.melanx.utilitix.content.redstone.wireless;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;

@@ -1,7 +1,9 @@
 package de.melanx.utilitix.content.crudefurnace;
 
+import de.melanx.utilitix.config.FeatureConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -56,5 +58,10 @@ public class BlockCrudeFurnace extends MenuBlockBE<TileCrudeFurnace, ContainerMe
     @Override
     protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(HorizontalDirectionalBlock.FACING, AbstractFurnaceBlock.LIT);
+    }
+
+    @Override
+    public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
+        return FeatureConfig.Machines.crudeFurnace;
     }
 }

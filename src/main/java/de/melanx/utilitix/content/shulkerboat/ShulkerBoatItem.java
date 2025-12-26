@@ -1,5 +1,6 @@
 package de.melanx.utilitix.content.shulkerboat;
 
+import de.melanx.utilitix.config.FeatureConfig;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -8,6 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
@@ -90,5 +92,10 @@ public class ShulkerBoatItem extends ItemBase {
     @Override
     public boolean canFitInsideContainerItems(@Nonnull ItemStack stack) {
         return false;
+    }
+
+    @Override
+    public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
+        return FeatureConfig.Transportation.shulkerBoats;
     }
 }

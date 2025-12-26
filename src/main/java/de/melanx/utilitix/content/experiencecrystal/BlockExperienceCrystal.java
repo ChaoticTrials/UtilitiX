@@ -1,11 +1,13 @@
 package de.melanx.utilitix.content.experiencecrystal;
 
+import de.melanx.utilitix.config.FeatureConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -127,5 +129,10 @@ public class BlockExperienceCrystal extends MenuBlockBE<TileExperienceCrystal, C
         if (level.isClientSide || !this.useFluidItem(this.getBlockEntity(level, pos), player, hand, level, pos, hitResult))
             return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
         return ItemInteractionResult.SUCCESS;
+    }
+
+    @Override
+    public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
+        return FeatureConfig.Machines.experienceCrystal;
     }
 }

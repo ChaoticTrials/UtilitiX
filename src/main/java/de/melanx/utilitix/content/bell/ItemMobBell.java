@@ -30,6 +30,7 @@ public class ItemMobBell extends BellBase {
 
         ItemMobYoinker.MobData mobData = stack.get(ModDataComponentTypes.mobData);
 
+        //noinspection DataFlowIssue
         return entity.getType() == mobData.getEntityType();
     }
 
@@ -44,15 +45,22 @@ public class ItemMobBell extends BellBase {
         MutableComponent component = MobUtil.getCurrentMob(stack);
         tooltipComponents.add(component != null ? component : MobUtil.NO_MOB);
     }
-    
+
     public static int getColor(ItemStack stack) {
-        if (stack.has(ModDataComponentTypes.mobData)) {
-            ItemMobYoinker.MobData mobData = stack.get(ModDataComponentTypes.mobData);
-            //noinspection DataFlowIssue
-            EntityType<?> entityType = mobData.getEntityType();
-            if (entityType != null && SpawnEggItem.byId(entityType) instanceof SpawnEggItem egg) {
-                return egg.getColor(0);
-            }
+        if (!stack.has(ModDataComponentTypes.mobData)) {
+            return 0xFFFFFF;
+        }
+
+        ItemMobYoinker.MobData mobData = stack.get(ModDataComponentTypes.mobData);
+        //noinspection DataFlowIssue
+        EntityType<?> entityType = mobData.getEntityType();
+        if (entityType == null) {
+            return 0xFFFFFF;
+        }
+
+        SpawnEggItem egg = SpawnEggItem.byId(entityType);
+        if (egg != null) {
+            return egg.getColor(0);
         }
 
         return 0xFFFFFF;

@@ -1,5 +1,6 @@
-package de.melanx.utilitix.content.wireless;
+package de.melanx.utilitix.content.redstone.wireless;
 
+import de.melanx.utilitix.config.FeatureConfig;
 import de.melanx.utilitix.registration.ModItems;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
@@ -12,6 +13,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -211,6 +213,11 @@ public class BlockLinkedRepeater extends BlockBE<TileLinkedRepeater> {
 
         level.neighborChanged(target, this, pos);
         level.updateNeighborsAtExceptFromFacing(target, this, face);
+    }
+
+    @Override
+    public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
+        return FeatureConfig.Misc.Redstone.wirelessRedstone;
     }
 
     public static int inputStrength(Level level, BlockState state, BlockPos pos) {

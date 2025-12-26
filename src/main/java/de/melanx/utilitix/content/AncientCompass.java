@@ -1,6 +1,7 @@
 package de.melanx.utilitix.content;
 
 import com.mojang.datafixers.util.Pair;
+import de.melanx.utilitix.config.FeatureConfig;
 import de.melanx.utilitix.registration.ModDataComponentTypes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -10,6 +11,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -82,6 +84,11 @@ public class AncientCompass extends ItemBase {
     @Override
     public void appendHoverText(@Nonnull ItemStack stack, @Nonnull TooltipContext context, List<Component> tooltipComponents, @Nonnull TooltipFlag tooltipFlag) {
         tooltipComponents.add(TOOLTIP);
+    }
+
+    @Override
+    public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
+        return FeatureConfig.Items.ancientCompass;
     }
 
     public static class BiomeSearcher implements WorldWorkerManager.IWorker {

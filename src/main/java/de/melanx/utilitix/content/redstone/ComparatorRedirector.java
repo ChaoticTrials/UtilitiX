@@ -1,7 +1,9 @@
-package de.melanx.utilitix.block;
+package de.melanx.utilitix.content.redstone;
 
+import de.melanx.utilitix.config.FeatureConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -37,5 +39,10 @@ public class ComparatorRedirector extends BlockBase {
         } else {
             return target.getAnalogOutputSignal(level, pos.relative(this.direction.getOpposite()));
         }
+    }
+
+    @Override
+    public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
+        return FeatureConfig.Misc.Redstone.comparatorRedirector;
     }
 }

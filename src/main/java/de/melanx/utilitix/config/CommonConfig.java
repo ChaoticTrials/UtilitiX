@@ -16,6 +16,48 @@ import java.util.Optional;
 @RegisterConfig(value = "common")
 public class CommonConfig {
 
+    @Config({
+            "A list of armor stand rotations for armor stands with arms.",
+            "You can cycle through these with a piece of flint."
+    })
+    public static List<ArmorStandRotation> armorStandPoses = ImmutableList.of(
+            ArmorStandRotation.defaultRotation(),
+            ArmorStandRotation.create(3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -10.0f, 0.0f, -10.0f, -15.0f, 0.0f, 10.0f, 25.0f, 0.0f, -1.0f, -25.0f, 0.0f, 1.0f),
+            ArmorStandRotation.create(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -20.0f, 0.0f, -10.0f, -85.0f, 0.0f, 0.0f, -1.0f, 0.0f, -1.0f, 1.0f, 0.0f, 1.0f),
+            ArmorStandRotation.create(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -50.0f, 0.0f, 60.0f, -60.0f, -40.0f, 0.0f, -1.0f, 0.0f, -1.0f, 1.0f, 0.0f, 1.0f),
+            ArmorStandRotation.create(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -10.0f, 0.0f, -110.0f, -15.0f, 0.0f, 110.0f, -1.0f, 0.0f, -15.0f, 1.0f, 0.0f, 15.0f),
+            ArmorStandRotation.create(70.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -10.0f, 0.0f, 5.0f, -15.0f, 0.0f, -5.0f, 3.0f, 0.0f, -1.0f, 3.0f, 0.0f, 1.0f),
+            ArmorStandRotation.create(0.0f, -35.0f, -5.0f, 0.0f, 0.0f, 0.0f, -10.0f, 0.0f, -10.0f, -15.0f, 0.0f, 10.0f, -1.0f, 0.0f, -1.0f, 1.0f, 0.0f, 1.0f),
+            ArmorStandRotation.create(0.0f, 35.0f, 5.0f, 0.0f, 0.0f, 0.0f, -10.0f, 0.0f, -10.0f, -15.0f, 0.0f, 10.0f, -1.0f, 0.0f, -1.0f, 1.0f, 0.0f, 1.0f),
+            ArmorStandRotation.create(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -10.0f, 0.0f, -10.0f, -40.0f, 0.0f, 55.0f, -1.0f, 0.0f, -1.0f, 1.0f, 0.0f, 1.0f),
+            ArmorStandRotation.create(0.0f, 0.0f, -25.0f, 0.0f, 0.0f, 0.0f, -160.0f, -60.0f, 40.0f, -160.0f, -60.0f, 40.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f)
+    );
+
+    @Config("Entity denylist for mob yoinker")
+    public static ResourceList mobYoinkerEntities = ResourceList.DENY_LIST;
+
+    @Config("List of items which are allowed to be planted when despawn on correct soil")
+    public static ResourceList plantsOnDespawn = ResourceList.DENY_LIST;
+
+    @Config({"The time in ticks which will be added to the despawn delay of a wandering trader on each trade",
+            "This way, the wandering trader remains in the world longer."})
+    @IntRange(min = 0)
+    public static int wanderingTraderExtraTime = 400;
+
+    @Group("Config options for experience crystal")
+    public static class ExperienceCrystal {
+
+        @Config("Should the experience crystal pull xp orbs automatically?")
+        public static boolean pullOrbs = true;
+
+        @Config("Maximum experience which can be stored")
+        @IntRange(min = 0)
+        public static int maxXp = Integer.MAX_VALUE;
+
+        @Config("A ResourceLocation for an experience fluid. If it exists in the tag #c:experience, the crystal will always store this type of fluid xp")
+        public static Optional<ResourceLocation> fluidXp = Optional.empty();
+    }
+
     @Group("Config values for the two bells, mob bell and hand bell")
     public static class HandBells {
 
@@ -35,25 +77,6 @@ public class CommonConfig {
         public static int notifyRadius = 24;
     }
 
-    @Config({
-            "A list of armor stand rotations for armor stands with arms.",
-            "You can cycle through these with a piece of flint."
-    })
-    public static List<ArmorStandRotation> armorStandPoses = ImmutableList.of(
-            ArmorStandRotation.defaultRotation(),
-            ArmorStandRotation.create(3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -10.0f, 0.0f, -10.0f, -15.0f, 0.0f, 10.0f, 25.0f, 0.0f, -1.0f, -25.0f, 0.0f, 1.0f),
-            ArmorStandRotation.create(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -20.0f, 0.0f, -10.0f, -85.0f, 0.0f, 0.0f, -1.0f, 0.0f, -1.0f, 1.0f, 0.0f, 1.0f),
-            ArmorStandRotation.create(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -50.0f, 0.0f, 60.0f, -60.0f, -40.0f, 0.0f, -1.0f, 0.0f, -1.0f, 1.0f, 0.0f, 1.0f),
-            ArmorStandRotation.create(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -10.0f, 0.0f, -110.0f, -15.0f, 0.0f, 110.0f, -1.0f, 0.0f, -15.0f, 1.0f, 0.0f, 15.0f),
-            ArmorStandRotation.create(70.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -10.0f, 0.0f, 5.0f, -15.0f, 0.0f, -5.0f, 3.0f, 0.0f, -1.0f, 3.0f, 0.0f, 1.0f),
-            ArmorStandRotation.create(0.0f, -35.0f, -5.0f, 0.0f, 0.0f, 0.0f, -10.0f, 0.0f, -10.0f, -15.0f, 0.0f, 10.0f, -1.0f, 0.0f, -1.0f, 1.0f, 0.0f, 1.0f),
-            ArmorStandRotation.create(0.0f, 35.0f, 5.0f, 0.0f, 0.0f, 0.0f, -10.0f, 0.0f, -10.0f, -15.0f, 0.0f, 10.0f, -1.0f, 0.0f, -1.0f, 1.0f, 0.0f, 1.0f),
-            ArmorStandRotation.create(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -10.0f, 0.0f, -10.0f, -40.0f, 0.0f, 55.0f, -1.0f, 0.0f, -1.0f, 1.0f, 0.0f, 1.0f)
-    );
-
-    @Config("Items in world which have mending collect xp orbs to get repaired")
-    public static boolean betterMending = true;
-
     @Group("Config options for rails and minecarts")
     public static class Track {
 
@@ -61,35 +84,4 @@ public class CommonConfig {
         @FloatRange(min = 0)
         public static float stonecutterMaxHardness = 5;
     }
-
-    @Group("Config options for experience crystal")
-    public static class ExperienceCrystal {
-
-        @Config("Should the experience crystal pull xp orbs automatically?")
-        public static boolean pullOrbs = true;
-
-        @Config("Maximum experience which can be stored")
-        @IntRange(min = 0)
-        public static int maxXp = Integer.MAX_VALUE;
-
-        @Config("A ResourceLocation for an experience fluid. If it exists in the tag #c:experience, the crystal will always store this type of fluid xp")
-        public static Optional<ResourceLocation> fluidXp = Optional.empty();
-    }
-
-    @Config("List of items which are allowed to be planted when despawn on correct soil")
-    public static ResourceList plantsOnDespawn = ResourceList.DENY_LIST;
-
-    @Config("Prevents waterlogging when holding the sneak key")
-    public static boolean crouchNoWaterlog = true;
-
-    @Config({"The time in ticks which will be added to the despawn delay of a wandering trader on each trade",
-            "This way, the wandering trader remains in the world longer."})
-    @IntRange(min = 0)
-    public static int wanderingTraderExtraTime = 400;
-
-    @Config("Entity denylist for mob yoinker")
-    public static ResourceList mobYoinkerEntities = ResourceList.DENY_LIST;
-
-    @Config("Both doors open at the same time if connected")
-    public static boolean doubleDoor = true;
 }

@@ -1,6 +1,7 @@
 package de.melanx.utilitix.client.commands;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.neoforged.fml.loading.FMLPaths;
+import org.moddingx.libx.command.CommandUtil;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -30,7 +32,9 @@ public class MapsCommand {
 
     public static ArgumentBuilder<CommandSourceStack, ?> register() {
         return Commands.literal("print_map")
-                .executes(MapsCommand::printMap);
+                .executes(MapsCommand::printMap)
+                .then(Commands.argument("scale", IntegerArgumentType.integer(1))
+                        .executes(MapsCommand::printMap));
     }
 
     private static int printMap(CommandContext<CommandSourceStack> command) throws CommandSyntaxException {
@@ -70,8 +74,9 @@ public class MapsCommand {
             return 0;
         }
 
-        if (ClientConfig.mapScale != 1) {
-            img = MapsCommand.resize(data, img, ClientConfig.mapScale);
+        int mapScale = CommandUtil.getArgumentOrDefault(command, "scale", Integer.class, ClientConfig.mapScale);
+        if (mapScale != 1) {
+            img = MapsCommand.resize(data, img, mapScale);
         }
 
         Path path = MAPS_PATH.resolve("map_" + mapId.id() + ".png");

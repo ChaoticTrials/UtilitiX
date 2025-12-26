@@ -1,6 +1,6 @@
 package de.melanx.utilitix.content;
 
-import de.melanx.utilitix.config.CommonConfig;
+import de.melanx.utilitix.config.FeatureConfig;
 import de.melanx.utilitix.network.ItemEntityRepaired;
 import de.melanx.utilitix.util.BoundingBoxUtils;
 import net.minecraft.client.Minecraft;
@@ -35,13 +35,14 @@ public class BetterMending {
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void pullXPClient(ClientTickEvent.Post event) {
-        if (Minecraft.getInstance().level instanceof ClientLevel level) {
+        if (Minecraft.getInstance().level != null) {
+            ClientLevel level = Minecraft.getInstance().level;
             this.moveExps(level, level.entitiesForRendering());
         }
     }
 
     private void moveExps(Level level, Iterable<Entity> entities) {
-        if (!CommonConfig.betterMending) return;
+        if (!FeatureConfig.Misc.InWorldChanges.betterMending) return;
         List<ItemEntity> items = new ArrayList<>();
         for (Entity entity : entities) {
             if (entity instanceof ItemEntity item) {

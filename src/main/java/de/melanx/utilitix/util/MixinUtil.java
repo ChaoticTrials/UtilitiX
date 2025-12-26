@@ -1,5 +1,6 @@
 package de.melanx.utilitix.util;
 
+import de.melanx.utilitix.config.FeatureConfig;
 import de.melanx.utilitix.content.slime.StickyChunk;
 import de.melanx.utilitix.registration.ModAttachmentTypes;
 import net.minecraft.core.BlockPos;
@@ -28,7 +29,7 @@ public class MixinUtil {
             // Sticky data is stored as an attachment on the chunk, not on the level.
             // Create it if needed (glueData originates from a previously glued block).
             StickyChunk glue = chunk.getData(ModAttachmentTypes.stickyChunk);
-            if (glue != null) {
+            if (FeatureConfig.Misc.InWorldChanges.glue) {
                 glue.attach(chunk);
                 int x = pos.getX() & 0xF;
                 int y = pos.getY();

@@ -1,5 +1,6 @@
 package de.melanx.utilitix.content.track.carts;
 
+import de.melanx.utilitix.config.FeatureConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -9,6 +10,7 @@ import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -79,6 +81,11 @@ public class ItemCart extends ItemBase implements Registerable {
         } else {
             return InteractionResult.FAIL;
         }
+    }
+
+    @Override
+    public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
+        return FeatureConfig.Transportation.moreMinecarts;
     }
 
     public final DispenseItemBehavior dispenseBehaviour = new DefaultDispenseItemBehavior() {
