@@ -60,19 +60,23 @@ public class Merge extends EffectTransformer {
                 this.addMergedEffectToList(effect.getEffect(), merged, input.getEffects1(), input.getEffects2());
             }
         }
+
         if (input.getEffects2() != null) {
             for (MobEffectInstance effect : this.getEffects(input.getEffects2())) {
                 this.addMergedEffectToList(effect.getEffect(), merged, input.getEffects1(), input.getEffects2());
             }
         }
+
         float chance = Math.max(0, merged.size() + 1) * this.failMultiplier;
+
         if (new Random().nextInt(100) < chance) {
             return PotionOutput.simple(new ItemStack(ModItems.failedPotion));
-        } else {
-            ItemStack stack = EffectTransformer.create(input.getIn1().getItem(), merged);
-            stack.set(DataComponents.CUSTOM_NAME, Component.translatable("item.utilitix.merged_potion").withStyle(ChatFormatting.GREEN));
-            return PotionOutput.simple(stack);
         }
+
+        ItemStack stack = EffectTransformer.create(input.getIn1().getItem(), merged);
+        stack.set(DataComponents.CUSTOM_NAME, Component.translatable("item.utilitix.merged_potion").withStyle(ChatFormatting.GREEN));
+
+        return PotionOutput.simple(stack);
     }
 
     public float getFailMultiplier() {
@@ -81,8 +85,9 @@ public class Merge extends EffectTransformer {
 
     private void addMergedEffectToList(Holder<MobEffect> potion, List<MobEffectInstance> mergeList, @Nullable PotionContents potionContents1, @Nullable PotionContents potionContents2) {
         for (MobEffectInstance effect : mergeList) {
-            if (effect.getEffect() == potion)
+            if (effect.getEffect() == potion) {
                 return;
+            }
         }
 
         MobEffectInstance effect1 = null;
@@ -106,25 +111,23 @@ public class Merge extends EffectTransformer {
             }
         }
 
-        //noinspection StatementWithEmptyBody
         if (effect1 == null && effect2 == null) {
-            //
-        } else if (effect1 == null) {
-            mergeList.add(effect2);
-        } else if (effect2 == null) {
-            mergeList.add(effect1);
-        } else {
-            boolean useFirst;
-            if (effect1.getAmplifier() > effect2.getAmplifier())
-                useFirst = true;
-            else if (effect2.getAmplifier() > effect1.getAmplifier())
-                useFirst = false;
-            else
-                useFirst = effect1.getDuration() > effect2.getDuration();
-            if (useFirst)
-                mergeList.add(effect1);
-            else
-                mergeList.add(effect2);
+            return;
         }
+
+        if (effect1 == null) {
+            mergeList.add(effect2);
+            return;
+        }
+
+        if (effect2 == null) {
+            mergeList.add(effect1);
+            return;
+        }
+
+        boolean useFirst = effect1.getAmplifier() != effect2.getAmplifier()
+                ? effect1.getAmplifier() > effect2.getAmplifier()  // use higher level first
+                : effect1.getDuration() > effect2.getDuration();   // use longer duration if the same level
+        mergeList.add(useFirst ? effect1 : effect2);
     }
 }

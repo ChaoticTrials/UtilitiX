@@ -1,7 +1,6 @@
 package de.melanx.utilitix.util;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.item.ItemMobYoinker;
 import de.melanx.utilitix.registration.ModDataComponentTypes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -23,15 +22,13 @@ import java.util.Optional;
 
 public class MobUtil {
 
-    public static final String ENTITY_TYPE_TAG = "EntityType";
-    public static final String ENTITY_DATA_TAG = "EntityData";
     public static final MutableComponent NO_MOB = Component.translatable("tooltip." + UtilitiX.getInstance().modid + ".no_mob").withStyle(ChatFormatting.DARK_RED);
     private static final MutableComponent DENYLISTED_MOB = Component.translatable("tooltip." + UtilitiX.getInstance().modid + ".blacklisted_mob").withStyle(ChatFormatting.DARK_RED);
 
     public static boolean storeEntityData(Player player, InteractionHand hand, LivingEntity entity, ResourceList denylist, boolean typeKeyOnly) {
         String entityKey = entity.getEncodeId();
         ItemStack stack = player.getItemInHand(hand);
-        ItemMobYoinker.MobData mobData = stack.get(ModDataComponentTypes.mobData);
+        MobData mobData = stack.get(ModDataComponentTypes.mobData);
         if (entityKey == null || (mobData != null && entityKey.equals(mobData.entityType()))) {
             return false;
         }
@@ -41,7 +38,7 @@ public class MobUtil {
             return false;
         }
 
-        ItemMobYoinker.MobData newMobData = new ItemMobYoinker.MobData(entityKey, !typeKeyOnly ? entity.saveWithoutId(new CompoundTag()) : new CompoundTag());
+        MobData newMobData = new MobData(entityKey, !typeKeyOnly ? entity.saveWithoutId(new CompoundTag()) : new CompoundTag());
 
         if (stack.getCount() > 1) {
             stack.shrink(1);

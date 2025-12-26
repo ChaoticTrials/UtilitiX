@@ -1,7 +1,7 @@
 package de.melanx.utilitix.compat.jade;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.content.experiencecrystal.TileExperienceCrystal;
+import de.melanx.utilitix.content.experiencecrystal.ExperienceCrystalBlockEntity;
 import de.melanx.utilitix.util.XPUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -47,7 +47,7 @@ public class ExperienceCrystalProvider implements IBlockComponentProvider, IServ
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
-        TileExperienceCrystal crystal = (TileExperienceCrystal) accessor.getBlockEntity();
+        ExperienceCrystalBlockEntity crystal = (ExperienceCrystalBlockEntity) accessor.getBlockEntity();
         data.putInt("Xp", crystal.getXp());
         data.putBoolean("ShowDetails", accessor.showDetails());
     }

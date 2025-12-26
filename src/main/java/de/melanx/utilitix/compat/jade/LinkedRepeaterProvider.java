@@ -1,7 +1,7 @@
 package de.melanx.utilitix.compat.jade;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.content.redstone.wireless.TileLinkedRepeater;
+import de.melanx.utilitix.content.redstone.wireless.LinkedRepeaterBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -40,7 +40,7 @@ public class LinkedRepeaterProvider implements IBlockComponentProvider, IServerD
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
-        TileLinkedRepeater linkedRepeater = (TileLinkedRepeater) accessor.getBlockEntity();
+        LinkedRepeaterBlockEntity linkedRepeater = (LinkedRepeaterBlockEntity) accessor.getBlockEntity();
         UUID id = linkedRepeater.getLinkId();
         if (id != null) {
             data.putUUID("LinkId", id);

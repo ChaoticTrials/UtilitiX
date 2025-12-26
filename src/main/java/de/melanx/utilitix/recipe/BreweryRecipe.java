@@ -2,6 +2,7 @@ package de.melanx.utilitix.recipe;
 
 import com.mojang.serialization.*;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import de.melanx.utilitix.content.brewery.AdvancedBreweryBlockEntity;
 import de.melanx.utilitix.recipe.brewery.*;
 import de.melanx.utilitix.registration.ModRecipeTypes;
 import de.melanx.utilitix.registration.ModRecipes;
@@ -35,30 +36,41 @@ public class BreweryRecipe implements Recipe<RecipeWrapper> {
 
     @Override
     public boolean matches(@Nonnull RecipeWrapper recipeWrapper, @Nonnull Level level) {
-        if (recipeWrapper.size() == 5) {
-            ItemStack mainInput = recipeWrapper.getItem(0);
-            if (this.input == null && !mainInput.isEmpty() || this.input != null && !this.input.test(mainInput)) {
-                return false;
-            }
-            return this.transformer.canTransform(new PotionInput(recipeWrapper.getItem(3), recipeWrapper.getItem(1), recipeWrapper.getItem(2)));
+        if (recipeWrapper.size() != 5) {
+            return false;
         }
-        return false;
+
+        ItemStack mainInput = recipeWrapper.getItem(AdvancedBreweryBlockEntity.INGREDIENT_SLOT);
+        if (this.input == null && !mainInput.isEmpty() || this.input != null && !this.input.test(mainInput)) {
+            return false;
+        }
+
+        return this.transformer.canTransform(new PotionInput(
+                recipeWrapper.getItem(AdvancedBreweryBlockEntity.OUTPUT_SLOT),
+                recipeWrapper.getItem(AdvancedBreweryBlockEntity.POTION_SLOT_RIGHT),
+                recipeWrapper.getItem(AdvancedBreweryBlockEntity.POTION_SLOT_LEFT)
+        ));
     }
 
     @Nullable
     public PotionOutput getPotionResult(@Nonnull RecipeWrapper recipeWrapper) {
-        if (recipeWrapper.size() == 5) {
-            return this.transformer.transform(new PotionInput(recipeWrapper.getItem(3), recipeWrapper.getItem(1), recipeWrapper.getItem(2)));
+        if (recipeWrapper.size() != 5) {
+            return null;
         }
 
-        return null;
+        return this.transformer.transform(new PotionInput(
+                recipeWrapper.getItem(AdvancedBreweryBlockEntity.OUTPUT_SLOT),
+                recipeWrapper.getItem(AdvancedBreweryBlockEntity.POTION_SLOT_RIGHT),
+                recipeWrapper.getItem(AdvancedBreweryBlockEntity.POTION_SLOT_LEFT)
+        ));
     }
 
     @Nonnull
     @Override
     public ItemStack assemble(@Nonnull RecipeWrapper recipeWrapper, @Nonnull HolderLookup.Provider registry) {
         PotionOutput output = this.getPotionResult(recipeWrapper);
-        return output == null ? recipeWrapper.getItem(3).copy() : output.getMain();
+
+        return output == null ? recipeWrapper.getItem(AdvancedBreweryBlockEntity.OUTPUT_SLOT).copy() : output.getMain();
     }
 
     @Override
@@ -75,12 +87,12 @@ public class BreweryRecipe implements Recipe<RecipeWrapper> {
     @Nonnull
     @Override
     public NonNullList<Ingredient> getIngredients() {
-        NonNullList<Ingredient> nnl = NonNullList.create();
+        NonNullList<Ingredient> list = NonNullList.create();
         if (this.input != null) {
-            nnl.add(this.input);
+            list.add(this.input);
         }
 
-        return nnl;
+        return list;
     }
 
     @Override
@@ -101,7 +113,7 @@ public class BreweryRecipe implements Recipe<RecipeWrapper> {
     @Nonnull
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return ModRecipes.BREWERY_SERIALIZER;
+        return ModRecipes.brewerySerializer;
     }
 
     public Optional<Ingredient> getInput() {

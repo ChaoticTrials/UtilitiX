@@ -1,7 +1,7 @@
 package de.melanx.utilitix.content.track.tinkerer;
 
-import de.melanx.utilitix.content.track.ItemMinecartTinkerer;
-import de.melanx.utilitix.content.track.rails.TileControllerRail;
+import de.melanx.utilitix.content.track.MinecartTinkererItem;
+import de.melanx.utilitix.content.track.rails.ControllerRailBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
@@ -50,7 +50,7 @@ public class MinecartTinkererMenu extends MenuBase {
     @Nullable
     private final AbstractMinecart minecart;
     @Nullable
-    private final TileControllerRail controllerRail;
+    private final ControllerRailBlockEntity controllerRail;
 
     public MinecartTinkererMenu(@Nullable MenuType<?> type, int windowId, Level level, Target target, Player player, Inventory playerInventory) {
         super(type, windowId, playerInventory);
@@ -64,7 +64,7 @@ public class MinecartTinkererMenu extends MenuBase {
             }
             case BLOCK -> {
                 this.minecart = null;
-                this.controllerRail = level.getBlockEntity(target.pos()) instanceof TileControllerRail rail ? rail : null;
+                this.controllerRail = level.getBlockEntity(target.pos()) instanceof ControllerRailBlockEntity rail ? rail : null;
             }
             default -> throw new IllegalStateException("Unknown target type: " + target.type());
         }
@@ -83,7 +83,7 @@ public class MinecartTinkererMenu extends MenuBase {
                 if (!MinecartTinkererMenu.this.level.isClientSide) {
                     ItemStack stack = this.getStackInSlot(LABEL_SLOT);
                     if (MinecartTinkererMenu.this.minecart != null) {
-                        ItemMinecartTinkerer.setLabelStack(MinecartTinkererMenu.this.minecart, stack);
+                        MinecartTinkererItem.setLabelStack(MinecartTinkererMenu.this.minecart, stack);
                     } else if (MinecartTinkererMenu.this.controllerRail != null) {
                         MinecartTinkererMenu.this.controllerRail.setFilterStack(stack);
                     }
@@ -92,7 +92,7 @@ public class MinecartTinkererMenu extends MenuBase {
         };
 
         switch(target.type()) {
-            case ENTITY -> labelInventory.setStackInSlot(LABEL_SLOT, ItemMinecartTinkerer.getLabelStack(this.minecart));
+            case ENTITY -> labelInventory.setStackInSlot(LABEL_SLOT, MinecartTinkererItem.getLabelStack(this.minecart));
             case BLOCK -> labelInventory.setStackInSlot(LABEL_SLOT, this.controllerRail.getFilterStack().copy());
         }
 
@@ -114,7 +114,7 @@ public class MinecartTinkererMenu extends MenuBase {
     }
 
     @Nullable
-    public TileControllerRail getControllerRail() {
+    public ControllerRailBlockEntity getControllerRail() {
         return this.controllerRail;
     }
 

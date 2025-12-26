@@ -38,7 +38,7 @@ public class GildingArmorRecipe extends SmithingTransformRecipe {
         ItemStack input = inv.getItem(ARMOR_SLOT_ID);
         ItemStack addition = inv.getItem(ADDITION_SLOT_ID);
 
-        if (input.getItem() instanceof ArmorItem armor && !isGilded(input) && canGild(armor, input)) {
+        if (input.getItem() instanceof ArmorItem armor && !GildingArmorRecipe.isGilded(input) && GildingArmorRecipe.canGild(armor, input)) {
             return addition.getItem() == ModItems.gildingCrystal;
         }
 
@@ -68,7 +68,7 @@ public class GildingArmorRecipe extends SmithingTransformRecipe {
     @Nonnull
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return ModRecipes.GILDING_SERIALIZER;
+        return ModRecipes.gildingSerializer;
     }
 
     public static boolean isGilded(ItemStack stack) {

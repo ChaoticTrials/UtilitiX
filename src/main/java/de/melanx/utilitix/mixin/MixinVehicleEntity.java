@@ -1,6 +1,6 @@
 package de.melanx.utilitix.mixin;
 
-import de.melanx.utilitix.content.track.ItemMinecartTinkerer;
+import de.melanx.utilitix.content.track.MinecartTinkererItem;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.VehicleEntity;
 import net.minecraft.world.item.Item;
@@ -19,7 +19,7 @@ public class MixinVehicleEntity {
     )
     public void killMinecart(Item dropItem, CallbackInfo ci) {
         if ((Object) this instanceof AbstractMinecart minecart) {
-            ItemStack stack = ItemMinecartTinkerer.getLabelStack(minecart);
+            ItemStack stack = MinecartTinkererItem.getLabelStack(minecart);
             if (!stack.isEmpty()) {
                 minecart.spawnAtLocation(stack);
             }

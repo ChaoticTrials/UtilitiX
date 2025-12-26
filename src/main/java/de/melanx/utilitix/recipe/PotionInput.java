@@ -73,17 +73,17 @@ public class PotionInput {
             return null;
         }
 
-        if (stack.is(ModItemTags.POTIONS)) {
-            PotionContents potionContents = stack.get(DataComponents.POTION_CONTENTS);
-
-            if (potionContents != null && potionContents.hasEffects() && !potionContents.is(Potions.AWKWARD)) {
-                return potionContents;
-            }
-
-            return null;
+        if (!stack.is(ModItemTags.POTIONS)) {
+            return PotionContents.EMPTY;
         }
 
-        return PotionContents.EMPTY;
+        PotionContents potionContents = stack.get(DataComponents.POTION_CONTENTS);
+
+        if (potionContents != null && potionContents.hasEffects() && !potionContents.is(Potions.AWKWARD)) {
+            return potionContents;
+        }
+
+        return null;
     }
 
 }

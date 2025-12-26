@@ -18,6 +18,7 @@ public class StoneWallBlock extends WallBlock implements Registerable {
     public StoneWallBlock(Properties properties, Item.Properties itemProperties) {
         super(properties);
         this.item = new BlockItem(this, itemProperties) {
+
             @Override
             public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
                 return StoneWallBlock.this.isEnabled(enabledFeatures);

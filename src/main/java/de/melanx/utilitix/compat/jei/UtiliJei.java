@@ -1,11 +1,11 @@
 package de.melanx.utilitix.compat.jei;
 
 import com.google.common.collect.ImmutableList;
-import de.melanx.utilitix.content.brewery.ContainerMenuAdvancedBrewery;
-import de.melanx.utilitix.content.brewery.ScreenAdvancedBrewery;
-import de.melanx.utilitix.content.crudefurnace.ContainerMenuCrudeFurnace;
+import de.melanx.utilitix.content.brewery.AdvancedBreweryMenu;
+import de.melanx.utilitix.content.brewery.AdvancedBreweryScreen;
+import de.melanx.utilitix.content.crudefurnace.CrudeFurnaceMenu;
 import de.melanx.utilitix.content.crudefurnace.CrudeFurnaceRecipeHelper;
-import de.melanx.utilitix.content.crudefurnace.ScreenCrudeFurnace;
+import de.melanx.utilitix.content.crudefurnace.CrudeFurnaceScreen;
 import de.melanx.utilitix.content.gildingarmor.GildingArmorRecipe;
 import de.melanx.utilitix.recipe.BreweryRecipe;
 import de.melanx.utilitix.recipe.brewery.Apply;
@@ -106,9 +106,9 @@ public class UtiliJei implements IModPlugin {
 
     @Override
     public void registerRecipeTransferHandlers(@Nonnull IRecipeTransferRegistration registration) {
-        registration.addRecipeTransferHandler(ContainerMenuCrudeFurnace.class, ModBlocks.crudeFurnace.menu, RecipeTypes.FUELING, 0, 1, 3, 36);
-        registration.addRecipeTransferHandler(ContainerMenuCrudeFurnace.class, ModBlocks.crudeFurnace.menu, SMELTING_RECIPE, 1, 1, 3, 36);
-        registration.addRecipeTransferHandler(ContainerMenuAdvancedBrewery.class, ModBlocks.advancedBrewery.menu, BREWING_RECIPE, 0, 4, 5, 36);
+        registration.addRecipeTransferHandler(CrudeFurnaceMenu.class, ModBlocks.crudeFurnace.menu, RecipeTypes.FUELING, 0, 1, 3, 36);
+        registration.addRecipeTransferHandler(CrudeFurnaceMenu.class, ModBlocks.crudeFurnace.menu, SMELTING_RECIPE, 1, 1, 3, 36);
+        registration.addRecipeTransferHandler(AdvancedBreweryMenu.class, ModBlocks.advancedBrewery.menu, BREWING_RECIPE, 0, 4, 5, 36);
     }
 
     @Override
@@ -120,8 +120,8 @@ public class UtiliJei implements IModPlugin {
 
     @Override
     public void registerGuiHandlers(@Nonnull IGuiHandlerRegistration registration) {
-        registration.addRecipeClickArea(ScreenAdvancedBrewery.class, 98, 17, 7, 26, BREWING_RECIPE);
-        registration.addRecipeClickArea(ScreenCrudeFurnace.class, 78, 32, 28, 23, SMELTING_RECIPE, RecipeTypes.FUELING);
+        registration.addRecipeClickArea(AdvancedBreweryScreen.class, 98, 17, 7, 26, BREWING_RECIPE);
+        registration.addRecipeClickArea(CrudeFurnaceScreen.class, 78, 32, 28, 23, SMELTING_RECIPE, RecipeTypes.FUELING);
     }
 
     @Override

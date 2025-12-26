@@ -1,6 +1,6 @@
 package de.melanx.utilitix.mixin;
 
-import de.melanx.utilitix.content.slime.StickyChunk;
+import de.melanx.utilitix.content.glue.StickyChunk;
 import de.melanx.utilitix.registration.ModAttachmentTypes;
 import de.melanx.utilitix.util.MixinUtil;
 import net.minecraft.core.BlockPos;
@@ -29,22 +29,26 @@ public class MixinPistonMovingBlockEntity {
     )
     private static void tick(Level level, BlockPos pos, BlockState state, PistonMovingBlockEntity blockEntity, CallbackInfo ci) {
         //noinspection ConstantConditions
-        if (((MixinPistonMovingBlockEntity) (Object) blockEntity).utilitiX$glueData == null) {
-            BlockPos fromPos = pos.relative(blockEntity.isExtending() ? blockEntity.getDirection().getOpposite() : blockEntity.getDirection());
-            LevelChunk chunk = level.getChunkAt(fromPos);
-            //noinspection ConstantConditions
-            StickyChunk glue = chunk.getExistingDataOrNull(ModAttachmentTypes.stickyChunk);
-            //noinspection ConstantConditions
-            if (glue != null) {
-                int x = fromPos.getX() & 0xF;
-                int y = fromPos.getY();
-                int z = fromPos.getZ() & 0xF;
-                //noinspection ConstantConditions
-                ((MixinPistonMovingBlockEntity) (Object) blockEntity).utilitiX$glueData = glue.getData(x, y, z);
-                glue.clearData(x, y, z);
-                chunk.setUnsaved(true);
-            }
+        if (((MixinPistonMovingBlockEntity) (Object) blockEntity).utilitiX$glueData != null) {
+            return;
         }
+
+        BlockPos fromPos = pos.relative(blockEntity.isExtending() ? blockEntity.getDirection().getOpposite() : blockEntity.getDirection());
+        LevelChunk chunk = level.getChunkAt(fromPos);
+        //noinspection ConstantConditions
+        StickyChunk glue = chunk.getExistingDataOrNull(ModAttachmentTypes.stickyChunk);
+        //noinspection ConstantConditions
+        if (glue == null) {
+            return;
+        }
+
+        int x = fromPos.getX() & 0xF;
+        int y = fromPos.getY();
+        int z = fromPos.getZ() & 0xF;
+        //noinspection ConstantConditions
+        ((MixinPistonMovingBlockEntity) (Object) blockEntity).utilitiX$glueData = glue.getData(x, y, z);
+        glue.clearData(x, y, z);
+        chunk.setUnsaved(true);
     }
 
     @Inject(

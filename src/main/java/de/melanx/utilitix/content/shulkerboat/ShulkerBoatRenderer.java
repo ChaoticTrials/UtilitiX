@@ -46,6 +46,7 @@ public class ShulkerBoatRenderer extends BoatRenderer {
         super.render(boat, entityYaw, partialTick, poseStack, buffer, packedLight);
         RenderType renderType = this.shulkerModel.renderType(ResourceLocation.fromNamespaceAndPath("minecraft", "textures/" + Sheets.DEFAULT_SHULKER_TEXTURE_LOCATION.texture().getPath() + ".png"));
         VertexConsumer vertexConsumer = buffer.getBuffer(renderType);
+
         poseStack.pushPose();
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - entityYaw));
         float remainingHurtTime = (float) boat.getHurtTime() - partialTick;
@@ -53,7 +54,6 @@ public class ShulkerBoatRenderer extends BoatRenderer {
             float damage = Math.max(0, boat.getDamage() - partialTick);
             poseStack.mulPose(Axis.XP.rotationDegrees(Mth.sin(remainingHurtTime) * remainingHurtTime * damage / 10.0F * (float) boat.getHurtDir()));
         }
-
         boolean bamboo = boat.getVariant() == Boat.Type.BAMBOO;
         poseStack.translate(0, bamboo ? 1.7 : 1.39, bamboo ? 0.46 : 0.475);
         poseStack.scale(0.8f, 0.8f, 0.8f);

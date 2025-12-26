@@ -4,6 +4,7 @@ import de.melanx.utilitix.config.CommonConfig;
 import de.melanx.utilitix.config.FeatureConfig;
 import de.melanx.utilitix.data.enchantments.EnchantmentProvider;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -20,6 +21,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.fml.ModList;
@@ -37,19 +39,23 @@ public abstract class BellBase extends ItemBase {
 
     @Override
     public void onStopUsing(@Nonnull ItemStack stack, @Nonnull LivingEntity entity, int count) {
-        if (count % 4 == 0) {
-            boolean ringed = this.dinkDonk(entity, stack);
-            if (ringed && entity instanceof Player) {
-                ((Player) entity).awardStat(Stats.BELL_RING);
-            }
+        if (count % 4 != 0) {
+            return;
+        }
+
+        boolean ringed = this.tryRinging(entity, stack);
+        if (ringed && entity instanceof Player player) {
+            player.awardStat(Stats.BELL_RING);
         }
     }
 
     @Override
     public void onUseTick(@Nonnull Level level, @Nonnull LivingEntity livingEntity, @Nonnull ItemStack stack, int remainingUseDuration) {
-        if (remainingUseDuration % 4 == 0 && remainingUseDuration != 0) {
-            level.playSound(null, livingEntity.blockPosition(), SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 2.0F, 1.0F);
+        if (remainingUseDuration % 4 != 0 || remainingUseDuration == 0) {
+            return;
         }
+
+        level.playSound(null, livingEntity.blockPosition(), SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 2.0F, 1.0F);
     }
 
     @Override
@@ -60,9 +66,16 @@ public abstract class BellBase extends ItemBase {
     @Nonnull
     @Override
     public ItemStack finishUsingItem(@Nonnull ItemStack stack, @Nonnull Level level, @Nonnull LivingEntity entityLiving) {
-        double range = CommonConfig.HandBells.glowRadius * (1 + stack.getEnchantmentLevel(level.registryAccess().holderOrThrow(EnchantmentProvider.BELL_RANGE)) * 0.25D);
-        List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(entityLiving.getX() - range, entityLiving.getY() - range, entityLiving.getZ() - range, entityLiving.getX() + range, entityLiving.getY() + range, entityLiving.getZ() + range), livingEntity -> this.entityFilter(livingEntity, stack));
-        entities.forEach(e -> e.addEffect(new MobEffectInstance(MobEffects.GLOWING, CommonConfig.HandBells.glowTime)));
+        Holder<Enchantment> bellRangeEnchantmentHolder = level.registryAccess().holderOrThrow(EnchantmentProvider.BELL_RANGE);
+        double range = CommonConfig.HandBells.glowRadius * (1 + stack.getEnchantmentLevel(bellRangeEnchantmentHolder) * 0.25D);
+        List<LivingEntity> entities = level.getEntitiesOfClass(
+                LivingEntity.class,
+                new AABB(
+                        entityLiving.getX() - range, entityLiving.getY() - range, entityLiving.getZ() - range,
+                        entityLiving.getX() + range, entityLiving.getY() + range, entityLiving.getZ() + range
+                ),
+                livingEntity -> this.entityFilter(livingEntity, stack));
+        entities.forEach(entity -> entity.addEffect(new MobEffectInstance(MobEffects.GLOWING, CommonConfig.HandBells.glowTime)));
 
         return super.finishUsingItem(stack, level, entityLiving);
     }
@@ -71,6 +84,7 @@ public abstract class BellBase extends ItemBase {
     @Override
     public InteractionResultHolder<ItemStack> use(@Nonnull Level level, @Nonnull Player player, @Nonnull InteractionHand hand) {
         player.startUsingItem(hand);
+
         return InteractionResultHolder.consume(player.getItemInHand(hand));
     }
 
@@ -80,24 +94,31 @@ public abstract class BellBase extends ItemBase {
         return UseAnim.BLOCK;
     }
 
-    public boolean dinkDonk(LivingEntity entity, ItemStack stack) {
+    public boolean tryRinging(LivingEntity entity, ItemStack stack) {
         Level level = entity.getCommandSenderWorld();
         BlockPos pos = entity.blockPosition();
 
-        if (!level.isClientSide) {
-            if (this.notifyNearbyEntities()) {
-                double range = CommonConfig.HandBells.notifyRadius * (1 + stack.getEnchantmentLevel(level.registryAccess().holderOrThrow(EnchantmentProvider.BELL_RANGE)) * 0.25D);
-                List<LivingEntity> entities = entity.getCommandSenderWorld().getEntitiesOfClass(LivingEntity.class, new AABB(entity.getX() - range, entity.getY() - range, entity.getZ() - range, entity.getX() + range, entity.getY() + range, entity.getZ() + range));
-                for (LivingEntity e : entities) {
-                    e.getBrain().setMemory(MemoryModuleType.HEARD_BELL_TIME, level.getGameTime());
-                }
-            }
-
-            level.playSound(null, pos, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 2.0F, 1.0F);
-            return true;
-        } else {
+        if (level.isClientSide) {
             return false;
         }
+
+        if (this.notifyNearbyEntities()) {
+            Holder<Enchantment> bellRangeEnchantmentHolder = level.registryAccess().holderOrThrow(EnchantmentProvider.BELL_RANGE);
+            double range = CommonConfig.HandBells.notifyRadius * (1 + stack.getEnchantmentLevel(bellRangeEnchantmentHolder) * 0.25D);
+            List<LivingEntity> entities = entity.getCommandSenderWorld().getEntitiesOfClass(
+                    LivingEntity.class,
+                    new AABB(
+                            entity.getX() - range, entity.getY() - range, entity.getZ() - range,
+                            entity.getX() + range, entity.getY() + range, entity.getZ() + range
+                    )
+            );
+
+            entities.forEach(e -> e.getBrain().setMemory(MemoryModuleType.HEARD_BELL_TIME, level.getGameTime()));
+        }
+
+        level.playSound(null, pos, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 2.0F, 1.0F);
+
+        return true;
     }
 
     protected abstract boolean entityFilter(LivingEntity entity, ItemStack stack);
@@ -107,6 +128,7 @@ public abstract class BellBase extends ItemBase {
     @Override
     public void appendHoverText(@Nonnull ItemStack stack, @Nonnull TooltipContext context, @Nonnull List<Component> tooltipComponents, @Nonnull TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+
         if (ModList.get().isLoaded("emojiful")) {
             tooltipComponents.add(Component.literal(":DinkDonk:"));
         }

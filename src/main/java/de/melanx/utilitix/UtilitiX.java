@@ -1,7 +1,6 @@
 package de.melanx.utilitix;
 
 import de.melanx.utilitix.client.ClientUtilitiX;
-import de.melanx.utilitix.content.BetterMending;
 import de.melanx.utilitix.content.shulkerboat.ShulkerBoatRenderer;
 import de.melanx.utilitix.data.*;
 import de.melanx.utilitix.data.enchantments.EnchantmentProvider;
@@ -15,7 +14,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.common.NeoForge;
 import org.moddingx.libx.datagen.DatagenSystem;
 import org.moddingx.libx.mod.ModXRegistration;
 import org.slf4j.Logger;
@@ -38,11 +36,6 @@ public final class UtilitiX extends ModXRegistration {
         if (dist == Dist.CLIENT) {
             new ClientUtilitiX(modBus);
         }
-
-//        modBus.addListener(SlimyCapability::registerCapability); todo
-
-        NeoForge.EVENT_BUS.register(new BetterMending());
-//        NeoForge.EVENT_BUS.addListener(LevelChunk.class, SlimyCapability::attach); todo
 
         DatagenSystem.create(this, system -> {
             system.addRegistryProvider(LootTableProvider::new);

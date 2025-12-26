@@ -1,5 +1,6 @@
 package de.melanx.utilitix.network;
 
+import de.melanx.utilitix.network.handler.*;
 import org.moddingx.libx.mod.ModX;
 import org.moddingx.libx.network.NetworkX;
 

@@ -46,7 +46,5 @@ public class ModTagProvider extends CommonTagsProviderBase {
         if (block != ModBlocks.linkedRepeater && block != ModBlocks.weakRedstoneTorch) {
             this.block(BlockTags.MINEABLE_WITH_PICKAXE).add(block);
         }
-
-        super.defaultBlockTags(block);
     }
 }

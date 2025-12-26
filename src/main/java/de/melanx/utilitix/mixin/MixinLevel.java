@@ -1,6 +1,6 @@
 package de.melanx.utilitix.mixin;
 
-import de.melanx.utilitix.content.redstone.ComparatorRedirector;
+import de.melanx.utilitix.content.redstone.ComparatorRedirectorBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -18,18 +18,20 @@ public abstract class MixinLevel {
             at = @At("RETURN")
     )
     public void updateComparatorOutputLevel(BlockPos pos, Block block, CallbackInfo ci) {
-        if (!(block instanceof ComparatorRedirector)) {
-            Level level = (Level) (Object) this;
+        if (block instanceof ComparatorRedirectorBlock) {
+            return;
+        }
 
-            BlockState up = level.getBlockState(pos.above());
-            if (up.getBlock() instanceof ComparatorRedirector) {
-                level.updateNeighbourForOutputSignal(pos.above(), up.getBlock());
-            }
+        Level level = (Level) (Object) this;
 
-            BlockState down = level.getBlockState(pos.below());
-            if (down.getBlock() instanceof ComparatorRedirector) {
-                level.updateNeighbourForOutputSignal(pos.below(), down.getBlock());
-            }
+        BlockState up = level.getBlockState(pos.above());
+        if (up.getBlock() instanceof ComparatorRedirectorBlock) {
+            level.updateNeighbourForOutputSignal(pos.above(), up.getBlock());
+        }
+
+        BlockState down = level.getBlockState(pos.below());
+        if (down.getBlock() instanceof ComparatorRedirectorBlock) {
+            level.updateNeighbourForOutputSignal(pos.below(), down.getBlock());
         }
     }
 }

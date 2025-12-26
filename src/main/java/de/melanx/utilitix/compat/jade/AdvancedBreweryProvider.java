@@ -1,7 +1,7 @@
 package de.melanx.utilitix.compat.jade;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.content.brewery.TileAdvancedBrewery;
+import de.melanx.utilitix.content.brewery.AdvancedBreweryBlockEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -42,7 +42,7 @@ public class AdvancedBreweryProvider implements IBlockComponentProvider, IServer
         tooltip.add(helper.smallItem(BLAZE_POWDER));
         tooltip.append(helper.text(Component.translatable(Integer.toString(fuel))));
 
-        if (time > 0 && time != TileAdvancedBrewery.MAX_BREW_TIME) {
+        if (time > 0 && time != AdvancedBreweryBlockEntity.MAX_BREW_TIME) {
             tooltip.append(helper.spacer(5, 0));
             tooltip.append(helper.item(CLOCK, 0.75f));
             tooltip.append(helper.text(Component.translatable("jade.seconds", time / 20)).translate(ElementHelper.SMALL_ITEM_OFFSET));
@@ -51,9 +51,9 @@ public class AdvancedBreweryProvider implements IBlockComponentProvider, IServer
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor blockAccessor) {
-        TileAdvancedBrewery brewery = (TileAdvancedBrewery) blockAccessor.getBlockEntity();
+        AdvancedBreweryBlockEntity brewery = (AdvancedBreweryBlockEntity) blockAccessor.getBlockEntity();
         CompoundTag tag = new CompoundTag();
-        tag.putInt("time", TileAdvancedBrewery.MAX_BREW_TIME - brewery.getBrewTime());
+        tag.putInt("time", AdvancedBreweryBlockEntity.MAX_BREW_TIME - brewery.getBrewTime());
         tag.putInt("fuel", brewery.getFuel());
         data.put("AdvancedBrewery", tag);
     }

@@ -1,7 +1,7 @@
 package de.melanx.utilitix.registration;
 
 import com.mojang.serialization.Codec;
-import de.melanx.utilitix.item.ItemMobYoinker;
+import de.melanx.utilitix.util.MobData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;
@@ -16,7 +16,7 @@ public class ModDataComponentTypes {
 
     public static final DataComponentType<Boolean> gilded = ModDataComponentTypes.builder(builder -> builder.persistent(Codec.BOOL));
     public static final DataComponentType<Boolean> filled = ModDataComponentTypes.builder(builder -> builder.persistent(Codec.BOOL));
-    public static final DataComponentType<ItemMobYoinker.MobData> mobData = ModDataComponentTypes.builder(builder -> builder.persistent(ItemMobYoinker.MobData.CODEC).networkSynchronized(ItemMobYoinker.MobData.STREAM_CODEC).cacheEncoding());
+    public static final DataComponentType<MobData> mobData = ModDataComponentTypes.builder(builder -> builder.persistent(MobData.CODEC).networkSynchronized(MobData.STREAM_CODEC).cacheEncoding());
     public static final DataComponentType<UUID> redstoneId = ModDataComponentTypes.builder(builder -> builder.persistent(UUIDUtil.CODEC).networkSynchronized(UUIDUtil.STREAM_CODEC).cacheEncoding());
     public static final DataComponentType<BlockPos> ancientCityPos = ModDataComponentTypes.builder(builder -> builder.persistent(BlockPos.CODEC).networkSynchronized(BlockPos.STREAM_CODEC).cacheEncoding());
     public static final DataComponentType<ResourceLocation> ancientCityLevel = ModDataComponentTypes.builder(builder -> builder.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC).cacheEncoding());

@@ -123,6 +123,7 @@ public class Apply extends EffectTransformer {
         if (buffer.readBoolean()) {
             name = ComponentSerialization.TRUSTED_CONTEXT_FREE_STREAM_CODEC.decode(buffer);
         }
+
         int size = buffer.readVarInt();
         ImmutableList.Builder<MobEffectInstance> effects = ImmutableList.builder();
         for (int i = 0; i < size; i++) {
@@ -130,8 +131,10 @@ public class Apply extends EffectTransformer {
             if (nbt == null) {
                 throw new IllegalStateException("Missing MobEffectInstance NBT in Apply transformer");
             }
+
             effects.add(Objects.requireNonNull(MobEffectInstance.load(nbt)));
         }
+
         return new Apply(name, effects.build());
     }
 
@@ -140,6 +143,7 @@ public class Apply extends EffectTransformer {
         if (transformer.name != null) {
             ComponentSerialization.TRUSTED_CONTEXT_FREE_STREAM_CODEC.encode(buffer, transformer.name);
         }
+
         buffer.writeVarInt(transformer.effects.size());
         for (MobEffectInstance effect : transformer.effects) {
             buffer.writeNbt(effect.save());

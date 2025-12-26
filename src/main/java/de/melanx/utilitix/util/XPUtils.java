@@ -7,23 +7,29 @@ public class XPUtils {
     public static int getXpBarCap(int level) {
         if (level >= 30) {
             return 112 + ((level - 30) * 9);
-        } else if (level >= 15) {
-            return 37 + ((level - 15) * 5);
-        } else if (level < 0) {
-            return 0;
-        } else {
-            return 7 + (level * 2);
         }
+
+        if (level >= 15) {
+            return 37 + ((level - 15) * 5);
+        }
+
+        if (level < 0) {
+            return 0;
+        }
+
+        return 7 + (level * 2);
     }
 
     public static Pair<Integer, Float> getLevelExp(int xpPoints) {
         int level = 0;
         float exp = xpPoints / (float) getXpBarCap(level);
+
         while (exp >= 1.0F) {
             exp = (exp - 1) * getXpBarCap(level);
             level += 1;
             exp = exp / getXpBarCap(level);
         }
+
         return Pair.of(level, exp);
     }
 
@@ -32,7 +38,9 @@ public class XPUtils {
         for (int i = 0; i < level; i++) {
             points += getXpBarCap(i);
         }
+
         points += Math.round(getXpBarCap(level) * exp);
+
         return points;
     }
 }

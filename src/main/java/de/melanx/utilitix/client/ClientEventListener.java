@@ -2,19 +2,19 @@ package de.melanx.utilitix.client;
 
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.client.commands.MapsCommand;
-import de.melanx.utilitix.content.bell.RenderBell;
-import de.melanx.utilitix.content.brewery.ContainerMenuAdvancedBrewery;
-import de.melanx.utilitix.content.brewery.ScreenAdvancedBrewery;
-import de.melanx.utilitix.content.crudefurnace.ContainerMenuCrudeFurnace;
-import de.melanx.utilitix.content.crudefurnace.ScreenCrudeFurnace;
-import de.melanx.utilitix.content.experiencecrystal.ContainerMenuExperienceCrystal;
-import de.melanx.utilitix.content.experiencecrystal.ScreenExperienceCrystal;
+import de.melanx.utilitix.content.bell.BellRenderer;
+import de.melanx.utilitix.content.brewery.AdvancedBreweryMenu;
+import de.melanx.utilitix.content.brewery.AdvancedBreweryScreen;
+import de.melanx.utilitix.content.crudefurnace.CrudeFurnaceMenu;
+import de.melanx.utilitix.content.crudefurnace.CrudeFurnaceScreen;
+import de.melanx.utilitix.content.experiencecrystal.ExperienceCrystalMenu;
+import de.melanx.utilitix.content.experiencecrystal.ExperienceCrystalScreen;
 import de.melanx.utilitix.content.gildingarmor.GildingArmorRecipe;
-import de.melanx.utilitix.content.track.carts.piston.PistonCartContainerMenu;
+import de.melanx.utilitix.content.track.carts.piston.PistonCartMenu;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartScreen;
 import de.melanx.utilitix.content.track.tinkerer.MinecartTinkererMenu;
 import de.melanx.utilitix.content.track.tinkerer.MinecartTinkererScreen;
-import de.melanx.utilitix.network.StickyChunkRequest;
+import de.melanx.utilitix.network.handler.StickyChunkRequest;
 import de.melanx.utilitix.registration.ModDataComponentTypes;
 import de.melanx.utilitix.registration.ModItems;
 import net.minecraft.ChatFormatting;
@@ -67,10 +67,10 @@ public class ClientEventListener {
 
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
-        event.register(PistonCartContainerMenu.TYPE, PistonCartScreen::new);
-        event.register(ContainerMenuAdvancedBrewery.TYPE, ScreenAdvancedBrewery::new);
-        event.register(ContainerMenuCrudeFurnace.TYPE, ScreenCrudeFurnace::new);
-        event.register(ContainerMenuExperienceCrystal.TYPE, ScreenExperienceCrystal::new);
+        event.register(PistonCartMenu.TYPE, PistonCartScreen::new);
+        event.register(AdvancedBreweryMenu.TYPE, AdvancedBreweryScreen::new);
+        event.register(CrudeFurnaceMenu.TYPE, CrudeFurnaceScreen::new);
+        event.register(ExperienceCrystalMenu.TYPE, ExperienceCrystalScreen::new);
         event.register(MinecartTinkererMenu.TYPE, MinecartTinkererScreen::new);
     }
 
@@ -89,12 +89,14 @@ public class ClientEventListener {
                     Objects.requireNonNull(stack.get(ModDataComponentTypes.ancientCityPos))
             );
         }));
+
         ItemProperties.register(ModItems.mobYoinker, UtilitiX.getInstance().resource("filled"), ((stack, level, entity, seed) -> stack.getOrDefault(ModDataComponentTypes.filled, false) ? 1.0F : 0.0F));
         event.registerItem(new IClientItemExtensions() {
+
             @Nonnull
             @Override
             public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                return new RenderBell(new BlockEntityRendererProvider.Context(
+                return new BellRenderer(new BlockEntityRendererProvider.Context(
                         Minecraft.getInstance().getBlockEntityRenderDispatcher(),
                         Minecraft.getInstance().getBlockRenderer(),
                         Minecraft.getInstance().getItemRenderer(),

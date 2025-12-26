@@ -2,7 +2,7 @@ package de.melanx.utilitix.content.track.carts.piston;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.network.PistonCartModeCycle;
+import de.melanx.utilitix.network.handler.PistonCartModeCycle;
 import de.melanx.utilitix.registration.ModItemTags;
 import de.melanx.utilitix.util.GhostItemRenderHelper;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.util.List;
 
-public class PistonCartScreen extends AbstractContainerScreen<PistonCartContainerMenu> {
+public class PistonCartScreen extends AbstractContainerScreen<PistonCartMenu> {
 
     public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "textures/container/piston_cart.png");
     private static final int TORCHES_SLOT = 12;
@@ -32,7 +32,7 @@ public class PistonCartScreen extends AbstractContainerScreen<PistonCartContaine
     private final List<ItemStack> railItems;
     private final List<ItemStack> torchItems;
 
-    public PistonCartScreen(PistonCartContainerMenu menu, Inventory inv, Component title) {
+    public PistonCartScreen(PistonCartMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);
         this.imageWidth = 176;
         this.imageHeight = 186;

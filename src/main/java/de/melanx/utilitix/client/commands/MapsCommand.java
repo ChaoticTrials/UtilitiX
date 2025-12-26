@@ -46,7 +46,6 @@ public class MapsCommand {
         }
 
         ItemStack stack = player.getMainHandItem();
-
         if (!(stack.getItem() instanceof MapItem)) {
             return 0;
         }
@@ -94,6 +93,7 @@ public class MapsCommand {
     private static NativeImage resize(MapItemSavedData data, NativeImage original, int scale) {
         int size = 128 * scale;
         NativeImage img = new NativeImage(original.getWidth() * scale, original.getHeight() * scale, true);
+
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < size; ++j) {
                 int k = (j / scale) + (i / scale) * 128;

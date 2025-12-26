@@ -1,55 +1,26 @@
 package de.melanx.utilitix;
 
 import de.melanx.utilitix.config.CommonConfig;
-import de.melanx.utilitix.config.FeatureConfig;
-import de.melanx.utilitix.content.brewery.TileAdvancedBrewery;
-import de.melanx.utilitix.content.crudefurnace.TileCrudeFurnace;
-import de.melanx.utilitix.content.experiencecrystal.TileExperienceCrystal;
-import de.melanx.utilitix.content.slime.ItemGlueBall;
-import de.melanx.utilitix.content.slime.StickyChunk;
-import de.melanx.utilitix.registration.ModAttachmentTypes;
+import de.melanx.utilitix.content.brewery.AdvancedBreweryBlockEntity;
+import de.melanx.utilitix.content.crudefurnace.CrudeFurnaceBlockEntity;
+import de.melanx.utilitix.content.experiencecrystal.ExperienceCrystalBlockEntity;
 import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.util.MobUtil;
 import de.melanx.utilitix.util.XPUtils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.decoration.ArmorStand;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.context.DirectionalPlaceContext;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.storage.loot.BuiltInLootTables;
-import net.minecraft.world.level.storage.loot.LootPool;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.event.LootTableLoadEvent;
-import net.neoforged.neoforge.event.entity.item.ItemExpireEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.event.level.ExplosionEvent;
 
 @EventBusSubscriber(modid = "utilitix")
 public class EventListener {
@@ -58,32 +29,38 @@ public class EventListener {
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
         Player player = event.getEntity();
 
-        if (player.isShiftKeyDown() && event.getTarget() instanceof LivingEntity target) {
-            InteractionHand hand = event.getHand();
-            ItemStack stack = player.getItemInHand(hand);
-            if (stack.getItem() == ModItems.mobBell) {
-                if (MobUtil.storeEntityData(player, hand, target, CommonConfig.HandBells.mobBellEntities, true)) {
-                    event.setCancellationResult(InteractionResult.SUCCESS);
-                    event.setCanceled(true);
-                }
-            } else if (stack.getItem() == ModItems.mobYoinker) {
-                if (!player.isCreative()) {
-                    int xp = XPUtils.getExpPoints(player.experienceLevel, player.experienceProgress);
-                    int health = (int) target.getHealth();
-                    int diff = xp - health;
-                    if (diff < 0) {
-                        player.displayClientMessage(Component.translatable("message.utilitix.mob_yoinker", -diff), true);
-                        return;
-                    }
-                }
+        if (!player.isShiftKeyDown() || !(event.getTarget() instanceof LivingEntity target)) {
+            return;
+        }
 
-                if (MobUtil.storeEntityData(player, hand, target, CommonConfig.mobYoinkerEntities, false)) {
-                    player.giveExperiencePoints((int) -target.getHealth());
-                    target.remove(Entity.RemovalReason.DISCARDED);
+        InteractionHand hand = event.getHand();
+        ItemStack stack = player.getItemInHand(hand);
+        if (stack.getItem() == ModItems.mobBell) {
+            if (MobUtil.storeEntityData(player, hand, target, CommonConfig.HandBells.mobBellEntities, true)) {
+                event.setCancellationResult(InteractionResult.SUCCESS);
+                event.setCanceled(true);
+            }
 
-                    event.setCancellationResult(InteractionResult.SUCCESS);
-                    event.setCanceled(true);
+            return;
+        }
+
+        if (stack.getItem() == ModItems.mobYoinker) {
+            if (!player.isCreative()) {
+                int xp = XPUtils.getExpPoints(player.experienceLevel, player.experienceProgress);
+                int health = (int) target.getHealth();
+                int diff = xp - health;
+                if (diff < 0) {
+                    player.displayClientMessage(Component.translatable("message.utilitix.mob_yoinker", -diff), true);
+                    return;
                 }
+            }
+
+            if (MobUtil.storeEntityData(player, hand, target, CommonConfig.mobYoinkerEntities, false)) {
+                player.giveExperiencePoints((int) -target.getHealth());
+                target.remove(Entity.RemovalReason.DISCARDED);
+
+                event.setCancellationResult(InteractionResult.SUCCESS);
+                event.setCanceled(true);
             }
         }
     }
@@ -124,125 +101,9 @@ public class EventListener {
 //    }
 
     @SubscribeEvent
-    public static void entityInteract(PlayerInteractEvent.EntityInteractSpecific event) {
-        if (event.getTarget() instanceof ArmorStand armorStand && event.getTarget().getPersistentData().getBoolean("UtilitiXArmorStand")) {
-            if (event.getItemStack().getItem() == Items.FLINT && event.getEntity().isShiftKeyDown()) {
-                if (CommonConfig.armorStandPoses.size() >= 2) {
-                    int newIdx = (armorStand.getPersistentData().getInt("UtilitiXPoseIdx") + 1) % CommonConfig.armorStandPoses.size();
-                    armorStand.getPersistentData().putInt("UtilitiXPoseIdx", newIdx);
-                    CommonConfig.armorStandPoses.get(newIdx).apply(armorStand);
-                }
-                event.setCanceled(true);
-                event.setCancellationResult(InteractionResult.SUCCESS);
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void neighbourChange(BlockEvent.NeighborNotifyEvent event) {
-        if (!event.getLevel().isClientSide() && event.getLevel() instanceof Level level) {
-            for (Direction dir : Direction.values()) {
-                BlockPos thePos = event.getPos().relative(dir);
-                BlockState state = level.getBlockState(thePos);
-                if (state.getBlock() == Blocks.MOVING_PISTON && (state.getValue(BlockStateProperties.FACING) == dir || state.getValue(BlockStateProperties.FACING) == dir.getOpposite())) {
-                    // Block has been changed because of a piston move.
-                    // Glue logic is handled in the piston til
-                    // Skip this here
-                    return;
-                } else if (state.getBlock() == Blocks.PISTON_HEAD && state.getValue(BlockStateProperties.SHORT) && (state.getValue(BlockStateProperties.FACING) == dir || state.getValue(BlockStateProperties.FACING) == dir.getOpposite())) {
-                    // Block has been changed because of a piston move.
-                    // Glue logic is handled in the piston til
-                    // Skip this here
-                    // This is sometimes buggy, but we can't really do anything about this.
-                    return;
-                }
-            }
-
-            LevelChunk chunk = level.getChunkAt(event.getPos());
-            //noinspection ConstantConditions
-            StickyChunk glue = chunk.getExistingDataOrNull(ModAttachmentTypes.stickyChunk);
-            //noinspection ConstantConditions
-            if (glue != null) {
-                int x = event.getPos().getX() & 0xF;
-                int y = event.getPos().getY();
-                int z = event.getPos().getZ() & 0xF;
-                for (Direction dir : Direction.values()) {
-                    if (glue.get(x, y, z, dir) && !ItemGlueBall.canGlue(level, event.getPos(), dir)) {
-                        glue.set(x, y, z, dir, false);
-                        chunk.setUnsaved(true);
-                        BlockPos targetPos = event.getPos().relative(dir);
-                        ItemEntity ie = new ItemEntity(level, targetPos.getX() + 0.5, targetPos.getY() + 0.5, targetPos.getZ() + 0.5, new ItemStack(ModItems.glueBall));
-                        ie.setPickUpDelay(20);
-                        level.addFreshEntity(ie);
-                    }
-                }
-            }
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.LOW)
-    public static void onItemDespawn(ItemExpireEvent event) {
-        ItemEntity entity = event.getEntity();
-        Level level = entity.level();
-        if (!level.isClientSide) {
-            BlockPos pos = entity.blockPosition();
-            ItemStack stack = entity.getItem();
-            if (stack.getItem() instanceof BlockItem item && (item.getBlock().defaultBlockState().is(BlockTags.CROPS) || item.getBlock().defaultBlockState().is(BlockTags.SAPLINGS))) {
-                if (!FeatureConfig.Misc.InWorldChanges.plantsOnDespawn || !CommonConfig.plantsOnDespawn.test(BuiltInRegistries.ITEM.getKey(item))) {
-                    return;
-                }
-
-                try {
-                    DirectionalPlaceContext context = new DirectionalPlaceContext(level, pos, Direction.DOWN, stack, Direction.UP);
-                    if (item.place(context) == InteractionResult.SUCCESS) {
-                        level.setBlockAndUpdate(pos, item.getBlock().defaultBlockState());
-                        return;
-                    }
-
-                    context = new DirectionalPlaceContext(level, pos.above(), Direction.DOWN, stack, Direction.UP);
-                    if (item.place(context) == InteractionResult.SUCCESS) {
-                        level.setBlockAndUpdate(pos.above(), item.getBlock().defaultBlockState());
-                    }
-                } catch (NullPointerException e) {
-                    UtilitiX.getInstance().logger.warn("Tried to place {} but was prevented.", item);
-                }
-            }
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onExplosionStart(ExplosionEvent.Start event) {
-        if (event.isCanceled()) {
-            return;
-        }
-
-        Explosion explosion = event.getExplosion();
-
-        if (explosion.getDirectSourceEntity() instanceof Creeper creeper) {
-            float health = creeper.getHealth();
-            float maxHealth = creeper.getMaxHealth();
-
-            explosion.radius = explosion.radius * (health / maxHealth);
-        }
-    }
-
-    @SubscribeEvent
-    public static void addLayers(LootTableLoadEvent event) {
-        LootTable table = event.getTable();
-        if (table.getLootTableId().equals(BuiltInLootTables.SIMPLE_DUNGEON.location())) {
-            table.addPool(LootPool.lootPool()
-                    .setRolls(ConstantValue.exactly(1))
-                    .add(LootItem.lootTableItem(ModItems.ancientCompass))
-                    .add(LootItem.lootTableItem(Items.AIR)
-                            .setWeight(31))
-                    .build());
-        }
-    }
-
-    @SubscribeEvent
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlocks.advancedBrewery.getBlockEntityType(), TileAdvancedBrewery::getCapability);
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlocks.crudeFurnace.getBlockEntityType(), TileCrudeFurnace::getCapability);
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlocks.experienceCrystal.getBlockEntityType(), TileExperienceCrystal::getCapability);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlocks.advancedBrewery.getBlockEntityType(), AdvancedBreweryBlockEntity::getCapability);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlocks.crudeFurnace.getBlockEntityType(), CrudeFurnaceBlockEntity::getCapability);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlocks.experienceCrystal.getBlockEntityType(), ExperienceCrystalBlockEntity::getCapability);
     }
 }

@@ -52,31 +52,31 @@ public class CoreUtil {
     private static int getNearStrongPower(SignalGetter signalGetter, BlockPos pos) {
         BlockPos posDown = pos.below();
         Block block = signalGetter.getBlockState(posDown).getBlock();
-        if (block == ModBlocks.weakRedstoneTorch || block == ModBlocks.weakRedstoneTorch.wallTorch) {
-            int power = signalGetter.getDirectSignal(pos.above(), Direction.UP);
-            if (power >= 15) {
-                return power;
-            }
+        if (block != ModBlocks.weakRedstoneTorch && block != ModBlocks.weakRedstoneTorch.wallTorch) {
+            return signalGetter.getDirectSignalTo(pos);
+        }
 
-            power = Math.max(power, signalGetter.getDirectSignal(pos.north(), Direction.NORTH));
-            if (power >= 15) {
-                return power;
-            }
-
-            power = Math.max(power, signalGetter.getDirectSignal(pos.south(), Direction.SOUTH));
-            if (power >= 15) {
-                return power;
-            }
-
-            power = Math.max(power, signalGetter.getDirectSignal(pos.west(), Direction.WEST));
-            if (power >= 15) {
-                return power;
-            }
-
-            power = Math.max(power, signalGetter.getDirectSignal(pos.east(), Direction.EAST));
+        int power = signalGetter.getDirectSignal(pos.above(), Direction.UP);
+        if (power >= 15) {
             return power;
         }
 
-        return signalGetter.getDirectSignalTo(pos);
+        power = Math.max(power, signalGetter.getDirectSignal(pos.north(), Direction.NORTH));
+        if (power >= 15) {
+            return power;
+        }
+
+        power = Math.max(power, signalGetter.getDirectSignal(pos.south(), Direction.SOUTH));
+        if (power >= 15) {
+            return power;
+        }
+
+        power = Math.max(power, signalGetter.getDirectSignal(pos.west(), Direction.WEST));
+        if (power >= 15) {
+            return power;
+        }
+
+        power = Math.max(power, signalGetter.getDirectSignal(pos.east(), Direction.EAST));
+        return power;
     }
 }

@@ -57,36 +57,36 @@ public class ShulkerBoatItem extends ItemBase {
             }
         }
 
-        if (hitResult.getType() == HitResult.Type.BLOCK) {
-            ShulkerBoat boat = new ShulkerBoat(level, hitResult.getLocation());
-            boat.setVariant(this.boatType);
-            boat.setYRot(player.getYRot());
-            if (!level.noCollision(boat, boat.getBoundingBox())) {
-                return InteractionResultHolder.fail(stack);
-            }
-
-            if (!level.isClientSide) {
-                if (stack.has(DataComponents.CONTAINER)) {
-                    ItemContainerContents itemContainerContents = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
-                    itemContainerContents.copyInto(boat.getItemStacks());
-                }
-
-                if (stack.has(DataComponents.CUSTOM_NAME)) {
-                    boat.setCustomName(stack.getHoverName());
-                }
-
-                level.addFreshEntity(boat);
-                level.gameEvent(player, GameEvent.ENTITY_PLACE, hitResult.getLocation());
-                if (!player.getAbilities().instabuild) {
-                    stack.shrink(1);
-                }
-            }
-
-            player.awardStat(Stats.ITEM_USED.get(this));
-            return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+        if (hitResult.getType() != HitResult.Type.BLOCK) {
+            return InteractionResultHolder.pass(stack);
         }
 
-        return InteractionResultHolder.pass(stack);
+        ShulkerBoat boat = new ShulkerBoat(level, hitResult.getLocation());
+        boat.setVariant(this.boatType);
+        boat.setYRot(player.getYRot());
+        if (!level.noCollision(boat, boat.getBoundingBox())) {
+            return InteractionResultHolder.fail(stack);
+        }
+
+        if (!level.isClientSide) {
+            if (stack.has(DataComponents.CONTAINER)) {
+                ItemContainerContents itemContainerContents = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+                itemContainerContents.copyInto(boat.getItemStacks());
+            }
+
+            if (stack.has(DataComponents.CUSTOM_NAME)) {
+                boat.setCustomName(stack.getHoverName());
+            }
+
+            level.addFreshEntity(boat);
+            level.gameEvent(player, GameEvent.ENTITY_PLACE, hitResult.getLocation());
+            if (!player.getAbilities().instabuild) {
+                stack.shrink(1);
+            }
+        }
+
+        player.awardStat(Stats.ITEM_USED.get(this));
+        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }
 
     @Override

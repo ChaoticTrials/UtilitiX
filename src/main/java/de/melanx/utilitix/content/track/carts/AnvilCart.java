@@ -16,7 +16,7 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
 
-public class AnvilCart extends Cart {
+public class AnvilCart extends BaseCart {
 
     public AnvilCart(EntityType<?> type, Level level) {
         super(type, level);
@@ -32,25 +32,29 @@ public class AnvilCart extends Cart {
     public void tick() {
         //noinspection ConstantConditions
         AABB collisionBox = this.getCollisionHandler() != null ? this.getCollisionHandler().getMinecartCollisionBox(this) : this.getBoundingBox().inflate(0.2, 0, 0.2);
-        if (this.canBeRidden() && getHorizontalDistanceSqr(this.getDeltaMovement()) > 0.1 * 0.1) {
-            for (Entity entity : this.level().getEntities(this, collisionBox, EntitySelector.pushableBy(this))) {
-                if (!(entity instanceof AbstractMinecart)) {
-                    if (entity instanceof Player || entity instanceof IronGolem || this.isVehicle() || entity.isPassenger()) {
-                        this.boostEntity(entity);
-                    } else {
-                        if (!entity.startRiding(this)) {
-                            this.boostEntity(entity);
-                        }
-                    }
-                }
-            }
-        } else {
+        if (!this.canBeRidden() || BaseCart.getHorizontalDistanceSqr(this.getDeltaMovement()) <= 0.1 * 0.1) {
             for (Entity entity : this.level().getEntities(this, collisionBox)) {
                 if (!this.hasPassenger(entity) && entity.isPushable() && !(entity instanceof AbstractMinecart)) {
                     this.boostEntity(entity);
                 }
             }
+
+            super.tick();
+            return;
         }
+
+        for (Entity entity : this.level().getEntities(this, collisionBox, EntitySelector.pushableBy(this))) {
+            if (!(entity instanceof AbstractMinecart)) {
+                if (entity instanceof Player || entity instanceof IronGolem || this.isVehicle() || entity.isPassenger()) {
+                    this.boostEntity(entity);
+                } else {
+                    if (!entity.startRiding(this)) {
+                        this.boostEntity(entity);
+                    }
+                }
+            }
+        }
+
         super.tick();
     }
 
@@ -66,7 +70,10 @@ public class AnvilCart extends Cart {
                 (entity.getX() - this.getX()) * (minecartDir.getAxis() == Direction.Axis.Z ? 2.5 : 0.8),
                 0,
                 (entity.getZ() - this.getZ()) * (minecartDir.getAxis() == Direction.Axis.X ? 2.5 : 0.8)
-        ).normalize().scale(1.5 * boost);
+        )
+                .normalize()
+                .scale(1.5 * boost);
+
         entity.hurt(this.damageSources().anvil(entity), 0.25f);
         entity.push(targetVec.x, targetVec.y, targetVec.z);
     }

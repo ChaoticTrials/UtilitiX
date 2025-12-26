@@ -1,10 +1,10 @@
 package de.melanx.utilitix.data;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.content.AncientCompass;
+import de.melanx.utilitix.content.AncientCompassItem;
 import de.melanx.utilitix.content.bell.BellBase;
-import de.melanx.utilitix.content.redstone.WeakRedstoneTorch;
-import de.melanx.utilitix.item.ItemMobYoinker;
+import de.melanx.utilitix.content.redstone.WeakRedstoneTorchBlock;
+import de.melanx.utilitix.item.MobYoinkerItem;
 import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModItems;
 import net.minecraft.resources.ResourceLocation;
@@ -32,12 +32,12 @@ public class ItemModelProvider extends ItemModelProviderBase {
         switch(item) {
             case BellBase bellBase ->
                     super.defaultItem(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath() + "_item"), bellBase);
-            case ItemMobYoinker itemMobYoinker -> this.withExistingParent(id.getPath(), GENERATED)
+            case MobYoinkerItem mobYoinker -> this.withExistingParent(id.getPath(), GENERATED)
                     .texture("layer0", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "item/" + id.getPath())).override()
                     .predicate(UtilitiX.getInstance().resource("filled"), 1)
                     .model(this.withExistingParent(id.getPath() + "_filled", GENERATED)
                             .texture("layer0", "item/" + id.getPath() + "_filled")).end();
-            case AncientCompass ancientCompass -> {
+            case AncientCompassItem ancientCompass -> {
                 for (int i = 0; i < 32; ++i) {
                     if (i != 16) {
                         String name = id.getPath() + String.format("_%02d", i);
@@ -54,16 +54,29 @@ public class ItemModelProvider extends ItemModelProviderBase {
     protected void defaultBlock(ResourceLocation id, BlockItem item) {
         if (item.getBlock() == ModBlocks.filterRail || item.getBlock() == ModBlocks.reinforcedFilterRail) {
             this.withExistingParent(id.getPath(), GENERATED).texture("layer0", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath() + "_right"));
-        } else if (item.getBlock() instanceof WeakRedstoneTorch || item.getBlock() instanceof BaseRailBlock) {
-            this.withExistingParent(id.getPath(), GENERATED).texture("layer0", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath()));
-        } else if (item.getBlock() == ModBlocks.linkedRepeater) {
-            this.withExistingParent(id.getPath(), GENERATED).texture("layer0", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "item/" + id.getPath()));
-        } else if (item.getBlock() == ModBlocks.stoneWall) {
-            this.withExistingParent(id.getPath(), WALL_PARENT).texture("wall", ResourceLocation.withDefaultNamespace("block/stone"));
-        } else if (item.getBlock() == ModBlocks.dimmableRedstoneLamp) {
-            this.getBuilder(id.getPath()).parent(new ModelFile.UncheckedModelFile(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath() + "_" + 7)));
-        } else {
-            super.defaultBlock(id, item);
+            return;
         }
+
+        if (item.getBlock() instanceof WeakRedstoneTorchBlock || item.getBlock() instanceof BaseRailBlock) {
+            this.withExistingParent(id.getPath(), GENERATED).texture("layer0", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath()));
+            return;
+        }
+
+        if (item.getBlock() == ModBlocks.linkedRepeater) {
+            this.withExistingParent(id.getPath(), GENERATED).texture("layer0", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "item/" + id.getPath()));
+            return;
+        }
+
+        if (item.getBlock() == ModBlocks.stoneWall) {
+            this.withExistingParent(id.getPath(), WALL_PARENT).texture("wall", ResourceLocation.withDefaultNamespace("block/stone"));
+            return;
+        }
+
+        if (item.getBlock() == ModBlocks.dimmableRedstoneLamp) {
+            this.getBuilder(id.getPath()).parent(new ModelFile.UncheckedModelFile(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath() + "_" + 7)));
+            return;
+        }
+
+        super.defaultBlock(id, item);
     }
 }

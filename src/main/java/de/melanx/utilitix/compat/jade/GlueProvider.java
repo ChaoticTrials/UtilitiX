@@ -1,7 +1,7 @@
 package de.melanx.utilitix.compat.jade;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.content.slime.StickyChunk;
+import de.melanx.utilitix.content.glue.StickyChunk;
 import de.melanx.utilitix.registration.ModAttachmentTypes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

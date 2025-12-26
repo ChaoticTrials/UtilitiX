@@ -1,7 +1,7 @@
 package de.melanx.utilitix.compat.jade;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.content.crudefurnace.TileCrudeFurnace;
+import de.melanx.utilitix.content.crudefurnace.CrudeFurnaceBlockEntity;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -54,7 +54,7 @@ public class CrudeFurnaceProvider implements IBlockComponentProvider, IServerDat
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
-        TileCrudeFurnace furnace = (TileCrudeFurnace) accessor.getBlockEntity();
+        CrudeFurnaceBlockEntity furnace = (CrudeFurnaceBlockEntity) accessor.getBlockEntity();
         ListTag items = new ListTag();
         for (int i = 0; i < 3; i++) {
 //            items.add(furnace.getInventory().getStackInSlot(i).serializeNBT()); todo

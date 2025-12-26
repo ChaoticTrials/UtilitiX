@@ -57,7 +57,6 @@ public abstract class MixinDoorBlock {
                 neighborState.useWithoutItem(level, player, neighborHit);
             }
             HANDLE_DOOR = false;
-//            ((DoorBlock) neighborState.getBlock()).setOpen(event.getEntity(), level, neighborState, neighborPos, !open);
         }
     }
 }

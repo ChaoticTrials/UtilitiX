@@ -1,6 +1,6 @@
 package de.melanx.utilitix.mixin;
 
-import de.melanx.utilitix.content.slime.StickyChunk;
+import de.melanx.utilitix.content.glue.StickyChunk;
 import de.melanx.utilitix.registration.ModAttachmentTypes;
 import de.melanx.utilitix.util.MixinUtil;
 import net.minecraft.core.BlockPos;

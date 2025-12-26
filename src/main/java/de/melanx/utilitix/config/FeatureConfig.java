@@ -95,6 +95,12 @@ public class FeatureConfig {
             })
             public static boolean glue = true;
 
+            @Config({
+                    FeatureConfig.MAIN_MESSAGE,
+                    "- Creeper explosion reduction based on its health"
+            })
+            public static boolean healthBasedExplosionDamageByCreeper = true;
+
             @Config("When a block from #minecraft:saplings or #minecraft:crops despawns, it tries to plant it instead")
             public static boolean plantsOnDespawn = true;
 
