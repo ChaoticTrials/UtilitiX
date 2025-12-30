@@ -67,9 +67,7 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
 
     private void createMiscRecipes() {
         this.shaped(ModItems.armedStand,
-                " s ",
-                " a ",
-                "s s",
+                "sas",
                 'a', Items.ARMOR_STAND,
                 's', Tags.Items.RODS_WOODEN);
         this.shaped(ModItems.gildingCrystal,

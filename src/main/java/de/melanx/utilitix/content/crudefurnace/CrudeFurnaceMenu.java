@@ -38,13 +38,13 @@ public class CrudeFurnaceMenu extends BlockEntityMenu<CrudeFurnaceBlockEntity> {
     private static class OutputSlot extends SlotItemHandler {
 
         private final Player player;
-        private final CrudeFurnaceBlockEntity tile;
+        private final CrudeFurnaceBlockEntity blockEntity;
         private int removeCount;
 
-        public OutputSlot(Player player, CrudeFurnaceBlockEntity tile, int index, int xPosition, int yPosition) {
-            super(tile.output, index, xPosition, yPosition);
+        public OutputSlot(Player player, CrudeFurnaceBlockEntity blockEntity, int index, int xPosition, int yPosition) {
+            super(blockEntity.output, index, xPosition, yPosition);
             this.player = player;
-            this.tile = tile;
+            this.blockEntity = blockEntity;
         }
 
         @Override
@@ -73,7 +73,7 @@ public class CrudeFurnaceMenu extends BlockEntityMenu<CrudeFurnaceBlockEntity> {
         protected void checkTakeAchievements(ItemStack stack) {
             stack.onCraftedBy(this.player.level(), this.player, this.removeCount);
             if (this.player instanceof ServerPlayer serverPlayer) {
-                this.tile.unlockRecipes(serverPlayer);
+                this.blockEntity.unlockRecipes(serverPlayer);
             }
 
             this.removeCount = 0;

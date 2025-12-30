@@ -80,7 +80,7 @@ public class FilterRailBlock extends ControllerRailBlock<FilterRailBlockEntity> 
             return baseShape;
         }
 
-        ItemStack filterThis = this.getTile(level, pos).getFilterStack();
+        ItemStack filterThis = this.getBlockEntity(level, pos).getFilterStack();
         if (filterThis.isEmpty()) {
             return baseShape;
         }

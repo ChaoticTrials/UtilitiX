@@ -44,8 +44,8 @@ public class BellRenderer extends BlockEntityWithoutLevelRenderer {
 
     private final LazyValue<ItemStack> stick = new LazyValue<>(() -> new ItemStack(Items.STICK));
     @SuppressWarnings("ConstantConditions")
-    private final LazyValue<BellBlockEntity> tile = new LazyValue<>(() -> new BellBlockEntity(BlockPos.ZERO, Blocks.BELL.defaultBlockState()));
-    private BlockEntityRenderer<BellBlockEntity> tileRender = null;
+    private final LazyValue<BellBlockEntity> lazyBellBlockEntity = new LazyValue<>(() -> new BellBlockEntity(BlockPos.ZERO, Blocks.BELL.defaultBlockState()));
+    private BlockEntityRenderer<BellBlockEntity> blockEntityRenderer = null;
 
     private final ModelPart grayscaleModel;
 
@@ -71,19 +71,19 @@ public class BellRenderer extends BlockEntityWithoutLevelRenderer {
         poseStack.popPose();
 
         if (mc.level != null) {
-            BellBlockEntity tile = this.tile.get();
-            tile.setLevel(mc.level);
-            tile.clickDirection = Direction.EAST;
+            BellBlockEntity blockEntity = this.lazyBellBlockEntity.get();
+            blockEntity.setLevel(mc.level);
+            blockEntity.clickDirection = Direction.EAST;
 
             if (mc.player == null || mc.player.getUseItemRemainingTicks() <= 0) {
-                tile.ticks = 0;
+                blockEntity.ticks = 0;
             } else {
-                tile.ticks = Math.round(Mth.lerp((mc.player.getUseItemRemainingTicks() % 10) / 10f, 0, 50));
+                blockEntity.ticks = Math.round(Mth.lerp((mc.player.getUseItemRemainingTicks() % 10) / 10f, 0, 50));
             }
 
-            tile.shaking = tile.ticks > 0;
-            if (this.tileRender == null) {
-                this.tileRender = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(tile);
+            blockEntity.shaking = blockEntity.ticks > 0;
+            if (this.blockEntityRenderer == null) {
+                this.blockEntityRenderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity);
             }
 
             poseStack.pushPose();
@@ -94,13 +94,13 @@ public class BellRenderer extends BlockEntityWithoutLevelRenderer {
             poseStack.translate(-0.475, -1.6, -1);
 
             if (stack.getItem() != ModItems.mobBell) {
-                this.tileRender.render(tile, mc.getFrameTimeNs(), poseStack, buffer, LightTexture.pack(15, 15), OverlayTexture.NO_OVERLAY);
+                this.blockEntityRenderer.render(blockEntity, mc.getFrameTimeNs(), poseStack, buffer, LightTexture.pack(15, 15), OverlayTexture.NO_OVERLAY);
             } else {
                 int color = MobBellItem.getColor(stack);
-                float ringRotation = -(Mth.sin(tile.ticks + mc.getFrameTimeNs() / (float) Math.PI) / (4 + (tile.ticks + Minecraft.getInstance().getFrameTimeNs()) / 3f));
+                float ringRotation = -(Mth.sin(blockEntity.ticks + mc.getFrameTimeNs() / (float) Math.PI) / (4 + (blockEntity.ticks + Minecraft.getInstance().getFrameTimeNs()) / 3f));
 
                 this.grayscaleModel.xRot = 0;
-                this.grayscaleModel.zRot = tile.shaking ? ringRotation : 0;
+                this.grayscaleModel.zRot = blockEntity.shaking ? ringRotation : 0;
 
                 VertexConsumer vertexConsumer = GRAY_BELL_MATERIAL.buffer(buffer, RenderType::entitySolid);
                 this.grayscaleModel.render(poseStack, vertexConsumer, light, OverlayTexture.NO_OVERLAY, color);

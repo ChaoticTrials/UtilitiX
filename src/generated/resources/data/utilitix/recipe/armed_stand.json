@@ -10,9 +10,7 @@
     }
   },
   "pattern": [
-    " s ",
-    " a ",
-    "s s"
+    "sas"
   ],
   "result": {
     "count": 1,

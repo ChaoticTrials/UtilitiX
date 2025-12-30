@@ -15,10 +15,10 @@ import javax.annotation.Nonnull;
 public class AdvancedBreweryRenderer extends RotatedBlockRenderer<AdvancedBreweryBlockEntity> {
 
     @Override
-    protected void doRender(@Nonnull AdvancedBreweryBlockEntity tile, float partialTick, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource buffer, int light, int overlay) {
+    protected void doRender(@Nonnull AdvancedBreweryBlockEntity blockEntity, float partialTick, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource buffer, int light, int overlay) {
         ClientLevel level = Minecraft.getInstance().level;
 
-        ItemStack ingredient = tile.getInventory().getStackInSlot(0);
+        ItemStack ingredient = blockEntity.getInventory().getStackInSlot(0);
         if (!ingredient.isEmpty()) {
             poseStack.pushPose();
             poseStack.translate(0.5, 0.66, 0.65);
@@ -28,7 +28,7 @@ public class AdvancedBreweryRenderer extends RotatedBlockRenderer<AdvancedBrewer
             poseStack.popPose();
         }
 
-        ItemStack main = tile.getInventory().getStackInSlot(3);
+        ItemStack main = blockEntity.getInventory().getStackInSlot(3);
         if (!main.isEmpty()) {
             poseStack.pushPose();
             poseStack.translate(0.5, 0.15, 0.18);
@@ -38,7 +38,7 @@ public class AdvancedBreweryRenderer extends RotatedBlockRenderer<AdvancedBrewer
             poseStack.popPose();
         }
 
-        ItemStack p1 = tile.getInventory().getStackInSlot(1);
+        ItemStack p1 = blockEntity.getInventory().getStackInSlot(1);
         if (!p1.isEmpty()) {
             poseStack.pushPose();
             poseStack.translate(0.82, 0.42, 0.68);
@@ -48,7 +48,7 @@ public class AdvancedBreweryRenderer extends RotatedBlockRenderer<AdvancedBrewer
             poseStack.popPose();
         }
 
-        ItemStack p2 = tile.getInventory().getStackInSlot(2);
+        ItemStack p2 = blockEntity.getInventory().getStackInSlot(2);
         if (!p2.isEmpty()) {
             poseStack.pushPose();
             poseStack.translate(0.18, 0.42, 0.68);

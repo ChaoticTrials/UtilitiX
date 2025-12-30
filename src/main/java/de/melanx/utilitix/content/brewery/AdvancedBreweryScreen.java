@@ -35,14 +35,14 @@ public class AdvancedBreweryScreen extends AbstractContainerScreen<AdvancedBrewe
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
 
-        AdvancedBreweryBlockEntity tile = this.menu.getBlockEntity();
-        int fuelWidth = Mth.clamp(Math.round(((18 * tile.getFuel()) + 19) / 20f), 0, 18);
-        if (tile.getFuel() > 0 && fuelWidth > 0) {
+        AdvancedBreweryBlockEntity blockEntity = this.menu.getBlockEntity();
+        int fuelWidth = Mth.clamp(Math.round(((18 * blockEntity.getFuel()) + 19) / 20f), 0, 18);
+        if (blockEntity.getFuel() > 0 && fuelWidth > 0) {
             guiGraphics.blit(TEXTURE, this.leftPos + 60, this.topPos + 44, 176, 29, fuelWidth, 4);
         }
 
-        int brewTime = Mth.clamp(tile.getBrewTime(), 0, AdvancedBreweryBlockEntity.MAX_BREW_TIME);
-        if (tile.getFuel() <= 0 || brewTime <= 0) {
+        int brewTime = Mth.clamp(blockEntity.getBrewTime(), 0, AdvancedBreweryBlockEntity.MAX_BREW_TIME);
+        if (blockEntity.getFuel() <= 0 || brewTime <= 0) {
             return;
         }
 

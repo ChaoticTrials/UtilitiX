@@ -72,21 +72,21 @@ public class ClickScreenButton extends PacketHandler<ClickScreenButton.Message> 
         }
     }
 
-    private static void normalizeAddition(Player player, ExperienceCrystalBlockEntity tile) {
+    private static void normalizeAddition(Player player, ExperienceCrystalBlockEntity blockEntity) {
         int transfer = (int) (player.experienceProgress * player.getXpNeededForNextLevel());
-        int i = tile.addXp(transfer);
+        int i = blockEntity.addXp(transfer);
         player.giveExperiencePoints(-i);
     }
 
-    private static void normalizeSubtraction(Player player, ExperienceCrystalBlockEntity tile, int levels) {
+    private static void normalizeSubtraction(Player player, ExperienceCrystalBlockEntity blockEntity, int levels) {
         int newV = XPUtils.getExpPoints(player.experienceLevel + levels, 0);
         int oldV = XPUtils.getExpPoints(player.experienceLevel, player.experienceProgress);
         int xp = newV - oldV;
-        int i = tile.subtractXp(xp);
+        int i = blockEntity.subtractXp(xp);
 
         player.giveExperiencePoints(i);
         if (Math.round(player.experienceProgress) == 1) {
-            i = tile.subtractXp(1);
+            i = blockEntity.subtractXp(1);
             player.giveExperiencePoints(i);
         }
     }

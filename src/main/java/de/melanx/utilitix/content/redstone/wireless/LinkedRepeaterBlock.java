@@ -87,19 +87,19 @@ public class LinkedRepeaterBlock extends BlockBE<LinkedRepeaterBlockEntity> {
             return ItemInteractionResult.SUCCESS;
         }
 
-        LinkedRepeaterBlockEntity tile = this.getBlockEntity(level, pos);
-        ItemStack link = tile.getLink();
+        LinkedRepeaterBlockEntity blockEntity = this.getBlockEntity(level, pos);
+        ItemStack link = blockEntity.getLink();
         if (!link.isEmpty()) {
             ItemEntity entity = new ItemEntity(level, pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, link.copy());
             level.addFreshEntity(entity);
-            tile.setLink(ItemStack.EMPTY);
+            blockEntity.setLink(ItemStack.EMPTY);
 
             return ItemInteractionResult.CONSUME;
         }
 
         ItemStack held = player.getItemInHand(hand);
         if (!held.isEmpty() && held.getItem() == ModItems.linkedCrystal && LinkedCrystalItem.getId(held) != null) {
-            tile.setLink(held.split(1));
+            blockEntity.setLink(held.split(1));
             player.setItemInHand(hand, held);
 
             return ItemInteractionResult.CONSUME;
@@ -111,10 +111,10 @@ public class LinkedRepeaterBlock extends BlockBE<LinkedRepeaterBlockEntity> {
     @Override
     public void onRemove(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
         if (state.hasBlockEntity() && (!state.is(newState.getBlock()) || !newState.hasBlockEntity())) {
-            LinkedRepeaterBlockEntity tile = this.getBlockEntity(level, pos);
-            WirelessRedstoneSavedData.get(level).remove(level, tile.getLinkId(), GlobalPos.of(level.dimension(), pos));
+            LinkedRepeaterBlockEntity blockEntity = this.getBlockEntity(level, pos);
+            WirelessRedstoneSavedData.get(level).remove(level, blockEntity.getLinkId(), GlobalPos.of(level.dimension(), pos));
 
-            ItemStack stack = tile.getLink();
+            ItemStack stack = blockEntity.getLink();
             if (!stack.isEmpty()) {
                 ItemEntity entity = new ItemEntity(level, pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, stack.copy());
                 level.addFreshEntity(entity);

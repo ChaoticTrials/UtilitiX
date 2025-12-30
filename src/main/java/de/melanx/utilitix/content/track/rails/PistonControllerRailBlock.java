@@ -56,11 +56,11 @@ public class PistonControllerRailBlock extends ControllerRailBlock<PistonControl
         }
 
         if (!level.isClientSide) {
-            PistonControllerRailBlockEntity tile = this.getTile(level, pos);
-            int modeIdx = tile.getMode().ordinal();
+            PistonControllerRailBlockEntity blockEntity = this.getBlockEntity(level, pos);
+            int modeIdx = blockEntity.getMode().ordinal();
             PistonCartMode[] modes = PistonCartMode.values();
-            tile.setMode(modes[(modeIdx + 1) % modes.length]);
-            player.sendSystemMessage(Component.translatable("tooltip.utilitix.piston_cart_mode", tile.getMode().name));
+            blockEntity.setMode(modes[(modeIdx + 1) % modes.length]);
+            player.sendSystemMessage(Component.translatable("tooltip.utilitix.piston_cart_mode", blockEntity.getMode().name));
         }
 
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
@@ -72,7 +72,7 @@ public class PistonControllerRailBlock extends ControllerRailBlock<PistonControl
             return;
         }
 
-        PistonControllerRailBlockEntity blockEntity = this.getTile(level, pos);
+        PistonControllerRailBlockEntity blockEntity = this.getBlockEntity(level, pos);
         ItemStack filterThis = blockEntity.getFilterStack();
         if (!filterThis.isEmpty()) {
             ItemStack filterCart = MinecartTinkererItem.getLabelStack(cart);

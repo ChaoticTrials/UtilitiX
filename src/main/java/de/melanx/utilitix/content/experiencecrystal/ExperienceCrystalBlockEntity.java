@@ -100,9 +100,9 @@ public class ExperienceCrystalBlockEntity extends BlockEntityBase implements Tic
         }
     }
 
-    public static IFluidHandler getCapability(ExperienceCrystalBlockEntity tile, Direction side) {
-        if (tile.xpFluid().isPresent()) {
-            return tile;
+    public static IFluidHandler getCapability(ExperienceCrystalBlockEntity blockEntity, Direction side) {
+        if (blockEntity.xpFluid().isPresent()) {
+            return blockEntity;
         }
 
         return null;

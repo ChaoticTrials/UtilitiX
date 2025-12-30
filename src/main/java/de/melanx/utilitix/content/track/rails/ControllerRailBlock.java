@@ -40,7 +40,7 @@ public abstract class ControllerRailBlock<T extends ControllerRailBlockEntity> e
     public ControllerRailBlock(ModX mod, Function3<BlockEntityType<T>, BlockPos, BlockState, T> ctor, boolean reinforced, BlockBehaviour.Properties properties, Item.Properties itemProperties) {
         super(mod, false, properties, itemProperties);
         //noinspection ConstantConditions
-        this.beType = new BlockEntityType<>((pos, state) -> ctor.apply(this.getTileType(), pos, state), ImmutableSet.of(this), null);
+        this.beType = new BlockEntityType<>((pos, state) -> ctor.apply(this.getBlockEntityType(), pos, state), ImmutableSet.of(this), null);
         this.reinforced = reinforced;
     }
 
@@ -78,7 +78,7 @@ public abstract class ControllerRailBlock<T extends ControllerRailBlockEntity> e
             return;
         }
 
-        ItemStack stack = this.getTile(level, pos).getFilterStack();
+        ItemStack stack = this.getBlockEntity(level, pos).getFilterStack();
         if (!stack.isEmpty()) {
             ItemEntity entity = new ItemEntity(level, pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, stack.copy());
             level.addFreshEntity(entity);
@@ -87,17 +87,17 @@ public abstract class ControllerRailBlock<T extends ControllerRailBlockEntity> e
         super.onRemove(state, level, pos, newState, isMoving);
     }
 
-    public T getTile(BlockGetter level, BlockPos pos) {
+    public T getBlockEntity(BlockGetter level, BlockPos pos) {
         BlockEntity be = level.getBlockEntity(pos);
         if (be != null) {
             //noinspection unchecked
             return (T) be;
         }
 
-        throw new IllegalStateException("Expected a controller rail tile entity at " + pos + ".");
+        throw new IllegalStateException("Expected a controller rail block entity at " + pos + ".");
     }
 
-    public BlockEntityType<T> getTileType() {
+    public BlockEntityType<T> getBlockEntityType() {
         return this.beType;
     }
 
