@@ -12,6 +12,7 @@ import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.IServerDataProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
+import snownee.jade.api.theme.IThemeHelper;
 import snownee.jade.api.ui.IElementHelper;
 import snownee.jade.impl.ui.ElementHelper;
 
@@ -44,8 +45,8 @@ public class AdvancedBreweryProvider implements IBlockComponentProvider, IServer
 
         if (time > 0 && time != AdvancedBreweryBlockEntity.MAX_BREW_TIME) {
             tooltip.append(helper.spacer(5, 0));
-            tooltip.append(helper.item(CLOCK, 0.75f));
-            tooltip.append(helper.text(Component.translatable("jade.seconds", time / 20)).translate(ElementHelper.SMALL_ITEM_OFFSET));
+            tooltip.append(helper.smallItem(CLOCK).message(" "));
+            tooltip.append(helper.text(IThemeHelper.get().seconds(time, accessor.tickRate())).translate(ElementHelper.SMALL_ITEM_OFFSET));
         }
     }
 
