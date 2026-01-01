@@ -70,7 +70,7 @@ public class AdvancedBreweryBlockEntity extends BlockEntityBase implements Ticki
 
         this.inventoryTop = new FilterItemHandler(this.inventory, slot -> false, (slot, stack) -> slot == INGREDIENT_SLOT || slot == OUTPUT_SLOT);
         this.inventorySide = new FilterItemHandler(this.inventory, slot -> false, (slot, stack) -> slot == POTION_SLOT_RIGHT || slot == POTION_SLOT_LEFT || slot == FUEL_SLOT);
-        this.inventoryBottom = new FilterItemHandler(this.inventory, slot -> slot == INGREDIENT_SLOT || slot == POTION_SLOT_RIGHT || slot == POTION_SLOT_LEFT, (slot, stack) -> false);
+        this.inventoryBottom = new FilterItemHandler(this.inventory, slot -> slot == OUTPUT_SLOT || slot == POTION_SLOT_RIGHT || slot == POTION_SLOT_LEFT, (slot, stack) -> false);
     }
 
     @Override
@@ -115,7 +115,7 @@ public class AdvancedBreweryBlockEntity extends BlockEntityBase implements Ticki
             return;
         }
 
-        PotionOutput output = recipe.get().value().getPotionResult(recipeInput);
+        PotionOutput output = recipe.get().value().getPotionResult(this.recipeInput);
         if (output == null || output.getMain().isEmpty()) {
             this.consumeItem(OUTPUT_SLOT);
         } else {
