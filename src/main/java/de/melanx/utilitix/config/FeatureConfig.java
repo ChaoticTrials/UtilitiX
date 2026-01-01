@@ -43,6 +43,12 @@ public class FeatureConfig {
                 "- Tiny Char Coal"
         })
         public static boolean tinyCoal = true;
+
+        @Config({
+                FeatureConfig.MAIN_MESSAGE,
+                "- Quiver"
+        })
+        public static boolean quiver = true;
     }
 
     @Group("All blocks that you can interact with")

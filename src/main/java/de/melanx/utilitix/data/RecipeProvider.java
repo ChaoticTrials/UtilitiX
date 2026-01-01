@@ -92,6 +92,22 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
                 'C', Tags.Items.STONES,
                 'S', Tags.Items.COBBLESTONES,
                 'F', Items.FURNACE);
+
+        this.shaped(ModItems.quiver,
+                "RLR",
+                "LSL",
+                "RLR",
+                'R', Items.RABBIT_HIDE,
+                'L', Tags.Items.LEATHERS,
+                'S', Tags.Items.STRINGS);
+        this.shaped(this.loc(ModItems.quiver, "rotated"),
+                ModItems.quiver,
+                "LRL",
+                "RSR",
+                "LRL",
+                'R', Items.RABBIT_HIDE,
+                'L', Tags.Items.LEATHERS,
+                'S', Tags.Items.STRINGS);
     }
 
     private void createRedstoneRecipes() {

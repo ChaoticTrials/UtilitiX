@@ -3,6 +3,7 @@ package de.melanx.utilitix.data;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.content.AncientCompassItem;
 import de.melanx.utilitix.content.bell.BellBase;
+import de.melanx.utilitix.content.quiver.QuiverItem;
 import de.melanx.utilitix.content.redstone.WeakRedstoneTorchBlock;
 import de.melanx.utilitix.item.MobYoinkerItem;
 import de.melanx.utilitix.registration.ModBlocks;
@@ -46,6 +47,12 @@ public class ItemModelProvider extends ItemModelProviderBase {
                     }
                 }
             }
+            case QuiverItem quiverItem -> this.withExistingParent(id.getPath(), GENERATED)
+                    .texture("layer0", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "item/" + id.getPath())).override()
+                    .predicate(UtilitiX.getInstance().resource("filled"), 1)
+                    .model(this.withExistingParent(id.getPath() + "_filled", GENERATED)
+                            .texture("layer0", "item/" + id.getPath())
+                            .texture("layer1", "item/" + id.getPath() + "_tip")).end();
             case null, default -> super.defaultItem(id, item);
         }
     }

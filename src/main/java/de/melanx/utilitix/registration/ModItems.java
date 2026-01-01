@@ -10,15 +10,16 @@ import de.melanx.utilitix.content.bell.MobBellItem;
 import de.melanx.utilitix.content.brewery.FailedPotionItem;
 import de.melanx.utilitix.content.gildingarmor.GildingCrystalItem;
 import de.melanx.utilitix.content.glue.GlueBallItem;
+import de.melanx.utilitix.content.quiver.QuiverItem;
 import de.melanx.utilitix.content.redstone.wireless.LinkedCrystalItem;
 import de.melanx.utilitix.content.shulkerboat.ShulkerBoatItem;
 import de.melanx.utilitix.content.track.MinecartTinkererItem;
 import de.melanx.utilitix.item.MobYoinkerItem;
-import de.melanx.utilitix.item.Quiver;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ShearsItem;
+import net.minecraft.world.item.component.ItemContainerContents;
 import org.moddingx.libx.annotation.registration.RegisterClass;
 
 @RegisterClass(registry = "ITEM")
@@ -28,7 +29,7 @@ public class ModItems {
     public static final Item tinyCharcoal = new TinyCoalItem(UtilitiX.getInstance(), new Item.Properties(), 200);
     public static final Item handBell = new HandBellItem(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
     public static final Item mobBell = new MobBellItem(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
-    public static final Item quiver = new Quiver(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
+    public static final Item quiver = new QuiverItem(UtilitiX.getInstance(), new Item.Properties().stacksTo(1).component(DataComponents.CONTAINER, ItemContainerContents.EMPTY));
     public static final Item failedPotion = new FailedPotionItem(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
     public static final Item armedStand = new ArmedStandItem(new Item.Properties().stacksTo(16));
     public static final Item glueBall = new GlueBallItem(UtilitiX.getInstance(), new Item.Properties());

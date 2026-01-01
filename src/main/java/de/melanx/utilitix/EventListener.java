@@ -65,41 +65,6 @@ public class EventListener {
         }
     }
 
-    // TODO wait for https://github.com/MinecraftForge/MinecraftForge/pull/8322
-//    @SubscribeEvent
-//    public void onBowFindAmmo(PlayerFindProjectileEvent event) {
-//        if (event.getFoundAmmo().isEmpty()) {
-//            PlayerEntity player = event.getPlayer();
-//            Stream.concat(Stream.of(player.getHeldItemOffhand()), player.inventory.mainInventory.stream())
-//                    .filter(stack -> stack.getItem() == ModItems.quiver)
-//                    .filter(stack -> !Quiver.isEmpty(stack))
-//                    .findFirst()
-//                    .ifPresent(stack -> {
-//                        IItemHandlerModifiable inventory = Quiver.getInventory(stack);
-//                        assert inventory != null;
-//                        int enchantmentLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, stack);
-//                        if (enchantmentLevel >= 1) {
-//                            for (int i = 0; i < inventory.getSlots(); i++) {
-//                                ItemStack arrow = inventory.getStackInSlot(i);
-//                                if (!arrow.isEmpty()) {
-//                                    event.setAmmo(arrow.copy());
-//                                    return;
-//                                }
-//                            }
-//                        } else {
-//                            for (int i = 0; i < inventory.getSlots(); i++) {
-//                                ItemStack arrow = inventory.getStackInSlot(i);
-//                                if (!arrow.isEmpty()) {
-//                                    arrow = player.isCreative() ? arrow.copy() : arrow;
-//                                    event.setAmmo(arrow);
-//                                    return;
-//                                }
-//                            }
-//                        }
-//                    });
-//        }
-//    }
-
     @SubscribeEvent
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlocks.advancedBrewery.getBlockEntityType(), AdvancedBreweryBlockEntity::getCapability);

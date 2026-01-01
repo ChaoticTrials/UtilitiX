@@ -10,6 +10,8 @@ import de.melanx.utilitix.content.crudefurnace.CrudeFurnaceScreen;
 import de.melanx.utilitix.content.experiencecrystal.ExperienceCrystalMenu;
 import de.melanx.utilitix.content.experiencecrystal.ExperienceCrystalScreen;
 import de.melanx.utilitix.content.gildingarmor.GildingArmorRecipe;
+import de.melanx.utilitix.content.quiver.QuiverMenu;
+import de.melanx.utilitix.content.quiver.QuiverScreen;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartMenu;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartScreen;
 import de.melanx.utilitix.content.track.tinkerer.MinecartTinkererMenu;
@@ -72,6 +74,7 @@ public class ClientEventListener {
         event.register(CrudeFurnaceMenu.TYPE, CrudeFurnaceScreen::new);
         event.register(ExperienceCrystalMenu.TYPE, ExperienceCrystalScreen::new);
         event.register(MinecartTinkererMenu.TYPE, MinecartTinkererScreen::new);
+        event.register(QuiverMenu.TYPE, QuiverScreen::new);
     }
 
     @SubscribeEvent
@@ -106,6 +109,8 @@ public class ClientEventListener {
                 ));
             }
         }, ModItems.handBell, ModItems.mobBell);
+
+        ItemProperties.register(ModItems.quiver, UtilitiX.getInstance().resource("filled"), (stack, level, entity, seed) -> stack.getOrDefault(ModDataComponentTypes.filled, false) ? 1.0F : 0.0F);
     }
 
     @SubscribeEvent

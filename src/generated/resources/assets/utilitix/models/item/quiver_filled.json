@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "utilitix:item/quiver",
+    "layer1": "utilitix:item/quiver_tip"
+  }
+}
