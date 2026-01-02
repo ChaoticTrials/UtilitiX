@@ -94,7 +94,7 @@
   "description.utilitix.failed_potion": "失败的药水有时是在高级酿造台中合并药水时的结果。复杂的合并会增加失败药水的几率。饮酒后，您会受到一些负面效果。",
   "description.utilitix.armed_stand": "有手臂的盔甲架。您可以通过用燧石右键单击它来循环切换不同的姿势。",
   "description.utilitix.glue_ball": "胶球可以附着在固体方块的侧面。当活塞移动时，这些方块会变得粘稠并拉动相邻的方块。",
-  "description.utilitix.linked_crystal": "您可以通过右键单击最多 8 个红石水晶将它们链接在一起。然后你可以将它们放入链接的中继器中以获得无线红石。这也适用于跨维度。右键单击已绑定的晶体将显示当前信号强度。",
+  "description.utilitix.linked_crystal": "您可以通过右键单击最多 16 个红石水晶将它们链接在一起。然后你可以将它们放入链接的中继器中以获得无线红石。这也适用于跨维度。右键单击已绑定的晶体将显示当前信号强度。",
   "description.utilitix.linked_repeater": "联动中继器就像延迟一刻的中继器。然而，他们可以采用链接的红石晶体来实现无线红石。",
   "description.utilitix.minecart_tinkerer": "矿车修补器可用于向矿车和某些类型的轨道添加标签。标签只是识别矿车的一个项目。左键单击矿车以设置标签。要将标签添加到支持标签的轨道上，请使用矿车修补器右键单击该轨道。这种轨道的一个例子是过滤轨道。其他一些轨道（例如控制器轨道）也有其他可以切换的选项。为此，只需右键单击轨道而不是按住 Shift 右键单击。",
   "description.utilitix.highspeed_rail": "工作原理类似于动力轨道，但速度更快。然而他们不能建造斜坡。",

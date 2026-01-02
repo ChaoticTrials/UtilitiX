@@ -29,7 +29,7 @@ public class ModItems {
     public static final Item failedPotion = new FailedPotionItem(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
     public static final Item armedStand = new ArmedStandItem(new Item.Properties().stacksTo(16));
     public static final Item glueBall = new GlueBallItem(UtilitiX.getInstance(), new Item.Properties());
-    public static final Item linkedCrystal = new LinkedCrystalItem(UtilitiX.getInstance(), new Item.Properties().stacksTo(8));
+    public static final Item linkedCrystal = new LinkedCrystalItem(UtilitiX.getInstance(), new Item.Properties().stacksTo(16));
     public static final Item gildingCrystal = new GildingCrystalItem(UtilitiX.getInstance(), new Item.Properties().stacksTo(16));
     public static final Item minecartTinkerer = new MinecartTinkererItem(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
     public static final Item diamondShears = new DiamondShearsItem(new Item.Properties().stacksTo(1).durability(1486).component(DataComponents.TOOL, ShearsItem.createToolProperties()));
