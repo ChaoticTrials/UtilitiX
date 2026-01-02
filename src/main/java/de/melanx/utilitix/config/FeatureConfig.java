@@ -80,6 +80,9 @@ public class FeatureConfig {
         @Group("All the changes that change in world vanilla behavior")
         public static class InWorldChanges {
 
+            @Config("When a block from #minecraft:saplings or #minecraft:crops despawns, it tries to plant it instead")
+            public static boolean autoReplant = true;
+
             @Config("Items in world which have mending collect xp orbs to get repaired")
             public static boolean betterMending = true;
 
@@ -88,6 +91,12 @@ public class FeatureConfig {
 
             @Config("Both doors open at the same time if connected")
             public static boolean doubleDoor = true;
+
+            @Config({
+                    FeatureConfig.MAIN_MESSAGE,
+                    "- Creeper explosion reduction based on its health"
+            })
+            public static boolean dynamicCreeperExplosions = true;
 
             @Config({
                     FeatureConfig.MAIN_MESSAGE,
@@ -100,15 +109,6 @@ public class FeatureConfig {
                     "- Glue Ball"
             })
             public static boolean glue = true;
-
-            @Config({
-                    FeatureConfig.MAIN_MESSAGE,
-                    "- Creeper explosion reduction based on its health"
-            })
-            public static boolean healthBasedExplosionDamageByCreeper = true;
-
-            @Config("When a block from #minecraft:saplings or #minecraft:crops despawns, it tries to plant it instead")
-            public static boolean plantsOnDespawn = true;
 
             @Config({
                     FeatureConfig.MAIN_MESSAGE,

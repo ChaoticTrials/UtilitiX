@@ -13,7 +13,7 @@ public class ModifiedCreeperDamageHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onExplosionStart(ExplosionEvent.Start event) {
-        if (event.isCanceled() || !FeatureConfig.Misc.InWorldChanges.healthBasedExplosionDamageByCreeper) {
+        if (event.isCanceled() || !FeatureConfig.Misc.InWorldChanges.dynamicCreeperExplosions) {
             return;
         }
 

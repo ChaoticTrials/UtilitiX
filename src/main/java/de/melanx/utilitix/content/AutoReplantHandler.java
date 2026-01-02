@@ -19,7 +19,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.item.ItemExpireEvent;
 
 @EventBusSubscriber
-public class PlantOnDespawnHandler {
+public class AutoReplantHandler {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onItemDespawn(ItemExpireEvent event) {
@@ -32,7 +32,7 @@ public class PlantOnDespawnHandler {
         BlockPos pos = entity.blockPosition();
         ItemStack stack = entity.getItem();
         if (stack.getItem() instanceof BlockItem item && (item.getBlock().defaultBlockState().is(BlockTags.CROPS) || item.getBlock().defaultBlockState().is(BlockTags.SAPLINGS))) {
-            if (!FeatureConfig.Misc.InWorldChanges.plantsOnDespawn || !CommonConfig.plantsOnDespawn.test(BuiltInRegistries.ITEM.getKey(item))) {
+            if (!FeatureConfig.Misc.InWorldChanges.autoReplant || !CommonConfig.plantsOnDespawn.test(BuiltInRegistries.ITEM.getKey(item))) {
                 return;
             }
 
