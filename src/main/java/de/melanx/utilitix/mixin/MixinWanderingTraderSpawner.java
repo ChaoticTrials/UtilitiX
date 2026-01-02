@@ -1,5 +1,6 @@
 package de.melanx.utilitix.mixin;
 
+import de.melanx.utilitix.config.FeatureConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -47,6 +48,10 @@ public abstract class MixinWanderingTraderSpawner {
             cancellable = true
     )
     private void utilitix$spawn(ServerLevel level, CallbackInfoReturnable<Boolean> cir) {
+        if (!FeatureConfig.Misc.InWorldChanges.wanderingTrader) {
+            return;
+        }
+
         List<ServerPlayer> players = level.getPlayers(player -> true);
         boolean returnValue = false;
         for (ServerPlayer player : players) {
