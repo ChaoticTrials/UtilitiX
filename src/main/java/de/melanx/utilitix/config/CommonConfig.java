@@ -3,6 +3,7 @@ package de.melanx.utilitix.config;
 import com.google.common.collect.ImmutableList;
 import de.melanx.utilitix.util.ArmorStandRotation;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import org.moddingx.libx.annotation.config.RegisterConfig;
 import org.moddingx.libx.config.Config;
 import org.moddingx.libx.config.Group;
@@ -43,6 +44,10 @@ public class CommonConfig {
             "This way, the wandering trader remains in the world longer."})
     @IntRange(min = 0)
     public static int wanderingTraderExtraTime = 400;
+
+    @Config("The block limit for moving adjacent blocks. Default is the same as vanilla Slime Blocks.")
+    @IntRange(max = 256)
+    public static int glueBlockLimit = PistonStructureResolver.MAX_PUSH_DEPTH;
 
     @Group("Config options for experience crystal")
     public static class ExperienceCrystal {

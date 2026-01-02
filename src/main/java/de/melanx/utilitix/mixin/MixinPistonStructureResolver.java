@@ -1,5 +1,6 @@
 package de.melanx.utilitix.mixin;
 
+import de.melanx.utilitix.config.CommonConfig;
 import de.melanx.utilitix.content.glue.StickyChunk;
 import de.melanx.utilitix.registration.ModAttachmentTypes;
 import de.melanx.utilitix.util.MixinUtil;
@@ -10,14 +11,22 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.List;
 
 @Mixin(PistonStructureResolver.class)
 public class MixinPistonStructureResolver {
+
+    @Unique private boolean utilitix$hasGlueInThisMove = false;
+    @Shadow @Final public Level level;
+    @Shadow @Final private List<BlockPos> toDestroy;
+    @Shadow @Final private List<BlockPos> toPush;
 
     @Redirect(
             method = "resolve",
@@ -43,12 +52,21 @@ public class MixinPistonStructureResolver {
         return Blocks.SLIME_BLOCK.defaultBlockState();
     }
 
+    @ModifyConstant(
+            method = "addBlockLine",
+            constant = @Constant(intValue = 12),
+            require = 3
+    )
+    private int increaseBlockLimit(int original, BlockPos originPos) {
+        return this.utilitix$shouldIncreaseLimit(originPos) ? CommonConfig.glueBlockLimit : original;
+    }
+
     @Inject(
             method = "addBranchingBlocks",
             at = @At("HEAD"),
             cancellable = true
     )
-    private void addBranchingBlocks(BlockPos fromPos, CallbackInfoReturnable<Boolean> cir) {
+    private void utilitix$addBranchingBlocks(BlockPos fromPos, CallbackInfoReturnable<Boolean> cir) {
         // We call this in any case. If it's a regular sticky block, do vanilla logic
         // if not, add direction-specific branching
         PistonStructureResolver pistonStructureResolver = (PistonStructureResolver) (Object) this;
@@ -78,5 +96,48 @@ public class MixinPistonStructureResolver {
 
             cir.setReturnValue(true);
         }
+    }
+
+    @Unique
+    private boolean utilitix$shouldIncreaseLimit(BlockPos originPos) {
+        if (this.utilitix$hasGlueInThisMove) {
+            return true;
+        }
+
+        if (utilitix$hasAnyGlue(originPos)) {
+            this.utilitix$hasGlueInThisMove = true;
+            return true;
+        }
+
+        for (BlockPos pos : this.toPush) {
+            if (utilitix$hasAnyGlue(pos)) {
+                this.utilitix$hasGlueInThisMove = true;
+                return true;
+            }
+        }
+
+        for (BlockPos pos : this.toDestroy) {
+            if (utilitix$hasAnyGlue(pos)) {
+                this.utilitix$hasGlueInThisMove = true;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Unique
+    private boolean utilitix$hasAnyGlue(BlockPos pos) {
+        LevelChunk chunk = this.level.getChunkAt(pos);
+        StickyChunk glue = chunk.getExistingDataOrNull(ModAttachmentTypes.stickyChunk);
+        if (glue == null) {
+            return false;
+        }
+
+        int lx = pos.getX() & 0xF;
+        int lz = pos.getZ() & 0xF;
+        int y = pos.getY();
+
+        return glue.getAny(lx, y, lz);
     }
 }

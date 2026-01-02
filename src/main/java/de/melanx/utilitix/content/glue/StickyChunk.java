@@ -33,6 +33,22 @@ public class StickyChunk implements INBTSerializable<CompoundTag> {
         return section != null && section.get(x, y & 0xF, z, dir);
     }
 
+    public boolean getAny(int x, int y, int z) {
+        StickySection section = this.getSection(y);
+
+        if (section == null) {
+            return false;
+        }
+
+        for (Direction direction : Direction.values()) {
+            if (section.get(x, y & 0xF, z, direction)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void set(int x, int y, int z, Direction dir, boolean sticky) {
         StickySection section = this.getOrCreateSection(y);
         section.set(x, y & 0xF, z, dir, sticky);
