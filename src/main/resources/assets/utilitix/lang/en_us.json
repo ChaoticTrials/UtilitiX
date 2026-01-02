@@ -115,6 +115,7 @@
 
   "message.utilitix.mob_yoinker": "You need %s more xp %s to yoink this mob.",
   "message.utilitix.map_save_command": "Something went wrong saving the map. More information in the log.",
+  "message.utilitix.map_save_command.no_map_found": "You have no valid map in your hands",
 
   "jei.utilitix.gilding": "Gilding",
   "jei.utilitix.cruding": "Cruding",

@@ -47,16 +47,19 @@ public class MapsCommand {
 
         ItemStack stack = player.getMainHandItem();
         if (!(stack.getItem() instanceof MapItem)) {
+            source.sendFailure(Component.translatable("message.utilitix.map_save_command.no_map_found"));
             return 0;
         }
 
         MapId mapId = stack.get(DataComponents.MAP_ID);
         if (mapId == null) {
+            source.sendFailure(Component.translatable("message.utilitix.map_save_command.no_map_found"));
             return 0;
         }
 
         MapItemSavedData data = MapItem.getSavedData(stack, player.level());
         if (data == null) {
+            source.sendFailure(Component.translatable("message.utilitix.map_save_command.no_map_found"));
             return 0;
         }
 
@@ -81,10 +84,10 @@ public class MapsCommand {
         Path path = MAPS_PATH.resolve("map_" + mapId.id() + ".png");
         try {
             img.writeToFile(path);
-            player.sendSystemMessage(Component.translatable("utilitix.map_saved", path.toString()));
+            source.sendSuccess(() -> Component.translatable("utilitix.map_saved", path.toString()), false);
             return 1;
         } catch (IOException e) {
-            player.sendSystemMessage(Component.translatable("message.utilitix.map_save_command"));
+            source.sendFailure(Component.translatable("message.utilitix.map_save_command"));
             UtilitiX.getInstance().logger.warn("Files to save file: {}", path, e);
             return 0;
         }
