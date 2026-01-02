@@ -1,10 +1,7 @@
 package de.melanx.utilitix.registration;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.content.AncientCompassItem;
-import de.melanx.utilitix.content.ArmedStandItem;
-import de.melanx.utilitix.content.DiamondShearsItem;
-import de.melanx.utilitix.content.TinyCoalItem;
+import de.melanx.utilitix.content.*;
 import de.melanx.utilitix.content.bell.HandBellItem;
 import de.melanx.utilitix.content.bell.MobBellItem;
 import de.melanx.utilitix.content.brewery.FailedPotionItem;
@@ -14,7 +11,6 @@ import de.melanx.utilitix.content.quiver.QuiverItem;
 import de.melanx.utilitix.content.redstone.wireless.LinkedCrystalItem;
 import de.melanx.utilitix.content.shulkerboat.ShulkerBoatItem;
 import de.melanx.utilitix.content.track.MinecartTinkererItem;
-import de.melanx.utilitix.item.MobYoinkerItem;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.Item;

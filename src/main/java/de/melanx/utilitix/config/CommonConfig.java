@@ -1,6 +1,7 @@
 package de.melanx.utilitix.config;
 
 import com.google.common.collect.ImmutableList;
+import de.melanx.utilitix.content.MobYoinkerItem;
 import de.melanx.utilitix.util.ArmorStandRotation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
@@ -34,9 +35,6 @@ public class CommonConfig {
             ArmorStandRotation.create(0.0f, 0.0f, -25.0f, 0.0f, 0.0f, 0.0f, -160.0f, -60.0f, 40.0f, -160.0f, -60.0f, 40.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f)
     );
 
-    @Config("Entity denylist for mob yoinker")
-    public static ResourceList mobYoinkerEntities = ResourceList.DENY_LIST;
-
     @Config("List of items which are allowed to be planted when despawn on correct soil")
     public static ResourceList plantsOnDespawn = ResourceList.DENY_LIST;
 
@@ -48,6 +46,16 @@ public class CommonConfig {
     @Config("The block limit for moving adjacent blocks. Default is the same as vanilla Slime Blocks.")
     @IntRange(max = 256)
     public static int glueBlockLimit = PistonStructureResolver.MAX_PUSH_DEPTH;
+
+    @Group
+    public static class MobYoinker {
+
+        @Config
+        public static MobYoinkerItem.ExperienceMode experienceMode = MobYoinkerItem.ExperienceMode.POINTS;
+
+        @Config("Entity denylist for mob yoinker")
+        public static ResourceList mobYoinkerEntities = ResourceList.DENY_LIST;
+    }
 
     @Group("Config options for experience crystal")
     public static class ExperienceCrystal {

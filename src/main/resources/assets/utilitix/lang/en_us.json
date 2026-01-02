@@ -113,7 +113,7 @@
   "description.utilitix.crude_furnace": "This Furnace smelts everything a normal furnace can smelt if the Smoker and Blast Furnace §lcannot§r smelt this item. It is twice as fast as the normal Furnace recipe but only provides the half experience.",
   "description.utilitix.mob_yoinker": "The §lMob Yoinker$r uses your XP to catch mobs into the Cage. It requires as much XP points as the mob has health points.",
 
-  "message.utilitix.mob_yoinker": "You need %s more xp to yoink this mob.",
+  "message.utilitix.mob_yoinker": "You need %s more xp %s to yoink this mob.",
   "message.utilitix.map_save_command": "Something went wrong saving the map. More information in the log.",
 
   "jei.utilitix.gilding": "Gilding",

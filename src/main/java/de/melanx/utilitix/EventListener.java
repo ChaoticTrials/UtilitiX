@@ -1,6 +1,7 @@
 package de.melanx.utilitix;
 
 import de.melanx.utilitix.config.CommonConfig;
+import de.melanx.utilitix.content.MobYoinkerItem;
 import de.melanx.utilitix.content.brewery.AdvancedBreweryBlockEntity;
 import de.melanx.utilitix.content.crudefurnace.CrudeFurnaceBlockEntity;
 import de.melanx.utilitix.content.experiencecrystal.ExperienceCrystalBlockEntity;
@@ -46,17 +47,25 @@ public class EventListener {
 
         if (stack.getItem() == ModItems.mobYoinker) {
             if (!player.isCreative()) {
-                int xp = XPUtils.getExpPoints(player.experienceLevel, player.experienceProgress);
+                int xp = player.experienceLevel;
+                if (CommonConfig.MobYoinker.experienceMode == MobYoinkerItem.ExperienceMode.POINTS) {
+                    xp = XPUtils.getExpPoints(player.experienceLevel, player.experienceProgress);
+                }
+
                 int health = (int) target.getHealth();
                 int diff = xp - health;
                 if (diff < 0) {
-                    player.displayClientMessage(Component.translatable("message.utilitix.mob_yoinker", -diff), true);
+                    player.displayClientMessage(Component.translatable("message.utilitix.mob_yoinker", -diff, CommonConfig.MobYoinker.experienceMode == MobYoinkerItem.ExperienceMode.LEVEL ? Component.translatable("levels") : Component.translatable("points")), true);
                     return;
                 }
             }
 
-            if (MobUtil.storeEntityData(player, hand, target, CommonConfig.mobYoinkerEntities, false)) {
-                player.giveExperiencePoints((int) -target.getHealth());
+            if (MobUtil.storeEntityData(player, hand, target, CommonConfig.MobYoinker.mobYoinkerEntities, false)) {
+                if (CommonConfig.MobYoinker.experienceMode == MobYoinkerItem.ExperienceMode.LEVEL) {
+                    player.giveExperienceLevels((int) -target.getHealth());
+                } else {
+                    player.giveExperiencePoints((int) -target.getHealth());
+                }
                 target.remove(Entity.RemovalReason.DISCARDED);
 
                 event.setCancellationResult(InteractionResult.SUCCESS);

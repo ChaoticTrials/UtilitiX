@@ -1,4 +1,4 @@
-package de.melanx.utilitix.item;
+package de.melanx.utilitix.content;
 
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.config.FeatureConfig;
@@ -88,5 +88,10 @@ public class MobYoinkerItem extends ItemBase {
 
     private static void reset(ItemStack stack) {
         stack.remove(ModDataComponentTypes.mobData);
+    }
+
+    public enum ExperienceMode {
+        LEVEL,
+        POINTS
     }
 }

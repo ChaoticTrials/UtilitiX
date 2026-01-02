@@ -2,10 +2,10 @@ package de.melanx.utilitix.data;
 
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.content.AncientCompassItem;
+import de.melanx.utilitix.content.MobYoinkerItem;
 import de.melanx.utilitix.content.bell.BellBase;
 import de.melanx.utilitix.content.quiver.QuiverItem;
 import de.melanx.utilitix.content.redstone.WeakRedstoneTorchBlock;
-import de.melanx.utilitix.item.MobYoinkerItem;
 import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModItems;
 import net.minecraft.resources.ResourceLocation;
