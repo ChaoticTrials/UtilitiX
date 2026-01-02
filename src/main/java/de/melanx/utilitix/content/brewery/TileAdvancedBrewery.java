@@ -66,7 +66,7 @@ public class TileAdvancedBrewery extends BlockEntityBase implements TickingBlock
         this.vanilla = new VanillaWrapper(this.inventory, this::setChanged);
         this.inventoryTop = ItemCapabilities.create(this::getInventory, slot -> false, (slot, stack) -> slot == 0 || slot == 3).cast();
         this.inventorySide = ItemCapabilities.create(this::getInventory, slot -> false, (slot, stack) -> slot == 1 || slot == 2 || slot == 4).cast();
-        this.inventoryBottom = ItemCapabilities.create(this::getInventory, slot -> slot == 0 || slot == 1 || slot == 2, (slot, stack) -> false).cast();
+        this.inventoryBottom = ItemCapabilities.create(this::getInventory, slot -> slot == 1 || slot == 2 || slot == 3, (slot, stack) -> false).cast();
     }
 
     @Override
