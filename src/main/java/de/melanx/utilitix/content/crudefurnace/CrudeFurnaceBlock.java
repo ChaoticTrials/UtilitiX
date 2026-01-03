@@ -30,11 +30,6 @@ public class CrudeFurnaceBlock extends MenuBlockBE<CrudeFurnaceBlockEntity, Crud
     }
 
     @Override
-    protected boolean shouldDropInventory(Level level, BlockPos pos, BlockState state) {
-        return false;
-    }
-
-    @Override
     public boolean hasAnalogOutputSignal(@Nonnull BlockState state) {
         return true;
     }

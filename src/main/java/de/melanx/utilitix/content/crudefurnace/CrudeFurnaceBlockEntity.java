@@ -55,10 +55,12 @@ public class CrudeFurnaceBlockEntity extends BlockEntityBase implements TickingB
                 .validator(stack -> stack.getBurnTime(RecipeType.SMELTING) > 0, FUEL_SLOT)
                 .validator(stack -> this.level != null && CrudeFurnaceRecipeHelper.getResult(this.level, stack) != null, INPUT_SLOT)
                 .output(OUTPUT_SLOT)
-                .contentsChanged(() -> {
+                .contentsChanged(slot -> {
                     this.setChanged();
                     this.setDispatchable();
-                    this.update = true;
+                    if (slot == INPUT_SLOT) {
+                        this.update = true;
+                    }
                 })
                 .build();
 
@@ -78,13 +80,18 @@ public class CrudeFurnaceBlockEntity extends BlockEntityBase implements TickingB
 
             if (this.recipe != null) {
                 ItemStack result = this.recipe.getOutput();
+                boolean recipeOutputMatchesOutputSlot = this.inventory.getUnrestricted().insertItem(OUTPUT_SLOT, result, true).isEmpty();
 
                 if (this.fuelTime > 0) {
-                    this.burnTime++;
+                    if (recipeOutputMatchesOutputSlot) {
+                        this.burnTime++;
+                    } else {
+                        this.burnTime = 0;
+                    }
                     this.setDispatchable();
                 }
 
-                if (!result.isEmpty() && this.burnTime >= this.recipe.getBurnTime() && this.inventory.getUnrestricted().insertItem(OUTPUT_SLOT, result, true).isEmpty()) {
+                if (!result.isEmpty() && this.burnTime >= this.recipe.getBurnTime() && recipeOutputMatchesOutputSlot) {
                     this.burnTime = 0;
                     this.inventory.getUnrestricted().extractItem(INPUT_SLOT, 1, false);
                     this.inventory.getUnrestricted().insertItem(OUTPUT_SLOT, result.copy(), false);
@@ -99,7 +106,7 @@ public class CrudeFurnaceBlockEntity extends BlockEntityBase implements TickingB
                 this.setDispatchable();
             }
 
-            if (this.recipe != null && this.fuelTime <= 0) {
+            if (this.recipe != null && this.fuelTime <= 0 && this.inventory.getUnrestricted().insertItem(OUTPUT_SLOT, recipe.getOutput().copy(), true).isEmpty()) {
                 this.fuelTime = this.inventory.getStackInSlot(FUEL_SLOT).getBurnTime(RecipeType.SMELTING) / 2;
                 this.maxFuelTime = this.fuelTime;
                 this.inventory.getUnrestricted().extractItem(FUEL_SLOT, 1, false);
