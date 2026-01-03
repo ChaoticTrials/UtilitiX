@@ -1,14 +1,14 @@
 package de.melanx.utilitix.compat.jade;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.content.brewery.BlockAdvancedBrewery;
-import de.melanx.utilitix.content.brewery.TileAdvancedBrewery;
-import de.melanx.utilitix.content.crudefurnace.BlockCrudeFurnace;
-import de.melanx.utilitix.content.crudefurnace.TileCrudeFurnace;
-import de.melanx.utilitix.content.experiencecrystal.BlockExperienceCrystal;
-import de.melanx.utilitix.content.experiencecrystal.TileExperienceCrystal;
-import de.melanx.utilitix.content.wireless.BlockLinkedRepeater;
-import de.melanx.utilitix.content.wireless.TileLinkedRepeater;
+import de.melanx.utilitix.content.brewery.AdvancedBreweryBlock;
+import de.melanx.utilitix.content.brewery.AdvancedBreweryBlockEntity;
+import de.melanx.utilitix.content.crudefurnace.CrudeFurnaceBlock;
+import de.melanx.utilitix.content.crudefurnace.CrudeFurnaceBlockEntity;
+import de.melanx.utilitix.content.experiencecrystal.ExperienceCrystalBlock;
+import de.melanx.utilitix.content.experiencecrystal.ExperienceCrystalBlockEntity;
+import de.melanx.utilitix.content.redstone.wireless.LinkedRepeaterBlock;
+import de.melanx.utilitix.content.redstone.wireless.LinkedRepeaterBlockEntity;
 import de.melanx.utilitix.registration.ModEntities;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -28,18 +28,18 @@ public class UtilJade implements IWailaPlugin {
 
     @Override
     public void register(IWailaCommonRegistration registration) {
-        registration.registerBlockDataProvider(AdvancedBreweryProvider.INSTANCE, TileAdvancedBrewery.class);
-        registration.registerBlockDataProvider(CrudeFurnaceProvider.INSTANCE, TileCrudeFurnace.class);
-        registration.registerBlockDataProvider(ExperienceCrystalProvider.INSTANCE, TileExperienceCrystal.class);
-        registration.registerBlockDataProvider(LinkedRepeaterProvider.INSTANCE, TileLinkedRepeater.class);
+        registration.registerBlockDataProvider(AdvancedBreweryProvider.INSTANCE, AdvancedBreweryBlockEntity.class);
+        registration.registerBlockDataProvider(CrudeFurnaceProvider.INSTANCE, CrudeFurnaceBlockEntity.class);
+        registration.registerBlockDataProvider(ExperienceCrystalProvider.INSTANCE, ExperienceCrystalBlockEntity.class);
+        registration.registerBlockDataProvider(LinkedRepeaterProvider.INSTANCE, LinkedRepeaterBlockEntity.class);
     }
 
     @Override
     public void registerClient(IWailaClientRegistration registration) {
-        registration.registerBlockComponent(AdvancedBreweryProvider.INSTANCE, BlockAdvancedBrewery.class);
-        registration.registerBlockComponent(CrudeFurnaceProvider.INSTANCE, BlockCrudeFurnace.class);
-        registration.registerBlockComponent(ExperienceCrystalProvider.INSTANCE, BlockExperienceCrystal.class);
-        registration.registerBlockComponent(LinkedRepeaterProvider.INSTANCE, BlockLinkedRepeater.class);
+        registration.registerBlockComponent(AdvancedBreweryProvider.INSTANCE, AdvancedBreweryBlock.class);
+        registration.registerBlockComponent(CrudeFurnaceProvider.INSTANCE, CrudeFurnaceBlock.class);
+        registration.registerBlockComponent(ExperienceCrystalProvider.INSTANCE, ExperienceCrystalBlock.class);
+        registration.registerBlockComponent(LinkedRepeaterProvider.INSTANCE, LinkedRepeaterBlock.class);
         registration.registerBlockComponent(GlueProvider.INSTANCE, Block.class);
 
         registration.usePickedResult(ModEntities.shulkerBoat);

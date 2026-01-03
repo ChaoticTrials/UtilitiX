@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "L": {
+      "item": "minecraft:redstone_lamp"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "pattern": [
+    " L ",
+    "LRL",
+    " L "
+  ],
+  "result": {
+    "count": 4,
+    "id": "utilitix:dimmable_redstone_lamp"
+  }
+}

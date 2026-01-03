@@ -1,5 +1,13 @@
 {
   "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "model": "utilitix:item/quiver_filled",
+      "predicate": {
+        "utilitix:filled": 1.0
+      }
+    }
+  ],
   "textures": {
     "layer0": "utilitix:item/quiver"
   }

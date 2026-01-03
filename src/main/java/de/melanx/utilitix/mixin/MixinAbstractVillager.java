@@ -1,6 +1,7 @@
 package de.melanx.utilitix.mixin;
 
-import de.melanx.utilitix.UtilitiXConfig;
+import de.melanx.utilitix.config.CommonConfig;
+import de.melanx.utilitix.config.FeatureConfig;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.item.trading.MerchantOffer;
@@ -17,8 +18,12 @@ public class MixinAbstractVillager {
             at = @At("TAIL")
     )
     public void notifyTrade2(MerchantOffer offer, CallbackInfo ci) {
+        if (!FeatureConfig.Misc.InWorldChanges.wanderingTrader) {
+            return;
+        }
+
         if (((AbstractVillager) (Object) this) instanceof WanderingTrader trader) {
-            trader.setDespawnDelay(trader.getDespawnDelay() + UtilitiXConfig.wanderingTraderExtraTime);
+            trader.setDespawnDelay(trader.getDespawnDelay() + CommonConfig.wanderingTraderExtraTime);
         }
     }
 }

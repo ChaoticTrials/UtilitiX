@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "block": "utilitix:experience_crystal",
+              "function": "libx:copy_block_entity_data",
+              "tags": [
+                "Xp"
+              ]
+            }
+          ],
+          "name": "utilitix:experience_crystal"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "utilitix:experience_crystal"
+}

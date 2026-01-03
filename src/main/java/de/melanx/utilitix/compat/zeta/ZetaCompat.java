@@ -3,7 +3,7 @@ package de.melanx.utilitix.compat.zeta;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import org.violetmoon.zeta.config.ZetaGeneralConfig;
+import org.violetmoon.zeta.piston.ZetaPistonStructureResolver;
 
 public class ZetaCompat {
 
@@ -12,7 +12,7 @@ public class ZetaCompat {
     public static Component warningForGlue() {
         Component component = null;
 
-        if (ZetaGeneralConfig.usePistonLogicRepl) {
+        if (ZetaPistonStructureResolver.GlobalSettings.isEnabled()) {
             component = WARNING;
         }
 

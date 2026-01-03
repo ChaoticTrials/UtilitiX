@@ -21,6 +21,7 @@ public abstract class MixinPiglinAi {
         for (ItemStack stack : player.getArmorSlots()) {
             if (GildingArmorRecipe.isGilded(stack)) {
                 cir.setReturnValue(true);
+                return;
             }
         }
     }

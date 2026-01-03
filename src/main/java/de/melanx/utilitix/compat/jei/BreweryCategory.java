@@ -21,7 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 
 import javax.annotation.Nonnull;
@@ -37,7 +37,7 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
     private final IDrawableStatic blazeHeat;
 
     public BreweryCategory(IGuiHelper guiHelper) {
-        ResourceLocation location = new ResourceLocation(UtilitiX.getInstance().modid, "textures/container/advanced_brewery.png");
+        ResourceLocation location = ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "textures/container/advanced_brewery.png");
         this.background = guiHelper.drawableBuilder(location, 55, 15, 64, 60).addPadding(1, 0, 0, 50).build();
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.advancedBrewery));
         this.localizedName = Component.translatable("screen.utilitix.advanced_brewery");
@@ -51,7 +51,7 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
     @Nonnull
     @Override
     public RecipeType<BreweryRecipe> getRecipeType() {
-        return RecipeTypes.BREWING;
+        return UtiliJei.BREWING_RECIPE;
     }
 
     @Nonnull
@@ -60,10 +60,14 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
         return this.localizedName;
     }
 
-    @Nonnull
     @Override
-    public IDrawable getBackground() {
-        return this.background;
+    public int getWidth() {
+        return 114;
+    }
+
+    @Override
+    public int getHeight() {
+        return 61;
     }
 
     @Nonnull
@@ -74,14 +78,13 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
 
     @Override
     public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull BreweryRecipe recipe, @Nonnull IFocusGroup focuses) {
-        ItemStack stack = new ItemStack(Items.POTION);
-        PotionUtils.setPotion(stack, Potions.AWKWARD);
+        ItemStack stack = PotionContents.createItemStack(Items.POTION, Potions.AWKWARD);
 
         builder.addSlot(RecipeIngredientRole.OUTPUT, 24, 44)
                 .addItemStack(stack);
 
         builder.addSlot(RecipeIngredientRole.INPUT, 24, 3)
-                .addIngredients(recipe.getIngredients().get(0));
+                .addIngredients(recipe.getIngredients().getFirst());
         builder.addSlot(RecipeIngredientRole.OUTPUT, 81, 3)
                 .addItemStack(RecipeUtil.getResultItem(recipe))
                 .setBackground(this.slot, -1, -1);
@@ -89,6 +92,7 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
 
     @Override
     public void draw(@Nonnull BreweryRecipe recipe, @Nonnull IRecipeSlotsView slotsView, @Nonnull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+        this.background.draw(guiGraphics, 0, 0);
         this.blazeHeat.draw(guiGraphics, 5, 30);
         this.bubbles.draw(guiGraphics, 8, 0);
         this.arrow.draw(guiGraphics, 42, 2);

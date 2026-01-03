@@ -1,10 +1,12 @@
 package de.melanx.utilitix.compat.jade;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.content.slime.SlimyCapability;
+import de.melanx.utilitix.content.glue.StickyChunk;
+import de.melanx.utilitix.registration.ModAttachmentTypes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.chunk.LevelChunk;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.ITooltip;
@@ -22,11 +24,11 @@ public class GlueProvider implements IBlockComponentProvider {
             return;
         }
 
-        accessor.getLevel().getChunkAt(accessor.getPosition()).getCapability(SlimyCapability.STICKY_CHUNK).ifPresent(stickyChunk -> {
-            if (stickyChunk.get(accessor.getPosition().getX(), accessor.getPosition().getY(), accessor.getPosition().getZ(), accessor.getSide())) {
-                tooltip.add(INFORMATION);
-            }
-        });
+        LevelChunk chunk = accessor.getLevel().getChunkAt(accessor.getPosition());
+        StickyChunk stickyChunk = chunk.getExistingDataOrNull(ModAttachmentTypes.stickyChunk);
+        if (stickyChunk != null && stickyChunk.get(accessor.getPosition().getX(), accessor.getPosition().getY(), accessor.getPosition().getZ(), accessor.getSide())) {
+            tooltip.add(INFORMATION);
+        }
     }
 
     @Override

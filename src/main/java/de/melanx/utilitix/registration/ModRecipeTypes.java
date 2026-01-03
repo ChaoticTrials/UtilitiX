@@ -6,7 +6,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import org.moddingx.libx.annotation.registration.Reg;
 import org.moddingx.libx.annotation.registration.RegisterClass;
 
-@RegisterClass(registry = "RECIPE_TYPES")
+@RegisterClass(registry = "RECIPE_TYPE")
 public class ModRecipeTypes {
 
     @Reg.Name("utilitix_brewery")

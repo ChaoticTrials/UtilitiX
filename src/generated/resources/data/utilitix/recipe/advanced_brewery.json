@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "minecraft:smooth_stone"
+    },
+    "g": {
+      "tag": "c:ingots/gold"
+    },
+    "i": {
+      "tag": "c:ingots/iron"
+    },
+    "s": {
+      "item": "minecraft:brewing_stand"
+    }
+  },
+  "pattern": [
+    " g ",
+    "isi",
+    "bbb"
+  ],
+  "result": {
+    "count": 1,
+    "id": "utilitix:advanced_brewery"
+  }
+}

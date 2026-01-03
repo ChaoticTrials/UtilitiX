@@ -1,0 +1,40 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "${mod.license}"
+issueTrackerURL = "${mod.issue_url}"
+
+[[mods]]
+modId = "${mod.modid}"
+version = "${mod.version}"
+displayName = "UtilitiX"
+displayURL = "${mod.source_url}"
+updateJSONURL = "https://assets.melanx.de/updates/utilitix.json"
+credits = "Thanks to noeppi_noeppi who put a lot of work in this mod, too"
+authors = "MelanX, noeppi_noeppi"
+description = """
+A lot of items, nice to have
+"""
+
+[[dependencies.${ mod.modid }]]
+modId = "neoforge"
+type = "required"
+versionRange = "[${mod.neoforge},)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.${ mod.modid }]]
+modId = "minecraft"
+type = "required"
+versionRange = "[${mod.minecraft},)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.${ mod.modid }]]
+modId = "libx"
+type = "required"
+versionRange = "[1.21.1-6.0.7,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[mixins]]
+config = "${mod.modid}.mixins.json"

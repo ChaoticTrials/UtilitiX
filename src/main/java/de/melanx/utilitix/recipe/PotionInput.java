@@ -1,15 +1,13 @@
 package de.melanx.utilitix.recipe;
 
-import com.google.common.collect.ImmutableList;
 import de.melanx.utilitix.registration.ModItemTags;
-import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import org.moddingx.libx.util.lazy.LazyValue;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.function.Predicate;
 
 public class PotionInput {
@@ -17,9 +15,9 @@ public class PotionInput {
     private final ItemStack main;
     private final ItemStack in1;
     private final ItemStack in2;
-    private final LazyValue<List<MobEffectInstance>> effectsMain;
-    private final LazyValue<List<MobEffectInstance>> effects1;
-    private final LazyValue<List<MobEffectInstance>> effects2;
+    private final LazyValue<PotionContents> effectsMain;
+    private final LazyValue<PotionContents> effects1;
+    private final LazyValue<PotionContents> effects2;
 
     public PotionInput(ItemStack main, ItemStack in1, ItemStack in2) {
         this.main = main;
@@ -43,45 +41,49 @@ public class PotionInput {
     }
 
     @Nullable
-    public List<MobEffectInstance> getEffectsMain() {
+    public PotionContents getEffectsMain() {
         return this.effectsMain.get();
     }
 
     @Nullable
-    public List<MobEffectInstance> getEffects1() {
+    public PotionContents getEffects1() {
         return this.effects1.get();
     }
 
     @Nullable
-    public List<MobEffectInstance> getEffects2() {
+    public PotionContents getEffects2() {
         return this.effects2.get();
     }
 
-    public boolean testEffectsMain(Predicate<List<MobEffectInstance>> test) {
+    public boolean testEffectsMain(Predicate<PotionContents> test) {
         return this.getEffectsMain() != null && test.test(this.getEffectsMain());
     }
 
-    public boolean testEffects1(Predicate<List<MobEffectInstance>> test) {
+    public boolean testEffects1(Predicate<PotionContents> test) {
         return this.getEffects1() != null && test.test(this.getEffects1());
     }
 
-    public boolean testEffects2(Predicate<List<MobEffectInstance>> test) {
+    public boolean testEffects2(Predicate<PotionContents> test) {
         return this.getEffects2() != null && test.test(this.getEffects2());
     }
 
     @Nullable
-    private List<MobEffectInstance> getEffects(ItemStack stack) {
+    private PotionContents getEffects(ItemStack stack) {
         if (stack.isEmpty()) {
             return null;
-        } else if (stack.is(ModItemTags.POTIONS)) {
-            List<MobEffectInstance> list = PotionUtils.getMobEffects(stack);
-            if (list.isEmpty() && PotionUtils.getPotion(stack) != Potions.AWKWARD) {
-                return null;
-            }
-            return list;
-        } else {
-            return ImmutableList.of();
         }
+
+        if (!stack.is(ModItemTags.POTIONS)) {
+            return PotionContents.EMPTY;
+        }
+
+        PotionContents potionContents = stack.get(DataComponents.POTION_CONTENTS);
+
+        if (potionContents != null && potionContents.hasEffects() && !potionContents.is(Potions.AWKWARD)) {
+            return potionContents;
+        }
+
+        return null;
     }
 
 }

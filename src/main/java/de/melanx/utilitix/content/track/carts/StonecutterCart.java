@@ -1,6 +1,6 @@
 package de.melanx.utilitix.content.track.carts;
 
-import de.melanx.utilitix.UtilitiXConfig;
+import de.melanx.utilitix.config.CommonConfig;
 import de.melanx.utilitix.content.track.carts.stonecutter.StonecutterCartMode;
 import de.melanx.utilitix.registration.ModSerializers;
 import net.minecraft.core.BlockPos;
@@ -31,7 +31,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class StonecutterCart extends Cart {
+public class StonecutterCart extends BaseCart {
 
     // This is the max progress. Progress is incremented each tick by clamp(5 - hardness, 1, 5)
     // Exception: Hardness 0 is insta break
@@ -55,10 +55,10 @@ public class StonecutterCart extends Cart {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(MODE, StonecutterCartMode.TOP);
-        this.entityData.define(IN_REVERSE, false);
+    protected void defineSynchedData(@Nonnull SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(MODE, StonecutterCartMode.TOP);
+        builder.define(IN_REVERSE, false);
     }
 
     @Override
@@ -78,8 +78,9 @@ public class StonecutterCart extends Cart {
     }
 
     @Override
-    public void onRemovedFromWorld() {
-        super.onRemovedFromWorld();
+    public void onRemovedFromLevel() {
+        super.onRemovedFromLevel();
+
         if (this.breakingBlock != null) {
             this.level().destroyBlockProgress(this.getId(), this.breakingBlock, -1);
         }
@@ -88,84 +89,96 @@ public class StonecutterCart extends Cart {
     @Override
     public void tick() {
         super.tick();
-        if (!this.level().isClientSide) {
-            BlockPos pos = new BlockPos(Mth.floor(this.getX()), Mth.floor(this.getY()), Mth.floor(this.getZ()));
-            if (!this.level().getBlockState(pos).is(BlockTags.RAILS) && this.level().getBlockState(pos.below()).is(BlockTags.RAILS)) {
-                pos = pos.below();
-            }
-            Direction minecartDir = this.getMotionDirection();
-            Direction leftDir = minecartDir.getCounterClockWise();
-            int ox = (minecartDir.getStepX() * this.getMode().offsetTrack) + (leftDir.getStepX() * this.getMode().offsetLeft);
-            int oz = (minecartDir.getStepZ() * this.getMode().offsetTrack) + (leftDir.getStepZ() * this.getMode().offsetLeft);
-            pos = pos.offset(ox, this.getMode().offsetHor, oz);
 
-            if (!pos.equals(this.breakingBlock)) {
-                if (this.breakingBlock != null) {
-                    this.level().destroyBlockProgress(this.getId(), this.breakingBlock, -1);
-                }
-                this.breakingBlock = pos;
+        if (this.level().isClientSide) {
+            return;
+        }
+
+        BlockPos pos = new BlockPos(Mth.floor(this.getX()), Mth.floor(this.getY()), Mth.floor(this.getZ()));
+        if (!this.level().getBlockState(pos).is(BlockTags.RAILS) && this.level().getBlockState(pos.below()).is(BlockTags.RAILS)) {
+            pos = pos.below();
+        }
+
+        Direction minecartDir = this.getMotionDirection();
+        Direction leftDir = minecartDir.getCounterClockWise();
+        int ox = (minecartDir.getStepX() * this.getMode().offsetTrack) + (leftDir.getStepX() * this.getMode().offsetLeft);
+        int oz = (minecartDir.getStepZ() * this.getMode().offsetTrack) + (leftDir.getStepZ() * this.getMode().offsetLeft);
+        pos = pos.offset(ox, this.getMode().offsetHor, oz);
+
+        if (!pos.equals(this.breakingBlock)) {
+            if (this.breakingBlock != null) {
+                this.level().destroyBlockProgress(this.getId(), this.breakingBlock, -1);
+            }
+
+            this.breakingBlock = pos;
+            this.breakProgress = 0;
+        }
+
+        boolean shouldResetMotion = true;
+        if (!this.breakingBlock.equals(this.lastSuccess) && this.cartHasMoved) {
+            BlockState state = this.level().getBlockState(this.breakingBlock);
+            if (state.isAir() || state.canBeReplaced() || state.is(BlockTags.RAILS)) {
                 this.breakProgress = 0;
+                this.finalTick(shouldResetMotion);
+                return;
             }
 
-            boolean shouldResetMotion = true;
-            if (!this.breakingBlock.equals(this.lastSuccess) && this.cartHasMoved) {
-                BlockState state = this.level().getBlockState(this.breakingBlock);
-                if (!state.isAir() && !state.canBeReplaced() && !state.is(BlockTags.RAILS)) {
-                    float hardness = state.getDestroySpeed(this.level(), this.breakingBlock);
-                    if (hardness >= 0 && hardness <= UtilitiXConfig.Track.stonecutterMaxHardness) {
-                        this.breakProgress += Mth.clamp(5 - hardness, 1, 5);
-                        if (this.breakProgress >= MAX_PROGRESS || hardness == 0) {
-                            List<ItemStack> drops = null;
-                            if (this.level() instanceof ServerLevel) {
-                                drops = Block.getDrops(state, (ServerLevel) this.level(), this.breakingBlock, this.level().getBlockEntity(pos));
-                            }
-                            this.level().setBlock(this.breakingBlock, Blocks.AIR.defaultBlockState(), 11);
-                            if (drops != null) {
-                                for (ItemStack drop : drops) {
-                                    ItemEntity ie = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), drop.copy());
-                                    ie.setDeltaMovement(Vec3.ZERO);
-                                    this.level().addFreshEntity(ie);
-                                }
-                            }
-                            this.level().destroyBlockProgress(this.getId(), this.breakingBlock, -1);
-                            this.lastSuccess = this.breakingBlock;
-                            this.breakingBlock = null;
-                            this.breakProgress = 0;
+            float hardness = state.getDestroySpeed(this.level(), this.breakingBlock);
+            if (hardness < 0 || hardness > CommonConfig.Track.stonecutterMaxHardness) {
+                this.breakProgress = 0;
+                this.finalTick(shouldResetMotion);
+                return;
+            }
 
-                        } else {
-                            int stage = Mth.clamp(Math.round((this.breakProgress / (float) MAX_PROGRESS) * 10), 0, 9);
-                            this.level().destroyBlockProgress(this.getId(), this.breakingBlock, stage);
-                            // capture motion if not yet done and remove current motion
-                            // important we can only capture the motion once before resetting it
-                            // as the calculations for the motion rely on the current motion which we
-                            // set to ZERO
-                            if (this.storedMotion == null) {
-                                this.storedMotion = this.getDeltaMovement();
-                            }
-                            this.setDeltaMovement(Vec3.ZERO);
-                            shouldResetMotion = false;
-                        }
-                    } else {
-                        this.breakProgress = 0;
+            this.breakProgress += (int) Mth.clamp(5 - hardness, 1, 5);
+            if (this.breakProgress >= MAX_PROGRESS || hardness == 0) {
+                List<ItemStack> drops = null;
+                if (this.level() instanceof ServerLevel) {
+                    drops = Block.getDrops(state, (ServerLevel) this.level(), this.breakingBlock, this.level().getBlockEntity(pos));
+                }
+                this.level().setBlock(this.breakingBlock, Blocks.AIR.defaultBlockState(), 11);
+                if (drops != null) {
+                    for (ItemStack drop : drops) {
+                        ItemEntity ie = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), drop.copy());
+                        ie.setDeltaMovement(Vec3.ZERO);
+                        this.level().addFreshEntity(ie);
                     }
-                } else {
-                    this.breakProgress = 0;
                 }
-            }
-
-            if (shouldResetMotion) {
-                if (this.storedMotion != null) {
-                    this.setDeltaMovement(this.storedMotion);
-                    this.storedMotion = null;
+                this.level().destroyBlockProgress(this.getId(), this.breakingBlock, -1);
+                this.lastSuccess = this.breakingBlock;
+                this.breakingBlock = null;
+                this.breakProgress = 0;
+            } else {
+                int stage = Mth.clamp(Math.round((this.breakProgress / (float) MAX_PROGRESS) * 10), 0, 9);
+                this.level().destroyBlockProgress(this.getId(), this.breakingBlock, stage);
+                // capture motion if not yet done and remove current motion
+                // important we can only capture the motion once before resetting it
+                // as the calculations for the motion rely on the current motion which we
+                // set to ZERO
+                if (this.storedMotion == null) {
+                    this.storedMotion = this.getDeltaMovement();
                 }
-            }
-
-            if (getHorizontalDistanceSqr(this.getDeltaMovement()) >= 0.1 * 0.1) {
-                this.cartHasMoved = true;
+                this.setDeltaMovement(Vec3.ZERO);
+                shouldResetMotion = false;
             }
         }
 
-        if (!this.level().isClientSide && this.flipped != this.entityData.get(IN_REVERSE)) {
+        this.finalTick(shouldResetMotion);
+    }
+
+    private void finalTick(boolean shouldResetMotion) {
+        if (shouldResetMotion) {
+            if (this.storedMotion != null) {
+                this.setDeltaMovement(this.storedMotion);
+                this.storedMotion = null;
+            }
+        }
+
+        if (BaseCart.getHorizontalDistanceSqr(this.getDeltaMovement()) >= 0.1 * 0.1) {
+            this.cartHasMoved = true;
+        }
+
+        if (this.flipped != this.entityData.get(IN_REVERSE)) {
             this.entityData.set(IN_REVERSE, this.flipped);
         }
     }
@@ -183,63 +196,77 @@ public class StonecutterCart extends Cart {
     @Override
     public InteractionResult interact(@Nonnull Player player, @Nonnull InteractionHand hand) {
         InteractionResult ret = super.interact(player, hand);
-        if (ret.consumesAction()) return ret;
+        if (ret.consumesAction()) {
+            return ret;
+        }
+
         if (!this.level().isClientSide) {
             int modeIdx = this.getMode().ordinal();
             StonecutterCartMode[] modes = StonecutterCartMode.values();
             this.setMode(modes[(modeIdx + 1) % modes.length]);
         }
+
         return InteractionResult.sidedSuccess(player.level().isClientSide);
     }
 
     @Override
-    protected void readAdditionalSaveData(@Nonnull CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        String modeName = compound.getString("Mode");
+    protected void readAdditionalSaveData(@Nonnull CompoundTag nbt) {
+        super.readAdditionalSaveData(nbt);
+
+        String modeName = nbt.getString("Mode");
         try {
             this.mode = StonecutterCartMode.valueOf(modeName);
         } catch (IllegalArgumentException | NoSuchElementException e) {
             this.mode = StonecutterCartMode.TOP;
         }
+
         if (this.mode != this.entityData.get(MODE)) {
             this.entityData.set(MODE, this.mode);
         }
-        this.breakingBlock = NbtUtils.readBlockPos(compound.getCompound("BreakPos"));
-        this.lastSuccess = NbtUtils.readBlockPos(compound.getCompound("LastSuccessfulBreak"));
-        this.breakProgress = compound.getInt("BreakProgress");
-        if (compound.contains("StoredMotion", Tag.TAG_COMPOUND)) {
-            CompoundTag motionNbt = compound.getCompound("StoredMotion");
+
+        this.breakingBlock = NbtUtils.readBlockPos(nbt, "BreakPos").orElse(null);
+        this.lastSuccess = NbtUtils.readBlockPos(nbt, "LastSuccessfulBreak").orElse(null);
+        this.breakProgress = nbt.getInt("BreakProgress");
+
+        if (nbt.contains("StoredMotion", Tag.TAG_COMPOUND)) {
+            CompoundTag motionNbt = nbt.getCompound("StoredMotion");
             this.storedMotion = new Vec3(motionNbt.getDouble("X"), motionNbt.getDouble("Y"), motionNbt.getDouble("Z"));
         } else {
             this.storedMotion = null;
         }
-        this.cartHasMoved = compound.getBoolean("CartHasMoved");
+
+        this.cartHasMoved = nbt.getBoolean("CartHasMoved");
     }
 
     @Override
-    protected void addAdditionalSaveData(@Nonnull CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putString("Mode", this.mode.name());
+    protected void addAdditionalSaveData(@Nonnull CompoundTag nbt) {
+        super.addAdditionalSaveData(nbt);
+
+        nbt.putString("Mode", this.mode.name());
+
         if (this.breakingBlock == null) {
-            compound.remove("BreakPos");
+            nbt.remove("BreakPos");
         } else {
-            compound.put("BreakPos", NbtUtils.writeBlockPos(this.breakingBlock));
+            nbt.put("BreakPos", NbtUtils.writeBlockPos(this.breakingBlock));
         }
+
         if (this.lastSuccess == null) {
-            compound.remove("LastSuccessfulBreak");
+            nbt.remove("LastSuccessfulBreak");
         } else {
-            compound.put("LastSuccessfulBreak", NbtUtils.writeBlockPos(this.lastSuccess));
+            nbt.put("LastSuccessfulBreak", NbtUtils.writeBlockPos(this.lastSuccess));
         }
-        compound.putInt("BreakProgress", this.breakProgress);
+
+        nbt.putInt("BreakProgress", this.breakProgress);
         if (this.storedMotion == null) {
-            compound.remove("StoredMotion");
+            nbt.remove("StoredMotion");
         } else {
             CompoundTag motionNBT = new CompoundTag();
             motionNBT.putDouble("X", this.storedMotion.x);
             motionNBT.putDouble("Y", this.storedMotion.y);
             motionNBT.putDouble("Z", this.storedMotion.z);
-            compound.put("StoredMotion", motionNBT);
+            nbt.put("StoredMotion", motionNBT);
         }
-        compound.putBoolean("CartHasMoved", this.cartHasMoved);
+
+        nbt.putBoolean("CartHasMoved", this.cartHasMoved);
     }
 }

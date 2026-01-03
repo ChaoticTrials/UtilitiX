@@ -1,7 +1,6 @@
 package de.melanx.utilitix.content.track.carts.stonecutter;
 
 public enum StonecutterCartMode {
-
     TOP(0, 0, 1),
     LEFT(0, 1, 0),
     RIGHT(0, -1, 0),

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "utilitix:comparator_redirector_up"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "utilitix:comparator_redirector_down"
+  }
+}

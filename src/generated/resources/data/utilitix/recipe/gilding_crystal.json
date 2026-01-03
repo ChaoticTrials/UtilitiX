@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "g": {
+      "tag": "c:ingots/gold"
+    },
+    "m": {
+      "item": "minecraft:phantom_membrane"
+    }
+  },
+  "pattern": [
+    " g ",
+    "gmg",
+    " g "
+  ],
+  "result": {
+    "count": 1,
+    "id": "utilitix:gilding_crystal"
+  }
+}

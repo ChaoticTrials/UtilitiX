@@ -1,7 +1,7 @@
 package de.melanx.utilitix.util;
 
 import com.google.errorprone.annotations.DoNotCall;
-import de.melanx.utilitix.UtilitiXConfig;
+import de.melanx.utilitix.config.FeatureConfig;
 import de.melanx.utilitix.registration.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,7 +14,7 @@ public class CoreUtil {
 
     @DoNotCall
     public static boolean shouldPreventWaterlogging(Player player) {
-        return UtilitiXConfig.crouchNoWaterlog && player != null && player.isShiftKeyDown();
+        return FeatureConfig.Misc.InWorldChanges.crouchNoWaterlog && player != null && player.isShiftKeyDown();
     }
 
     @DoNotCall
@@ -52,32 +52,31 @@ public class CoreUtil {
     private static int getNearStrongPower(SignalGetter signalGetter, BlockPos pos) {
         BlockPos posDown = pos.below();
         Block block = signalGetter.getBlockState(posDown).getBlock();
-        if (block == ModBlocks.weakRedstoneTorch || block == ModBlocks.weakRedstoneTorch.wallTorch) {
-            int power = signalGetter.getDirectSignal(pos.above(), Direction.UP);
-
-            if (power >= 15) {
-                return power;
-            } else {
-                power = Math.max(power, signalGetter.getDirectSignal(pos.north(), Direction.NORTH));
-                if (power >= 15) {
-                    return power;
-                } else {
-                    power = Math.max(power, signalGetter.getDirectSignal(pos.south(), Direction.SOUTH));
-                    if (power >= 15) {
-                        return power;
-                    } else {
-                        power = Math.max(power, signalGetter.getDirectSignal(pos.west(), Direction.WEST));
-                        if (power >= 15) {
-                            return power;
-                        } else {
-                            power = Math.max(power, signalGetter.getDirectSignal(pos.east(), Direction.EAST));
-                            return power;
-                        }
-                    }
-                }
-            }
-        } else {
+        if (block != ModBlocks.weakRedstoneTorch && block != ModBlocks.weakRedstoneTorch.wallTorch) {
             return signalGetter.getDirectSignalTo(pos);
         }
+
+        int power = signalGetter.getDirectSignal(pos.above(), Direction.UP);
+        if (power >= 15) {
+            return power;
+        }
+
+        power = Math.max(power, signalGetter.getDirectSignal(pos.north(), Direction.NORTH));
+        if (power >= 15) {
+            return power;
+        }
+
+        power = Math.max(power, signalGetter.getDirectSignal(pos.south(), Direction.SOUTH));
+        if (power >= 15) {
+            return power;
+        }
+
+        power = Math.max(power, signalGetter.getDirectSignal(pos.west(), Direction.WEST));
+        if (power >= 15) {
+            return power;
+        }
+
+        power = Math.max(power, signalGetter.getDirectSignal(pos.east(), Direction.EAST));
+        return power;
     }
 }

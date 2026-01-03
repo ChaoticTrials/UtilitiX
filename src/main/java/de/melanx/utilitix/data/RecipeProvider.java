@@ -2,11 +2,15 @@ package de.melanx.utilitix.data;
 
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.data.recipe.BreweryRecipeBuilder;
-import de.melanx.utilitix.recipe.EffectTransformer;
+import de.melanx.utilitix.recipe.brewery.Apply;
+import de.melanx.utilitix.recipe.brewery.Clone;
+import de.melanx.utilitix.recipe.brewery.Merge;
+import de.melanx.utilitix.recipe.brewery.Upgrade;
 import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.registration.ModRegisterables;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -15,8 +19,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.Tags;
 import org.moddingx.libx.datagen.DatagenContext;
 import org.moddingx.libx.datagen.provider.recipe.RecipeProviderBase;
 import org.moddingx.libx.datagen.provider.recipe.StoneCuttingExtension;
@@ -46,7 +49,7 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
         this.shaped(ModItems.mobYoinker, "CIC", "ILI", "III", 'I', Items.IRON_BARS, 'C', Items.COPPER_INGOT, 'L', Items.LEAD);
         this.shaped(ModBlocks.dimmableRedstoneLamp, 4, " L ", "LRL", " L ", 'L', Blocks.REDSTONE_LAMP, 'R', Tags.Items.DUSTS_REDSTONE);
         //noinspection ConstantConditions
-        this.shapeless(UtilitiX.getInstance().resource(ForgeRegistries.BLOCKS.getKey(Blocks.REDSTONE_LAMP).getPath() + "_revert"), Blocks.REDSTONE_LAMP, ModBlocks.dimmableRedstoneLamp);
+        this.shapeless(UtilitiX.getInstance().resource(BuiltInRegistries.BLOCK.getKey(Blocks.REDSTONE_LAMP).getPath() + "_revert"), Blocks.REDSTONE_LAMP, ModBlocks.dimmableRedstoneLamp);
     }
 
     private void createTinyCoalRecipe(ItemLike coal, ItemLike tinyCoal) {
@@ -58,15 +61,13 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
         this.shaped(ModItems.handBell, " s", "sb", 's', Tags.Items.RODS_WOODEN, 'b', Items.BELL);
         this.shaped(ModItems.mobBell, "abc", "def", "ghi",
                 'a', Items.SPIDER_EYE, 'b', Items.GHAST_TEAR, 'c', Tags.Items.BONES,
-                'd', Tags.Items.GUNPOWDER, 'e', ModItems.handBell, 'f', Tags.Items.DUSTS_GLOWSTONE,
+                'd', Tags.Items.GUNPOWDERS, 'e', ModItems.handBell, 'f', Tags.Items.DUSTS_GLOWSTONE,
                 'g', Items.BLAZE_POWDER, 'h', Tags.Items.ENDER_PEARLS, 'i', Items.ROTTEN_FLESH);
     }
 
     private void createMiscRecipes() {
         this.shaped(ModItems.armedStand,
-                " s ",
-                " a ",
-                "s s",
+                "sas",
                 'a', Items.ARMOR_STAND,
                 's', Tags.Items.RODS_WOODEN);
         this.shaped(ModItems.gildingCrystal,
@@ -75,12 +76,12 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
                 " g ",
                 'g', Tags.Items.INGOTS_GOLD,
                 'm', Items.PHANTOM_MEMBRANE);
-        this.shapeless(ModItems.glueBall, 4, Tags.Items.SLIMEBALLS, Tags.Items.SLIMEBALLS);
+        this.shapeless(ModItems.glueBall, 4, Tags.Items.SLIME_BALLS, Tags.Items.SLIME_BALLS);
         this.shaped(ModBlocks.experienceCrystal,
                 "geg",
                 "exe",
                 "ccc",
-                'g', Tags.Items.GLASS_LIME,
+                'g', Blocks.LIME_STAINED_GLASS,
                 'e', Tags.Items.GEMS_EMERALD,
                 'x', Items.EXPERIENCE_BOTTLE,
                 'c', Items.BLACK_CONCRETE);
@@ -88,9 +89,25 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
                 "C C",
                 "SFS",
                 "SSS",
-                'C', Tags.Items.STONE,
-                'S', Tags.Items.COBBLESTONE,
+                'C', Tags.Items.STONES,
+                'S', Tags.Items.COBBLESTONES,
                 'F', Items.FURNACE);
+
+        this.shaped(ModItems.quiver,
+                "RLR",
+                "LSL",
+                "RLR",
+                'R', Items.RABBIT_HIDE,
+                'L', Tags.Items.LEATHERS,
+                'S', Tags.Items.STRINGS);
+        this.shaped(this.loc(ModItems.quiver, "rotated"),
+                ModItems.quiver,
+                "LRL",
+                "RSR",
+                "LRL",
+                'R', Items.RABBIT_HIDE,
+                'L', Tags.Items.LEATHERS,
+                'S', Tags.Items.STRINGS);
     }
 
     private void createRedstoneRecipes() {
@@ -105,14 +122,14 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
                 "s s",
                 "sts",
                 't', Items.REDSTONE_TORCH,
-                's', Tags.Items.COBBLESTONE,
+                's', Tags.Items.COBBLESTONES,
                 'i', Tags.Items.INGOTS_IRON);
         this.shaped(ModBlocks.comparatorRedirectorDown,
                 "sts",
                 "s s",
                 "sis",
                 't', Items.REDSTONE_TORCH,
-                's', Tags.Items.COBBLESTONE,
+                's', Tags.Items.COBBLESTONES,
                 'i', Tags.Items.INGOTS_IRON);
         this.shapeless(this.loc(ModBlocks.comparatorRedirectorUp, "flip"), ModBlocks.comparatorRedirectorUp, ModBlocks.comparatorRedirectorDown);
         this.shapeless(this.loc(ModBlocks.comparatorRedirectorDown, "flip"), ModBlocks.comparatorRedirectorDown, ModBlocks.comparatorRedirectorUp);
@@ -127,7 +144,7 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
                 "sss",
                 'r', Tags.Items.DUSTS_REDSTONE,
                 't', Items.REDSTONE_TORCH,
-                's', Tags.Items.STONE);
+                's', Tags.Items.STONES);
     }
 
     private void createBreweryRecipes() {
@@ -141,33 +158,33 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
                 'g', Tags.Items.INGOTS_GOLD);
         BreweryRecipeBuilder.breweryRecipe()
                 .input(Items.GOLDEN_APPLE)
-                .action(new EffectTransformer.Apply(
+                .action(new Apply(
                         Component.translatable("item." + UtilitiX.getInstance().modid + ".apple_juice").withStyle(ChatFormatting.GREEN),
                         new MobEffectInstance(MobEffects.REGENERATION, 100, 1),
                         new MobEffectInstance(MobEffects.ABSORPTION, 2400, 0)
                 ))
-                .build(this.consumer(), new ResourceLocation(UtilitiX.getInstance().modid, "apple_juice"));
+                .save(this.output(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "apple_juice"));
         BreweryRecipeBuilder.breweryRecipe()
                 .input(Items.ENCHANTED_GOLDEN_APPLE)
-                .action(new EffectTransformer.Apply(
+                .action(new Apply(
                         Component.translatable("item." + UtilitiX.getInstance().modid + ".god_apple_juice").withStyle(ChatFormatting.GREEN),
                         new MobEffectInstance(MobEffects.REGENERATION, 400, 1),
                         new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 6000, 0),
                         new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 6000, 0),
                         new MobEffectInstance(MobEffects.ABSORPTION, 2400, 3)
                 ))
-                .build(this.consumer(), new ResourceLocation(UtilitiX.getInstance().modid, "god_apple_juice"));
+                .save(this.output(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "god_apple_juice"));
         BreweryRecipeBuilder.breweryRecipe()
-                .action(new EffectTransformer.Merge(1))
-                .build(this.consumer(), new ResourceLocation(UtilitiX.getInstance().modid, "merge"));
+                .action(new Merge(1))
+                .save(this.output(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "merge"));
         BreweryRecipeBuilder.breweryRecipe()
                 .input(Items.NETHERITE_SCRAP)
-                .action(new EffectTransformer.Clone())
-                .build(this.consumer(), new ResourceLocation(UtilitiX.getInstance().modid, "clone"));
+                .action(new Clone())
+                .save(this.output(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "clone"));
         BreweryRecipeBuilder.breweryRecipe()
                 .input(Items.POPPED_CHORUS_FRUIT)
-                .action(new EffectTransformer.Upgrade(2))
-                .build(this.consumer(), new ResourceLocation(UtilitiX.getInstance().modid, "upgrade"));
+                .action(new Upgrade(2))
+                .save(this.output(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "upgrade"));
     }
 
     private void createRailRecipes() {

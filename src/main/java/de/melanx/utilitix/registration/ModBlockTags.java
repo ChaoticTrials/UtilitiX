@@ -8,5 +8,5 @@ import net.minecraft.world.level.block.Block;
 
 public class ModBlockTags {
 
-    public static final TagKey<Block> RAIL_POWER_SOURCES = BlockTags.create(new ResourceLocation(UtilitiX.getInstance().modid, "rail_power_sources"));
+    public static final TagKey<Block> RAIL_POWER_SOURCES = BlockTags.create(ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "rail_power_sources"));
 }

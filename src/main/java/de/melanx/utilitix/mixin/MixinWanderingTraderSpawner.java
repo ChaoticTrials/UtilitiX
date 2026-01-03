@@ -1,5 +1,6 @@
 package de.melanx.utilitix.mixin;
 
+import de.melanx.utilitix.config.FeatureConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -10,7 +11,6 @@ import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.npc.WanderingTraderSpawner;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.storage.ServerLevelData;
@@ -30,13 +30,13 @@ public abstract class MixinWanderingTraderSpawner {
 
     @Shadow
     @Nullable
-    protected abstract BlockPos findSpawnPositionNear(LevelReader p_35929_, BlockPos p_35930_, int p_35931_);
+    protected abstract BlockPos findSpawnPositionNear(LevelReader level, BlockPos checkPos, int i);
 
     @Shadow
-    protected abstract boolean hasEnoughSpace(BlockGetter p_35926_, BlockPos p_35927_);
+    protected abstract boolean hasEnoughSpace(BlockGetter level, BlockPos possibleSpawnPos);
 
     @Shadow
-    protected abstract void tryToSpawnLlamaFor(ServerLevel p_35918_, WanderingTrader p_35919_, int p_35920_);
+    protected abstract void tryToSpawnLlamaFor(ServerLevel serverLevel, WanderingTrader trader, int maxDistance);
 
     @Shadow
     @Final
@@ -48,6 +48,10 @@ public abstract class MixinWanderingTraderSpawner {
             cancellable = true
     )
     private void utilitix$spawn(ServerLevel level, CallbackInfoReturnable<Boolean> cir) {
+        if (!FeatureConfig.Misc.InWorldChanges.wanderingTrader) {
+            return;
+        }
+
         List<ServerPlayer> players = level.getPlayers(player -> true);
         boolean returnValue = false;
         for (ServerPlayer player : players) {
@@ -66,7 +70,7 @@ public abstract class MixinWanderingTraderSpawner {
                         continue;
                     }
 
-                    WanderingTrader trader = EntityType.WANDERING_TRADER.spawn(level, (ItemStack) null, null, possibleSpawnPos, MobSpawnType.EVENT, false, false);
+                    WanderingTrader trader = EntityType.WANDERING_TRADER.spawn(level, null, null, possibleSpawnPos, MobSpawnType.EVENT, false, false);
                     if (trader != null) {
                         for (int j = 0; j < 2; ++j) {
                             this.tryToSpawnLlamaFor(level, trader, 4);

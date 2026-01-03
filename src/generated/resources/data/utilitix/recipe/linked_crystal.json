@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "g": {
+      "tag": "c:gems/emerald"
+    },
+    "r": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "pattern": [
+    " r ",
+    "rgr",
+    " r "
+  ],
+  "result": {
+    "count": 1,
+    "id": "utilitix:linked_crystal"
+  }
+}

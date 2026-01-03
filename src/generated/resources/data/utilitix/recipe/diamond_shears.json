@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "tag": "c:gems/diamond"
+    }
+  },
+  "pattern": [
+    " I",
+    "I "
+  ],
+  "result": {
+    "count": 1,
+    "id": "utilitix:diamond_shears"
+  }
+}

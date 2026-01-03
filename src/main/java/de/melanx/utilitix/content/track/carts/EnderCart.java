@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 
-public class EnderCart extends Cart {
+public class EnderCart extends BaseCart {
 
     public EnderCart(EntityType<?> type, Level level) {
         super(type, level);
@@ -34,9 +34,13 @@ public class EnderCart extends Cart {
     @Override
     public InteractionResult interact(@Nonnull Player player, @Nonnull InteractionHand hand) {
         InteractionResult ret = super.interact(player, hand);
-        if (ret.consumesAction()) return ret;
+        if (ret.consumesAction()) {
+            return ret;
+        }
+
         SimpleContainer ender = player.getEnderChestInventory();
         player.openMenu(new SimpleMenuProvider((id, inventory, usingPlayer) -> ChestMenu.threeRows(id, inventory, ender), this.getDisplayName()));
+
         return InteractionResult.sidedSuccess(player.level().isClientSide);
     }
 }

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "a": {
+      "item": "minecraft:activator_rail"
+    },
+    "c": {
+      "item": "utilitix:piston_cart"
+    },
+    "r": {
+      "item": "utilitix:reinforced_rail"
+    }
+  },
+  "pattern": [
+    "rar",
+    "aca",
+    "rar"
+  ],
+  "result": {
+    "count": 8,
+    "id": "utilitix:reinforced_piston_controller_rail"
+  }
+}

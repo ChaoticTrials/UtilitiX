@@ -1,5 +1,5 @@
 function initializeCoreMod() {
-    var ASMAPI = Java.type('net.minecraftforge.coremod.api.ASMAPI');
+    var ASMAPI = Java.type('net.neoforged.coremod.api.ASMAPI');
     var Opcodes = Java.type('org.objectweb.asm.Opcodes');
     var VarInsnNode = Java.type('org.objectweb.asm.tree.VarInsnNode');
     var InsnNode = Java.type('org.objectweb.asm.tree.InsnNode');
@@ -10,7 +10,7 @@ function initializeCoreMod() {
             'target': {
                 'type': 'METHOD',
                 'class': 'net.minecraft.world.level.SignalGetter',
-                'methodName': 'm_277086_',
+                'methodName': 'getBestNeighborSignal',
                 'methodDesc': '(Lnet/minecraft/core/BlockPos;)I'
             },
             'transformer': function (method) {
