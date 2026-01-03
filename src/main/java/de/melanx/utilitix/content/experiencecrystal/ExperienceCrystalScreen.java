@@ -101,7 +101,9 @@ public class ExperienceCrystalScreen extends AbstractContainerScreen<ExperienceC
         ADD_ALL(115, 18, 40, "add_all"),
         SUB_ONE(41, 58, 60, "sub_1"),
         SUB_TEN(78, 58, 80, "sub_10"),
-        SUB_ALL(115, 58, 100, "sub_all");
+        SUB_ALL(115, 58, 100, "sub_all"),
+        REPAIR_ONE(11, 38, 120, "repair_hand"),
+        REPAIR_ALL(146, 38, 140, "repair_all");
 
         private final int x;
         private final int y;

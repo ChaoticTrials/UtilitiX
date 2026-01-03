@@ -5,6 +5,7 @@ import de.melanx.utilitix.content.experiencecrystal.ExperienceCrystalBlockEntity
 import de.melanx.utilitix.content.experiencecrystal.ExperienceCrystalScreen;
 import de.melanx.utilitix.util.XPUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.PacketFlow;
@@ -12,6 +13,9 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.registration.HandlerThread;
@@ -36,6 +40,7 @@ public class ClickScreenButton extends PacketHandler<ClickScreenButton.Message> 
         ServerLevel level = (ServerLevel) player.level();
         ExperienceCrystalScreen.Button button = msg.button;
         BlockEntity blockEntity = level.getBlockEntity(msg.pos);
+        Holder<Enchantment> mending = level.registryAccess().holderOrThrow(Enchantments.MENDING);
 
         if (!(blockEntity instanceof ExperienceCrystalBlockEntity experienceCrystalBlockEntity)) {
             return;
@@ -69,6 +74,16 @@ public class ClickScreenButton extends PacketHandler<ClickScreenButton.Message> 
                 int xp = experienceCrystalBlockEntity.subtractXp(Integer.MAX_VALUE);
                 player.giveExperiencePoints(xp);
             }
+            case REPAIR_ONE -> {
+                ItemStack mainHandItem = player.getMainHandItem();
+                ClickScreenButton.repairItem(experienceCrystalBlockEntity, mainHandItem, mending);
+            }
+            case REPAIR_ALL -> {
+                for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+                    ItemStack stack = player.getInventory().getItem(i);
+                    ClickScreenButton.repairItem(experienceCrystalBlockEntity, stack, mending);
+                }
+            }
         }
     }
 
@@ -88,6 +103,14 @@ public class ClickScreenButton extends PacketHandler<ClickScreenButton.Message> 
         if (Math.round(player.experienceProgress) == 1) {
             i = blockEntity.subtractXp(1);
             player.giveExperiencePoints(i);
+        }
+    }
+
+    private static void repairItem(ExperienceCrystalBlockEntity blockEntity, ItemStack stack, Holder<Enchantment> mending) {
+        if (stack.getEnchantmentLevel(mending) > 0 && stack.isDamaged()) {
+            int damageValue = (int) (stack.getDamageValue() * stack.getXpRepairRatio());
+            int toRemove = blockEntity.subtractXp(damageValue);
+            stack.setDamageValue(stack.getDamageValue() - toRemove);
         }
     }
 

@@ -82,6 +82,8 @@
   "tooltip.utilitix.experience_crystal.sub_1": "Retrieve 1 level",
   "tooltip.utilitix.experience_crystal.sub_10": "Retrieve 10 levels",
   "tooltip.utilitix.experience_crystal.sub_all": "Retrieve all levels",
+  "tooltip.utilitix.experience_crystal.repair_hand": "Repair Mending Item in Hand",
+  "tooltip.utilitix.experience_crystal.repair_all": "Repair All Mending Items in Inventory",
   "tooltip.utilitix.ancient_compass": "Don't use me unless you're quiet enough",
 
   "description.utilitix.advanced_brewery": "The Advanced Brewery can modify potions. Just like a regular brewery it requires §6Blaze Powder§r to work. It has four modes:\n- Brewing\n- Merging\n- Upgrading\n- Cloning",
