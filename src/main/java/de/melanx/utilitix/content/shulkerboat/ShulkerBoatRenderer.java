@@ -32,12 +32,20 @@ public class ShulkerBoatRenderer extends BoatRenderer {
 
     public ShulkerBoatRenderer(EntityRendererProvider.Context context) {
         super(context, true);
-        this.boatResources = Stream.of(Boat.Type.values()).collect(ImmutableMap.toImmutableMap(type -> type, type -> {
-            ResourceLocation location = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/entity/boat/" + type.getName() + ".png");
-            ModelPart modelPart = context.bakeLayer(ModelLayers.createBoatModelName(type));
-            ListModel<Boat> model = type == Boat.Type.BAMBOO ? new RaftModel(modelPart) : new BoatModel(modelPart);
-            return Pair.of(location, model);
-        }));
+        this.boatResources = Stream.of(Boat.Type.values())
+                .filter(type -> ResourceLocation.tryParse(type.getName()) != null)
+                .collect(ImmutableMap.toImmutableMap(type -> type, type -> {
+                    ResourceLocation resourceId = ResourceLocation.tryParse(type.getName());
+                    if (resourceId == null) {
+                        throw new IllegalStateException("Could not parse boat type: " + type.getName());
+                    }
+
+                    ResourceLocation location = ResourceLocation.fromNamespaceAndPath(resourceId.getNamespace(), "textures/entity/boat/" + resourceId.getPath() + ".png");
+                    ModelPart modelPart = context.bakeLayer(ModelLayers.createBoatModelName(type));
+                    ListModel<Boat> model = type.isRaft() ? new RaftModel(modelPart) : new BoatModel(modelPart);
+
+                    return Pair.of(location, model);
+                }));
         this.shulkerModel = new ShulkerModel<>(context.bakeLayer(ModelLayers.SHULKER));
     }
 
@@ -54,8 +62,9 @@ public class ShulkerBoatRenderer extends BoatRenderer {
             float damage = Math.max(0, boat.getDamage() - partialTick);
             poseStack.mulPose(Axis.XP.rotationDegrees(Mth.sin(remainingHurtTime) * remainingHurtTime * damage / 10.0F * (float) boat.getHurtDir()));
         }
-        boolean bamboo = boat.getVariant() == Boat.Type.BAMBOO;
-        poseStack.translate(0, bamboo ? 1.7 : 1.39, bamboo ? 0.46 : 0.475);
+
+        boolean raft = boat.getVariant().isRaft();
+        poseStack.translate(0, raft ? 1.7 : 1.39, raft ? 0.46 : 0.475);
         poseStack.scale(0.8f, 0.8f, 0.8f);
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
