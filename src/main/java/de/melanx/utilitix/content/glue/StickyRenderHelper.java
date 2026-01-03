@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
@@ -46,7 +47,7 @@ public class StickyRenderHelper {
         PoseStack poseStack = event.getPoseStack();
         Frustum clip = event.getFrustum();
         int size = level.getChunkSource().storage.chunks.length();
-        Vec3 projection = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        Vec3 projection = event.getCamera().getPosition();
         clip.prepare(projection.x, projection.y, projection.z);
 
         Minecraft.getInstance().getProfiler().push("render_chunks");
@@ -79,7 +80,7 @@ public class StickyRenderHelper {
                 return renderSection(camera, poseStack, pos, sectionOffset, chunk, slime);
             }
 
-                return null;
+            return null;
         };
     }
 
@@ -104,7 +105,19 @@ public class StickyRenderHelper {
 
                 poseStack.pushPose();
                 poseStack.translate(x, y, z);
-                RenderHelperBlock.renderBlockOverlaySprite(state, poseStack, light, OverlayTexture.NO_OVERLAY, slime, state.getSeed(block), dir -> (data & (1 << dir.ordinal())) != 0);
+                RenderHelperBlock.renderBlockOverlaySprite(state, poseStack, light, OverlayTexture.NO_OVERLAY, slime, state.getSeed(block), dir -> {
+                    if ((data & (1 << dir.ordinal())) == 0) {
+                        return false;
+                    }
+
+                    BlockPos neighborPos = block.relative(dir);
+                    BlockState neighbor = chunk.getBlockState(neighborPos);
+                    if (state.skipRendering(neighbor, dir)) {
+                        return false;
+                    }
+
+                    return Block.shouldRenderFace(state, chunk, block, dir, neighborPos);
+                });
                 poseStack.popPose();
 
                 Minecraft.getInstance().getProfiler().pop(); // do_render

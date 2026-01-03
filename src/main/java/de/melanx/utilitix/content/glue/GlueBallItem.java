@@ -44,11 +44,7 @@ public class GlueBallItem extends ItemBase {
         Level level = context.getLevel();
         BlockPos clickedPos = context.getClickedPos();
         LevelChunk chunk = level.getChunkAt(clickedPos);
-        StickyChunk glue = chunk.getExistingDataOrNull(ModAttachmentTypes.stickyChunk);
-
-        if (glue == null) {
-            return super.useOn(context);
-        }
+        StickyChunk glue = chunk.getData(ModAttachmentTypes.stickyChunk);
 
         int x = clickedPos.getX() & 0xF;
         int y = clickedPos.getY();
