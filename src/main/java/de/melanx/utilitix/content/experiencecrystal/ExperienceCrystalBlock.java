@@ -1,14 +1,21 @@
 package de.melanx.utilitix.content.experiencecrystal;
 
 import de.melanx.utilitix.config.FeatureConfig;
+import de.melanx.utilitix.util.XPUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -29,6 +36,7 @@ import org.moddingx.libx.mod.ModX;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Optional;
 
 public class ExperienceCrystalBlock extends MenuBlockBE<ExperienceCrystalBlockEntity, ExperienceCrystalMenu> {
@@ -133,6 +141,30 @@ public class ExperienceCrystalBlock extends MenuBlockBE<ExperienceCrystalBlockEn
         }
 
         return ItemInteractionResult.SUCCESS;
+    }
+
+    @Override
+    public void appendHoverText(@Nonnull ItemStack stack, @Nonnull Item.TooltipContext context, @Nonnull List<Component> tooltipComponents, @Nonnull TooltipFlag tooltipFlag) {
+        if (!stack.has(DataComponents.BLOCK_ENTITY_DATA)) {
+            return;
+        }
+
+        CustomData blockEntityData = stack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY);
+        if (!blockEntityData.contains("Xp")) {
+            return;
+        }
+
+        int xp = blockEntityData.copyTag().getInt("Xp");
+        if (xp <= 0) {
+            return;
+        }
+
+        int level = XPUtils.getLevelExp(xp).getLeft();
+        if (level > 0) {
+            tooltipComponents.add(Component.translatable("tooltip.utilitix.experience_crystal.xp_level", level).withStyle(ChatFormatting.GREEN));
+        } else {
+            tooltipComponents.add(Component.translatable("tooltip.utilitix.experience_crystal.xp_points", xp).withStyle(ChatFormatting.GREEN));
+        }
     }
 
     @Override
