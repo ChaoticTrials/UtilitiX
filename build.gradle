@@ -24,7 +24,7 @@ repositories {
 
 var dev = System.getenv('IS_DEV')?.toBoolean() ?: false
 var baseVersion = '21.1'
-var libxVersion = '1.21.1-6.0.7'
+var libxVersion = '1.21.1-6.0.8'
 var jeiVersion = '19.25.0.324'
 var curiosVersion = '9.5.1+1.21.1'
 var jadeVersion = '6853386' // 1.21.1-NeoForge-15.10.3
