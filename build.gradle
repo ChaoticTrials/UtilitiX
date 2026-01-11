@@ -24,7 +24,7 @@ repositories {
 
 var dev = System.getenv('IS_DEV')?.toBoolean() ?: false
 var baseVersion = '21.1'
-var libxVersion = '1.21.1-6.0.8'
+var libxVersion = '1.21.1-6.0.9'
 var jeiVersion = '19.25.0.324'
 var curiosVersion = '9.5.1+1.21.1'
 var jadeVersion = '6853386' // 1.21.1-NeoForge-15.10.3
@@ -50,6 +50,7 @@ mod.configure {
     github 'ChaoticTrials/UtilitiX'
 
     artifacts {
+        useJarJar()
         sources {
             publishToRepositories()
         }
@@ -85,6 +86,14 @@ mod.configure {
             projectId 'MMMWYsjm'
         }
     }
+
+    runs {
+        all {
+            dependencies {
+                runtime project(":coremods")
+            }
+        }
+    }
 }
 
 dependencies {
@@ -97,4 +106,5 @@ dependencies {
 
     compileOnly "org.violetmoon.quark:Quark:${quarkVersion}"
     compileOnly "org.violetmoon.zeta:Zeta:${zetaVersion}"
+    compileOnly(jarJar(project(":coremods")))
 }
