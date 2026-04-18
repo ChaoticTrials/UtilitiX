@@ -46,6 +46,6 @@ A lot of items, nice to have
 [[dependencies.utilitix]]
     modId = "jei"
     mandatory = false
-    versionRange = "[15.0.0.12,)"
+    versionRange = "[15.20.0.100,)"
     ordering = "BEFORE"
     side = "BOTH"

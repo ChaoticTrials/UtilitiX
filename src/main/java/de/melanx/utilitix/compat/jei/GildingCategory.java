@@ -2,13 +2,12 @@ package de.melanx.utilitix.compat.jei;
 
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import mezz.jei.common.Constants;
 import mezz.jei.common.platform.IPlatformRecipeHelper;
 import mezz.jei.common.platform.Services;
 import mezz.jei.library.util.RecipeUtil;
@@ -21,11 +20,9 @@ import javax.annotation.Nonnull;
 
 public class GildingCategory implements IRecipeCategory<SmithingTransformRecipe> {
 
-    private final IDrawable background;
     private final IDrawable icon;
 
     public GildingCategory(IGuiHelper helper) {
-        this.background = helper.createDrawable(Constants.RECIPE_GUI_VANILLA, 0, 168, 108, 18);
         this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Blocks.SMITHING_TABLE));
     }
 
@@ -41,10 +38,14 @@ public class GildingCategory implements IRecipeCategory<SmithingTransformRecipe>
         return Component.translatable("jei.utilitix.gilding");
     }
 
-    @Nonnull
     @Override
-    public IDrawable getBackground() {
-        return this.background;
+    public int getWidth() {
+        return 108;
+    }
+
+    @Override
+    public int getHeight() {
+        return 28;
     }
 
     @Nonnull
@@ -57,8 +58,17 @@ public class GildingCategory implements IRecipeCategory<SmithingTransformRecipe>
     public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull SmithingTransformRecipe recipe, @Nonnull IFocusGroup focuses) {
         IPlatformRecipeHelper recipeHelper = Services.PLATFORM.getRecipeHelper();
 
-        builder.addSlot(RecipeIngredientRole.INPUT, 19, 1).addIngredients(recipeHelper.getBase(recipe));
-        builder.addSlot(RecipeIngredientRole.INPUT, 37, 1).addIngredients(recipeHelper.getAddition(recipe));
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 91, 1).addItemStack(RecipeUtil.getResultItem(recipe));
+        builder.addInputSlot(1, 6).setStandardSlotBackground();
+
+        IRecipeSlotBuilder baseSlot = builder.addInputSlot(19, 6)
+                .setStandardSlotBackground();
+        IRecipeSlotBuilder additionSlot = builder.addInputSlot(37, 6)
+                .setStandardSlotBackground();
+        IRecipeSlotBuilder outputSlot = builder.addOutputSlot(91, 6)
+                .setStandardSlotBackground();
+
+        baseSlot.addIngredients(recipeHelper.getBase(recipe));
+        additionSlot.addIngredients(recipeHelper.getAddition(recipe));
+        outputSlot.addItemStack(RecipeUtil.getResultItem(recipe));
     }
 }

@@ -60,10 +60,14 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
         return this.localizedName;
     }
 
-    @Nonnull
     @Override
-    public IDrawable getBackground() {
-        return this.background;
+    public int getWidth() {
+        return 114;
+    }
+
+    @Override
+    public int getHeight() {
+        return 61;
     }
 
     @Nonnull
@@ -89,6 +93,7 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
 
     @Override
     public void draw(@Nonnull BreweryRecipe recipe, @Nonnull IRecipeSlotsView slotsView, @Nonnull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+        this.background.draw(guiGraphics, 0, 0);
         this.blazeHeat.draw(guiGraphics, 5, 30);
         this.bubbles.draw(guiGraphics, 8, 0);
         this.arrow.draw(guiGraphics, 42, 2);
