@@ -32,7 +32,7 @@ public class ModCreativeTab {
     }
 
     private static ResourceKey<CreativeModeTab> getTabForItem(Item item) {
-        if (item == ModItems.quiver || item == ModItems.backpack) {
+        if (item == ModItems.quiver) {
             return null;
         }
 

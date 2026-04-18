@@ -59,7 +59,17 @@ public class BackpackMenu extends MenuBase {
             this.addSlot(new SlotItemHandler(handler, i, this.slotList.get(i).getLeft(), this.slotList.get(i).getRight()));
         }
 
-        this.layoutPlayerInventorySlots(layout.getMiddle().getLeft(), layout.getMiddle().getRight());
+        // Player inventory
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 9; col++) {
+                this.addSlot(new Slot(inventory, col + row * 9 + 9, this.invX + col * 18, this.invY + row * 18));
+            }
+        }
+
+        // Hotbar
+        for (int col = 0; col < 9; col++) {
+            this.addSlot(new Slot(inventory, col, this.invX + col * 18, this.invY + 58));
+        }
     }
 
     @Override
