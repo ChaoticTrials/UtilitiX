@@ -16,9 +16,11 @@ import de.melanx.utilitix.content.track.carts.piston.PistonCartMenu;
 import de.melanx.utilitix.content.track.carts.piston.PistonCartScreen;
 import de.melanx.utilitix.content.track.tinkerer.MinecartTinkererMenu;
 import de.melanx.utilitix.content.track.tinkerer.MinecartTinkererScreen;
+import de.melanx.utilitix.network.handler.OpenCurioBackpack;
 import de.melanx.utilitix.network.handler.StickyChunkRequest;
 import de.melanx.utilitix.registration.ModDataComponentTypes;
 import de.melanx.utilitix.registration.ModItems;
+import de.melanx.utilitix.registration.ModKeys;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.BoatModel;
@@ -35,16 +37,16 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
-import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
@@ -114,10 +116,27 @@ public class ClientEventListener {
     }
 
     @SubscribeEvent
+    public static void registerColorHandlers(RegisterColorHandlersEvent.Item event) {
+        event.register((stack, tintIndex) -> tintIndex != 0 ? -1 : DyedItemColor.getOrDefault(stack, DyedItemColor.LEATHER_COLOR), ModItems.backpack);
+    }
+
+    @SubscribeEvent
     public static void loadChunk(ChunkEvent.Load event) {
         if (event.getLevel().isClientSide()) {
             PacketDistributor.sendToServer(new StickyChunkRequest.Message(event.getChunk().getPos()));
         }
+    }
+
+    @SubscribeEvent
+    public static void onLevelTick(LevelTickEvent.Post event) {
+        while (ModKeys.OPEN_BACKPACK.get().consumeClick() && Minecraft.getInstance().screen == null) {
+            PacketDistributor.sendToServer(new OpenCurioBackpack.Message());
+        }
+    }
+
+    @SubscribeEvent
+    public static void registerKeys(RegisterKeyMappingsEvent event) {
+        event.register(ModKeys.OPEN_BACKPACK.get());
     }
 
     @SubscribeEvent

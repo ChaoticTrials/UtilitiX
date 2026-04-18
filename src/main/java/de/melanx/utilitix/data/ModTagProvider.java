@@ -32,6 +32,8 @@ public class ModTagProvider extends CommonTagsProviderBase {
         this.item(Tags.Items.TOOLS_SHEAR).add(ModItems.diamondShears);
         this.item(ItemTags.CHEST_BOATS).addTag(ModItemTags.SHULKER_CHEST_BOATS);
         this.item(ModItemTags.SHULKER_CHEST_BOATS).add(ModItems.oakShulkerBoat, ModItems.spruceShulkerBoat, ModItems.birchShulkerBoat, ModItems.jungleShulkerBoat, ModItems.acaciaShulkerBoat, ModItems.darkOakShulkerBoat, ModItems.mangroveShulkerBoat);
+        this.item(ItemTags.DYEABLE).add(ModItems.backpack);
+        this.item(ModItemTags.CURIOS_BACK).add(ModItems.backpack);
 
         this.copyBlock(BlockTags.RAILS, ItemTags.RAILS);
         this.copyBlock(BlockTags.WALLS, ItemTags.WALLS);

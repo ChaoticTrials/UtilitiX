@@ -13,6 +13,7 @@ public class UtiliNetwork extends NetworkX {
         this.register(new StickyChunkRequest());
         this.register(new PistonCartModeCycle());
         this.register(new ClickScreenButton());
+        this.register(new OpenCurioBackpack());
 
         // send to client
         this.register(new StickyChunkUpdate());
@@ -21,6 +22,6 @@ public class UtiliNetwork extends NetworkX {
 
     @Override
     protected String getVersion() {
-        return "9";
+        return "10";
     }
 }

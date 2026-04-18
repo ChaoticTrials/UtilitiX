@@ -48,6 +48,19 @@ public class CommonConfig {
     public static int glueBlockLimit = PistonStructureResolver.MAX_PUSH_DEPTH;
 
     @Group
+    public static class Backpack {
+
+        @Config("The initial size of a backpack")
+        @IntRange(min = 1, max = 154)
+        public static int slotSize = 9;
+
+        @Config({"The maximum size of a backpack when merging with other backpacks",
+                "Beyond this number, backpacks cannot be merged"})
+        @IntRange(min = 1, max = 154)
+        public static int maxSize = 54;
+    }
+
+    @Group
     public static class MobYoinker {
 
         @Config

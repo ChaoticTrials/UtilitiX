@@ -2,6 +2,7 @@ package de.melanx.utilitix.registration;
 
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.content.*;
+import de.melanx.utilitix.content.backpack.BackpackItem;
 import de.melanx.utilitix.content.bell.HandBellItem;
 import de.melanx.utilitix.content.bell.MobBellItem;
 import de.melanx.utilitix.content.brewery.FailedPotionItem;
@@ -21,6 +22,7 @@ import org.moddingx.libx.annotation.registration.RegisterClass;
 @RegisterClass(registry = "ITEM")
 public class ModItems {
 
+    public static final BackpackItem backpack = new BackpackItem(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
     public static final Item tinyCoal = new TinyCoalItem(UtilitiX.getInstance(), new Item.Properties(), 200);
     public static final Item tinyCharcoal = new TinyCoalItem(UtilitiX.getInstance(), new Item.Properties(), 200);
     public static final Item handBell = new HandBellItem(UtilitiX.getInstance(), new Item.Properties().stacksTo(1));
