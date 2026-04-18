@@ -38,9 +38,6 @@ public class UtilitiXConfig {
     @Group
     public static class Backpack {
 
-        @Config("Only enable this if you already have backpacks that you want to empty before.")
-        public static boolean enabled = false;
-
         @Config("The initial size of a backpack")
         @IntRange(min = 1, max = 154)
         public static int slotSize = 9;

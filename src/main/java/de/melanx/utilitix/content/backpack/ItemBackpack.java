@@ -13,7 +13,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.DyeableLeatherItem;
@@ -202,11 +201,6 @@ public class ItemBackpack extends ItemBase implements DyeableLeatherItem {
         if (isAdvanced.isAdvanced()) {
             tooltipComponents.add(Component.translatable(this.getDescriptionId() + ".slots", ItemBackpack.slotSize(stack)).withStyle(ChatFormatting.GRAY));
         }
-    }
-
-    @Override
-    public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
-        return UtilitiXConfig.Backpack.enabled;
     }
 
     private static void combineDyeableItemColors(ItemStack stack, ItemStack other) {
