@@ -24,7 +24,7 @@ repositories {
 
 var dev = System.getenv('IS_DEV')?.toBoolean() ?: false
 var baseVersion = '21.1'
-var libxVersion = '1.21.1-6.0.9'
+var libxVersion = '1.21.1-6.0.13'
 var jeiVersion = '19.25.0.324'
 var curiosVersion = '9.5.1+1.21.1'
 var jadeVersion = '6853386' // 1.21.1-NeoForge-15.10.3
@@ -103,6 +103,8 @@ dependencies {
     implementation "mezz.jei:jei-1.${baseVersion}-neoforge:${jeiVersion}"
     implementation "top.theillusivec4.curios:curios-neoforge:${curiosVersion}"
     implementation "curse.maven:jade-324717:${jadeVersion}"
+
+    runtimeOnly "de.melanx:RecipePrinter:21.1.0"
 
     compileOnly "org.violetmoon.quark:Quark:${quarkVersion}"
     compileOnly "org.violetmoon.zeta:Zeta:${zetaVersion}"
