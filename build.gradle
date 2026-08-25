@@ -1,5 +1,5 @@
 plugins {
-    id 'org.moddingx.modgradle.meta' version '5.1.0'
+    id 'org.moddingx.modgradle.meta' version '5.1.5'
 }
 
 repositories {
@@ -78,6 +78,7 @@ mod.configure {
             require 'libx'
             optional 'jade'
             optional 'jei'
+            environmentType 'client_and_server'
         }
         curseforge {
             projectId 463703
