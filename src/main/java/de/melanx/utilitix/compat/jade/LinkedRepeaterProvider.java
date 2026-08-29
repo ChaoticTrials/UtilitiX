@@ -1,6 +1,5 @@
 package de.melanx.utilitix.compat.jade;
 
-import de.melanx.utilitix.UtilitiX;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.chat.Component;
@@ -16,13 +15,12 @@ import java.util.UUID;
 
 public class LinkedRepeaterProvider implements IBlockComponentProvider {
 
-    public static final Identifier UID = UtilitiX.getInstance().id("linked_repeater");
     public static final LinkedRepeaterProvider INSTANCE = new LinkedRepeaterProvider();
 
     @Nonnull
     @Override
     public Identifier getUid() {
-        return UID;
+        return UtilJade.LINKED_REPEATER;
     }
 
     @Override

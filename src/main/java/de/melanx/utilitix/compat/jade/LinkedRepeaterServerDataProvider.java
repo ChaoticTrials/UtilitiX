@@ -17,7 +17,7 @@ public class LinkedRepeaterServerDataProvider implements IServerDataProvider<Blo
     @Nonnull
     @Override
     public Identifier getUid() {
-        return LinkedRepeaterProvider.UID;
+        return UtilJade.LINKED_REPEATER;
     }
 
     @Override

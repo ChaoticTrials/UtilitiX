@@ -21,7 +21,7 @@ public class CrudeFurnaceServerDataProvider implements IServerDataProvider<Block
     @Nonnull
     @Override
     public Identifier getUid() {
-        return CrudeFurnaceProvider.UID;
+        return UtilJade.CRUDE_FURNACE;
     }
 
     @Override

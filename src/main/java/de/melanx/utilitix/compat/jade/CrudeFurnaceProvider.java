@@ -1,6 +1,5 @@
 package de.melanx.utilitix.compat.jade;
 
-import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.content.crudefurnace.CrudeFurnaceBlockEntity;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -20,13 +19,12 @@ import javax.annotation.Nonnull;
 
 public class CrudeFurnaceProvider implements IBlockComponentProvider {
 
-    public static final Identifier UID = UtilitiX.getInstance().id("crude_furnace");
     public static final CrudeFurnaceProvider INSTANCE = new CrudeFurnaceProvider();
 
     @Nonnull
     @Override
     public Identifier getUid() {
-        return UID;
+        return UtilJade.CRUDE_FURNACE;
     }
 
     @Override

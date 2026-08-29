@@ -1,8 +1,6 @@
 package de.melanx.utilitix.content.track.carts;
 
 import de.melanx.utilitix.UtilitiX;
-import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
@@ -17,7 +15,6 @@ import org.moddingx.libx.annotation.impl.RegistrationPropertiesHelper;
 import org.moddingx.libx.base.ItemBase;
 import org.moddingx.libx.registration.Registerable;
 import org.moddingx.libx.registration.RegistrationContext;
-import org.moddingx.libx.registration.SetupContext;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -93,11 +90,6 @@ public class BaseCart extends AbstractMinecart {
         public void registerAdditional(RegistrationContext ctx, EntryCollector builder) {
             builder.register(Registries.ENTITY_TYPE, this.type);
             builder.register(Registries.ITEM, this.item);
-        }
-
-        @Override
-        public void setupClient(SetupContext ctx) {
-            ctx.enqueue(() -> EntityRenderers.register(this.type, context -> new MinecartRendererX<>(context, ModelLayers.MINECART)));
         }
     }
 }

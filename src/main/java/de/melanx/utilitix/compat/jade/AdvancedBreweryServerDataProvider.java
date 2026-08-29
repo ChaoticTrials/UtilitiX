@@ -15,7 +15,7 @@ public class AdvancedBreweryServerDataProvider implements IServerDataProvider<Bl
     @Nonnull
     @Override
     public Identifier getUid() {
-        return AdvancedBreweryProvider.UID;
+        return UtilJade.ADVANCED_BREWERY;
     }
 
     @Override

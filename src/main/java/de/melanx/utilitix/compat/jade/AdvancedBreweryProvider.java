@@ -1,6 +1,5 @@
 package de.melanx.utilitix.compat.jade;
 
-import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.content.brewery.AdvancedBreweryBlockEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -18,7 +17,6 @@ import javax.annotation.Nonnull;
 
 public class AdvancedBreweryProvider implements IBlockComponentProvider {
 
-    public static final Identifier UID = UtilitiX.getInstance().id("advanced_brewery");
     public static final AdvancedBreweryProvider INSTANCE = new AdvancedBreweryProvider();
 
     private static ItemStack blazePowder;
@@ -43,7 +41,7 @@ public class AdvancedBreweryProvider implements IBlockComponentProvider {
     @Nonnull
     @Override
     public Identifier getUid() {
-        return UID;
+        return UtilJade.ADVANCED_BREWERY;
     }
 
     @Override

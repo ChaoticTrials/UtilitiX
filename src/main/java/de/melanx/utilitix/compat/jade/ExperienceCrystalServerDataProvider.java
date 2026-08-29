@@ -15,7 +15,7 @@ public class ExperienceCrystalServerDataProvider implements IServerDataProvider<
     @Nonnull
     @Override
     public Identifier getUid() {
-        return ExperienceCrystalProvider.UID;
+        return UtilJade.EXPERIENCE_CRYSTAL;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package de.melanx.utilitix.compat.jade;
 
-import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.util.XPUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -16,7 +15,6 @@ import javax.annotation.Nonnull;
 
 public class ExperienceCrystalProvider implements IBlockComponentProvider {
 
-    public static final Identifier UID = UtilitiX.getInstance().id("experience_crystal");
     public static final ExperienceCrystalProvider INSTANCE = new ExperienceCrystalProvider();
 
     private static ItemStack xpBottle;
@@ -32,7 +30,7 @@ public class ExperienceCrystalProvider implements IBlockComponentProvider {
     @Nonnull
     @Override
     public Identifier getUid() {
-        return UID;
+        return UtilJade.EXPERIENCE_CRYSTAL;
     }
 
     @Override
