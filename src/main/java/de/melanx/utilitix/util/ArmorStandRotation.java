@@ -55,24 +55,24 @@ public class ArmorStandRotation {
     }
 
     public void write(FriendlyByteBuf buffer) {
-        buffer.writeFloat(this.head.getX());
-        buffer.writeFloat(this.head.getY());
-        buffer.writeFloat(this.head.getZ());
-        buffer.writeFloat(this.body.getX());
-        buffer.writeFloat(this.body.getY());
-        buffer.writeFloat(this.body.getZ());
-        buffer.writeFloat(this.leftArm.getX());
-        buffer.writeFloat(this.leftArm.getY());
-        buffer.writeFloat(this.leftArm.getZ());
-        buffer.writeFloat(this.rightArm.getX());
-        buffer.writeFloat(this.rightArm.getY());
-        buffer.writeFloat(this.rightArm.getZ());
-        buffer.writeFloat(this.leftLeg.getX());
-        buffer.writeFloat(this.leftLeg.getY());
-        buffer.writeFloat(this.leftLeg.getZ());
-        buffer.writeFloat(this.rightLeg.getX());
-        buffer.writeFloat(this.rightLeg.getY());
-        buffer.writeFloat(this.rightLeg.getZ());
+        buffer.writeFloat(this.head.x());
+        buffer.writeFloat(this.head.y());
+        buffer.writeFloat(this.head.z());
+        buffer.writeFloat(this.body.x());
+        buffer.writeFloat(this.body.y());
+        buffer.writeFloat(this.body.z());
+        buffer.writeFloat(this.leftArm.x());
+        buffer.writeFloat(this.leftArm.y());
+        buffer.writeFloat(this.leftArm.z());
+        buffer.writeFloat(this.rightArm.x());
+        buffer.writeFloat(this.rightArm.y());
+        buffer.writeFloat(this.rightArm.z());
+        buffer.writeFloat(this.leftLeg.x());
+        buffer.writeFloat(this.leftLeg.y());
+        buffer.writeFloat(this.leftLeg.z());
+        buffer.writeFloat(this.rightLeg.x());
+        buffer.writeFloat(this.rightLeg.y());
+        buffer.writeFloat(this.rightLeg.z());
     }
 
     public JsonObject serialize() {
@@ -88,9 +88,9 @@ public class ArmorStandRotation {
 
     private static JsonArray rot(Rotations rot) {
         JsonArray array = new JsonArray();
-        array.add(rot.getX());
-        array.add(rot.getY());
-        array.add(rot.getZ());
+        array.add(rot.x());
+        array.add(rot.y());
+        array.add(rot.z());
         return array;
     }
 

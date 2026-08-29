@@ -5,9 +5,6 @@ import de.melanx.utilitix.content.track.carts.stonecutter.StonecutterCartMode;
 import de.melanx.utilitix.registration.ModSerializers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -24,6 +21,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
@@ -67,7 +66,7 @@ public class StonecutterCart extends BaseCart {
         if (MODE.equals(key)) {
             this.mode = this.entityData.get(MODE);
         } else if (IN_REVERSE.equals(key)) {
-            this.flipped = this.entityData.get(IN_REVERSE);
+            this.setFlipped(this.entityData.get(IN_REVERSE));
         }
     }
 
@@ -90,7 +89,7 @@ public class StonecutterCart extends BaseCart {
     public void tick() {
         super.tick();
 
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             return;
         }
 
@@ -178,8 +177,8 @@ public class StonecutterCart extends BaseCart {
             this.cartHasMoved = true;
         }
 
-        if (this.flipped != this.entityData.get(IN_REVERSE)) {
-            this.entityData.set(IN_REVERSE, this.flipped);
+        if (this.isFlipped() != this.entityData.get(IN_REVERSE)) {
+            this.entityData.set(IN_REVERSE, this.isFlipped());
         }
     }
 
@@ -194,26 +193,26 @@ public class StonecutterCart extends BaseCart {
 
     @Nonnull
     @Override
-    public InteractionResult interact(@Nonnull Player player, @Nonnull InteractionHand hand) {
-        InteractionResult ret = super.interact(player, hand);
+    public InteractionResult interact(@Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Vec3 location) {
+        InteractionResult ret = super.interact(player, hand, location);
         if (ret.consumesAction()) {
             return ret;
         }
 
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             int modeIdx = this.getMode().ordinal();
             StonecutterCartMode[] modes = StonecutterCartMode.values();
             this.setMode(modes[(modeIdx + 1) % modes.length]);
         }
 
-        return InteractionResult.sidedSuccess(player.level().isClientSide);
+        return player.level().isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
     }
 
     @Override
-    protected void readAdditionalSaveData(@Nonnull CompoundTag nbt) {
-        super.readAdditionalSaveData(nbt);
+    protected void readAdditionalSaveData(@Nonnull ValueInput input) {
+        super.readAdditionalSaveData(input);
 
-        String modeName = nbt.getString("Mode");
+        String modeName = input.getStringOr("Mode", "");
         try {
             this.mode = StonecutterCartMode.valueOf(modeName);
         } catch (IllegalArgumentException | NoSuchElementException e) {
@@ -224,49 +223,38 @@ public class StonecutterCart extends BaseCart {
             this.entityData.set(MODE, this.mode);
         }
 
-        this.breakingBlock = NbtUtils.readBlockPos(nbt, "BreakPos").orElse(null);
-        this.lastSuccess = NbtUtils.readBlockPos(nbt, "LastSuccessfulBreak").orElse(null);
-        this.breakProgress = nbt.getInt("BreakProgress");
-
-        if (nbt.contains("StoredMotion", Tag.TAG_COMPOUND)) {
-            CompoundTag motionNbt = nbt.getCompound("StoredMotion");
-            this.storedMotion = new Vec3(motionNbt.getDouble("X"), motionNbt.getDouble("Y"), motionNbt.getDouble("Z"));
-        } else {
-            this.storedMotion = null;
-        }
-
-        this.cartHasMoved = nbt.getBoolean("CartHasMoved");
+        this.breakingBlock = input.read("BreakPos", BlockPos.CODEC).orElse(null);
+        this.lastSuccess = input.read("LastSuccessfulBreak", BlockPos.CODEC).orElse(null);
+        this.breakProgress = input.getIntOr("BreakProgress", 0);
+        this.storedMotion = input.read("StoredMotion", Vec3.CODEC).orElse(null);
+        this.cartHasMoved = input.getBooleanOr("CartHasMoved", false);
     }
 
     @Override
-    protected void addAdditionalSaveData(@Nonnull CompoundTag nbt) {
-        super.addAdditionalSaveData(nbt);
+    protected void addAdditionalSaveData(@Nonnull ValueOutput output) {
+        super.addAdditionalSaveData(output);
 
-        nbt.putString("Mode", this.mode.name());
+        output.putString("Mode", this.mode.name());
 
         if (this.breakingBlock == null) {
-            nbt.remove("BreakPos");
+            output.discard("BreakPos");
         } else {
-            nbt.put("BreakPos", NbtUtils.writeBlockPos(this.breakingBlock));
+            output.store("BreakPos", BlockPos.CODEC, this.breakingBlock);
         }
 
         if (this.lastSuccess == null) {
-            nbt.remove("LastSuccessfulBreak");
+            output.discard("LastSuccessfulBreak");
         } else {
-            nbt.put("LastSuccessfulBreak", NbtUtils.writeBlockPos(this.lastSuccess));
+            output.store("LastSuccessfulBreak", BlockPos.CODEC, this.lastSuccess);
         }
 
-        nbt.putInt("BreakProgress", this.breakProgress);
+        output.putInt("BreakProgress", this.breakProgress);
         if (this.storedMotion == null) {
-            nbt.remove("StoredMotion");
+            output.discard("StoredMotion");
         } else {
-            CompoundTag motionNBT = new CompoundTag();
-            motionNBT.putDouble("X", this.storedMotion.x);
-            motionNBT.putDouble("Y", this.storedMotion.y);
-            motionNBT.putDouble("Z", this.storedMotion.z);
-            nbt.put("StoredMotion", motionNBT);
+            output.store("StoredMotion", Vec3.CODEC, this.storedMotion);
         }
 
-        nbt.putBoolean("CartHasMoved", this.cartHasMoved);
+        output.putBoolean("CartHasMoved", this.cartHasMoved);
     }
 }

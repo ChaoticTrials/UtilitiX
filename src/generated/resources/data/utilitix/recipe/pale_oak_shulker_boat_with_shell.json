@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": "minecraft:pale_oak_chest_boat",
+    "s": "minecraft:shulker_shell"
+  },
+  "pattern": [
+    "s",
+    "b",
+    "s"
+  ],
+  "result": {
+    "id": "utilitix:pale_oak_shulker_boat"
+  }
+}

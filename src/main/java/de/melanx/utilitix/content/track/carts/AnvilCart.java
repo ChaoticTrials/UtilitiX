@@ -3,11 +3,8 @@ package de.melanx.utilitix.content.track.carts;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.IronGolem;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -30,28 +27,10 @@ public class AnvilCart extends BaseCart {
 
     @Override
     public void tick() {
-        //noinspection ConstantConditions
-        AABB collisionBox = this.getCollisionHandler() != null ? this.getCollisionHandler().getMinecartCollisionBox(this) : this.getBoundingBox().inflate(0.2, 0, 0.2);
-        if (!this.canBeRidden() || BaseCart.getHorizontalDistanceSqr(this.getDeltaMovement()) <= 0.1 * 0.1) {
-            for (Entity entity : this.level().getEntities(this, collisionBox)) {
-                if (!this.hasPassenger(entity) && entity.isPushable() && !(entity instanceof AbstractMinecart)) {
-                    this.boostEntity(entity);
-                }
-            }
-
-            super.tick();
-            return;
-        }
-
-        for (Entity entity : this.level().getEntities(this, collisionBox, EntitySelector.pushableBy(this))) {
-            if (!(entity instanceof AbstractMinecart)) {
-                if (entity instanceof Player || entity instanceof IronGolem || this.isVehicle() || entity.isPassenger()) {
-                    this.boostEntity(entity);
-                } else {
-                    if (!entity.startRiding(this)) {
-                        this.boostEntity(entity);
-                    }
-                }
+        AABB collisionBox = this.getBoundingBox().inflate(0.2, 0, 0.2);
+        for (Entity entity : this.level().getEntities(this, collisionBox)) {
+            if (!this.hasPassenger(entity) && entity.isPushable() && !(entity instanceof AbstractMinecart)) {
+                this.boostEntity(entity);
             }
         }
 

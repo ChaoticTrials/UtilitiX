@@ -9,6 +9,7 @@ import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.ItemStack;
@@ -31,19 +32,13 @@ public class BaseCartItem extends ItemBase implements Registerable {
     public final EntityType<? extends BaseCart> minecartType;
 
     public BaseCartItem(ModX mod, EntityType<? extends BaseCart> minecartType, Properties properties) {
-        super(mod, properties);
+        super(mod, properties.overrideDescription(minecartType.getDescriptionId()));
         this.minecartType = minecartType;
     }
 
     @Override
     public void setupCommon(SetupContext ctx) {
         ctx.enqueue(() -> DispenserBlock.registerBehavior(this, this.dispenseBehaviour));
-    }
-
-    @Nonnull
-    @Override
-    protected String getOrCreateDescriptionId() {
-        return this.minecartType.getDescriptionId();
     }
 
     @Nonnull
@@ -57,18 +52,15 @@ public class BaseCartItem extends ItemBase implements Registerable {
         }
 
         ItemStack stack = context.getItemInHand();
-        if (!level.isClientSide) {
-            BaseCart cart = this.minecartType.create(level);
+        if (!level.isClientSide()) {
+            BaseCart cart = this.minecartType.create(level, EntitySpawnReason.SPAWN_ITEM_USE);
             if (cart == null) {
                 return InteractionResult.FAIL;
             }
 
             RailShape rail = state.getBlock() instanceof BaseRailBlock ? ((BaseRailBlock) state.getBlock()).getRailDirection(state, level, pos, null) : RailShape.NORTH_SOUTH;
-            cart.setPos(pos.getX() + 0.5, pos.getY() + (rail.isAscending() ? 0.5625 : 0.0625), pos.getZ() + 0.5);
+            cart.setInitialPos(pos.getX() + 0.5, pos.getY() + (rail.isSlope() ? 0.5625 : 0.0625), pos.getZ() + 0.5);
             cart.setDeltaMovement(Vec3.ZERO);
-            cart.xo = pos.getX() + 0.5;
-            cart.yo = pos.getY() + (rail.isAscending() ? 0.5625 : 0.0625);
-            cart.zo = pos.getZ() + 0.5;
 
             if (stack.has(DataComponents.CUSTOM_NAME)) {
                 cart.setCustomName(stack.getHoverName());
@@ -79,7 +71,7 @@ public class BaseCartItem extends ItemBase implements Registerable {
 
         stack.shrink(1);
 
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return ((level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER));
     }
 
     @Override
@@ -105,7 +97,7 @@ public class BaseCartItem extends ItemBase implements Registerable {
 
             double yOffset;
             if (targetState.is(BlockTags.RAILS)) {
-                yOffset = rail.isAscending() ? 0.6 : 0.1;
+                yOffset = rail.isSlope() ? 0.6 : 0.1;
             } else {
                 if (!targetState.isAir() || !world.getBlockState(target.below()).is(BlockTags.RAILS)) {
                     return this.defaultDispense.dispense(source, stack);
@@ -113,20 +105,16 @@ public class BaseCartItem extends ItemBase implements Registerable {
 
                 BlockState railState = world.getBlockState(target.below());
                 RailShape railDown = railState.getBlock() instanceof BaseRailBlock ? ((BaseRailBlock) railState.getBlock()).getRailDirection(railState, world, target.below(), null) : RailShape.NORTH_SOUTH;
-                yOffset = dir != Direction.DOWN && railDown.isAscending() ? -0.4 : -0.9;
+                yOffset = dir != Direction.DOWN && railDown.isSlope() ? -0.4 : -0.9;
             }
 
-            BaseCart cart = BaseCartItem.this.minecartType.create(world);
+            BaseCart cart = BaseCartItem.this.minecartType.create(world, EntitySpawnReason.DISPENSER);
             if (cart == null) {
                 return this.defaultDispense.dispense(source, stack);
             }
 
-            cart.setPos(x, y + yOffset, z);
+            cart.setInitialPos(x, y + yOffset, z);
             cart.setDeltaMovement(Vec3.ZERO);
-
-            cart.xo = x;
-            cart.yo = y + yOffset;
-            cart.zo = z;
 
             if (stack.has(DataComponents.CUSTOM_NAME)) {
                 cart.setCustomName(stack.getHoverName());

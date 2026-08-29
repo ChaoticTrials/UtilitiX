@@ -35,6 +35,6 @@ public class MixinUtil {
         int y = pos.getY();
         int z = pos.getZ() & 0xF;
         glue.setData(x, y, z, glueData);
-        chunk.setUnsaved(true);
+        chunk.markUnsaved();
     }
 }

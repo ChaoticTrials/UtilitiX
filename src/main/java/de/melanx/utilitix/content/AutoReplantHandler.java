@@ -25,7 +25,7 @@ public class AutoReplantHandler {
     public static void onItemDespawn(ItemExpireEvent event) {
         ItemEntity entity = event.getEntity();
         Level level = entity.level();
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
 

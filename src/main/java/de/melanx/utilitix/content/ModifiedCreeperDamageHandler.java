@@ -2,7 +2,7 @@ package de.melanx.utilitix.content;
 
 import de.melanx.utilitix.config.FeatureConfig;
 import net.minecraft.world.entity.monster.Creeper;
-import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.ServerExplosion;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -17,7 +17,7 @@ public class ModifiedCreeperDamageHandler {
             return;
         }
 
-        Explosion explosion = event.getExplosion();
+        ServerExplosion explosion = event.getExplosion();
 
         if (explosion.getDirectSourceEntity() instanceof Creeper creeper) {
             float health = creeper.getHealth();

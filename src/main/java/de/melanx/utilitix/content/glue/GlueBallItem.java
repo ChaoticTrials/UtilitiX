@@ -16,6 +16,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -29,7 +30,7 @@ import org.moddingx.libx.base.ItemBase;
 import org.moddingx.libx.mod.ModX;
 
 import javax.annotation.Nonnull;
-import java.util.List;
+import java.util.function.Consumer;
 
 public class GlueBallItem extends ItemBase {
 
@@ -52,13 +53,13 @@ public class GlueBallItem extends ItemBase {
 
         Direction face = context.getPlayer() != null && context.getPlayer().isShiftKeyDown() ? context.getClickedFace().getOpposite() : context.getClickedFace();
         if (glue.get(x, y, z, face) || !GlueBallItem.canGlue(level, clickedPos, face)) {
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return ((level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER));
         }
 
         if (level instanceof ServerLevel serverLevel) {
             glue.attach(chunk);
             glue.set(x, y, z, face, true);
-            chunk.setUnsaved(true);
+            chunk.markUnsaved();
 
             if (context.getPlayer() == null || !context.getPlayer().getAbilities().instabuild) {
                 context.getItemInHand().shrink(1);
@@ -77,11 +78,11 @@ public class GlueBallItem extends ItemBase {
     }
 
     @Override
-    public void appendHoverText(@Nonnull ItemStack stack, @Nonnull TooltipContext context, @Nonnull List<Component> tooltipComponents, @Nonnull TooltipFlag tooltipFlag) {
+    public void appendHoverText(@Nonnull ItemStack stack, @Nonnull TooltipContext context, @Nonnull TooltipDisplay display, @Nonnull Consumer<Component> tooltipComponents, @Nonnull TooltipFlag tooltipFlag) {
         if (ModList.get().isLoaded("zeta")) {
             Component warning = ZetaCompat.warningForGlue();
             if (warning != null) {
-                tooltipComponents.add(warning);
+                tooltipComponents.accept(warning);
             }
         }
     }
@@ -125,7 +126,7 @@ public class GlueBallItem extends ItemBase {
         for (Direction dir : Direction.values()) {
             if (glue.get(x, y, z, dir) && !GlueBallItem.canGlue(level, event.getPos(), dir)) {
                 glue.set(x, y, z, dir, false);
-                chunk.setUnsaved(true);
+                chunk.markUnsaved();
                 BlockPos targetPos = event.getPos().relative(dir);
                 ItemEntity ie = new ItemEntity(level, targetPos.getX() + 0.5, targetPos.getY() + 0.5, targetPos.getZ() + 0.5, new ItemStack(ModItems.glueBall));
                 ie.setPickUpDelay(20);

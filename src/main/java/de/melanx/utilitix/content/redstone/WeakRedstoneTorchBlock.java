@@ -4,6 +4,7 @@ import de.melanx.utilitix.config.FeatureConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.flag.FeatureFlagSet;
@@ -15,7 +16,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.RedstoneTorchBlock;
 import net.minecraft.world.level.block.RedstoneWallTorchBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.HitResult;
 import org.moddingx.libx.mod.ModX;
 import org.moddingx.libx.registration.Registerable;
 import org.moddingx.libx.registration.RegistrationContext;
@@ -25,7 +25,8 @@ import javax.annotation.Nonnull;
 public class WeakRedstoneTorchBlock extends RedstoneTorchBlock implements Registerable {
 
     protected final ModX mod;
-    private final Item item;
+    private Item.Properties pendingItemProperties;
+    private Item item;
     public final RedstoneWallTorchBlock wallTorch;
 
     public WeakRedstoneTorchBlock(ModX mod, Properties properties) {
@@ -36,18 +37,21 @@ public class WeakRedstoneTorchBlock extends RedstoneTorchBlock implements Regist
         super(properties);
         this.mod = mod;
         this.wallTorch = new WallTorchBlock(properties);
-        this.item = new StandingAndWallBlockItem(this, this.wallTorch, itemProperties, Direction.DOWN) {
+        this.pendingItemProperties = itemProperties;
+    }
+
+    @Override
+    public void registerAdditional(RegistrationContext ctx, EntryCollector builder) {
+        builder.registerNamed(Registries.BLOCK, "wall", this.wallTorch);
+
+        this.item = new StandingAndWallBlockItem(this, this.wallTorch, Direction.DOWN, this.pendingItemProperties.setId(ResourceKey.create(Registries.ITEM, ctx.id())).useBlockDescriptionPrefix()) {
 
             @Override
             public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
                 return WeakRedstoneTorchBlock.this.isEnabled(enabledFeatures);
             }
         };
-    }
-
-    @Override
-    public void registerAdditional(RegistrationContext ctx, EntryCollector builder) {
-        builder.registerNamed(Registries.BLOCK, "wall", this.wallTorch);
+        this.pendingItemProperties = null;
         builder.register(Registries.ITEM, this.item);
     }
 
@@ -72,7 +76,7 @@ public class WeakRedstoneTorchBlock extends RedstoneTorchBlock implements Regist
 
         @Nonnull
         @Override
-        public ItemStack getCloneItemStack(@Nonnull BlockState state, @Nonnull HitResult target, @Nonnull LevelReader level, @Nonnull BlockPos pos, @Nonnull Player player) {
+        public ItemStack getCloneItemStack(@Nonnull LevelReader level, @Nonnull BlockPos pos, @Nonnull BlockState state, boolean includeData, @Nonnull Player player) {
             return new ItemStack(WeakRedstoneTorchBlock.this.item);
         }
 

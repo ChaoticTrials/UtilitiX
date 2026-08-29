@@ -2,12 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "utilitix:linked_crystal"
-    }
+    "utilitix:linked_crystal"
   ],
   "result": {
-    "count": 1,
     "id": "utilitix:linked_crystal"
   }
 }

@@ -3,7 +3,5 @@
   "action": {
     "type": "clone"
   },
-  "input": {
-    "item": "minecraft:netherite_scrap"
-  }
+  "input": "minecraft:netherite_scrap"
 }

@@ -36,7 +36,7 @@ public class MixinPistonStructureResolver {
                     ordinal = 1
             )
     )
-    private BlockState checkSticky1(Level level, BlockPos pos) {
+    private BlockState utilitix$checkSticky1(Level level, BlockPos pos) {
         return Blocks.SLIME_BLOCK.defaultBlockState();
     }
 
@@ -48,7 +48,7 @@ public class MixinPistonStructureResolver {
                     ordinal = 2
             )
     )
-    private BlockState checkSticky2(Level level, BlockPos pos) {
+    private BlockState utilitix$checkSticky2(Level level, BlockPos pos) {
         return Blocks.SLIME_BLOCK.defaultBlockState();
     }
 
@@ -57,7 +57,7 @@ public class MixinPistonStructureResolver {
             constant = @Constant(intValue = 12),
             require = 3
     )
-    private int increaseBlockLimit(int original, BlockPos originPos) {
+    private int utilitix$increaseBlockLimit(int original, BlockPos originPos) {
         return this.utilitix$shouldIncreaseLimit(originPos) ? CommonConfig.glueBlockLimit : original;
     }
 
@@ -75,10 +75,8 @@ public class MixinPistonStructureResolver {
         if (!level.getBlockState(fromPos).isStickyBlock()) {
             // We need our own logic here
             LevelChunk chunk = level.getChunkAt(fromPos);
-            //noinspection ConstantConditions
             StickyChunk glue = chunk.getExistingDataOrNull(ModAttachmentTypes.stickyChunk);
 
-            //noinspection ConstantConditions
             if (glue != null) {
                 int x = fromPos.getX() & 0xF;
                 int y = fromPos.getY();

@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
 
 public class StickyChunkUpdate extends PacketHandler<StickyChunkUpdate.Message> {
 
-    public static final CustomPacketPayload.Type<Message> TYPE = new CustomPacketPayload.Type<>(UtilitiX.getInstance().resource("sticky_chunk_update"));
+    public static final CustomPacketPayload.Type<Message> TYPE = new CustomPacketPayload.Type<>(UtilitiX.getInstance().id("sticky_chunk_update"));
 
     public StickyChunkUpdate() {
         super(TYPE, PacketFlow.CLIENTBOUND, Message.CODEC, HandlerThread.MAIN);
@@ -28,7 +28,7 @@ public class StickyChunkUpdate extends PacketHandler<StickyChunkUpdate.Message> 
     @Override
     public void handle(StickyChunkUpdate.Message msg, IPayloadContext ctx) {
         Level level = ctx.player().level();
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             this.sendWarning(msg);
             return;
         }
@@ -39,7 +39,7 @@ public class StickyChunkUpdate extends PacketHandler<StickyChunkUpdate.Message> 
             return;
         }
 
-        LevelChunk loaded = level.getChunk(msg.pos().x, msg.pos().z);
+        LevelChunk loaded = level.getChunk(msg.pos().x(), msg.pos().z());
         //noinspection ConstantConditions
         if (loaded == null) {
             this.sendWarning(msg);
@@ -55,15 +55,15 @@ public class StickyChunkUpdate extends PacketHandler<StickyChunkUpdate.Message> 
     }
 
     private void sendWarning(StickyChunkUpdate.Message msg) {
-        UtilitiX.getInstance().logger.warn("Received invalid sticky chunk packet for unloaded chunk: ({},{})", msg.pos().x, msg.pos().z);
+        UtilitiX.getInstance().logger.warn("Received invalid sticky chunk packet for unloaded chunk: ({},{})", msg.pos().x(), msg.pos().z());
     }
 
     public record Message(ChunkPos pos, StickyChunk data) implements CustomPacketPayload {
 
         public static final StreamCodec<RegistryFriendlyByteBuf, Message> CODEC = StreamCodec.of(
                 (buffer, msg) -> {
-                    buffer.writeInt(msg.pos().x);
-                    buffer.writeInt(msg.pos().z);
+                    buffer.writeInt(msg.pos().x());
+                    buffer.writeInt(msg.pos().z());
                     msg.data().write(buffer);
                 }, buffer -> {
                     ChunkPos pos = new ChunkPos(buffer.readInt(), buffer.readInt());

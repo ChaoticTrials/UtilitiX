@@ -6,25 +6,20 @@ import de.melanx.utilitix.content.brewery.AdvancedBreweryBlockEntity;
 import de.melanx.utilitix.recipe.brewery.*;
 import de.melanx.utilitix.registration.ModRecipeTypes;
 import de.melanx.utilitix.registration.ModRecipes;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class BreweryRecipe implements Recipe<RecipeWrapper> {
+public class BreweryRecipe implements Recipe<ItemHandlerRecipeInput> {
 
     private final Ingredient input;
     private final EffectTransformer transformer;
@@ -35,7 +30,7 @@ public class BreweryRecipe implements Recipe<RecipeWrapper> {
     }
 
     @Override
-    public boolean matches(@Nonnull RecipeWrapper recipeWrapper, @Nonnull Level level) {
+    public boolean matches(@Nonnull ItemHandlerRecipeInput recipeWrapper, @Nonnull Level level) {
         if (recipeWrapper.size() != 5) {
             return false;
         }
@@ -53,7 +48,7 @@ public class BreweryRecipe implements Recipe<RecipeWrapper> {
     }
 
     @Nullable
-    public PotionOutput getPotionResult(@Nonnull RecipeWrapper recipeWrapper) {
+    public PotionOutput getPotionResult(@Nonnull ItemHandlerRecipeInput recipeWrapper) {
         if (recipeWrapper.size() != 5) {
             return null;
         }
@@ -67,37 +62,42 @@ public class BreweryRecipe implements Recipe<RecipeWrapper> {
 
     @Nonnull
     @Override
-    public ItemStack assemble(@Nonnull RecipeWrapper recipeWrapper, @Nonnull HolderLookup.Provider registry) {
+    public ItemStack assemble(@Nonnull ItemHandlerRecipeInput recipeWrapper) {
         PotionOutput output = this.getPotionResult(recipeWrapper);
 
         return output == null ? recipeWrapper.getItem(AdvancedBreweryBlockEntity.OUTPUT_SLOT).copy() : output.getMain();
     }
 
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return true;
-    }
-
-    @Nonnull
-    @Override
-    public ItemStack getResultItem(@Nonnull HolderLookup.Provider registry) {
+    public ItemStack getResultItem() {
         return this.transformer.output();
     }
 
     @Nonnull
     @Override
-    public NonNullList<Ingredient> getIngredients() {
-        NonNullList<Ingredient> list = NonNullList.create();
-        if (this.input != null) {
-            list.add(this.input);
-        }
-
-        return list;
+    public PlacementInfo placementInfo() {
+        return this.input != null ? PlacementInfo.create(this.input) : PlacementInfo.create(List.of());
     }
 
     @Override
     public boolean isSpecial() {
         return true;
+    }
+
+    @Override
+    public boolean showNotification() {
+        return true;
+    }
+
+    @Nonnull
+    @Override
+    public String group() {
+        return "";
+    }
+
+    @Nonnull
+    @Override
+    public RecipeBookCategory recipeBookCategory() {
+        return RecipeBookCategories.CRAFTING_MISC;
     }
 
     public EffectTransformer getAction() {
@@ -106,13 +106,13 @@ public class BreweryRecipe implements Recipe<RecipeWrapper> {
 
     @Nonnull
     @Override
-    public RecipeType<?> getType() {
+    public RecipeType<BreweryRecipe> getType() {
         return ModRecipeTypes.BREWERY;
     }
 
     @Nonnull
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<BreweryRecipe> getSerializer() {
         return ModRecipes.brewerySerializer;
     }
 
@@ -120,7 +120,7 @@ public class BreweryRecipe implements Recipe<RecipeWrapper> {
         return Optional.ofNullable(this.input);
     }
 
-    public static class Serializer implements RecipeSerializer<BreweryRecipe> {
+    public static class Serializer {
 
         private static <T> MapCodec<T> errorMapCodec(String message) {
             return new MapCodec<>() {
@@ -229,18 +229,6 @@ public class BreweryRecipe implements Recipe<RecipeWrapper> {
             }
 
             ACTION_STREAM_CODEC.encode(buffer, recipe.transformer);
-        }
-
-        @Nonnull
-        @Override
-        public MapCodec<BreweryRecipe> codec() {
-            return CODEC;
-        }
-
-        @Nonnull
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, BreweryRecipe> streamCodec() {
-            return STREAM_CODEC;
         }
     }
 }

@@ -14,7 +14,7 @@ public class HandBellItem extends BellBase {
 
     @Override
     protected boolean entityFilter(LivingEntity entity, ItemStack stack) {
-        return entity.isAlive() && entity.getType().is(EntityTypeTags.RAIDERS);
+        return entity.isAlive() && entity.is(EntityTypeTags.RAIDERS);
     }
 
     @Override

@@ -9,9 +9,10 @@ import de.melanx.utilitix.registration.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -44,18 +45,18 @@ public class PistonControllerRailBlock extends ControllerRailBlock<PistonControl
 
     @Nonnull
     @Override
-    protected ItemInteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hitResult) {
-        ItemInteractionResult result = super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+    protected InteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hitResult) {
+        InteractionResult result = super.useItemOn(stack, state, level, pos, player, hand, hitResult);
         if (result.consumesAction()) {
             return result;
         }
 
         ItemStack held = player.getItemInHand(hand);
         if (held.isEmpty() || held.getItem() != ModItems.minecartTinkerer) {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
 
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             PistonControllerRailBlockEntity blockEntity = this.getBlockEntity(level, pos);
             int modeIdx = blockEntity.getMode().ordinal();
             PistonCartMode[] modes = PistonCartMode.values();
@@ -63,19 +64,20 @@ public class PistonControllerRailBlock extends ControllerRailBlock<PistonControl
             player.sendSystemMessage(Component.translatable("tooltip.utilitix.piston_cart_mode", blockEntity.getMode().name));
         }
 
-        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public void onMinecartPass(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull AbstractMinecart cart) {
-        if (!(cart instanceof PistonCart pistonCart)) {
+    protected void entityInside(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Entity entity, @Nonnull InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+        super.entityInside(state, level, pos, entity, effectApplier, isPrecise);
+        if (!(entity instanceof PistonCart pistonCart)) {
             return;
         }
 
         PistonControllerRailBlockEntity blockEntity = this.getBlockEntity(level, pos);
         ItemStack filterThis = blockEntity.getFilterStack();
         if (!filterThis.isEmpty()) {
-            ItemStack filterCart = MinecartTinkererItem.getLabelStack(cart);
+            ItemStack filterCart = MinecartTinkererItem.getLabelStack(pistonCart);
             if (filterCart.isEmpty()) {
                 return;
             }

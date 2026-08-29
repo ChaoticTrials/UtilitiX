@@ -2,10 +2,10 @@ package de.melanx.utilitix.content.track.rails;
 
 import de.melanx.utilitix.content.track.carts.piston.PistonCartMode;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import javax.annotation.Nonnull;
 import java.util.NoSuchElementException;
@@ -28,10 +28,10 @@ public class PistonControllerRailBlockEntity extends ControllerRailBlockEntity {
     }
 
     @Override
-    public void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
+    protected void loadAdditional(@Nonnull ValueInput input) {
+        super.loadAdditional(input);
 
-        String modeName = tag.getString("Mode");
+        String modeName = input.getStringOr("Mode", "");
         try {
             this.mode = PistonCartMode.valueOf(modeName);
         } catch (IllegalArgumentException | NoSuchElementException e) {
@@ -40,7 +40,8 @@ public class PistonControllerRailBlockEntity extends ControllerRailBlockEntity {
     }
 
     @Override
-    public void saveAdditional(@Nonnull CompoundTag nbt, @Nonnull HolderLookup.Provider registries) {
-        nbt.putString("Mode", this.mode.name());
+    protected void saveAdditional(@Nonnull ValueOutput output) {
+        super.saveAdditional(output);
+        output.putString("Mode", this.mode.name());
     }
 }

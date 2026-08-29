@@ -2,33 +2,15 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "a": {
-      "item": "minecraft:spider_eye"
-    },
-    "b": {
-      "item": "minecraft:ghast_tear"
-    },
-    "c": {
-      "tag": "c:bones"
-    },
-    "d": {
-      "tag": "c:gunpowders"
-    },
-    "e": {
-      "item": "utilitix:hand_bell"
-    },
-    "f": {
-      "tag": "c:dusts/glowstone"
-    },
-    "g": {
-      "item": "minecraft:blaze_powder"
-    },
-    "h": {
-      "tag": "c:ender_pearls"
-    },
-    "i": {
-      "item": "minecraft:rotten_flesh"
-    }
+    "a": "minecraft:spider_eye",
+    "b": "minecraft:ghast_tear",
+    "c": "#c:bones",
+    "d": "#c:gunpowders",
+    "e": "utilitix:hand_bell",
+    "f": "#c:dusts/glowstone",
+    "g": "minecraft:blaze_powder",
+    "h": "#c:ender_pearls",
+    "i": "minecraft:rotten_flesh"
   },
   "pattern": [
     "abc",
@@ -36,7 +18,6 @@
     "ghi"
   ],
   "result": {
-    "count": 1,
     "id": "utilitix:mob_bell"
   }
 }

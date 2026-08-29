@@ -8,8 +8,8 @@ version = rootProject.version
 repositories {
     maven { url = 'https://maven.neoforged.net/releases' }
     maven {
-        name 'Mojang'
-        url 'https://libraries.minecraft.net'
+        name = 'Mojang'
+        url = 'https://libraries.minecraft.net'
     }
     mavenCentral()
 }

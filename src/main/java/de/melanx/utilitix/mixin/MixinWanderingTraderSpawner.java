@@ -5,16 +5,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
-import net.minecraft.world.entity.npc.WanderingTrader;
-import net.minecraft.world.entity.npc.WanderingTraderSpawner;
+import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
+import net.minecraft.world.entity.npc.wanderingtrader.WanderingTraderSpawner;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.storage.ServerLevelData;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,10 +36,6 @@ public abstract class MixinWanderingTraderSpawner {
     @Shadow
     protected abstract void tryToSpawnLlamaFor(ServerLevel serverLevel, WanderingTrader trader, int maxDistance);
 
-    @Shadow
-    @Final
-    private ServerLevelData serverLevelData;
-
     @Inject(
             method = "spawn",
             at = @At("HEAD"),
@@ -59,7 +53,7 @@ public abstract class MixinWanderingTraderSpawner {
                 continue;
             }
 
-            if (level.random.nextInt(10) > 1) {
+            if (level.getRandom().nextInt(10) > 1) {
                 int i = 48;
                 BlockPos playerPos = player.blockPosition();
                 Optional<BlockPos> optional = level.getPoiManager().find((poiTypeHolder) -> poiTypeHolder.is(PoiTypes.MEETING), (pos) -> true, playerPos, i, PoiManager.Occupancy.ANY);
@@ -70,16 +64,15 @@ public abstract class MixinWanderingTraderSpawner {
                         continue;
                     }
 
-                    WanderingTrader trader = EntityType.WANDERING_TRADER.spawn(level, null, null, possibleSpawnPos, MobSpawnType.EVENT, false, false);
+                    WanderingTrader trader = EntityType.WANDERING_TRADER.spawn(level, null, null, possibleSpawnPos, EntitySpawnReason.EVENT, false, false);
                     if (trader != null) {
                         for (int j = 0; j < 2; ++j) {
                             this.tryToSpawnLlamaFor(level, trader, 4);
                         }
 
-                        this.serverLevelData.setWanderingTraderId(trader.getUUID());
                         trader.setDespawnDelay(48000);
                         trader.setWanderTarget(checkPos);
-                        trader.restrictTo(checkPos, 16);
+                        trader.setHomeTo(checkPos, 16);
                         returnValue = true;
                     }
                 }

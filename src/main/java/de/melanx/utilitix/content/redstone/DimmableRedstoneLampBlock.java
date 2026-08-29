@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.redstone.Orientation;
 import org.moddingx.libx.base.BlockBase;
 import org.moddingx.libx.mod.ModX;
 
@@ -36,15 +37,15 @@ public class DimmableRedstoneLampBlock extends BlockBase {
     }
 
     @Override
-    public void neighborChanged(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockPos fromPos, boolean isMoving) {
-        if (!level.isClientSide) {
+    protected void neighborChanged(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Block block, @Nullable Orientation orientation, boolean isMoving) {
+        if (!level.isClientSide()) {
             this.updatePowerStrength(state, level, pos);
         }
     }
 
     @Override
     public void onPlace(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState oldState, boolean isMoving) {
-        if (!oldState.is(state.getBlock()) && !level.isClientSide) {
+        if (!oldState.is(state.getBlock()) && !level.isClientSide()) {
             this.updatePowerStrength(state, level, pos);
         }
     }

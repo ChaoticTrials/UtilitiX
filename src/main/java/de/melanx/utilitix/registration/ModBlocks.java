@@ -71,5 +71,5 @@ public class ModBlocks {
         }
     };
     public static final MenuBlockBE<ExperienceCrystalBlockEntity, ExperienceCrystalMenu> experienceCrystal = new ExperienceCrystalBlock(UtilitiX.getInstance(), BlockBehaviour.Properties.ofLegacyCopy(Blocks.STONE).mapColor(MapColor.COLOR_LIGHT_GREEN).strength(3, 7));
-    public static final Block stoneWall = new StoneWallBlock(BlockBehaviour.Properties.ofLegacyCopy(Blocks.STONE), new Item.Properties());
+    public static final Block stoneWall = new StoneWallBlock(BlockBehaviour.Properties.ofLegacyCopy(Blocks.STONE), new Item.Properties().useBlockDescriptionPrefix());
 }

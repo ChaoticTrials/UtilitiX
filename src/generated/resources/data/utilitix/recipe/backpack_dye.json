@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_dye",
+  "category": "misc",
+  "dye": "#c:dyes",
+  "group": "dyed_backpack",
+  "result": {
+    "id": "utilitix:backpack"
+  },
+  "target": "utilitix:backpack"
+}

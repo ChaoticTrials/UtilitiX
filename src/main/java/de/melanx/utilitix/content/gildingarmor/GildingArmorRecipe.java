@@ -1,27 +1,24 @@
 package de.melanx.utilitix.content.gildingarmor;
 
-import com.mojang.serialization.MapCodec;
 import de.melanx.utilitix.client.ClientProxy;
 import de.melanx.utilitix.config.FeatureConfig;
 import de.melanx.utilitix.registration.ModDataComponentTypes;
 import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.registration.ModRecipes;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.SmithingRecipeInput;
-import net.minecraft.world.item.crafting.SmithingTransformRecipe;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 
 public class GildingArmorRecipe extends SmithingTransformRecipe {
 
@@ -30,7 +27,14 @@ public class GildingArmorRecipe extends SmithingTransformRecipe {
     private static final int ADDITION_SLOT_ID = 2;
 
     public GildingArmorRecipe() {
-        super(Ingredient.EMPTY, Ingredient.EMPTY, Ingredient.EMPTY, ItemStack.EMPTY);
+        super(
+                // Iron Chestplate is only used for rendering in Cooking Book and JEI
+                new Recipe.CommonInfo(true),
+                Optional.empty(),
+                Ingredient.of(Items.IRON_CHESTPLATE),
+                Optional.of(Ingredient.of(ModItems.gildingCrystal)),
+                new ItemStackTemplate(Items.IRON_CHESTPLATE)
+        );
     }
 
     @Override
@@ -38,7 +42,7 @@ public class GildingArmorRecipe extends SmithingTransformRecipe {
         ItemStack input = inv.getItem(ARMOR_SLOT_ID);
         ItemStack addition = inv.getItem(ADDITION_SLOT_ID);
 
-        if (input.getItem() instanceof ArmorItem armor && !GildingArmorRecipe.isGilded(input) && GildingArmorRecipe.canGild(armor, input)) {
+        if (!GildingArmorRecipe.isGilded(input) && GildingArmorRecipe.canGild(input)) {
             return addition.getItem() == ModItems.gildingCrystal;
         }
 
@@ -47,8 +51,8 @@ public class GildingArmorRecipe extends SmithingTransformRecipe {
 
     @Nonnull
     @Override
-    public ItemStack assemble(@Nonnull SmithingRecipeInput inv, @Nonnull HolderLookup.Provider registry) {
-        ItemStack stack = inv.getItem(ARMOR_SLOT_ID).copy();
+    public ItemStack assemble(SmithingRecipeInput input) {
+        ItemStack stack = input.getItem(ARMOR_SLOT_ID).copy();
         stack.set(ModDataComponentTypes.gilded, true);
 
         return stack;
@@ -56,18 +60,7 @@ public class GildingArmorRecipe extends SmithingTransformRecipe {
 
     @Nonnull
     @Override
-    public ItemStack getResultItem(@Nonnull HolderLookup.Provider registry) {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public boolean isAdditionIngredient(@Nonnull ItemStack addition) {
-        return addition.getItem() == ModItems.gildingCrystal;
-    }
-
-    @Nonnull
-    @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<SmithingTransformRecipe> getSerializer() {
         return ModRecipes.gildingSerializer;
     }
 
@@ -75,14 +68,15 @@ public class GildingArmorRecipe extends SmithingTransformRecipe {
         return stack.getOrDefault(ModDataComponentTypes.gilded, false) && FeatureConfig.Misc.InWorldChanges.gilding;
     }
 
-    public static boolean canGild(ArmorItem armor, ItemStack stack) {
-        if (armor.getMaterial() == ArmorMaterials.GOLD) {
+    public static boolean canGild(ItemStack armor) {
+        Equippable equippable = armor.get(DataComponents.EQUIPPABLE);
+        if (equippable == null || !EquipmentSlotGroup.ARMOR.slots().contains(equippable.slot())) {
             return false;
         }
 
         try {
             Player player = null;
-            if (FMLEnvironment.dist == Dist.CLIENT) {
+            if (FMLEnvironment.getDist() == Dist.CLIENT) {
                 try {
                     player = ClientProxy.getClientPlayer();
                 } catch (Exception e) {
@@ -91,24 +85,9 @@ public class GildingArmorRecipe extends SmithingTransformRecipe {
             }
 
             //noinspection DataFlowIssue
-            return !armor.makesPiglinsNeutral(stack, player);
+            return !armor.makesPiglinsNeutral(player);
         } catch (NullPointerException e) {
             return false;
-        }
-    }
-
-    public static class Serializer implements RecipeSerializer<GildingArmorRecipe> {
-
-        @Nonnull
-        @Override
-        public MapCodec<GildingArmorRecipe> codec() {
-            return MapCodec.unit(() -> GildingArmorRecipe.INSTANCE);
-        }
-
-        @Nonnull
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, GildingArmorRecipe> streamCodec() {
-            return StreamCodec.unit(GildingArmorRecipe.INSTANCE);
         }
     }
 }

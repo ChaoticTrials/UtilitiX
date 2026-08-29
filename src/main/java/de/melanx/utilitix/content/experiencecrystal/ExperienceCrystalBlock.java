@@ -1,21 +1,15 @@
 package de.melanx.utilitix.content.experiencecrystal;
 
 import de.melanx.utilitix.config.FeatureConfig;
-import de.melanx.utilitix.util.XPUtils;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.flag.FeatureFlagSet;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -28,16 +22,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.fluids.FluidUtil;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 import org.moddingx.libx.base.tile.MenuBlockBE;
 import org.moddingx.libx.block.DirectionShape;
 import org.moddingx.libx.mod.ModX;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Optional;
 
 public class ExperienceCrystalBlock extends MenuBlockBE<ExperienceCrystalBlockEntity, ExperienceCrystalMenu> {
 
@@ -77,19 +71,19 @@ public class ExperienceCrystalBlock extends MenuBlockBE<ExperienceCrystalBlockEn
     }
 
     @Override
-    public void entityInside(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Entity entity) {
-        if (!(entity instanceof ExperienceOrb orb) || level.isClientSide) {
+    public void entityInside(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Entity entity, @Nonnull InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+        if (!(entity instanceof ExperienceOrb orb) || level.isClientSide()) {
             return;
         }
 
         ExperienceCrystalBlockEntity blockEntity = this.getBlockEntity(level, pos);
-        int xpValue = orb.value;
+        int xpValue = orb.getValue();
         int added = blockEntity.addXp(xpValue);
 
         if (added == xpValue) {
             entity.remove(Entity.RemovalReason.KILLED);
         } else {
-            orb.value -= added;
+            orb.setValue(orb.getValue() - added);
         }
     }
 
@@ -117,54 +111,30 @@ public class ExperienceCrystalBlock extends MenuBlockBE<ExperienceCrystalBlockEn
     }
 
     private boolean useFluidItem(BlockEntity blockEntity, Player player, InteractionHand hand, Level level, BlockPos pos, BlockHitResult hitResult) {
-        Optional<IFluidHandler> handler = FluidUtil.getFluidHandler(level, pos, hitResult.getDirection());
+        ResourceHandler<FluidResource> handler = level.getCapability(Capabilities.Fluid.BLOCK, pos, hitResult.getDirection());
 
         // Shouldn't happen but if there's no tank pass
-        if (handler.isEmpty()) {
+        if (handler == null) {
             return false;
         }
 
         // If the user isn't holding an item or if the tank is empty, pass
-        if (player.getItemInHand(hand).isEmpty() && !handler.get().getFluidInTank(0).isEmpty()) {
+        if (player.getItemInHand(hand).isEmpty() && !handler.getResource(0).isEmpty()) {
             return false;
         }
 
         // try to interact. If that fails, pass
-        return FluidUtil.interactWithFluidHandler(player, hand, level, pos, hitResult.getDirection());
+        return FluidUtil.interactWithFluidHandler(player, hand, level, pos, hitResult.getDirection(), null);
     }
 
     @Nonnull
     @Override
-    protected ItemInteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hitResult) {
-        if (level.isClientSide || !this.useFluidItem(this.getBlockEntity(level, pos), player, hand, level, pos, hitResult)) {
+    protected InteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hitResult) {
+        if (level.isClientSide() || !this.useFluidItem(this.getBlockEntity(level, pos), player, hand, level, pos, hitResult)) {
             return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
         }
 
-        return ItemInteractionResult.SUCCESS;
-    }
-
-    @Override
-    public void appendHoverText(@Nonnull ItemStack stack, @Nonnull Item.TooltipContext context, @Nonnull List<Component> tooltipComponents, @Nonnull TooltipFlag tooltipFlag) {
-        if (!stack.has(DataComponents.BLOCK_ENTITY_DATA)) {
-            return;
-        }
-
-        CustomData blockEntityData = stack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY);
-        if (!blockEntityData.contains("Xp")) {
-            return;
-        }
-
-        int xp = blockEntityData.copyTag().getInt("Xp");
-        if (xp <= 0) {
-            return;
-        }
-
-        int level = XPUtils.getLevelExp(xp).getLeft();
-        if (level > 0) {
-            tooltipComponents.add(Component.translatable("tooltip.utilitix.experience_crystal.xp_level", level).withStyle(ChatFormatting.GREEN));
-        } else {
-            tooltipComponents.add(Component.translatable("tooltip.utilitix.experience_crystal.xp_points", xp).withStyle(ChatFormatting.GREEN));
-        }
+        return InteractionResult.SUCCESS;
     }
 
     @Override

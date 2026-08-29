@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:builtin/entity",
   "gui_light": "front",
+  "textures": {
+    "particle": "utilitix:item/mob_bell_bell"
+  },
   "display": {
     "thirdperson_righthand": {
       "rotation": [

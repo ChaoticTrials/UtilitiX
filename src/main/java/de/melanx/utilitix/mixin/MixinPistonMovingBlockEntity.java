@@ -1,16 +1,16 @@
 package de.melanx.utilitix.mixin;
 
+import com.mojang.serialization.Codec;
 import de.melanx.utilitix.content.glue.StickyChunk;
 import de.melanx.utilitix.registration.ModAttachmentTypes;
 import de.melanx.utilitix.util.MixinUtil;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,7 +27,7 @@ public class MixinPistonMovingBlockEntity {
             method = "tick",
             at = @At("HEAD")
     )
-    private static void tick(Level level, BlockPos pos, BlockState state, PistonMovingBlockEntity blockEntity, CallbackInfo ci) {
+    private static void utilitix$tick(Level level, BlockPos pos, BlockState state, PistonMovingBlockEntity blockEntity, CallbackInfo ci) {
         //noinspection ConstantConditions
         if (((MixinPistonMovingBlockEntity) (Object) blockEntity).utilitiX$glueData != null) {
             return;
@@ -35,9 +35,7 @@ public class MixinPistonMovingBlockEntity {
 
         BlockPos fromPos = pos.relative(blockEntity.isExtending() ? blockEntity.getDirection().getOpposite() : blockEntity.getDirection());
         LevelChunk chunk = level.getChunkAt(fromPos);
-        //noinspection ConstantConditions
         StickyChunk glue = chunk.getExistingDataOrNull(ModAttachmentTypes.stickyChunk);
-        //noinspection ConstantConditions
         if (glue == null) {
             return;
         }
@@ -48,7 +46,7 @@ public class MixinPistonMovingBlockEntity {
         //noinspection ConstantConditions
         ((MixinPistonMovingBlockEntity) (Object) blockEntity).utilitiX$glueData = glue.getData(x, y, z);
         glue.clearData(x, y, z);
-        chunk.setUnsaved(true);
+        chunk.markUnsaved();
     }
 
     @Inject(
@@ -59,7 +57,7 @@ public class MixinPistonMovingBlockEntity {
                     shift = At.Shift.AFTER
             )
     )
-    private static void afterSetBlockState(Level level, BlockPos pos, BlockState state, PistonMovingBlockEntity blockEntity, CallbackInfo ci) {
+    private static void utilitix$afterSetBlockState(Level level, BlockPos pos, BlockState state, PistonMovingBlockEntity blockEntity, CallbackInfo ci) {
         //noinspection ConstantConditions
         MixinUtil.afterSetBlockState(level, pos, ((MixinPistonMovingBlockEntity) (Object) blockEntity).utilitiX$glueData);
     }
@@ -72,7 +70,7 @@ public class MixinPistonMovingBlockEntity {
                     shift = At.Shift.AFTER
             )
     )
-    public void afterSetBlockState(CallbackInfo ci) {
+    public void utilitix$afterSetBlockState(CallbackInfo ci) {
         PistonMovingBlockEntity blockEntity = ((PistonMovingBlockEntity) (Object) this);
         Level level = blockEntity.getLevel();
         BlockPos pos = blockEntity.getBlockPos();
@@ -83,19 +81,17 @@ public class MixinPistonMovingBlockEntity {
             method = "loadAdditional",
             at = @At("RETURN")
     )
-    public void read(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
-        if (tag.contains("utilitix_glue_data", Tag.TAG_ANY_NUMERIC)) {
-            this.utilitiX$glueData = tag.getByte("utilitix_glue_data");
-        }
+    public void utilitix$read(ValueInput input, CallbackInfo ci) {
+        this.utilitiX$glueData = input.read("utilitix_glue_data", Codec.BYTE).orElse(null);
     }
 
     @Inject(
             method = "saveAdditional",
             at = @At("HEAD")
     )
-    public void write(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
+    public void utilitix$write(ValueOutput output, CallbackInfo ci) {
         if (this.utilitiX$glueData != null) {
-            tag.putByte("utilitix_glue_data", this.utilitiX$glueData);
+            output.store("utilitix_glue_data", Codec.BYTE, this.utilitiX$glueData);
         }
     }
 }

@@ -7,7 +7,9 @@ import de.melanx.utilitix.content.track.TrackUtil;
 import de.melanx.utilitix.content.track.carts.BaseCart;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
+import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -60,7 +62,12 @@ public class DirectionalRailBlock extends PoweredRailBlock {
     }
 
     @Override
-    public void onMinecartPass(BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull AbstractMinecart cart) {
+    protected void entityInside(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Entity entity, @Nonnull InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+        if (!(entity instanceof AbstractMinecart cart)) {
+            super.entityInside(state, level, pos, entity, effectApplier, isPrecise);
+            return;
+        }
+
         if (!state.getValue(BlockStateProperties.POWERED)) {
             TrackUtil.slowDownCart(level, cart, this.maxRailSpeed);
             return;

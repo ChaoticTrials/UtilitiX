@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 
 public class ItemEntityRepaired extends PacketHandler<ItemEntityRepaired.Message> {
 
-    public static final CustomPacketPayload.Type<ItemEntityRepaired.Message> TYPE = new CustomPacketPayload.Type<>(UtilitiX.getInstance().resource("item_entity_repaired"));
+    public static final CustomPacketPayload.Type<ItemEntityRepaired.Message> TYPE = new CustomPacketPayload.Type<>(UtilitiX.getInstance().id("item_entity_repaired"));
 
     public ItemEntityRepaired() {
         super(TYPE, PacketFlow.CLIENTBOUND, Message.CODEC, HandlerThread.MAIN);

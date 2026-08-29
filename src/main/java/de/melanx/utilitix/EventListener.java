@@ -55,7 +55,7 @@ public class EventListener {
                 int health = (int) target.getHealth();
                 int diff = xp - health;
                 if (diff < 0) {
-                    player.displayClientMessage(Component.translatable("message.utilitix.mob_yoinker", -diff, CommonConfig.MobYoinker.experienceMode == MobYoinkerItem.ExperienceMode.LEVEL ? Component.translatable("levels") : Component.translatable("points")), true);
+                    player.sendOverlayMessage(Component.translatable("message.utilitix.mob_yoinker", -diff, CommonConfig.MobYoinker.experienceMode == MobYoinkerItem.ExperienceMode.LEVEL ? Component.translatable("levels") : Component.translatable("points")));
                     return;
                 }
             }
@@ -76,8 +76,8 @@ public class EventListener {
 
     @SubscribeEvent
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlocks.advancedBrewery.getBlockEntityType(), AdvancedBreweryBlockEntity::getCapability);
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlocks.crudeFurnace.getBlockEntityType(), CrudeFurnaceBlockEntity::getCapability);
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlocks.experienceCrystal.getBlockEntityType(), ExperienceCrystalBlockEntity::getCapability);
+        event.registerBlockEntity(Capabilities.Item.BLOCK, ModBlocks.advancedBrewery.getBlockEntityType(), AdvancedBreweryBlockEntity::getCapability);
+        event.registerBlockEntity(Capabilities.Item.BLOCK, ModBlocks.crudeFurnace.getBlockEntityType(), CrudeFurnaceBlockEntity::getCapability);
+        event.registerBlockEntity(Capabilities.Fluid.BLOCK, ModBlocks.experienceCrystal.getBlockEntityType(), ExperienceCrystalBlockEntity::getCapability);
     }
 }

@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "L": {
-      "tag": "c:leathers"
-    },
-    "R": {
-      "item": "minecraft:rabbit_hide"
-    },
-    "S": {
-      "tag": "c:strings"
-    }
+    "L": "#c:leathers",
+    "R": "minecraft:rabbit_hide",
+    "S": "#c:strings"
   },
   "pattern": [
     "RLR",
@@ -18,7 +12,6 @@
     "RLR"
   ],
   "result": {
-    "count": 1,
     "id": "utilitix:quiver"
   }
 }

@@ -1,99 +1,78 @@
 package de.melanx.utilitix.content.redstone.wireless;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.registration.ModBlocks;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraft.world.level.saveddata.SavedDataType;
+import net.minecraft.world.level.storage.SavedDataStorage;
 import net.minecraft.world.ticks.TickPriority;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
 public class WirelessRedstoneSavedData extends SavedData {
 
-    public static final String ID = UtilitiX.getInstance().modid + "_wireless";
+    public static final SavedDataType<WirelessRedstoneSavedData> TYPE = new SavedDataType<>(
+            UtilitiX.getInstance().id("wireless"),
+            WirelessRedstoneSavedData::new,
+            WirelessRedstoneSavedData.UidEntry.CODEC.listOf().xmap(WirelessRedstoneSavedData::fromEntries, WirelessRedstoneSavedData::toEntries)
+                    .xmap(WirelessRedstoneSavedData::new, data -> data.signals)
+    );
+
+    private static Map<UUID, Map<GlobalPos, Integer>> fromEntries(List<UidEntry> list) {
+        Map<UUID, Map<GlobalPos, Integer>> signals = new HashMap<>();
+        for (UidEntry entry : list) {
+            Map<GlobalPos, Integer> signalMap = new HashMap<>();
+            for (SignalEntry signal : entry.signals()) {
+                signalMap.put(signal.pos(), signal.strength());
+            }
+
+            signals.put(entry.uid(), signalMap);
+        }
+
+        return signals;
+    }
+
+    private static List<UidEntry> toEntries(Map<UUID, Map<GlobalPos, Integer>> signals) {
+        List<UidEntry> list = new java.util.ArrayList<>();
+        for (Map.Entry<UUID, Map<GlobalPos, Integer>> entry : signals.entrySet()) {
+            List<SignalEntry> signalList = new java.util.ArrayList<>();
+            for (Map.Entry<GlobalPos, Integer> signal : entry.getValue().entrySet()) {
+                signalList.add(new SignalEntry(signal.getKey(), signal.getValue()));
+            }
+
+            list.add(new UidEntry(entry.getKey(), signalList));
+        }
+
+        return list;
+    }
 
     public static WirelessRedstoneSavedData get(Level level) {
         if (!(level instanceof ServerLevel)) {
             return new WirelessRedstoneSavedData();
         }
 
-        DimensionDataStorage storage = level.getServer().overworld().getDataStorage();
-        return storage.computeIfAbsent(WirelessRedstoneSavedData.factory(), ID);
+        SavedDataStorage storage = level.getServer().overworld().getDataStorage();
+        return storage.computeIfAbsent(TYPE);
     }
 
-    public static SavedData.Factory<WirelessRedstoneSavedData> factory() {
-        return new SavedData.Factory<>(WirelessRedstoneSavedData::new, WirelessRedstoneSavedData::load);
+    private final Map<UUID, Map<GlobalPos, Integer>> signals;
+
+    public WirelessRedstoneSavedData() {
+        this(new HashMap<>());
     }
 
-    private final Map<UUID, Map<GlobalPos, Integer>> signals = new HashMap<>();
-
-    @Nonnull
-    public static WirelessRedstoneSavedData load(@Nonnull CompoundTag nbt, HolderLookup.Provider registries) {
-        WirelessRedstoneSavedData storage = new WirelessRedstoneSavedData();
-        storage.signals.clear();
-
-        ListTag list = nbt.getList("Signals", Tag.TAG_COMPOUND);
-        for (int i = 0; i < list.size(); i++) {
-            CompoundTag tag = list.getCompound(i);
-            UUID uid = tag.getUUID("K");
-
-            Map<GlobalPos, Integer> signalMap = new HashMap<>();
-            ListTag entries = tag.getList("V", Tag.TAG_COMPOUND);
-            for (int j = 0; j < entries.size(); j++) {
-                CompoundTag cmp = entries.getCompound(j);
-                try {
-                    GlobalPos pos = GlobalPos.of(ResourceKey.create(Registries.DIMENSION, Objects.requireNonNull(ResourceLocation.tryParse(cmp.getString("L")))), BlockPos.of(cmp.getLong("P")));
-                    int strength = cmp.getInt("R");
-                    signalMap.put(pos, strength);
-                } catch (NullPointerException e) {
-                    UtilitiX.getInstance().logger.warn("Invalid level loaded", e);
-                }
-            }
-
-            storage.signals.put(uid, signalMap);
-        }
-
-        return storage;
-    }
-
-    @Nonnull
-    @Override
-    public CompoundTag save(@Nonnull CompoundTag compound, @Nonnull HolderLookup.Provider registries) {
-        ListTag list = new ListTag();
-        for (Map.Entry<UUID, Map<GlobalPos, Integer>> entry : this.signals.entrySet()) {
-            CompoundTag tag = new CompoundTag();
-            tag.putUUID("K", entry.getKey());
-
-            ListTag entries = new ListTag();
-            for (Map.Entry<GlobalPos, Integer> signal : entry.getValue().entrySet()) {
-                CompoundTag cmp = new CompoundTag();
-                cmp.putString("L", signal.getKey().dimension().location().toString());
-                cmp.putLong("P", signal.getKey().pos().asLong());
-                cmp.putInt("R", signal.getValue());
-                entries.add(cmp);
-            }
-
-            tag.put("V", entries);
-            list.add(tag);
-        }
-        compound.put("Signals", list);
-        return compound;
+    public WirelessRedstoneSavedData(Map<UUID, Map<GlobalPos, Integer>> signals) {
+        this.signals = signals;
     }
 
     public int getStrength(UUID uid) {
@@ -163,5 +142,21 @@ public class WirelessRedstoneSavedData extends SavedData {
             this.signals.remove(uid);
             this.setDirty();
         }
+    }
+
+    private record SignalEntry(GlobalPos pos, int strength) {
+
+        private static final Codec<SignalEntry> CODEC = RecordCodecBuilder.create(i -> i.group(
+                GlobalPos.CODEC.fieldOf("pos").forGetter(SignalEntry::pos),
+                Codec.INT.fieldOf("strength").forGetter(SignalEntry::strength)
+        ).apply(i, SignalEntry::new));
+    }
+
+    private record UidEntry(UUID uid, List<SignalEntry> signals) {
+
+        private static final Codec<UidEntry> CODEC = RecordCodecBuilder.create(i -> i.group(
+                UUIDUtil.CODEC.fieldOf("uid").forGetter(UidEntry::uid),
+                SignalEntry.CODEC.listOf().fieldOf("signals").forGetter(UidEntry::signals)
+        ).apply(i, UidEntry::new));
     }
 }

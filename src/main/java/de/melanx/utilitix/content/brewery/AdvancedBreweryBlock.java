@@ -14,8 +14,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.moddingx.libx.base.tile.MenuBlockBE;
 import org.moddingx.libx.block.RotationShape;
 import org.moddingx.libx.mod.ModX;
@@ -39,9 +37,8 @@ public class AdvancedBreweryBlock extends MenuBlockBE<AdvancedBreweryBlockEntity
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void setupClient(SetupContext ctx) {
-        ctx.enqueue(() -> BlockEntityRenderers.register(this.getBlockEntityType(), context -> new AdvancedBreweryRenderer()));
+        ctx.enqueue(() -> BlockEntityRenderers.register(this.getBlockEntityType(), AdvancedBreweryRenderer::new));
     }
 
     @Nullable
@@ -56,12 +53,7 @@ public class AdvancedBreweryBlock extends MenuBlockBE<AdvancedBreweryBlockEntity
     }
 
     @Override
-    public int getLightBlock(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos) {
-        return 0;
-    }
-
-    @Override
-    public boolean propagatesSkylightDown(@Nonnull BlockState state, @Nonnull BlockGetter reader, @Nonnull BlockPos pos) {
+    protected boolean propagatesSkylightDown(@Nonnull BlockState state) {
         return true;
     }
 

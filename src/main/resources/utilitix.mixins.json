@@ -1,14 +1,14 @@
 {
   "required": true,
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "refmap": "utilitix.refmap.json",
   "package": "de.melanx.utilitix.mixin",
   "minVersion": "0.8",
   "client": [ ],
   "server": [ ],
   "mixins": [
-    "MixinAbstractVillager", "MixinArmorStand", "MixinDoorBlock", "MixinLevel", "MixinPiglinAi",
-    "MixinPistonMovingBlockEntity", "MixinPistonStructureResolver", "MixinProjectileWeaponItem", "MixinVehicleEntity",
-    "MixinWanderingTraderSpawner"
+    "MixinAbstractVillager", "MixinArmorStand", "MixinDoorBlock", "MixinLevel",
+    "MixinNewMinecartBehavior", "MixinOldMinecartBehavior", "MixinPiglinAi", "MixinPistonMovingBlockEntity",
+    "MixinPistonStructureResolver", "MixinProjectileWeaponItem", "MixinVehicleEntity", "MixinWanderingTraderSpawner"
   ]
 }

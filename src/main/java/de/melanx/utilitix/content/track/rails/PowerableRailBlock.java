@@ -128,7 +128,7 @@ public abstract class PowerableRailBlock extends RailBlock {
 
         level.setBlock(pos, state.setValue(BlockStateProperties.POWERED, shouldBePowered), 3);
         level.updateNeighborsAt(pos.below(), this);
-        if (state.getValue(this.getShapeProperty()).isAscending()) {
+        if (state.getValue(this.getShapeProperty()).isSlope()) {
             level.updateNeighborsAt(pos.above(), this);
         }
     }

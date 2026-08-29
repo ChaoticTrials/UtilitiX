@@ -4,7 +4,9 @@ import com.mojang.serialization.MapCodec;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.content.track.TrackUtil;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
+import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseRailBlock;
@@ -17,7 +19,7 @@ import org.moddingx.libx.mod.ModX;
 
 import javax.annotation.Nonnull;
 
-public class PoweredRailBlock extends PowerableRailBlock {
+public class PoweredRailBlock extends PowerableRailBlock implements MaxSpeedRail {
 
     public final double maxRailSpeed;
     public static final MapCodec<PoweredRailBlock> CODEC = Block.simpleCodec(PoweredRailBlock::new);
@@ -39,17 +41,17 @@ public class PoweredRailBlock extends PowerableRailBlock {
     }
 
     @Override
-    public void onMinecartPass(BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull AbstractMinecart cart) {
+    protected void entityInside(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Entity entity, @Nonnull InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+        super.entityInside(state, level, pos, entity, effectApplier, isPrecise);
+        if (!(entity instanceof AbstractMinecart cart)) {
+            return;
+        }
+
         if (state.getValue(BlockStateProperties.POWERED)) {
             TrackUtil.accelerateStraight(level, pos, this.getRailDirection(state, level, pos, cart), cart, this.maxRailSpeed);
         } else {
             TrackUtil.slowDownCart(level, cart, this.maxRailSpeed);
         }
-    }
-
-    @Override
-    public float getRailMaxSpeed(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull AbstractMinecart cart) {
-        return (float) this.maxRailSpeed;
     }
 
     @Nonnull
@@ -62,5 +64,10 @@ public class PoweredRailBlock extends PowerableRailBlock {
     @Override
     public Property<RailShape> getShapeProperty() {
         return BlockStateProperties.RAIL_SHAPE_STRAIGHT;
+    }
+
+    @Override
+    public double getMaxRailSpeed() {
+        return this.maxRailSpeed;
     }
 }

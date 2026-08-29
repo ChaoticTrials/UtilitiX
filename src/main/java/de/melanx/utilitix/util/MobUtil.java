@@ -6,13 +6,15 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.TagValueOutput;
 import org.moddingx.libx.util.data.ResourceList;
 
 import javax.annotation.Nonnull;
@@ -33,12 +35,21 @@ public class MobUtil {
             return false;
         }
 
-        if (!denylist.test(ResourceLocation.tryParse(entityKey))) {
-            player.displayClientMessage(DENYLISTED_MOB, true);
+        if (!denylist.test(Identifier.tryParse(entityKey))) {
+            player.sendOverlayMessage(DENYLISTED_MOB);
             return false;
         }
 
-        MobData newMobData = new MobData(entityKey, !typeKeyOnly ? entity.saveWithoutId(new CompoundTag()) : new CompoundTag());
+        CompoundTag entityData = new CompoundTag();
+        if (!typeKeyOnly) {
+            try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(entity.problemPath(), UtilitiX.getInstance().logger)) {
+                TagValueOutput output = TagValueOutput.createWithContext(reporter, entity.registryAccess());
+                entity.saveWithoutId(output);
+                entityData = output.buildResult();
+            }
+        }
+
+        MobData newMobData = new MobData(entityKey, entityData);
 
         if (stack.getCount() > 1) {
             stack.shrink(1);
@@ -51,7 +62,7 @@ public class MobUtil {
             player.setItemInHand(hand, stack);
         }
 
-        player.displayClientMessage(MobUtil.getCurrentMob(entity.getType()), true);
+        player.sendOverlayMessage(MobUtil.getCurrentMob(entity.getType()));
         return true;
     }
 

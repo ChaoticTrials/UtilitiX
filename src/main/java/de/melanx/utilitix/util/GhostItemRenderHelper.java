@@ -1,17 +1,14 @@
 package de.melanx.utilitix.util;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.opengl.GL11;
 import org.moddingx.libx.render.ClientTickHandler;
 
 import java.util.List;
 
 public class GhostItemRenderHelper {
 
-    public static void renderGhostItem(List<ItemStack> stacks, GuiGraphics guiGraphics, int x, int y) {
+    public static void renderGhostItem(List<ItemStack> stacks, GuiGraphicsExtractor guiGraphics, int x, int y) {
         if (stacks.isEmpty()) {
             return;
         }
@@ -20,14 +17,14 @@ public class GhostItemRenderHelper {
         renderGhostItem(stack, guiGraphics, x, y);
     }
 
-    public static void renderGhostItem(ItemStack stack, GuiGraphics guiGraphics, int x, int y) {
+    public static void renderGhostItem(ItemStack stack, GuiGraphicsExtractor guiGraphics, int x, int y) {
         if (stack.isEmpty()) {
             return;
         }
 
-        guiGraphics.renderFakeItem(stack, x, y);
-        RenderSystem.depthFunc(GL11.GL_GREATER);
-        guiGraphics.fill(RenderType.guiGhostRecipeOverlay(), x, y, x + 16, y + 16, 0x40FFFFFF);
-        RenderSystem.depthFunc(GL11.GL_LEQUAL);
+        // Vanilla's own recipe-book ghost-slot rendering (see GhostSlots#extractRenderState)
+        guiGraphics.fill(x, y, x + 16, y + 16, 0x30FFFFFF);
+        guiGraphics.fakeItem(stack, x, y);
+        guiGraphics.fill(x, y, x + 16, y + 16, 0x30FFFFFF);
     }
 }

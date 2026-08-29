@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 
 public class ClickScreenButton extends PacketHandler<ClickScreenButton.Message> {
 
-    public static final CustomPacketPayload.Type<Message> TYPE = new CustomPacketPayload.Type<>(UtilitiX.getInstance().resource("click_screen_button"));
+    public static final CustomPacketPayload.Type<Message> TYPE = new CustomPacketPayload.Type<>(UtilitiX.getInstance().id("click_screen_button"));
 
     public ClickScreenButton() {
         super(TYPE, PacketFlow.SERVERBOUND, Message.CODEC, HandlerThread.MAIN);

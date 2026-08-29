@@ -9,12 +9,12 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import org.moddingx.libx.mod.ModX;
 
 import javax.annotation.Nonnull;
-import java.util.List;
+import java.util.function.Consumer;
 
 public class MobBellItem extends BellBase {
 
@@ -42,30 +42,34 @@ public class MobBellItem extends BellBase {
     }
 
     @Override
-    public void appendHoverText(@Nonnull ItemStack stack, @Nonnull TooltipContext context, @Nonnull List<Component> tooltipComponents, @Nonnull TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+    public void appendHoverText(@Nonnull ItemStack stack, @Nonnull TooltipContext context, @Nonnull TooltipDisplay display, @Nonnull Consumer<Component> tooltipComponents, @Nonnull TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, display, tooltipComponents, tooltipFlag);
         MutableComponent component = MobUtil.getCurrentMob(stack);
 
-        tooltipComponents.add(component != null ? component : MobUtil.NO_MOB);
+        tooltipComponents.accept(component != null ? component : MobUtil.NO_MOB);
     }
 
     public static int getColor(ItemStack stack) {
-        if (!stack.has(ModDataComponentTypes.mobData)) {
+        MobData mobData = stack.get(ModDataComponentTypes.mobData);
+
+        if (mobData == null) {
             return NO_COLOR;
         }
 
-        MobData mobData = stack.get(ModDataComponentTypes.mobData);
-        //noinspection DataFlowIssue
         EntityType<?> entityType = mobData.getEntityType();
         if (entityType == null) {
             return NO_COLOR;
         }
 
-        SpawnEggItem egg = SpawnEggItem.byId(entityType);
-        if (egg != null) {
-            return egg.getColor(0);
-        }
-
-        return NO_COLOR;
+        return switch(entityType.getCategory()) {
+            case MONSTER -> 0x00AFAF;
+            case CREATURE -> 0xEDC343;
+            case AMBIENT -> 0x4C3E30;
+            case AXOLOTLS -> 0xFBC1E3;
+            case UNDERGROUND_WATER_CREATURE -> 0x0613A3;
+            case WATER_CREATURE -> 0x0661A3;
+            case WATER_AMBIENT -> 0xEF6915;
+            default -> 0xDBCDC2;
+        };
     }
 }

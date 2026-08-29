@@ -2,18 +2,13 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "a": {
-      "item": "minecraft:armor_stand"
-    },
-    "s": {
-      "tag": "c:rods/wooden"
-    }
+    "a": "minecraft:armor_stand",
+    "s": "#c:rods/wooden"
   },
   "pattern": [
     "sas"
   ],
   "result": {
-    "count": 1,
     "id": "utilitix:armed_stand"
   }
 }

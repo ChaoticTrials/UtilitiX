@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "r": {
-      "item": "minecraft:rail"
-    }
+    "r": "minecraft:rail"
   },
   "pattern": [
     " r ",

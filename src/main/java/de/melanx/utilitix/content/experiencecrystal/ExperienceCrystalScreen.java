@@ -4,15 +4,17 @@ import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.network.handler.ClickScreenButton;
 import de.melanx.utilitix.util.XPUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -21,52 +23,50 @@ import java.awt.Color;
 
 public class ExperienceCrystalScreen extends AbstractContainerScreen<ExperienceCrystalMenu> {
 
-    private static final ResourceLocation GUI = ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "textures/container/experience_crystal.png");
+    private static final Identifier GUI = Identifier.fromNamespaceAndPath(UtilitiX.getInstance().modid, "textures/container/experience_crystal.png");
 
     public ExperienceCrystalScreen(ExperienceCrystalMenu menu, Inventory inv, Component title) {
-        super(menu, inv, title);
-        this.imageHeight = 176;
+        super(menu, inv, title, 176, 176);
     }
 
     @Override
-    public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractRenderState(@Nonnull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float alpha) {
+        super.extractRenderState(graphics, mouseX, mouseY, alpha);
 
         Button hoveredButton = this.getHoveredButton(mouseX, mouseY);
         for (Button button : Button.values()) {
-            this.renderButton(guiGraphics, button, hoveredButton == button);
+            this.renderButton(graphics, button, hoveredButton == button);
         }
 
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
+        this.extractTooltip(graphics, mouseX, mouseY);
 
-        for (Button button : Button.values()) {
-            if (hoveredButton == button) {
-                guiGraphics.renderTooltip(this.font, button.component, mouseX, mouseY);
-            }
+        if (hoveredButton != null) {
+            graphics.setTooltipForNextFrame(this.font, hoveredButton.component, mouseX, mouseY);
         }
     }
 
     @Override
-    protected void renderLabels(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        guiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, Color.DARK_GRAY.getRGB(), false);
-        guiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY + 10, Color.DARK_GRAY.getRGB(), false);
+    protected void extractLabels(@Nonnull GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+        graphics.text(this.font, this.title, this.titleLabelX, this.titleLabelY, Color.DARK_GRAY.getRGB(), false);
+        graphics.text(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, Color.DARK_GRAY.getRGB(), false);
     }
 
     @Override
-    protected void renderBg(@Nonnull GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-        guiGraphics.blit(GUI, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
-        guiGraphics.blit(GUI, this.leftPos + (this.imageWidth / 2 - 50), this.topPos + 49, 0, this.imageHeight + 40, 100, 7);
+    public void extractBackground(@Nonnull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float alpha) {
+        super.extractBackground(graphics, mouseX, mouseY, alpha);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, GUI, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, GUI, this.leftPos + (this.imageWidth / 2 - 50), this.topPos + 49, 0, this.imageHeight + 40, 100, 7, 256, 256);
         Pair<Integer, Float> xp = XPUtils.getLevelExp(this.menu.getBlockEntity().getXp());
-        guiGraphics.blit(GUI, this.leftPos + (this.imageWidth / 2 - 49), this.topPos + 50, 0, this.imageHeight + 47, (int) (xp.getRight() * 98), 5);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, GUI, this.leftPos + (this.imageWidth / 2 - 49), this.topPos + 50, 0, this.imageHeight + 47, (int) (xp.getRight() * 98), 5, 256, 256);
         MutableComponent s = Component.literal(String.valueOf(xp.getLeft()));
         int width = this.font.width(s.getString());
-        guiGraphics.drawString(this.font, s.getString(), this.leftPos + ((float) this.imageWidth / 2) - ((float) width / 2), this.topPos + 40, Color.DARK_GRAY.getRGB(), false);
+        graphics.text(this.font, s.getString(), (int) (this.leftPos + ((float) this.imageWidth / 2) - ((float) width / 2)), this.topPos + 40, Color.DARK_GRAY.getRGB(), false);
     }
 
-    public void renderButton(GuiGraphics guiGraphics, Button button, boolean mouseHovered) {
+    public void renderButton(GuiGraphicsExtractor guiGraphics, Button button, boolean mouseHovered) {
         int xButton = this.leftPos + button.x;
         int yButton = this.topPos + button.y;
-        guiGraphics.blit(GUI, xButton, yButton, button.offset, mouseHovered ? this.imageHeight + 20 : this.imageHeight, 20, 20);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, GUI, xButton, yButton, button.offset, mouseHovered ? this.imageHeight + 20 : this.imageHeight, 20, 20, 256, 256);
     }
 
     @Nullable
@@ -83,16 +83,16 @@ public class ExperienceCrystalScreen extends AbstractContainerScreen<ExperienceC
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0) {
-            Button pressed = this.getHoveredButton((int) mouseX, (int) mouseY);
+    public boolean mouseClicked(@Nonnull MouseButtonEvent event, boolean doubleClick) {
+        if (event.button() == 0) {
+            Button pressed = this.getHoveredButton((int) event.x(), (int) event.y());
             if (pressed != null) {
                 Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
-                PacketDistributor.sendToServer(new ClickScreenButton.Message(this.menu.getPos(), pressed));
+                ClientPacketDistributor.sendToServer(new ClickScreenButton.Message(this.menu.getPos(), pressed));
             }
         }
 
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
 
     public enum Button {

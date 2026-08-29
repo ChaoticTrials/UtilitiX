@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "i": {
-      "tag": "c:ingots/iron"
-    },
-    "l": {
-      "tag": "c:gems/lapis"
-    },
-    "s": {
-      "tag": "c:rods/wooden"
-    }
+    "i": "#c:ingots/iron",
+    "l": "#c:gems/lapis",
+    "s": "#c:rods/wooden"
   },
   "pattern": [
     "i i",

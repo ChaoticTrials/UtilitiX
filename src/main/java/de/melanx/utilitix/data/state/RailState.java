@@ -1,121 +1,74 @@
 package de.melanx.utilitix.data.state;
 
-import net.minecraft.resources.ResourceLocation;
+import de.melanx.utilitix.data.BlockStateProvider;
+import net.minecraft.client.data.models.BlockModelGenerators;
+import net.minecraft.client.data.models.MultiVariant;
+import net.minecraft.client.data.models.model.ModelTemplate;
+import net.minecraft.client.data.models.model.ModelTemplates;
+import net.minecraft.client.data.models.model.TextureMapping;
+import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.RailShape;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
-import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
-import org.moddingx.libx.datagen.provider.model.BlockStateProviderBase;
 
 import javax.annotation.Nullable;
-import java.util.function.UnaryOperator;
 
 public class RailState {
-
-    public static final ResourceLocation STRAIGHT_RAIL_PARENT = ResourceLocation.fromNamespaceAndPath("minecraft", "block/rail_flat");
-    public static final ResourceLocation RAISED_RAIL_NE_PARENT = ResourceLocation.fromNamespaceAndPath("minecraft", "block/template_rail_raised_ne");
-    public static final ResourceLocation RAISED_RAIL_SW_PARENT = ResourceLocation.fromNamespaceAndPath("minecraft", "block/template_rail_raised_sw");
-    public static final ResourceLocation CURVED_RAIL_PARENT = ResourceLocation.fromNamespaceAndPath("minecraft", "block/rail_curved");
 
     public final Property<RailShape> shapeProperty;
     @Nullable
     public final Property<Boolean> reverseProperty;
-    public final UnaryOperator<VariantBlockStateBuilder.PartialBlockstate> variants;
 
-    public RailState(Property<RailShape> shapeProperty, @Nullable Property<Boolean> reverseProperty) {
-        this(shapeProperty, reverseProperty, UnaryOperator.identity());
+    private final MultiVariant modelStraight;
+    private final MultiVariant modelCorner;
+    private final MultiVariant modelRaisedNE;
+    private final MultiVariant modelRaisedSW;
+
+    public RailState(BlockStateProvider provider, Identifier id, Property<RailShape> shapeProperty, @Nullable Property<Boolean> reverseProperty) {
+        this(provider, id, shapeProperty, reverseProperty, "");
     }
 
-    public RailState(Property<RailShape> shapeProperty, @Nullable Property<Boolean> reverseProperty, UnaryOperator<VariantBlockStateBuilder.PartialBlockstate> variants) {
+    public RailState(BlockStateProvider provider, Identifier id, Property<RailShape> shapeProperty, @Nullable Property<Boolean> reverseProperty, String modelId) {
         this.shapeProperty = shapeProperty;
         this.reverseProperty = reverseProperty;
-        this.variants = variants;
-    }
 
-    public void generate(BlockStateProviderBase provider, VariantBlockStateBuilder builder, ResourceLocation id) {
-        this.doGenerate(provider, builder, id, "");
-    }
+        String suffix = modelId.isEmpty() ? "" : "_" + modelId;
+        this.modelStraight = this.createModel(provider, id, ModelTemplates.RAIL_FLAT, suffix, suffix, RailShape.NORTH_SOUTH, RailShape.EAST_WEST);
+        this.modelCorner = this.createModel(provider, id, ModelTemplates.RAIL_CURVED, "_corner" + suffix, "_corner" + suffix, RailShape.NORTH_EAST, RailShape.NORTH_WEST, RailShape.SOUTH_EAST, RailShape.SOUTH_WEST);
 
-    public void generate(BlockStateProviderBase provider, VariantBlockStateBuilder builder, ResourceLocation id, String modelId) {
-        this.doGenerate(provider, builder, id, "_" + modelId);
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    private void doGenerate(BlockStateProviderBase provider, VariantBlockStateBuilder builder, ResourceLocation id, String modelId) {
-        ModelFile modelStraight = this.createModel(provider, id, STRAIGHT_RAIL_PARENT, modelId, modelId, RailShape.NORTH_SOUTH, RailShape.EAST_WEST);
-        ModelFile modelCorner = this.createModel(provider, id, CURVED_RAIL_PARENT, "_corner" + modelId, "_corner" + modelId, RailShape.NORTH_EAST, RailShape.NORTH_WEST, RailShape.SOUTH_EAST, RailShape.SOUTH_WEST);
-        ModelFile modelRaisedNE;
-        ModelFile modelRaisedSW;
-        if (this.reverseProperty != null) {
-            modelRaisedNE = this.createModel(provider, id, RAISED_RAIL_NE_PARENT, "_ascending_ne" + modelId, modelId, RailShape.ASCENDING_NORTH, RailShape.ASCENDING_SOUTH, RailShape.ASCENDING_EAST, RailShape.ASCENDING_WEST);
-            modelRaisedSW = this.createModel(provider, id, RAISED_RAIL_SW_PARENT, "_ascending_sw" + modelId, modelId, RailShape.ASCENDING_NORTH, RailShape.ASCENDING_SOUTH, RailShape.ASCENDING_EAST, RailShape.ASCENDING_WEST);
-        } else {
-            modelRaisedNE = this.createModel(provider, id, RAISED_RAIL_NE_PARENT, "_ascending_ne" + modelId, modelId, RailShape.ASCENDING_NORTH, RailShape.ASCENDING_EAST);
-            modelRaisedSW = this.createModel(provider, id, RAISED_RAIL_SW_PARENT, "_ascending_sw" + modelId, modelId, RailShape.ASCENDING_SOUTH, RailShape.ASCENDING_WEST);
-        }
-
-        if (modelCorner != null && this.reverseProperty != null) {
+        if (this.modelCorner != null && reverseProperty != null) {
             throw new IllegalStateException("Can't use corner rail models together with reverse properties.");
         }
 
-        for (RailShape shape : this.shapeProperty.getPossibleValues()) {
-            switch(shape) {
-                case NORTH_SOUTH -> {
-                    this.partial(builder, shape, false).addModels(new ConfiguredModel(modelStraight, 0, 0, false));
-                    if (this.reverseProperty != null) {
-                        this.partial(builder, shape, true).addModels(new ConfiguredModel(modelStraight, 0, 180, false));
-                    }
-                }
-                case EAST_WEST -> {
-                    this.partial(builder, shape, false).addModels(new ConfiguredModel(modelStraight, 0, 90, false));
-                    if (this.reverseProperty != null) {
-                        this.partial(builder, shape, true).addModels(new ConfiguredModel(modelStraight, 0, 270, false));
-                    }
-                }
-                case ASCENDING_EAST -> {
-                    this.partial(builder, shape, false).addModels(new ConfiguredModel(modelRaisedNE, 0, 90, false));
-                    if (this.reverseProperty != null) {
-                        this.partial(builder, shape, true).addModels(new ConfiguredModel(modelRaisedSW, 0, 270, false));
-                    }
-                }
-                case ASCENDING_WEST -> {
-                    this.partial(builder, shape, false).addModels(new ConfiguredModel(modelRaisedSW, 0, 90, false));
-                    if (this.reverseProperty != null) {
-                        this.partial(builder, shape, true).addModels(new ConfiguredModel(modelRaisedNE, 0, 270, false));
-                    }
-                }
-                case ASCENDING_NORTH -> {
-                    this.partial(builder, shape, false).addModels(new ConfiguredModel(modelRaisedNE, 0, 0, false));
-                    if (this.reverseProperty != null) {
-                        this.partial(builder, shape, true).addModels(new ConfiguredModel(modelRaisedSW, 0, 180, false));
-                    }
-                }
-                case ASCENDING_SOUTH -> {
-                    this.partial(builder, shape, false).addModels(new ConfiguredModel(modelRaisedSW, 0, 0, false));
-                    if (this.reverseProperty != null) {
-                        this.partial(builder, shape, true).addModels(new ConfiguredModel(modelRaisedNE, 0, 180, false));
-                    }
-                }
-                case SOUTH_EAST -> this.partial(builder, shape, false).addModels(new ConfiguredModel(modelCorner, 0, 0, false));
-                case SOUTH_WEST -> this.partial(builder, shape, false).addModels(new ConfiguredModel(modelCorner, 0, 90, false));
-                case NORTH_WEST -> this.partial(builder, shape, false).addModels(new ConfiguredModel(modelCorner, 0, 180, false));
-                case NORTH_EAST -> this.partial(builder, shape, false).addModels(new ConfiguredModel(modelCorner, 0, 270, false));
-            }
+        if (reverseProperty != null) {
+            this.modelRaisedNE = this.createModel(provider, id, ModelTemplates.RAIL_RAISED_NE, "_ascending_ne" + suffix, suffix, RailShape.ASCENDING_NORTH, RailShape.ASCENDING_SOUTH, RailShape.ASCENDING_EAST, RailShape.ASCENDING_WEST);
+            this.modelRaisedSW = this.createModel(provider, id, ModelTemplates.RAIL_RAISED_SW, "_ascending_sw" + suffix, suffix, RailShape.ASCENDING_NORTH, RailShape.ASCENDING_SOUTH, RailShape.ASCENDING_EAST, RailShape.ASCENDING_WEST);
+        } else {
+            this.modelRaisedNE = this.createModel(provider, id, ModelTemplates.RAIL_RAISED_NE, "_ascending_ne" + suffix, suffix, RailShape.ASCENDING_NORTH, RailShape.ASCENDING_EAST);
+            this.modelRaisedSW = this.createModel(provider, id, ModelTemplates.RAIL_RAISED_SW, "_ascending_sw" + suffix, suffix, RailShape.ASCENDING_SOUTH, RailShape.ASCENDING_WEST);
         }
     }
 
-    private VariantBlockStateBuilder.PartialBlockstate partial(VariantBlockStateBuilder builder, RailShape shape, boolean reverse) {
-        VariantBlockStateBuilder.PartialBlockstate partial = builder.partialState().with(this.shapeProperty, shape);
-
-        if (this.reverseProperty != null) {
-            partial = partial.with(this.reverseProperty, reverse);
-        }
-
-        return this.variants.apply(partial);
+    public MultiVariant get(RailShape shape, boolean reverse) {
+        return switch(shape) {
+            case NORTH_SOUTH -> reverse ? this.modelStraight.with(BlockModelGenerators.Y_ROT_180) : this.modelStraight;
+            case EAST_WEST ->
+                    reverse ? this.modelStraight.with(BlockModelGenerators.Y_ROT_270) : this.modelStraight.with(BlockModelGenerators.Y_ROT_90);
+            case ASCENDING_EAST ->
+                    reverse ? this.modelRaisedSW.with(BlockModelGenerators.Y_ROT_270) : this.modelRaisedNE.with(BlockModelGenerators.Y_ROT_90);
+            case ASCENDING_WEST ->
+                    reverse ? this.modelRaisedNE.with(BlockModelGenerators.Y_ROT_270) : this.modelRaisedSW.with(BlockModelGenerators.Y_ROT_90);
+            case ASCENDING_NORTH -> reverse ? this.modelRaisedSW.with(BlockModelGenerators.Y_ROT_180) : this.modelRaisedNE;
+            case ASCENDING_SOUTH -> reverse ? this.modelRaisedNE.with(BlockModelGenerators.Y_ROT_180) : this.modelRaisedSW;
+            case SOUTH_EAST -> this.modelCorner;
+            case SOUTH_WEST -> this.modelCorner.with(BlockModelGenerators.Y_ROT_90);
+            case NORTH_WEST -> this.modelCorner.with(BlockModelGenerators.Y_ROT_180);
+            case NORTH_EAST -> this.modelCorner.with(BlockModelGenerators.Y_ROT_270);
+        };
     }
 
-    private ModelFile createModel(BlockStateProviderBase provider, ResourceLocation id, ResourceLocation parent, String modelId, String textureId, RailShape... shapes) {
+    @Nullable
+    private MultiVariant createModel(BlockStateProvider provider, Identifier id, ModelTemplate template, String modelSuffix, String textureSuffix, RailShape... shapes) {
         boolean needsModel = false;
         for (RailShape shape : shapes) {
             if (this.shapeProperty.getPossibleValues().contains(shape)) {
@@ -124,12 +77,13 @@ public class RailState {
             }
         }
 
-        if (needsModel) {
-            return provider.models().withExistingParent(id.getPath() + modelId, parent)
-                    .texture("rail", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath() + textureId))
-                    .renderType("cutout");
+        if (!needsModel) {
+            return null;
         }
 
-        return null;
+        Identifier modelId = BlockStateProvider.blockModelId(id, modelSuffix);
+        Identifier textureId = Identifier.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath() + textureSuffix);
+        TextureMapping mapping = new TextureMapping().put(TextureSlot.RAIL, provider.material(textureId));
+        return BlockModelGenerators.plainVariant(provider.createBlockModel(modelId, template, mapping));
     }
 }

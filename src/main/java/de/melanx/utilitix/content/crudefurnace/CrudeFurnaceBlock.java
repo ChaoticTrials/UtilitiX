@@ -14,7 +14,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import org.moddingx.libx.base.tile.MenuBlockBE;
-import org.moddingx.libx.inventory.BaseItemStackHandler;
 import org.moddingx.libx.mod.ModX;
 
 import javax.annotation.Nonnull;
@@ -35,13 +34,13 @@ public class CrudeFurnaceBlock extends MenuBlockBE<CrudeFurnaceBlockEntity, Crud
     }
 
     @Override
-    public int getAnalogOutputSignal(@Nonnull BlockState blockState, @Nonnull Level level, @Nonnull BlockPos pos) {
+    public int getAnalogOutputSignal(@Nonnull BlockState blockState, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Direction direction) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof CrudeFurnaceBlockEntity crudeFurnace) {
-            return AbstractContainerMenu.getRedstoneSignalFromContainer(((BaseItemStackHandler) crudeFurnace.getUnrestricted()).toVanilla());
+            return AbstractContainerMenu.getRedstoneSignalFromContainer(crudeFurnace.getInventory().toVanilla());
         }
 
-        return super.getAnalogOutputSignal(blockState, level, pos);
+        return super.getAnalogOutputSignal(blockState, level, pos, direction);
     }
 
     @Nullable

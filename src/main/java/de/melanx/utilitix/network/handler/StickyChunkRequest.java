@@ -21,7 +21,7 @@ import java.util.Optional;
 
 public class StickyChunkRequest extends PacketHandler<StickyChunkRequest.Message> {
 
-    public static final CustomPacketPayload.Type<Message> TYPE = new CustomPacketPayload.Type<>(UtilitiX.getInstance().resource("sticky_chunk_request"));
+    public static final CustomPacketPayload.Type<Message> TYPE = new CustomPacketPayload.Type<>(UtilitiX.getInstance().id("sticky_chunk_request"));
 
     public StickyChunkRequest() {
         super(TYPE, PacketFlow.SERVERBOUND, Message.CODEC, HandlerThread.MAIN);
@@ -38,7 +38,7 @@ public class StickyChunkRequest extends PacketHandler<StickyChunkRequest.Message
             return;
         }
 
-        LevelChunk chunk = sender.level().getChunk(msg.pos().x, msg.pos().z);
+        LevelChunk chunk = sender.level().getChunk(msg.pos().x(), msg.pos().z());
         //noinspection ConstantConditions
         if (chunk != null && chunk.loaded) {
             // Sticky data is stored as an attachment on the chunk, not on the level.
@@ -51,8 +51,8 @@ public class StickyChunkRequest extends PacketHandler<StickyChunkRequest.Message
 
         public static final StreamCodec<RegistryFriendlyByteBuf, Message> CODEC = StreamCodec.of(
                 (buffer, msg) -> {
-                    buffer.writeInt(msg.pos.x);
-                    buffer.writeInt(msg.pos.z);
+                    buffer.writeInt(msg.pos.x());
+                    buffer.writeInt(msg.pos.z());
                 }, buffer -> new Message(new ChunkPos(buffer.readInt(), buffer.readInt()))
         );
 

@@ -12,6 +12,8 @@ import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 
 import java.util.Optional;
 
+// Curios hasn't migrated to NeoForge's new transfer/ResourceHandler API yet.
+@SuppressWarnings("removal")
 public class UtilCurios {
 
     public static final String MODID = "curios";

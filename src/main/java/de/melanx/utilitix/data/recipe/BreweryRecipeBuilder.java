@@ -3,16 +3,24 @@ package de.melanx.utilitix.data.recipe;
 import de.melanx.utilitix.recipe.BreweryRecipe;
 import de.melanx.utilitix.recipe.brewery.EffectTransformer;
 import net.minecraft.advancements.Criterion;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BreweryRecipeBuilder implements RecipeBuilder {
 
@@ -32,7 +40,9 @@ public class BreweryRecipeBuilder implements RecipeBuilder {
     }
 
     public BreweryRecipeBuilder input(TagKey<Item> input) {
-        return this.input(Ingredient.of(input));
+        List<Holder<Item>> holders = new ArrayList<>();
+        BuiltInRegistries.ITEM.getTagOrEmpty(input).forEach(holders::add);
+        return this.input(Ingredient.of(HolderSet.direct(holders)));
     }
 
     public BreweryRecipeBuilder input(Ingredient input) {
@@ -67,21 +77,28 @@ public class BreweryRecipeBuilder implements RecipeBuilder {
 
     @Nonnull
     @Override
-    public Item getResult() {
-        if (this.transformer == null) {
-            throw new IllegalStateException("Can't build Advanced Brewery Recipe without action.");
-        }
-
-        return this.transformer.output().getItem();
+    public ResourceKey<Recipe<?>> defaultId() {
+        throw new IllegalStateException("No default id given.");
     }
 
     @Override
-    public void save(@Nonnull RecipeOutput recipeOutput, @Nonnull ResourceLocation id) {
+    public void save(@Nonnull RecipeOutput output, @Nonnull ResourceKey<Recipe<?>> location) {
         if (this.transformer == null) {
             throw new IllegalStateException("Can't build Advanced Brewery Recipe without action.");
         }
 
         BreweryRecipe breweryRecipe = new BreweryRecipe(this.input, this.transformer);
-        recipeOutput.accept(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "utilitix_brewery/" + id.getPath()), breweryRecipe, null);
+        Identifier id = location.identifier();
+        ResourceKey<Recipe<?>> key = ResourceKey.create(Registries.RECIPE, Identifier.fromNamespaceAndPath(id.getNamespace(), "utilitix_brewery/" + id.getPath()));
+        output.accept(key, breweryRecipe, null);
+    }
+
+    @Override
+    public void save(@Nonnull RecipeOutput output, @Nonnull String id) {
+        this.save(output, Identifier.parse(id));
+    }
+
+    public void save(@Nonnull RecipeOutput output, @Nonnull Identifier id) {
+        this.save(output, ResourceKey.create(Registries.RECIPE, id));
     }
 }

@@ -1,15 +1,15 @@
 package de.melanx.utilitix.content.brewery;
 
 import de.melanx.utilitix.recipe.BreweryRecipe;
+import de.melanx.utilitix.recipe.ItemHandlerRecipeInput;
 import de.melanx.utilitix.recipe.PotionOutput;
 import de.melanx.utilitix.registration.ModItemTags;
 import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.registration.ModRecipeTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -19,14 +19,18 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import org.moddingx.libx.base.tile.BlockEntityBase;
 import org.moddingx.libx.base.tile.TickingBlock;
 import org.moddingx.libx.crafting.RecipeHelper;
 import org.moddingx.libx.inventory.BaseItemStackHandler;
 import org.moddingx.libx.inventory.FilterItemHandler;
+import org.moddingx.libx.inventory.IAdvancedItemHandler;
+import org.moddingx.libx.inventory.IAdvancedItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -49,10 +53,10 @@ public class AdvancedBreweryBlockEntity extends BlockEntityBase implements Ticki
     private int fuel = 0;
 
     private final BaseItemStackHandler inventory;
-    private final RecipeWrapper recipeInput;
-    public final IItemHandler inventoryTop;
-    public final IItemHandler inventorySide;
-    public final IItemHandler inventoryBottom;
+    private final ItemHandlerRecipeInput recipeInput;
+    public final IAdvancedItemHandler inventoryTop;
+    public final IAdvancedItemHandler inventorySide;
+    public final IAdvancedItemHandler inventoryBottom;
 
     public AdvancedBreweryBlockEntity(BlockEntityType<?> blockEntityTypeIn, BlockPos pos, BlockState state) {
         super(blockEntityTypeIn, pos, state);
@@ -61,12 +65,12 @@ public class AdvancedBreweryBlockEntity extends BlockEntityBase implements Ticki
                     this.setChanged();
                     this.setDispatchable();
                 })
-                .validator(stack -> this.level != null && RecipeHelper.isItemValidInput(this.level.getRecipeManager(), ModRecipeTypes.BREWERY, stack), INGREDIENT_SLOT)
+                .validator(stack -> !(this.level instanceof ServerLevel serverLevel) || RecipeHelper.isItemValidInput(serverLevel.recipeAccess(), ModRecipeTypes.BREWERY, stack), INGREDIENT_SLOT)
                 .validator(stack -> stack.is(ModItemTags.BOTTLES), POTION_SLOT_RIGHT, POTION_SLOT_LEFT, OUTPUT_SLOT)
                 .validator(stack -> stack.getItem() == Items.BLAZE_POWDER, FUEL_SLOT)
                 .slotLimit(1, POTION_SLOT_RIGHT, POTION_SLOT_LEFT, OUTPUT_SLOT)
                 .build();
-        this.recipeInput = new RecipeWrapper(this.inventory);
+        this.recipeInput = new ItemHandlerRecipeInput(this.inventory);
 
         this.inventoryTop = new FilterItemHandler(this.inventory, slot -> false, (slot, stack) -> slot == INGREDIENT_SLOT || slot == OUTPUT_SLOT);
         this.inventorySide = new FilterItemHandler(this.inventory, slot -> false, (slot, stack) -> slot == POTION_SLOT_RIGHT || slot == POTION_SLOT_LEFT || slot == FUEL_SLOT);
@@ -75,24 +79,24 @@ public class AdvancedBreweryBlockEntity extends BlockEntityBase implements Ticki
 
     @Override
     public void tick() {
-        if (this.level == null || this.level.isClientSide) {
+        if (this.level == null || this.level.isClientSide()) {
             this.clientTick();
             return;
         }
 
         if (this.fuel <= 0) {
-            ItemStack fuelStack = this.inventory.getStackInSlot(FUEL_SLOT);
+            ItemStack fuelStack = ItemUtil.getStack(this.inventory, FUEL_SLOT);
             if (fuelStack.getItem() == Items.BLAZE_POWDER && !fuelStack.isEmpty()) {
                 this.fuel = 20;
                 ItemStack fuelNew = fuelStack.copy();
                 fuelNew.shrink(1);
-                this.inventory.setStackInSlot(FUEL_SLOT, fuelNew);
+                this.setStack(FUEL_SLOT, fuelNew);
                 this.setChanged();
                 this.setDispatchable();
             }
         }
 
-        Optional<RecipeHolder<BreweryRecipe>> recipe = this.level.getRecipeManager().getRecipeFor(ModRecipeTypes.BREWERY, this.recipeInput, this.level);
+        Optional<RecipeHolder<BreweryRecipe>> recipe = ((ServerLevel) this.level).recipeAccess().getRecipeFor(ModRecipeTypes.BREWERY, this.recipeInput, this.level);
         if ((this.fuel <= 0 || recipe.isEmpty()) && this.brewTime > 0) {
             this.brewTime = 0;
             this.setChanged();
@@ -119,20 +123,20 @@ public class AdvancedBreweryBlockEntity extends BlockEntityBase implements Ticki
         if (output == null || output.getMain().isEmpty()) {
             this.consumeItem(OUTPUT_SLOT);
         } else {
-            this.inventory.setStackInSlot(OUTPUT_SLOT, output.getMain());
+            this.setStack(OUTPUT_SLOT, output.getMain());
         }
 
         this.consumeItem(INGREDIENT_SLOT);
         if (output == null || output.getOut1().isEmpty()) {
             this.consumeItem(POTION_SLOT_RIGHT);
         } else {
-            this.inventory.setStackInSlot(POTION_SLOT_RIGHT, output.getOut1());
+            this.setStack(POTION_SLOT_RIGHT, output.getOut1());
         }
 
         if (output == null || output.getOut2().isEmpty()) {
             this.consumeItem(POTION_SLOT_LEFT);
         } else {
-            this.inventory.setStackInSlot(POTION_SLOT_LEFT, output.getOut2());
+            this.setStack(POTION_SLOT_LEFT, output.getOut2());
         }
 
         this.brewTime = 0;
@@ -173,34 +177,39 @@ public class AdvancedBreweryBlockEntity extends BlockEntityBase implements Ticki
     }
 
     private void consumeItem(int slot) {
-        ItemStack stack = this.inventory.getStackInSlot(slot);
+        ItemStack stack = ItemUtil.getStack(this.inventory, slot);
 
         if (stack.isEmpty()) {
             return;
         }
 
-        if (stack.hasCraftingRemainingItem()) {
-            this.inventory.setStackInSlot(slot, stack.getCraftingRemainingItem().copy());
+        net.minecraft.world.item.ItemStackTemplate remainder = stack.getCraftingRemainder();
+        if (remainder != null) {
+            this.setStack(slot, remainder.create());
             return;
         }
 
         if (stack.getItem() == Items.POTION || stack.getItem() == ModItems.failedPotion) {
             // Only give glass bottles for normal potions as other types don't give glass bottles as well.
-            this.inventory.setStackInSlot(slot, new ItemStack(Items.GLASS_BOTTLE, stack.getCount()));
+            this.setStack(slot, new ItemStack(Items.GLASS_BOTTLE, stack.getCount()));
             return;
         }
 
         if (stack.getCount() <= 1) {
-            this.inventory.setStackInSlot(slot, ItemStack.EMPTY);
+            this.setStack(slot, ItemStack.EMPTY);
             return;
         }
 
         ItemStack copy = stack.copy();
         copy.shrink(1);
-        this.inventory.setStackInSlot(slot, copy);
+        this.setStack(slot, copy);
     }
 
-    public static IItemHandler getCapability(AdvancedBreweryBlockEntity be, Direction side) {
+    private void setStack(int slot, ItemStack stack) {
+        this.inventory.getUnrestricted().set(slot, ItemResource.of(stack), stack.getCount());
+    }
+
+    public static ResourceHandler<ItemResource> getCapability(AdvancedBreweryBlockEntity be, Direction side) {
         if (side == null) {
             return be.getInventory();
         }
@@ -213,12 +222,12 @@ public class AdvancedBreweryBlockEntity extends BlockEntityBase implements Ticki
     }
 
     @Nonnull
-    public IItemHandlerModifiable getInventory() {
+    public BaseItemStackHandler getInventory() {
         return this.inventory;
     }
 
     @Nonnull
-    public IItemHandlerModifiable getUnrestricted() {
+    public IAdvancedItemHandlerModifiable getUnrestricted() {
         return this.inventory.getUnrestricted();
     }
 
@@ -231,45 +240,20 @@ public class AdvancedBreweryBlockEntity extends BlockEntityBase implements Ticki
     }
 
     @Override
-    protected void loadAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
+    protected void loadAdditional(@Nonnull ValueInput input) {
+        super.loadAdditional(input);
 
-        this.inventory.deserializeNBT(registries, tag.getCompound("Inventory"));
-        this.brewTime = tag.getInt("brewTime");
-        this.fuel = tag.getInt("fuel");
+        this.inventory.deserialize(input.childOrEmpty("Inventory"));
+        this.brewTime = input.getIntOr("brewTime", 0);
+        this.fuel = input.getIntOr("fuel", 0);
     }
 
     @Override
-    protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(@Nonnull ValueOutput output) {
+        super.saveAdditional(output);
 
-        tag.put("Inventory", this.inventory.serializeNBT(registries));
-        tag.putInt("brewTime", this.brewTime);
-        tag.putInt("fuel", this.fuel);
-    }
-
-    @Override
-    public void handleUpdateTag(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider lookupProvider) {
-        if (this.level != null && this.level.isClientSide) {
-            super.handleUpdateTag(tag, lookupProvider);
-
-            this.inventory.deserializeNBT(lookupProvider, tag.getCompound("Inventory"));
-            this.brewTime = tag.getInt("brewTime");
-            this.fuel = tag.getInt("fuel");
-        }
-    }
-
-    @Nonnull
-    @Override
-    public CompoundTag getUpdateTag(@Nonnull HolderLookup.Provider registries) {
-        CompoundTag tag = super.getUpdateTag(registries);
-
-        if (this.level != null && !this.level.isClientSide) {
-            tag.put("Inventory", this.inventory.serializeNBT(registries));
-            tag.putInt("brewTime", this.brewTime);
-            tag.putInt("fuel", this.fuel);
-        }
-
-        return tag;
+        this.inventory.serialize(output.child("Inventory"));
+        output.putInt("brewTime", this.brewTime);
+        output.putInt("fuel", this.fuel);
     }
 }

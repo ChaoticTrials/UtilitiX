@@ -5,15 +5,16 @@ import de.melanx.utilitix.compat.curios.UtilCurios;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import org.moddingx.libx.inventory.IAdvancedItemHandlerModifiable;
 import org.moddingx.libx.menu.MenuBase;
+import org.moddingx.libx.menu.slot.BaseSlot;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -33,12 +34,12 @@ public class BackpackMenu extends MenuBase {
         super(type, containerId, playerInventory);
 
         this.stack = stack;
-        IItemHandler handler = this.stack.getCapability(Capabilities.ItemHandler.ITEM);
+        IAdvancedItemHandlerModifiable handler = (IAdvancedItemHandlerModifiable) this.stack.getCapability(Capabilities.Item.ITEM, ItemAccess.forStack(stack));
         if (handler == null) {
             throw new IllegalStateException("Tried to open backpack menu without a valid item handler.");
         }
 
-        Layout layout = layoutSlots(handler.getSlots());
+        Layout layout = layoutSlots(handler.size());
         this.width = layout.size().width;
         this.height = layout.size().height;
         this.invX = layout.coordinates().x;
@@ -46,7 +47,7 @@ public class BackpackMenu extends MenuBase {
         this.slotList = layout.slots();
 
         for (int i = 0; i < this.slotList.size(); i++) {
-            this.addSlot(new SlotItemHandler(handler, i, this.slotList.get(i).x, this.slotList.get(i).y));
+            this.addSlot(new BaseSlot(handler, handler, i, this.slotList.get(i).x, this.slotList.get(i).y));
         }
 
         // Player inventory
@@ -121,12 +122,12 @@ public class BackpackMenu extends MenuBase {
     }
 
     @Override
-    public void clicked(int slotId, int button, @Nonnull ClickType clickType, @Nonnull Player player) {
+    public void clicked(int slotId, int button, @Nonnull ContainerInput containerInput, @Nonnull Player player) {
         if (slotId >= 0 && this.slots.get(slotId).getItem() == this.stack) {
             return;
         }
 
-        super.clicked(slotId, button, clickType, player);
+        super.clicked(slotId, button, containerInput, player);
     }
 
     private static Layout layoutSlots(int size) {

@@ -1,0 +1,12 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:single",
+      "resource": "utilitix:special/gray_bell"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "utilitix:special/glue_ball_overlay"
+    }
+  ]
+}

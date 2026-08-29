@@ -1,11 +1,8 @@
 package de.melanx.utilitix.content.crudefurnace;
 
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.SmeltingRecipe;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import org.moddingx.libx.crafting.RecipeHelper;
 
@@ -15,17 +12,21 @@ public class CrudeFurnaceRecipeHelper {
 
     @Nullable
     public static ModifiedRecipe getResult(Level level, ItemStack input) {
-        return CrudeFurnaceRecipeHelper.getResult(level.getRecipeManager(), level.registryAccess(), input);
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return null;
+        }
+
+        return CrudeFurnaceRecipeHelper.getResult(serverLevel.recipeAccess(), input);
     }
 
     @Nullable
-    public static ModifiedRecipe getResult(RecipeManager recipeManager, RegistryAccess registryAccess, ItemStack input) {
+    public static ModifiedRecipe getResult(RecipeManager recipeManager, ItemStack input) {
         if (input.isEmpty()) {
             return null;
         }
 
-        RecipeHolder<SmeltingRecipe> recipe = recipeManager.getAllRecipesFor(RecipeType.SMELTING).stream()
-                .filter(r -> r.value().getIngredients().getFirst().test(input))
+        RecipeHolder<SmeltingRecipe> recipe = recipeManager.recipes.byType(RecipeType.SMELTING).stream()
+                .filter(r -> r.value().input().test(input))
                 .findFirst().orElse(null);
 
         if (recipe == null) {
@@ -38,7 +39,7 @@ public class CrudeFurnaceRecipeHelper {
             return null;
         }
 
-        return new ModifiedRecipe(registryAccess, recipe);
+        return new ModifiedRecipe(recipe);
     }
 
     public static class ModifiedRecipe {
@@ -48,11 +49,11 @@ public class CrudeFurnaceRecipeHelper {
         private final ItemStack output;
         private final RecipeHolder<SmeltingRecipe> originalRecipe;
 
-        ModifiedRecipe(RegistryAccess registryAccess, RecipeHolder<SmeltingRecipe> recipeHolder) {
+        ModifiedRecipe(RecipeHolder<SmeltingRecipe> recipeHolder) {
             SmeltingRecipe recipe = recipeHolder.value();
-            this.xp = recipe.getExperience() / 2;
-            this.burnTime = recipe.getCookingTime() / 2;
-            this.output = recipe.getResultItem(registryAccess);
+            this.xp = recipe.experience() / 2;
+            this.burnTime = recipe.cookingTime() / 2;
+            this.output = recipe.assemble(new SingleRecipeInput(ItemStack.EMPTY));
             this.originalRecipe = recipeHolder;
         }
 

@@ -32,7 +32,7 @@ side = "BOTH"
 [[dependencies.${ mod.modid }]]
 modId = "libx"
 type = "required"
-versionRange = "[1.21.1-6.0.8,)"
+versionRange = "[26.1-7.0.2,)"
 ordering = "NONE"
 side = "BOTH"
 

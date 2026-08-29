@@ -19,9 +19,9 @@ public class MixinArmorStand {
             at = @At("HEAD"),
             cancellable = true
     )
-    private void breakArmorStand(ServerLevel level, DamageSource damageSource, CallbackInfo ci) {
+    private void utilitix$breakArmorStand(ServerLevel level, DamageSource damageSource, CallbackInfo ci) {
         ArmorStand armorStand = (ArmorStand) (Object) this;
-        if (armorStand.getPersistentData().getBoolean("UtilitiXArmorStand")) {
+        if (armorStand.getPersistentData().getBooleanOr("UtilitiXArmorStand", false)) {
             Block.popResource(armorStand.level(), armorStand.blockPosition(), new ItemStack(ModItems.armedStand));
             armorStand.brokenByAnything(level, damageSource);
             ci.cancel();

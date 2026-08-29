@@ -13,7 +13,7 @@ import org.moddingx.libx.datagen.provider.EnchantmentProviderBase;
 
 public class EnchantmentProvider extends EnchantmentProviderBase {
 
-    public static final ResourceKey<Enchantment> BELL_RANGE = ResourceKey.create(Registries.ENCHANTMENT, UtilitiX.getInstance().resource("bell_range"));
+    public static final ResourceKey<Enchantment> BELL_RANGE = ResourceKey.create(Registries.ENCHANTMENT, UtilitiX.getInstance().id("bell_range"));
 
     public final Holder<Enchantment> bellRange = this.enchantment(Component.translatable("enchantment.utilitix.bell_range"))
             .supportedItems(ModItems.handBell, ModItems.mobBell)

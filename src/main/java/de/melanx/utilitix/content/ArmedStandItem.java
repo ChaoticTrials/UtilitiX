@@ -9,8 +9,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.ArmorStandItem;
@@ -56,13 +56,13 @@ public class ArmedStandItem extends ArmorStandItem {
 
         if (level instanceof ServerLevel serverlevel) {
             Consumer<ArmorStand> consumer = EntityType.createDefaultStackConfig(serverlevel, stack, context.getPlayer());
-            ArmorStand stand = EntityType.ARMOR_STAND.create(serverlevel, consumer, pos, MobSpawnType.SPAWN_EGG, true, true);
+            ArmorStand stand = EntityType.ARMOR_STAND.create(serverlevel, consumer, pos, EntitySpawnReason.SPAWN_ITEM_USE, true, true);
             if (stand == null) {
                 return InteractionResult.FAIL;
             }
 
             float yRot = (float) Mth.floor((Mth.wrapDegrees(context.getRotation() - 180.0F) + 22.5F) / 45.0F) * 45.0F;
-            stand.moveTo(stand.getX(), stand.getY(), stand.getZ(), yRot, 0.0F);
+            stand.snapTo(stand.getX(), stand.getY(), stand.getZ(), yRot, 0.0F);
             this.setArms(stand);
             serverlevel.addFreshEntityWithPassengers(stand);
             level.playSound(null, stand.getX(), stand.getY(), stand.getZ(), SoundEvents.ARMOR_STAND_PLACE, SoundSource.BLOCKS, 0.75F, 0.8F);
@@ -71,7 +71,7 @@ public class ArmedStandItem extends ArmorStandItem {
 
         stack.shrink(1);
 
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
     }
 
     public void setArms(@Nonnull ArmorStand armorStand) {
@@ -89,7 +89,7 @@ public class ArmedStandItem extends ArmorStandItem {
     }
 
     public static void entityInteract(PlayerInteractEvent.EntityInteractSpecific event) {
-        if (!(event.getTarget() instanceof ArmorStand armorStand) || !event.getTarget().getPersistentData().getBoolean("UtilitiXArmorStand")) {
+        if (!(event.getTarget() instanceof ArmorStand armorStand) || !event.getTarget().getPersistentData().getBooleanOr("UtilitiXArmorStand", false)) {
             return;
         }
 
@@ -98,7 +98,7 @@ public class ArmedStandItem extends ArmorStandItem {
         }
 
         if (CommonConfig.armorStandPoses.size() >= 2) {
-            int newIdx = (armorStand.getPersistentData().getInt("UtilitiXPoseIdx") + 1) % CommonConfig.armorStandPoses.size();
+            int newIdx = (armorStand.getPersistentData().getIntOr("UtilitiXPoseIdx", 0) + 1) % CommonConfig.armorStandPoses.size();
             armorStand.getPersistentData().putInt("UtilitiXPoseIdx", newIdx);
             CommonConfig.armorStandPoses.get(newIdx).apply(armorStand);
         }

@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "a": {
-      "item": "minecraft:activator_rail"
-    },
-    "c": {
-      "item": "utilitix:piston_cart"
-    },
-    "r": {
-      "item": "minecraft:rail"
-    }
+    "a": "minecraft:activator_rail",
+    "c": "utilitix:piston_cart",
+    "r": "minecraft:rail"
   },
   "pattern": [
     "rar",

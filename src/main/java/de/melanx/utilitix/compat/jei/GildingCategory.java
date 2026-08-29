@@ -6,13 +6,13 @@ import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.common.platform.IPlatformRecipeHelper;
 import mezz.jei.common.platform.Services;
-import mezz.jei.library.util.RecipeUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.SmithingRecipeInput;
 import net.minecraft.world.item.crafting.SmithingTransformRecipe;
 import net.minecraft.world.level.block.Blocks;
 
@@ -28,7 +28,7 @@ public class GildingCategory implements IRecipeCategory<SmithingTransformRecipe>
 
     @Nonnull
     @Override
-    public RecipeType<SmithingTransformRecipe> getRecipeType() {
+    public IRecipeType<SmithingTransformRecipe> getRecipeType() {
         return UtiliJei.GILDING_RECIPE;
     }
 
@@ -67,8 +67,8 @@ public class GildingCategory implements IRecipeCategory<SmithingTransformRecipe>
         IRecipeSlotBuilder outputSlot = builder.addOutputSlot(91, 6)
                 .setStandardSlotBackground();
 
-        baseSlot.addIngredients(recipeHelper.getBase(recipe));
-        additionSlot.addIngredients(recipeHelper.getAddition(recipe));
-        outputSlot.addItemStack(RecipeUtil.getResultItem(recipe));
+        baseSlot.add(recipeHelper.getBase(recipe));
+        recipeHelper.getAddition(recipe).ifPresent(additionSlot::add);
+        outputSlot.add(recipe.assemble(new SmithingRecipeInput(ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY)));
     }
 }

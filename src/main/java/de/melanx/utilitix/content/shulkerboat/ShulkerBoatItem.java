@@ -4,11 +4,12 @@ import de.melanx.utilitix.config.FeatureConfig;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -28,20 +29,20 @@ import java.util.List;
 
 public class ShulkerBoatItem extends ItemBase {
 
-    private final Boat.Type boatType;
+    private final EntityType<ShulkerBoat> boatType;
 
-    public ShulkerBoatItem(ModX mod, Boat.Type boatType, Properties properties) {
+    public ShulkerBoatItem(ModX mod, EntityType<ShulkerBoat> boatType, Properties properties) {
         super(mod, properties);
         this.boatType = boatType;
     }
 
     @Nonnull
     @Override
-    public InteractionResultHolder<ItemStack> use(@Nonnull Level level, @Nonnull Player player, @Nonnull InteractionHand hand) {
+    public InteractionResult use(@Nonnull Level level, @Nonnull Player player, @Nonnull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         BlockHitResult hitResult = Item.getPlayerPOVHitResult(level, player, ClipContext.Fluid.ANY);
         if (hitResult.getType() == HitResult.Type.MISS) {
-            return InteractionResultHolder.pass(stack);
+            return InteractionResult.PASS;
         }
 
         Vec3 view = player.getViewVector(1);
@@ -52,23 +53,28 @@ public class ShulkerBoatItem extends ItemBase {
             for (Entity entity : entities) {
                 AABB box = entity.getBoundingBox().inflate(entity.getPickRadius());
                 if (box.contains(eyePos)) {
-                    return InteractionResultHolder.pass(stack);
+                    return InteractionResult.PASS;
                 }
             }
         }
 
         if (hitResult.getType() != HitResult.Type.BLOCK) {
-            return InteractionResultHolder.pass(stack);
+            return InteractionResult.PASS;
         }
 
-        ShulkerBoat boat = new ShulkerBoat(level, hitResult.getLocation());
-        boat.setVariant(this.boatType);
+        ShulkerBoat boat = this.boatType.create(level, EntitySpawnReason.SPAWN_ITEM_USE);
+        if (boat == null) {
+            return InteractionResult.FAIL;
+        }
+
+        Vec3 location = hitResult.getLocation();
+        boat.setInitialPos(location.x, location.y, location.z);
         boat.setYRot(player.getYRot());
         if (!level.noCollision(boat, boat.getBoundingBox())) {
-            return InteractionResultHolder.fail(stack);
+            return InteractionResult.FAIL;
         }
 
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             if (stack.has(DataComponents.CONTAINER)) {
                 ItemContainerContents itemContainerContents = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
                 itemContainerContents.copyInto(boat.getItemStacks());
@@ -86,7 +92,7 @@ public class ShulkerBoatItem extends ItemBase {
         }
 
         player.awardStat(Stats.ITEM_USED.get(this));
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+        return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
     }
 
     @Override

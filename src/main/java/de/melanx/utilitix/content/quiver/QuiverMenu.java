@@ -9,7 +9,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -109,12 +109,12 @@ public class QuiverMenu extends MenuBase {
     }
 
     @Override
-    public void clicked(int slotId, int button, @Nonnull ClickType clickType, @Nonnull Player player) {
+    public void clicked(int slotId, int button, @Nonnull ContainerInput containerInput, @Nonnull Player player) {
         if (slotId >= 0 && slotId < this.slots.size() && player.getItemInHand(this.hand) == this.getSlot(slotId).getItem()) {
             return;
         }
 
-        super.clicked(slotId, button, clickType, player);
+        super.clicked(slotId, button, containerInput, player);
     }
 
     private static class ArrowSlot extends Slot {

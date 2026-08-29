@@ -2,19 +2,14 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "c": {
-      "item": "minecraft:minecart"
-    },
-    "i": {
-      "item": "minecraft:stonecutter"
-    }
+    "c": "minecraft:minecart",
+    "i": "minecraft:stonecutter"
   },
   "pattern": [
     "i",
     "c"
   ],
   "result": {
-    "count": 1,
     "id": "utilitix:stonecutter_cart"
   }
 }

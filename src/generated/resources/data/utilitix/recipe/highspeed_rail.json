@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "e": {
-      "tag": "c:gems/emerald"
-    },
-    "r": {
-      "tag": "c:dusts/redstone"
-    },
-    "s": {
-      "tag": "c:rods/wooden"
-    }
+    "e": "#c:gems/emerald",
+    "r": "#c:dusts/redstone",
+    "s": "#c:rods/wooden"
   },
   "pattern": [
     "e e",

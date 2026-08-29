@@ -13,12 +13,11 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import mezz.jei.library.util.RecipeUtil;
-import net.minecraft.client.gui.GuiGraphics;
+import mezz.jei.api.recipe.types.IRecipeType;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
@@ -37,7 +36,7 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
     private final IDrawableStatic blazeHeat;
 
     public BreweryCategory(IGuiHelper guiHelper) {
-        ResourceLocation location = ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "textures/container/advanced_brewery.png");
+        Identifier location = Identifier.fromNamespaceAndPath(UtilitiX.getInstance().modid, "textures/container/advanced_brewery.png");
         this.background = guiHelper.drawableBuilder(location, 55, 15, 64, 60).addPadding(1, 0, 0, 50).build();
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.advancedBrewery));
         this.localizedName = Component.translatable("screen.utilitix.advanced_brewery");
@@ -50,7 +49,7 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
 
     @Nonnull
     @Override
-    public RecipeType<BreweryRecipe> getRecipeType() {
+    public IRecipeType<BreweryRecipe> getRecipeType() {
         return UtiliJei.BREWING_RECIPE;
     }
 
@@ -81,18 +80,18 @@ public class BreweryCategory implements IRecipeCategory<BreweryRecipe> {
         ItemStack stack = PotionContents.createItemStack(Items.POTION, Potions.AWKWARD);
 
         builder.addSlot(RecipeIngredientRole.OUTPUT, 24, 44)
-                .addItemStack(stack);
+                .add(stack);
 
-        builder.addSlot(RecipeIngredientRole.INPUT, 24, 3)
-                .addIngredients(recipe.getIngredients().getFirst());
+        recipe.getInput().ifPresent(ingredient -> builder.addSlot(RecipeIngredientRole.INPUT, 24, 3)
+                .add(ingredient));
         builder.addSlot(RecipeIngredientRole.OUTPUT, 81, 3)
-                .addItemStack(RecipeUtil.getResultItem(recipe))
+                .add(recipe.getResultItem())
                 .setBackground(this.slot, -1, -1);
     }
 
     @Override
-    public void draw(@Nonnull BreweryRecipe recipe, @Nonnull IRecipeSlotsView slotsView, @Nonnull GuiGraphics guiGraphics, double mouseX, double mouseY) {
-        this.background.draw(guiGraphics, 0, 0);
+    public void draw(@Nonnull BreweryRecipe recipe, @Nonnull IRecipeSlotsView slotsView, @Nonnull GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
+        this.background.draw(guiGraphics, 0, 1);
         this.blazeHeat.draw(guiGraphics, 5, 30);
         this.bubbles.draw(guiGraphics, 8, 0);
         this.arrow.draw(guiGraphics, 42, 2);

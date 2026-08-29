@@ -1,23 +1,23 @@
 package de.melanx.utilitix.content.glue;
 
-import de.melanx.utilitix.UtilitiX;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
 import de.melanx.utilitix.network.handler.StickyChunkUpdate;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.common.util.ValueIOSerializable;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StickyChunk implements INBTSerializable<CompoundTag> {
+public class StickyChunk implements ValueIOSerializable {
 
     @Nullable
     private LevelChunk chunk;
@@ -84,8 +84,8 @@ public class StickyChunk implements INBTSerializable<CompoundTag> {
     }
     
     public void sync() {
-        if (this.chunk != null && !this.chunk.getLevel().isClientSide) {
-            this.chunk.setUnsaved(true);
+        if (this.chunk != null && !this.chunk.getLevel().isClientSide()) {
+            this.chunk.markUnsaved();
             PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) this.chunk.getLevel(), this.chunk.getPos(), new StickyChunkUpdate.Message(this.chunk.getPos(), this));
         }
     }
@@ -96,7 +96,6 @@ public class StickyChunk implements INBTSerializable<CompoundTag> {
     }
     
     private StickySection getOrCreateSection(int y) {
-        // No need to sync as the newly created section is empty.
         return this.sections.computeIfAbsent(y >> 4, k -> new StickySection(this));
     }
 
@@ -136,39 +135,30 @@ public class StickyChunk implements INBTSerializable<CompoundTag> {
         networkChunk.sections.clear();
     }
 
-    @Override
-    public CompoundTag serializeNBT(@Nonnull HolderLookup.Provider provider) {
-        CompoundTag tag = new CompoundTag();
+    // ValueInput/ValueOutput have no generic "list all dynamic keys" accessor (unlike the old CompoundTag),
+    // so sections are stored as a list of (sectionId, stickies) pairs instead of dynamically-keyed fields.
+    private static final Codec<Pair<Integer, ByteBuffer>> SECTION_CODEC = Codec.pair(Codec.INT, Codec.BYTE_BUFFER);
 
+    @Override
+    public void serialize(ValueOutput output) {
+        ValueOutput.TypedOutputList<Pair<Integer, ByteBuffer>> list = output.list("Sections", SECTION_CODEC);
         for (Map.Entry<Integer, StickySection> entry : this.sections.entrySet()) {
             if (entry.getValue().canBeDiscarded()) {
                 continue;
             }
 
-            tag.putByteArray(Integer.toString(entry.getKey()), entry.getValue().getStickies());
+            list.add(Pair.of(entry.getKey(), ByteBuffer.wrap(entry.getValue().getStickies())));
         }
-
-        return tag;
     }
 
     @Override
-    public void deserializeNBT(@Nonnull HolderLookup.Provider provider, @Nonnull CompoundTag nbt) {
+    public void deserialize(ValueInput input) {
         this.sections.clear();
 
-        for (String key : nbt.getAllKeys()) {
-            if (!nbt.contains(key, Tag.TAG_BYTE_ARRAY)) {
-                UtilitiX.getInstance().logger.error("Invalid chunk section value in sticky chunk for: {}", key);
-                continue;
-            }
-
-            try {
-                int sectionId = Integer.parseInt(key);
-                StickySection section = new StickySection(this);
-                section.setStickies(nbt.getByteArray(key));
-                this.sections.put(sectionId, section);
-            } catch (NumberFormatException e) {
-                UtilitiX.getInstance().logger.error("Invalid chunk section id in sticky chunk: {}", key);
-            }
+        for (Pair<Integer, ByteBuffer> entry : input.listOrEmpty("Sections", SECTION_CODEC)) {
+            StickySection section = new StickySection(this);
+            section.setStickies(entry.getSecond().array());
+            this.sections.put(entry.getFirst(), section);
         }
     }
 

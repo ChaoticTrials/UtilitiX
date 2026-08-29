@@ -3,6 +3,7 @@ package de.melanx.utilitix.client;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.client.commands.MapsCommand;
 import de.melanx.utilitix.content.bell.BellRenderer;
+import de.melanx.utilitix.content.bell.MobBellTintSource;
 import de.melanx.utilitix.content.brewery.AdvancedBreweryMenu;
 import de.melanx.utilitix.content.brewery.AdvancedBreweryScreen;
 import de.melanx.utilitix.content.crudefurnace.CrudeFurnaceMenu;
@@ -18,45 +19,34 @@ import de.melanx.utilitix.content.track.tinkerer.MinecartTinkererMenu;
 import de.melanx.utilitix.content.track.tinkerer.MinecartTinkererScreen;
 import de.melanx.utilitix.network.handler.OpenCurioBackpack;
 import de.melanx.utilitix.network.handler.StickyChunkRequest;
-import de.melanx.utilitix.registration.ModDataComponentTypes;
-import de.melanx.utilitix.registration.ModItems;
+import de.melanx.utilitix.registration.ModBlocks;
 import de.melanx.utilitix.registration.ModKeys;
+import de.melanx.utilitix.util.XPUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.BoatModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.item.CompassItemPropertyFunction;
-import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.commands.Commands;
-import net.minecraft.core.GlobalPos;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.item.component.TypedEntityData;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import net.neoforged.neoforge.common.tooltip.TooltipLocation;
+import net.neoforged.neoforge.event.RegisterTooltipAppendersEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
-
-import javax.annotation.Nonnull;
-import java.util.Objects;
 
 @EventBusSubscriber(modid = "utilitix", value = Dist.CLIENT)
 public class ClientEventListener {
 
     public static final MutableComponent GILDED = Component.translatable("tooltip.utilitix.gilded").withStyle(ChatFormatting.GOLD);
-    public static final ModelLayerLocation SHULKER_BOAT = new ModelLayerLocation(UtilitiX.getInstance().resource("shulker_boat"), "main");
 
     @SubscribeEvent
     public static void registerClientCommands(RegisterClientCommandsEvent event) {
@@ -65,8 +55,18 @@ public class ClientEventListener {
     }
 
     @SubscribeEvent
-    public static void registerLayerDefinition(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(SHULKER_BOAT, BoatModel::createBodyModel);
+    public static void registerSpecialModelRenderer(RegisterSpecialModelRendererEvent event) {
+        event.register(UtilitiX.getInstance().id("bell"), BellRenderer.Unbaked.MAP_CODEC);
+    }
+
+    @SubscribeEvent
+    public static void registerItemTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
+        event.register(UtilitiX.getInstance().id("mob_bell"), MobBellTintSource.CODEC);
+    }
+
+    @SubscribeEvent
+    public static void registerItemModelProperties(RegisterRangeSelectItemModelPropertyEvent event) {
+        event.register(UtilitiX.getInstance().id("ancient_compass_angle"), AncientCompassAngleProperty.MAP_CODEC);
     }
 
     @SubscribeEvent
@@ -80,63 +80,48 @@ public class ClientEventListener {
     }
 
     @SubscribeEvent
-    public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
-        ItemProperties.register(ModItems.ancientCompass, ResourceLocation.withDefaultNamespace("angle"), new CompassItemPropertyFunction((level, stack, entity) -> {
-            if (!stack.has(ModDataComponentTypes.ancientCityPos) || !stack.has(ModDataComponentTypes.ancientCityLevel)) {
-                return null;
-            }
-
-            return GlobalPos.of(
-                    ResourceKey.create(
-                            Registries.DIMENSION,
-                            Objects.requireNonNull(ResourceLocation.tryParse(Objects.requireNonNull(stack.get(ModDataComponentTypes.ancientCityLevel)).toString()))
-                    ),
-                    Objects.requireNonNull(stack.get(ModDataComponentTypes.ancientCityPos))
-            );
-        }));
-
-        ItemProperties.register(ModItems.mobYoinker, UtilitiX.getInstance().resource("filled"), ((stack, level, entity, seed) -> stack.getOrDefault(ModDataComponentTypes.filled, false) ? 1.0F : 0.0F));
-        event.registerItem(new IClientItemExtensions() {
-
-            @Nonnull
-            @Override
-            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                return new BellRenderer(new BlockEntityRendererProvider.Context(
-                        Minecraft.getInstance().getBlockEntityRenderDispatcher(),
-                        Minecraft.getInstance().getBlockRenderer(),
-                        Minecraft.getInstance().getItemRenderer(),
-                        Minecraft.getInstance().getEntityRenderDispatcher(),
-                        Minecraft.getInstance().getEntityModels(),
-                        Minecraft.getInstance().font
-                ));
-            }
-        }, ModItems.handBell, ModItems.mobBell);
-
-        ItemProperties.register(ModItems.quiver, UtilitiX.getInstance().resource("filled"), (stack, level, entity, seed) -> stack.getOrDefault(ModDataComponentTypes.filled, false) ? 1.0F : 0.0F);
-    }
-
-    @SubscribeEvent
-    public static void registerColorHandlers(RegisterColorHandlersEvent.Item event) {
-        event.register((stack, tintIndex) -> tintIndex != 0 ? -1 : DyedItemColor.getOrDefault(stack, DyedItemColor.LEATHER_COLOR), ModItems.backpack);
-    }
-
-    @SubscribeEvent
     public static void loadChunk(ChunkEvent.Load event) {
         if (event.getLevel().isClientSide()) {
-            PacketDistributor.sendToServer(new StickyChunkRequest.Message(event.getChunk().getPos()));
+            ClientPacketDistributor.sendToServer(new StickyChunkRequest.Message(event.getChunk().getPos()));
         }
     }
 
     @SubscribeEvent
     public static void onLevelTick(LevelTickEvent.Post event) {
         while (ModKeys.OPEN_BACKPACK.get().consumeClick() && Minecraft.getInstance().screen == null) {
-            PacketDistributor.sendToServer(new OpenCurioBackpack.Message());
+            ClientPacketDistributor.sendToServer(new OpenCurioBackpack.Message());
         }
     }
 
     @SubscribeEvent
     public static void registerKeys(RegisterKeyMappingsEvent event) {
         event.register(ModKeys.OPEN_BACKPACK.get());
+    }
+
+    @SubscribeEvent
+    public static void registerTooltipAppenders(RegisterTooltipAppendersEvent event) {
+        event.registerAppender(TooltipLocation.TAIL, (stack, _, _, _, _, tooltip) -> {
+            if (!(stack.getItem() instanceof BlockItem blockItem) || blockItem.getBlock() != ModBlocks.experienceCrystal) {
+                return;
+            }
+
+            TypedEntityData<BlockEntityType<?>> blockEntityData = stack.get(DataComponents.BLOCK_ENTITY_DATA);
+            if (blockEntityData == null || !blockEntityData.contains("Xp")) {
+                return;
+            }
+
+            int xp = blockEntityData.copyTagWithoutId().getIntOr("Xp", 0);
+            if (xp <= 0) {
+                return;
+            }
+
+            int level = XPUtils.getLevelExp(xp).getLeft();
+            if (level > 0) {
+                tooltip.accept(Component.translatable("tooltip.utilitix.experience_crystal.xp_level", level).withStyle(ChatFormatting.GREEN));
+            } else {
+                tooltip.accept(Component.translatable("tooltip.utilitix.experience_crystal.xp_points", xp).withStyle(ChatFormatting.GREEN));
+            }
+        });
     }
 
     @SubscribeEvent

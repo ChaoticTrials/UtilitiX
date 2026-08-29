@@ -1,17 +1,28 @@
 package de.melanx.utilitix.content.track;
 
 import de.melanx.utilitix.content.track.carts.BaseCart;
+import de.melanx.utilitix.content.track.rails.MaxSpeedRail;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class TrackUtil {
+
+    /**
+     * The speed cap (blocks/tick) of the rail the given cart is currently on, or {@code -1} if it is not on a
+     * {@link MaxSpeedRail}. Used by the minecart-behavior mixins to restore the per-rail speed limit that
+     * NeoForge removed with {@code getRailMaxSpeed}.
+     */
+    public static double railMaxSpeed(AbstractMinecart cart) {
+        BlockPos pos = cart.getCurrentBlockPosOrRailBelow();
+        return cart.level().getBlockState(pos).getBlock() instanceof MaxSpeedRail rail ? rail.getMaxRailSpeed() : -1;
+    }
 
     public static void accelerateStraight(Level level, BlockPos pos, RailShape shape, AbstractMinecart cart, double accelerationValue) {
         Vec3 motion = cart.getDeltaMovement();
@@ -68,7 +79,7 @@ public class TrackUtil {
     }
 
     public static void defaultCollisions(AbstractMinecart cart, Entity other) {
-        if (cart.level().isClientSide || cart.noPhysics || other.noPhysics || cart.hasPassenger(other)) {
+        if (cart.level().isClientSide() || cart.noPhysics || other.noPhysics || cart.hasPassenger(other)) {
             return;
         }
 
@@ -98,14 +109,14 @@ public class TrackUtil {
 
         Vec3 cartMotion = cart.getDeltaMovement();
         Vec3 entityMotion = otherCart.getDeltaMovement();
-        if (!cart.isPoweredCart() && otherCart.isPoweredCart()) {
+        if (!cart.isFurnace() && otherCart.isFurnace()) {
             cart.setDeltaMovement(cartMotion.multiply(0.2, 1, 0.2));
             cart.push(entityMotion.x - xd, 0, entityMotion.z - zd);
             otherCart.setDeltaMovement(entityMotion.multiply(0.95, 1, 0.95));
             return;
         }
 
-        if (cart.isPoweredCart() && !otherCart.isPoweredCart()) {
+        if (cart.isFurnace() && !otherCart.isFurnace()) {
             otherCart.setDeltaMovement(entityMotion.multiply(0.2, 1, 0.2));
             otherCart.push(cartMotion.x + xd, 0, cartMotion.z + zd);
             cart.setDeltaMovement(cartMotion.multiply(0.95, 1, 0.95));

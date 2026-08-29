@@ -4,7 +4,5 @@
     "type": "upgrade",
     "max_level": 3
   },
-  "input": {
-    "item": "minecraft:popped_chorus_fruit"
-  }
+  "input": "minecraft:popped_chorus_fruit"
 }

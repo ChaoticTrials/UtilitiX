@@ -9,8 +9,7 @@ import de.melanx.utilitix.content.experiencecrystal.ExperienceCrystalBlock;
 import de.melanx.utilitix.content.experiencecrystal.ExperienceCrystalBlockEntity;
 import de.melanx.utilitix.content.redstone.wireless.LinkedRepeaterBlock;
 import de.melanx.utilitix.content.redstone.wireless.LinkedRepeaterBlockEntity;
-import de.melanx.utilitix.registration.ModEntities;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import snownee.jade.api.IWailaClientRegistration;
 import snownee.jade.api.IWailaCommonRegistration;
@@ -20,18 +19,18 @@ import snownee.jade.api.WailaPlugin;
 @WailaPlugin
 public class UtilJade implements IWailaPlugin {
 
-    public static final ResourceLocation ADVANCED_BREWERY = UtilitiX.getInstance().resource("advanced_brewery");
-    public static final ResourceLocation CRUDE_FURNACE = UtilitiX.getInstance().resource("crude_furnace");
-    public static final ResourceLocation EXPERIENCE_CRYSTAL = UtilitiX.getInstance().resource("experience_crystal");
-    public static final ResourceLocation LINKED_REPEATER = UtilitiX.getInstance().resource("linked_repeater");
-    public static final ResourceLocation GLUE_INFORMATION = UtilitiX.getInstance().resource("glue_information");
+    public static final Identifier ADVANCED_BREWERY = UtilitiX.getInstance().id("advanced_brewery");
+    public static final Identifier CRUDE_FURNACE = UtilitiX.getInstance().id("crude_furnace");
+    public static final Identifier EXPERIENCE_CRYSTAL = UtilitiX.getInstance().id("experience_crystal");
+    public static final Identifier LINKED_REPEATER = UtilitiX.getInstance().id("linked_repeater");
+    public static final Identifier GLUE_INFORMATION = UtilitiX.getInstance().id("glue_information");
 
     @Override
     public void register(IWailaCommonRegistration registration) {
-        registration.registerBlockDataProvider(AdvancedBreweryProvider.INSTANCE, AdvancedBreweryBlockEntity.class);
-        registration.registerBlockDataProvider(CrudeFurnaceProvider.INSTANCE, CrudeFurnaceBlockEntity.class);
-        registration.registerBlockDataProvider(ExperienceCrystalProvider.INSTANCE, ExperienceCrystalBlockEntity.class);
-        registration.registerBlockDataProvider(LinkedRepeaterProvider.INSTANCE, LinkedRepeaterBlockEntity.class);
+        registration.registerBlockDataProvider(AdvancedBreweryServerDataProvider.INSTANCE, AdvancedBreweryBlockEntity.class);
+        registration.registerBlockDataProvider(CrudeFurnaceServerDataProvider.INSTANCE, CrudeFurnaceBlockEntity.class);
+        registration.registerBlockDataProvider(ExperienceCrystalServerDataProvider.INSTANCE, ExperienceCrystalBlockEntity.class);
+        registration.registerBlockDataProvider(LinkedRepeaterServerDataProvider.INSTANCE, LinkedRepeaterBlockEntity.class);
     }
 
     @Override
@@ -42,7 +41,6 @@ public class UtilJade implements IWailaPlugin {
         registration.registerBlockComponent(LinkedRepeaterProvider.INSTANCE, LinkedRepeaterBlock.class);
         registration.registerBlockComponent(GlueProvider.INSTANCE, Block.class);
 
-        registration.usePickedResult(ModEntities.shulkerBoat);
         registration.markAsClientFeature(GLUE_INFORMATION);
     }
 }

@@ -7,8 +7,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.config.ClientConfig;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.MapRenderer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.component.DataComponents;
@@ -63,16 +61,15 @@ public class MapsCommand {
             return 0;
         }
 
-        MapRenderer mapRenderer = Minecraft.getInstance().gameRenderer.getMapRenderer();
-        MapRenderer.MapInstance mapInstance = mapRenderer.getOrCreateMapInstance(mapId, data);
-        NativeImage img = mapInstance.texture.getPixels();
+        NativeImage img = new NativeImage(128, 128, true);
+        for (int y = 0; y < 128; y++) {
+            for (int x = 0; x < 128; x++) {
+                img.setPixel(x, y, MapColor.getColorFromPackedId(data.colors[x + y * 128]));
+            }
+        }
 
         if (!MAPS_PATH.toFile().exists() && !MAPS_PATH.toFile().mkdirs()) {
             UtilitiX.getInstance().logger.warn("Could not create Maps directory: {}", MAPS_PATH);
-            return 0;
-        }
-
-        if (img == null) {
             return 0;
         }
 
@@ -100,7 +97,7 @@ public class MapsCommand {
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < size; ++j) {
                 int k = (j / scale) + (i / scale) * 128;
-                img.setPixelRGBA(j, i, MapColor.getColorFromPackedId(data.colors[k]));
+                img.setPixel(j, i, MapColor.getColorFromPackedId(data.colors[k]));
             }
         }
 

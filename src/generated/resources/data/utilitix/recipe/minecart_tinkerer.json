@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "i": {
-      "tag": "c:ingots/iron"
-    },
-    "m": {
-      "item": "minecraft:minecart"
-    },
-    "n": {
-      "tag": "c:nuggets/iron"
-    }
+    "i": "#c:ingots/iron",
+    "m": "minecraft:minecart",
+    "n": "#c:nuggets/iron"
   },
   "pattern": [
     " nm",
@@ -18,7 +12,6 @@
     "i  "
   ],
   "result": {
-    "count": 1,
     "id": "utilitix:minecart_tinkerer"
   }
 }

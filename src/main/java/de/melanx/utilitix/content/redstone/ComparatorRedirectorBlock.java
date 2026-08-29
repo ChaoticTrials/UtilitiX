@@ -32,13 +32,13 @@ public class ComparatorRedirectorBlock extends BlockBase {
     }
 
     @Override
-    public int getAnalogOutputSignal(@Nonnull BlockState blockState, @Nonnull Level level, @Nonnull BlockPos pos) {
+    public int getAnalogOutputSignal(@Nonnull BlockState blockState, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Direction direction) {
         BlockState target = level.getBlockState(pos.relative(this.direction.getOpposite()));
         if (target.getBlock() instanceof ComparatorRedirectorBlock) {
             return 0;
         }
 
-        return target.getAnalogOutputSignal(level, pos.relative(this.direction.getOpposite()));
+        return target.getAnalogOutputSignal(level, pos.relative(this.direction.getOpposite()), direction);
     }
 
     @Override

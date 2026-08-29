@@ -11,12 +11,15 @@ import de.melanx.utilitix.registration.ModItems;
 import de.melanx.utilitix.registration.ModRegisterables;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
@@ -48,14 +51,28 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
         this.wall(ModBlocks.stoneWall, Ingredient.of(Items.STONE));
         this.shaped(ModItems.mobYoinker, "CIC", "ILI", "III", 'I', Items.IRON_BARS, 'C', Items.COPPER_INGOT, 'L', Items.LEAD);
         this.shaped(ModBlocks.dimmableRedstoneLamp, 4, " L ", "LRL", " L ", 'L', Blocks.REDSTONE_LAMP, 'R', Tags.Items.DUSTS_REDSTONE);
-        //noinspection ConstantConditions
-        this.shapeless(UtilitiX.getInstance().resource(BuiltInRegistries.BLOCK.getKey(Blocks.REDSTONE_LAMP).getPath() + "_revert"), Blocks.REDSTONE_LAMP, ModBlocks.dimmableRedstoneLamp);
+        this.shapeless(UtilitiX.getInstance().id(BuiltInRegistries.BLOCK.getKey(Blocks.REDSTONE_LAMP).getPath() + "_revert"), Blocks.REDSTONE_LAMP, ModBlocks.dimmableRedstoneLamp);
         this.shaped(ModItems.backpack, "SLS", "LCL", "LLL", 'L', Tags.Items.LEATHERS, 'S', Tags.Items.STRINGS, 'C', Tags.Items.CHESTS_WOODEN);
+        this.createDyedBackpackRecipes();
+    }
+
+    private void createDyedBackpackRecipes() {
+        this.output().accept(
+                ResourceKey.create(Registries.RECIPE, UtilitiX.getInstance().id("backpack_dye")),
+                new DyeRecipe(
+                        new Recipe.CommonInfo(true),
+                        new CraftingRecipe.CraftingBookInfo(CraftingBookCategory.MISC, "dyed_backpack"),
+                        Ingredient.of(ModItems.backpack),
+                        Ingredient.of(this.items().getOrThrow(Tags.Items.DYES)),
+                        new ItemStackTemplate(ModItems.backpack)
+                ),
+                null
+        );
     }
 
     private void createTinyCoalRecipe(ItemLike coal, ItemLike tinyCoal) {
-        this.shapeless(this.loc(tinyCoal, "to_tiny"), tinyCoal, 8, coal);
-        this.shapeless(this.loc(tinyCoal, "from_tiny"), coal, tinyCoal, tinyCoal, tinyCoal, tinyCoal, tinyCoal, tinyCoal, tinyCoal, tinyCoal);
+        this.shapeless(this.id(tinyCoal, "to_tiny"), tinyCoal, 8, coal);
+        this.shapeless(this.id(tinyCoal, "from_tiny"), coal, tinyCoal, tinyCoal, tinyCoal, tinyCoal, tinyCoal, tinyCoal, tinyCoal, tinyCoal);
     }
 
     private void createBellRecipes() {
@@ -101,7 +118,7 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
                 'R', Items.RABBIT_HIDE,
                 'L', Tags.Items.LEATHERS,
                 'S', Tags.Items.STRINGS);
-        this.shaped(this.loc(ModItems.quiver, "rotated"),
+        this.shaped(this.id(ModItems.quiver, "rotated"),
                 ModItems.quiver,
                 "LRL",
                 "RSR",
@@ -132,8 +149,8 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
                 't', Items.REDSTONE_TORCH,
                 's', Tags.Items.COBBLESTONES,
                 'i', Tags.Items.INGOTS_IRON);
-        this.shapeless(this.loc(ModBlocks.comparatorRedirectorUp, "flip"), ModBlocks.comparatorRedirectorUp, ModBlocks.comparatorRedirectorDown);
-        this.shapeless(this.loc(ModBlocks.comparatorRedirectorDown, "flip"), ModBlocks.comparatorRedirectorDown, ModBlocks.comparatorRedirectorUp);
+        this.shapeless(this.id(ModBlocks.comparatorRedirectorUp, "flip"), ModBlocks.comparatorRedirectorUp, ModBlocks.comparatorRedirectorDown);
+        this.shapeless(this.id(ModBlocks.comparatorRedirectorDown, "flip"), ModBlocks.comparatorRedirectorDown, ModBlocks.comparatorRedirectorUp);
         this.shaped(ModItems.linkedCrystal,
                 " r ",
                 "rgr",
@@ -164,28 +181,28 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
                         new MobEffectInstance(MobEffects.REGENERATION, 100, 1),
                         new MobEffectInstance(MobEffects.ABSORPTION, 2400, 0)
                 ))
-                .save(this.output(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "apple_juice"));
+                .save(this.output(), Identifier.fromNamespaceAndPath(UtilitiX.getInstance().modid, "apple_juice"));
         BreweryRecipeBuilder.breweryRecipe()
                 .input(Items.ENCHANTED_GOLDEN_APPLE)
                 .action(new Apply(
                         Component.translatable("item." + UtilitiX.getInstance().modid + ".god_apple_juice").withStyle(ChatFormatting.GREEN),
                         new MobEffectInstance(MobEffects.REGENERATION, 400, 1),
-                        new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 6000, 0),
+                        new MobEffectInstance(MobEffects.RESISTANCE, 6000, 0),
                         new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 6000, 0),
                         new MobEffectInstance(MobEffects.ABSORPTION, 2400, 3)
                 ))
-                .save(this.output(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "god_apple_juice"));
+                .save(this.output(), Identifier.fromNamespaceAndPath(UtilitiX.getInstance().modid, "god_apple_juice"));
         BreweryRecipeBuilder.breweryRecipe()
                 .action(new Merge(1))
-                .save(this.output(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "merge"));
+                .save(this.output(), Identifier.fromNamespaceAndPath(UtilitiX.getInstance().modid, "merge"));
         BreweryRecipeBuilder.breweryRecipe()
                 .input(Items.NETHERITE_SCRAP)
                 .action(new Clone())
-                .save(this.output(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "clone"));
+                .save(this.output(), Identifier.fromNamespaceAndPath(UtilitiX.getInstance().modid, "clone"));
         BreweryRecipeBuilder.breweryRecipe()
                 .input(Items.POPPED_CHORUS_FRUIT)
                 .action(new Upgrade(2))
-                .save(this.output(), ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "upgrade"));
+                .save(this.output(), Identifier.fromNamespaceAndPath(UtilitiX.getInstance().modid, "upgrade"));
     }
 
     private void createRailRecipes() {
@@ -296,17 +313,19 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
         this.shapeless(ModItems.cherryShulkerBoat, shulker, Items.CHERRY_BOAT);
         this.shapeless(ModItems.darkOakShulkerBoat, shulker, Items.DARK_OAK_BOAT);
         this.shapeless(ModItems.mangroveShulkerBoat, shulker, Items.MANGROVE_BOAT);
+        this.shapeless(ModItems.paleOakShulkerBoat, shulker, Items.PALE_OAK_BOAT);
         this.shapeless(ModItems.bambooShulkerRaft, shulker, Items.BAMBOO_RAFT);
 
-        this.shaped(this.loc(ModItems.oakShulkerBoat, "with_shell"), ModItems.oakShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.OAK_CHEST_BOAT);
-        this.shaped(this.loc(ModItems.spruceShulkerBoat, "with_shell"), ModItems.spruceShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.SPRUCE_CHEST_BOAT);
-        this.shaped(this.loc(ModItems.birchShulkerBoat, "with_shell"), ModItems.birchShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.BIRCH_CHEST_BOAT);
-        this.shaped(this.loc(ModItems.jungleShulkerBoat, "with_shell"), ModItems.jungleShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.JUNGLE_CHEST_BOAT);
-        this.shaped(this.loc(ModItems.acaciaShulkerBoat, "with_shell"), ModItems.acaciaShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.ACACIA_CHEST_BOAT);
-        this.shaped(this.loc(ModItems.cherryShulkerBoat, "with_shell"), ModItems.cherryShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.CHERRY_CHEST_BOAT);
-        this.shaped(this.loc(ModItems.darkOakShulkerBoat, "with_shell"), ModItems.darkOakShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.DARK_OAK_CHEST_BOAT);
-        this.shaped(this.loc(ModItems.mangroveShulkerBoat, "with_shell"), ModItems.mangroveShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.MANGROVE_CHEST_BOAT);
-        this.shaped(this.loc(ModItems.bambooShulkerRaft, "with_shell"), ModItems.bambooShulkerRaft, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.BAMBOO_CHEST_RAFT);
+        this.shaped(this.id(ModItems.oakShulkerBoat, "with_shell"), ModItems.oakShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.OAK_CHEST_BOAT);
+        this.shaped(this.id(ModItems.spruceShulkerBoat, "with_shell"), ModItems.spruceShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.SPRUCE_CHEST_BOAT);
+        this.shaped(this.id(ModItems.birchShulkerBoat, "with_shell"), ModItems.birchShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.BIRCH_CHEST_BOAT);
+        this.shaped(this.id(ModItems.jungleShulkerBoat, "with_shell"), ModItems.jungleShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.JUNGLE_CHEST_BOAT);
+        this.shaped(this.id(ModItems.acaciaShulkerBoat, "with_shell"), ModItems.acaciaShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.ACACIA_CHEST_BOAT);
+        this.shaped(this.id(ModItems.cherryShulkerBoat, "with_shell"), ModItems.cherryShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.CHERRY_CHEST_BOAT);
+        this.shaped(this.id(ModItems.darkOakShulkerBoat, "with_shell"), ModItems.darkOakShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.DARK_OAK_CHEST_BOAT);
+        this.shaped(this.id(ModItems.mangroveShulkerBoat, "with_shell"), ModItems.mangroveShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.MANGROVE_CHEST_BOAT);
+        this.shaped(this.id(ModItems.paleOakShulkerBoat, "with_shell"), ModItems.paleOakShulkerBoat, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.PALE_OAK_CHEST_BOAT);
+        this.shaped(this.id(ModItems.bambooShulkerRaft, "with_shell"), ModItems.bambooShulkerRaft, "s", "b", "s", 's', Items.SHULKER_SHELL, 'b', Items.BAMBOO_CHEST_RAFT);
     }
 
     private void cart(ItemLike cart, ItemLike content) {
@@ -323,6 +342,6 @@ public class RecipeProvider extends RecipeProviderBase implements CraftingExtens
     }
 
     private void removeNbt(ItemLike item) {
-        this.shapeless(this.loc(item, "remove_nbt"), item, item);
+        this.shapeless(this.id(item, "remove_nbt"), item, item);
     }
 }

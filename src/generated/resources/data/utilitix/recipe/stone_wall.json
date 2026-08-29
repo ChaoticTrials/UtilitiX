@@ -2,16 +2,13 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "X": {
-      "item": "minecraft:stone"
-    }
+    "X": "minecraft:stone"
   },
   "pattern": [
     "XXX",
     "XXX"
   ],
   "result": {
-    "count": 1,
     "id": "utilitix:stone_wall"
   }
 }

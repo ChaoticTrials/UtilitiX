@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import de.melanx.utilitix.config.FeatureConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -26,7 +27,8 @@ import javax.annotation.Nonnull;
 public abstract class RailBlock extends BaseRailBlock implements Registerable {
 
     protected final ModX mod;
-    private final Item item;
+    private Item.Properties pendingItemProperties;
+    private Item item;
     private final boolean hasCorners;
     private final boolean hasSlopes;
 
@@ -37,13 +39,7 @@ public abstract class RailBlock extends BaseRailBlock implements Registerable {
     public RailBlock(ModX mod, boolean corners, Properties properties, Item.Properties itemProperties) {
         super(!corners, properties);
         this.mod = mod;
-        this.item = new BlockItem(this, itemProperties) {
-
-            @Override
-            public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
-                return RailBlock.this.isEnabled(enabledFeatures);
-            }
-        };
+        this.pendingItemProperties = itemProperties;
         this.hasCorners = this.getShapeProperty().getPossibleValues().containsAll(ImmutableList.of(RailShape.NORTH_EAST, RailShape.NORTH_WEST, RailShape.SOUTH_EAST, RailShape.SOUTH_WEST));
         this.hasSlopes = this.getShapeProperty().getPossibleValues().containsAll(ImmutableList.of(RailShape.ASCENDING_NORTH, RailShape.ASCENDING_SOUTH, RailShape.ASCENDING_EAST, RailShape.ASCENDING_WEST));
         this.registerDefaultState(this.defaultBlockState()
@@ -52,6 +48,14 @@ public abstract class RailBlock extends BaseRailBlock implements Registerable {
 
     @Override
     public void registerAdditional(RegistrationContext ctx, EntryCollector builder) {
+        this.item = new BlockItem(this, this.pendingItemProperties.setId(ResourceKey.create(Registries.ITEM, ctx.id())).useBlockDescriptionPrefix()) {
+
+            @Override
+            public boolean isEnabled(@Nonnull FeatureFlagSet enabledFeatures) {
+                return RailBlock.this.isEnabled(enabledFeatures);
+            }
+        };
+        this.pendingItemProperties = null;
         builder.register(Registries.ITEM, this.item);
     }
 

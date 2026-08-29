@@ -9,6 +9,6 @@ import org.moddingx.libx.annotation.registration.RegisterClass;
 @RegisterClass(registry = "RECIPE_TYPE")
 public class RecipeTypes {
 
-    public static final RecipeType<SmithingTransformRecipe> GILDING = RecipeType.simple(UtilitiX.getInstance().resource("gilding"));
-    public static final RecipeType<BreweryRecipe> BREWING = RecipeType.simple(UtilitiX.getInstance().resource("advanced_brewery"));
+    public static final RecipeType<SmithingTransformRecipe> GILDING = RecipeType.simple(UtilitiX.getInstance().id("gilding"));
+    public static final RecipeType<BreweryRecipe> BREWING = RecipeType.simple(UtilitiX.getInstance().id("advanced_brewery"));
 }

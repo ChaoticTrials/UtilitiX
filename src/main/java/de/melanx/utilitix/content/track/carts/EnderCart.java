@@ -10,6 +10,7 @@ import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
 
@@ -32,8 +33,8 @@ public class EnderCart extends BaseCart {
 
     @Nonnull
     @Override
-    public InteractionResult interact(@Nonnull Player player, @Nonnull InteractionHand hand) {
-        InteractionResult ret = super.interact(player, hand);
+    public InteractionResult interact(@Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Vec3 location) {
+        InteractionResult ret = super.interact(player, hand, location);
         if (ret.consumesAction()) {
             return ret;
         }
@@ -41,6 +42,6 @@ public class EnderCart extends BaseCart {
         SimpleContainer ender = player.getEnderChestInventory();
         player.openMenu(new SimpleMenuProvider((id, inventory, usingPlayer) -> ChestMenu.threeRows(id, inventory, ender), this.getDisplayName()));
 
-        return InteractionResult.sidedSuccess(player.level().isClientSide);
+        return player.level().isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
     }
 }

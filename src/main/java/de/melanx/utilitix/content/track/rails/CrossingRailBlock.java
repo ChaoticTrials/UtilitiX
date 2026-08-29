@@ -5,10 +5,9 @@ import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.block.ModProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,7 +18,7 @@ import org.moddingx.libx.mod.ModX;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class CrossingRailBlock extends RailBlock {
+public class CrossingRailBlock extends RailBlock implements MaxSpeedRail {
 
     public static final MapCodec<CrossingRailBlock> CODEC = Block.simpleCodec(CrossingRailBlock::new);
     public final boolean reinforced;
@@ -62,8 +61,8 @@ public class CrossingRailBlock extends RailBlock {
     }
 
     @Override
-    public float getRailMaxSpeed(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull AbstractMinecart cart) {
-        return this.reinforced ? 0.7f : 0.4f;
+    public double getMaxRailSpeed() {
+        return this.reinforced ? 0.7 : 0.4;
     }
 
     @Nonnull

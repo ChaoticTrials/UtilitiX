@@ -9,7 +9,7 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -26,12 +26,12 @@ import net.minecraft.world.level.block.DiodeBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.redstone.ExperimentalRedstoneUtils;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.ticks.TickPriority;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.event.EventHooks;
 import org.moddingx.libx.base.tile.BlockBE;
 import org.moddingx.libx.mod.ModX;
@@ -60,9 +60,8 @@ public class LinkedRepeaterBlock extends BlockBE<LinkedRepeaterBlockEntity> {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void setupClient(SetupContext ctx) {
-        ctx.enqueue(() -> BlockEntityRenderers.register(this.getBlockEntityType(), context -> new LinkedRepeaterRenderer()));
+        ctx.enqueue(() -> BlockEntityRenderers.register(this.getBlockEntityType(), LinkedRepeaterRenderer::new));
     }
 
     @Override
@@ -82,9 +81,9 @@ public class LinkedRepeaterBlock extends BlockBE<LinkedRepeaterBlockEntity> {
 
     @Nonnull
     @Override
-    protected ItemInteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hitResult) {
-        if (level.isClientSide) {
-            return ItemInteractionResult.SUCCESS;
+    protected InteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hitResult) {
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
         }
 
         LinkedRepeaterBlockEntity blockEntity = this.getBlockEntity(level, pos);
@@ -94,7 +93,7 @@ public class LinkedRepeaterBlock extends BlockBE<LinkedRepeaterBlockEntity> {
             level.addFreshEntity(entity);
             blockEntity.setLink(ItemStack.EMPTY);
 
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
 
         ItemStack held = player.getItemInHand(hand);
@@ -102,26 +101,14 @@ public class LinkedRepeaterBlock extends BlockBE<LinkedRepeaterBlockEntity> {
             blockEntity.setLink(held.split(1));
             player.setItemInHand(hand, held);
 
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
 
-        return ItemInteractionResult.FAIL;
+        return InteractionResult.FAIL;
     }
 
     @Override
-    public void onRemove(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
-        if (state.hasBlockEntity() && (!state.is(newState.getBlock()) || !newState.hasBlockEntity())) {
-            LinkedRepeaterBlockEntity blockEntity = this.getBlockEntity(level, pos);
-            WirelessRedstoneSavedData.get(level).remove(level, blockEntity.getLinkId(), GlobalPos.of(level.dimension(), pos));
-
-            ItemStack stack = blockEntity.getLink();
-            if (!stack.isEmpty()) {
-                ItemEntity entity = new ItemEntity(level, pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, stack.copy());
-                level.addFreshEntity(entity);
-            }
-        }
-
-        super.onRemove(state, level, pos, newState, isMoving);
+    protected void affectNeighborsAfterRemoval(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, boolean movedByPiston) {
         this.notifyNeighbors(level, pos, state);
     }
 
@@ -152,7 +139,7 @@ public class LinkedRepeaterBlock extends BlockBE<LinkedRepeaterBlockEntity> {
     }
 
     @Override
-    public void neighborChanged(BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockPos fromPos, boolean isMoving) {
+    protected void neighborChanged(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Block block, @Nullable Orientation orientation, boolean movedByPiston) {
         if (state.canSurvive(level, pos)) {
             this.updateState(level, pos, state);
             return;
@@ -224,8 +211,9 @@ public class LinkedRepeaterBlock extends BlockBE<LinkedRepeaterBlockEntity> {
             return;
         }
 
-        level.neighborChanged(target, this, pos);
-        level.updateNeighborsAtExceptFromFacing(target, this, face);
+        Orientation orientation = ExperimentalRedstoneUtils.initialOrientation(level, face.getOpposite(), Direction.UP);
+        level.neighborChanged(target, this, orientation);
+        level.updateNeighborsAtExceptFromFacing(target, this, face, orientation);
     }
 
     @Override

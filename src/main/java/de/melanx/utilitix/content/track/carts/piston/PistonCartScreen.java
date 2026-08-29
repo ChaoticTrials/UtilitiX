@@ -1,51 +1,50 @@
 package de.melanx.utilitix.content.track.carts.piston;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import de.melanx.utilitix.UtilitiX;
 import de.melanx.utilitix.network.handler.PistonCartModeCycle;
 import de.melanx.utilitix.registration.ModItemTags;
 import de.melanx.utilitix.util.GhostItemRenderHelper;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 public class PistonCartScreen extends AbstractContainerScreen<PistonCartMenu> {
 
-    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(UtilitiX.getInstance().modid, "textures/container/piston_cart.png");
+    public static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(UtilitiX.getInstance().modid, "textures/container/piston_cart.png");
     private static final int TORCHES_SLOT = 12;
     private static final int INPUT_SIZE = 12;
     private static final int SLOT_OFFSET = 18;
     private final List<ItemStack> railItems;
     private final List<ItemStack> torchItems;
+    private Button modeButton;
 
     public PistonCartScreen(PistonCartMenu menu, Inventory inv, Component title) {
-        super(menu, inv, title);
-        this.imageWidth = 176;
-        this.imageHeight = 186;
-        Registry<Item> itemRegistry = this.menu.getLevel().registryAccess().registryOrThrow(Registries.ITEM);
-        this.railItems = itemRegistry.getOrCreateTag(ItemTags.RAILS).stream().map(ItemStack::new).toList();
-        this.torchItems = itemRegistry.getOrCreateTag(ModItemTags.RAIL_POWER_SOURCES).stream().map(ItemStack::new).toList();
+        super(menu, inv, title, 176, 186);
+        Registry<Item> itemRegistry = this.menu.getLevel().registryAccess().lookupOrThrow(Registries.ITEM);
+        this.railItems = StreamSupport.stream(itemRegistry.getTagOrEmpty(ItemTags.RAILS).spliterator(), false).map(holder -> new ItemStack(holder)).toList();
+        this.torchItems = StreamSupport.stream(itemRegistry.getTagOrEmpty(ModItemTags.RAIL_POWER_SOURCES).spliterator(), false).map(holder -> new ItemStack(holder)).toList();
     }
 
     @Override
     protected void init() {
         super.init();
-        this.addRenderableWidget(Button.builder(Component.empty(), button -> {
-                    PacketDistributor.sendToServer(new PistonCartModeCycle.Message(this.menu.entity.getId()));
+        this.modeButton = this.addRenderableWidget(Button.builder(Component.empty(), _ -> {
+                    ClientPacketDistributor.sendToServer(new PistonCartModeCycle.Message(this.menu.entity.getId()));
                 })
                 .pos(this.leftPos + 64, this.topPos + 17)
                 .size(48, 18)
@@ -53,18 +52,13 @@ public class PistonCartScreen extends AbstractContainerScreen<PistonCartMenu> {
     }
 
     @Override
-    public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
-    }
+    public void extractBackground(@Nonnull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTick);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, this.leftPos, this.topPos, 0.0F, 0.0F, this.imageWidth, this.imageHeight, 256, 256);
 
-    @Override
-    protected void renderBg(@Nonnull GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, TEXTURE);
-        guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        if (this.menu.entity != null) {
+            this.modeButton.setMessage(this.menu.entity.getMode().name);
+        }
 
         if (!this.menu.getSlot(PistonCartScreen.TORCHES_SLOT).hasItem()) {
             GhostItemRenderHelper.renderGhostItem(this.torchItems, guiGraphics, this.leftPos + 80, this.topPos + 72);
@@ -79,14 +73,9 @@ public class PistonCartScreen extends AbstractContainerScreen<PistonCartMenu> {
     }
 
     @Override
-    protected void renderLabels(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void extractLabels(@Nonnull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
         String s = this.title.getString();
-        guiGraphics.drawString(this.font, s, (float) ((this.imageWidth / 2) - (this.font.width(s) / 2)), 5, Color.DARK_GRAY.getRGB(), false);
-        guiGraphics.drawString(this.font, this.playerInventoryTitle, 8, this.imageHeight - 94, Color.DARK_GRAY.getRGB(), false);
-        if (this.menu.entity != null) {
-            //noinspection ConstantConditions
-            int modeStrWidth = this.font.width(this.menu.entity.getMode().name);
-            guiGraphics.drawString(this.font, this.menu.entity.getMode().name.getString(), (float) (88 - (modeStrWidth / 2)), 22, 0xFFFFFF, true);
-        }
+        guiGraphics.text(this.font, s, (this.imageWidth / 2) - (this.font.width(s) / 2), 5, Color.DARK_GRAY.getRGB(), false);
+        guiGraphics.text(this.font, this.playerInventoryTitle, 8, this.imageHeight - 94, Color.DARK_GRAY.getRGB(), false);
     }
 }

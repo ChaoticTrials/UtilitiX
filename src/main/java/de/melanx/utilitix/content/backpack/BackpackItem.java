@@ -8,9 +8,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
@@ -18,10 +17,13 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
-import org.apache.commons.lang3.tuple.Pair;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import org.moddingx.libx.base.ItemBase;
 import org.moddingx.libx.menu.type.AdvancedMenuType;
 import org.moddingx.libx.mod.ModX;
@@ -31,9 +33,9 @@ import org.moddingx.libx.registration.util.CapabilityInfo;
 import org.moddingx.libx.registration.util.ClientExtensionInfo;
 
 import javax.annotation.Nonnull;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.function.Consumer;
 
 public class BackpackItem extends ItemBase implements Registerable {
 
@@ -52,10 +54,10 @@ public class BackpackItem extends ItemBase implements Registerable {
 
     @Nonnull
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, @Nonnull Player player, @Nonnull InteractionHand usedHand) {
+    public InteractionResult use(@Nonnull Level level, @Nonnull Player player, @Nonnull InteractionHand usedHand) {
         BackpackItem.openMenu(player.getItemInHand(usedHand), player);
 
-        return InteractionResultHolder.sidedSuccess(player.getItemInHand(usedHand), level.isClientSide());
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -79,53 +81,66 @@ public class BackpackItem extends ItemBase implements Registerable {
 
         boolean upgraded = this.upgrade(stack, other);
         if (upgraded) {
-            player.playSound(SoundEvents.BUNDLE_INSERT, 0.8f, 0.8f + player.level().random.nextFloat() * 0.4f);
+            player.playSound(SoundEvents.BUNDLE_INSERT, 0.8f, 0.8f + player.level().getRandom().nextFloat() * 0.4f);
             other.shrink(1);
         }
 
         return upgraded;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public void appendHoverText(@Nonnull ItemStack stack, @Nonnull TooltipContext context, @Nonnull List<Component> tooltipComponents, @Nonnull TooltipFlag tooltipFlag) {
+    public void appendHoverText(@Nonnull ItemStack stack, @Nonnull TooltipContext context, @Nonnull TooltipDisplay tooltipDisplay, @Nonnull Consumer<Component> tooltipComponents, @Nonnull TooltipFlag tooltipFlag) {
         if (tooltipFlag.isAdvanced()) {
-            tooltipComponents.add(Component.translatable("item.utilitix.backpack.slots", BackpackItem.slotSize(stack)));
+            tooltipComponents.accept(Component.translatable("item.utilitix.backpack.slots", BackpackItem.slotSize(stack)));
         }
     }
 
     public boolean upgrade(ItemStack backpack, ItemStack otherBackpack) {
         int backpackSlots = BackpackItem.slotSize(backpack);
         int otherBackpackSlots = BackpackItem.slotSize(otherBackpack);
-        if (backpackSlots + otherBackpackSlots > CommonConfig.Backpack.maxSize) {
+        if (backpackSlots < 0 || otherBackpackSlots < 0) {
             return false;
         }
 
-        if (!(backpack.getCapability(Capabilities.ItemHandler.ITEM) instanceof VariableSizeStackItemHandler itemHandler)) {
+        int newSize = backpackSlots + otherBackpackSlots;
+        if (newSize > CommonConfig.Backpack.maxSize) {
             return false;
         }
 
-        Set<Pair<Integer, ItemStack>> totalSlots = new HashSet<>(BackpackItem.getSlots(backpack));
-        for (Pair<Integer, ItemStack> slot : BackpackItem.getSlots(otherBackpack)) {
-            totalSlots.add(Pair.of(slot.getLeft() + backpackSlots, slot.getRight()));
+        ResourceHandler<ItemResource> donor = otherBackpack.getCapability(Capabilities.Item.ITEM, ItemAccess.forStack(otherBackpack));
+        if (donor == null) {
+            return false;
         }
 
-        itemHandler.setSlots(totalSlots.size());
-        for (Pair<Integer, ItemStack> slot : totalSlots) {
-            itemHandler.setStackInSlot(slot.getLeft(), slot.getRight());
+        List<ItemStack> donorContents = new ArrayList<>(donor.size());
+        for (int i = 0; i < donor.size(); i++) {
+            donorContents.add(ItemUtil.getStack(donor, i));
+        }
+
+        backpack.set(ModDataComponentTypes.inventorySize, newSize);
+        if (!(backpack.getCapability(Capabilities.Item.ITEM, ItemAccess.forStack(backpack)) instanceof VariableSizeStackItemHandler itemHandler)) {
+            backpack.set(ModDataComponentTypes.inventorySize, backpackSlots);
+            return false;
+        }
+
+        for (int i = 0; i < donorContents.size(); i++) {
+            ItemStack slotStack = donorContents.get(i);
+            if (!slotStack.isEmpty()) {
+                itemHandler.set(backpackSlots + i, ItemResource.of(slotStack), slotStack.getCount());
+            }
         }
 
         BackpackItem.combineDyeableItemColors(backpack, otherBackpack);
-        backpack.set(ModDataComponentTypes.inventorySize, totalSlots.size());
         return true;
     }
 
     public static boolean isEmpty(ItemStack stack) {
-        IItemHandler inventory = stack.getCapability(Capabilities.ItemHandler.ITEM);
+        ResourceHandler<ItemResource> inventory = stack.getCapability(Capabilities.Item.ITEM, ItemAccess.forStack(stack));
 
         if (inventory != null) {
-            for (int i = 0; i < inventory.getSlots(); i++) {
-                ItemStack itemStack = inventory.extractItem(i, 1, true);
-                if (!itemStack.isEmpty()) {
+            for (int i = 0; i < inventory.size(); i++) {
+                if (!inventory.getResource(i).isEmpty()) {
                     return false;
                 }
             }
@@ -135,16 +150,16 @@ public class BackpackItem extends ItemBase implements Registerable {
     }
 
     public static int slotSize(ItemStack stack) {
-        IItemHandler itemHandler = stack.getCapability(Capabilities.ItemHandler.ITEM);
+        ResourceHandler<ItemResource> itemHandler = stack.getCapability(Capabilities.Item.ITEM, ItemAccess.forStack(stack));
         if (itemHandler == null) {
             return -1;
         }
 
-        return itemHandler.getSlots();
+        return itemHandler.size();
     }
 
     private static void combineDyeableItemColors(ItemStack stack, ItemStack other) {
-        if (!stack.is(ItemTags.DYEABLE) || !other.is(ItemTags.DYEABLE)) {
+        if (!stack.has(DataComponents.DYED_COLOR) && !other.has(DataComponents.DYED_COLOR)) {
             return;
         }
 
@@ -193,27 +208,13 @@ public class BackpackItem extends ItemBase implements Registerable {
 
         int color = (r << 8) + g;
         color = (color << 8) + b;
-        stack.set(DataComponents.DYED_COLOR, new DyedItemColor(color, true));
-        other.set(DataComponents.DYED_COLOR, new DyedItemColor(color, true));
-    }
-
-    private static Set<Pair<Integer, ItemStack>> getSlots(ItemStack backpack) {
-        IItemHandler itemHandler = backpack.getCapability(Capabilities.ItemHandler.ITEM);
-        if (itemHandler == null) {
-            return Set.of();
-        }
-
-        Set<Pair<Integer, ItemStack>> slots = new HashSet<>();
-        for (int i = 0; i < itemHandler.getSlots(); i++) {
-            slots.add(Pair.of(i, itemHandler.getStackInSlot(i)));
-        }
-
-        return slots;
+        stack.set(DataComponents.DYED_COLOR, new DyedItemColor(color));
+        other.set(DataComponents.DYED_COLOR, new DyedItemColor(color));
     }
 
     @Override
     public void registerAdditional(RegistrationContext ctx, EntryCollector builder) {
-        builder.register(null, new CapabilityInfo.Item<>(this, Capabilities.ItemHandler.ITEM, (stack, ignored) -> new VariableSizeStackItemHandler(stack.getOrDefault(ModDataComponentTypes.inventorySize, CommonConfig.Backpack.slotSize), CommonConfig.Backpack.maxSize, stack)));
+        builder.register(null, new CapabilityInfo.Item<>(this, Capabilities.Item.ITEM, (stack, itemAccess) -> new VariableSizeStackItemHandler(Math.min(stack.getOrDefault(ModDataComponentTypes.inventorySize, CommonConfig.Backpack.slotSize), CommonConfig.Backpack.maxSize), itemAccess)));
         builder.register(Registries.MENU, this.menuType);
     }
 

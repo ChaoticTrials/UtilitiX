@@ -13,21 +13,22 @@ import de.melanx.utilitix.registration.*;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.block.Blocks;
 import org.apache.commons.compress.utils.Lists;
@@ -42,14 +43,14 @@ import java.util.stream.Collectors;
 public class UtiliJei implements IModPlugin {
 
     private static IJeiRuntime runtime = null;
-    public static final RecipeType<BreweryRecipe> BREWING_RECIPE = RecipeType.create("utilitix", "advanced_brewery", BreweryRecipe.class);
-    public static final RecipeType<SmithingTransformRecipe> GILDING_RECIPE = RecipeType.create("utilitix", "gilding", SmithingTransformRecipe.class);
-    public static final RecipeType<SmeltingRecipe> SMELTING_RECIPE = RecipeType.create("utilitix", "smelting", SmeltingRecipe.class);
+    public static final IRecipeType<BreweryRecipe> BREWING_RECIPE = IRecipeType.create("utilitix", "advanced_brewery", BreweryRecipe.class);
+    public static final IRecipeType<SmithingTransformRecipe> GILDING_RECIPE = IRecipeType.create("utilitix", "gilding", SmithingTransformRecipe.class);
+    public static final IRecipeType<SmeltingRecipe> SMELTING_RECIPE = IRecipeType.create("utilitix", "smelting", SmeltingRecipe.class);
 
     @Nonnull
     @Override
-    public ResourceLocation getPluginUid() {
-        return ResourceLocation.fromNamespaceAndPath("utilitix", "jeiplugin");
+    public Identifier getPluginUid() {
+        return Identifier.fromNamespaceAndPath("utilitix", "jeiplugin");
     }
 
     @Override
@@ -64,14 +65,14 @@ public class UtiliJei implements IModPlugin {
     @Override
     public void registerRecipes(@Nonnull IRecipeRegistration registration) {
         ClientLevel level = Minecraft.getInstance().level;
-        RecipeManager recipes = Objects.requireNonNull(level).getRecipeManager();
-        List<BreweryRecipe> simpleBrewery = recipes.getAllRecipesFor(ModRecipeTypes.BREWERY).stream()
+        RecipeManager recipeManager = Minecraft.getInstance().getSingleplayerServer().getRecipeManager();
+        List<BreweryRecipe> simpleBrewery = recipeManager.recipes.byType(ModRecipeTypes.BREWERY).stream()
                 .filter(r -> r.value().getAction() instanceof Apply)
                 .map(RecipeHolder::value)
                 .collect(Collectors.toList());
         registration.addRecipes(BREWING_RECIPE, simpleBrewery);
         registration.addRecipes(GILDING_RECIPE, getGildingRecipes());
-        registration.addRecipes(SMELTING_RECIPE, getSmeltingRecipes(recipes, level.registryAccess()));
+        registration.addRecipes(SMELTING_RECIPE, getSmeltingRecipes(recipeManager, level.registryAccess()));
 
         registration.addIngredientInfo(ModBlocks.advancedBrewery, Component.translatable("description.utilitix.advanced_brewery"));
         registration.addIngredientInfo(ModBlocks.advancedBrewery, Component.translatable("description.utilitix.advanced_brewery.brewing"));
@@ -106,22 +107,23 @@ public class UtiliJei implements IModPlugin {
 
     @Override
     public void registerRecipeTransferHandlers(@Nonnull IRecipeTransferRegistration registration) {
-        registration.addRecipeTransferHandler(CrudeFurnaceMenu.class, ModBlocks.crudeFurnace.menu, RecipeTypes.FUELING, 0, 1, 3, 36);
+        registration.addRecipeTransferHandler(CrudeFurnaceMenu.class, ModBlocks.crudeFurnace.menu, RecipeTypes.SMELTING_FUEL, 0, 1, 3, 36);
         registration.addRecipeTransferHandler(CrudeFurnaceMenu.class, ModBlocks.crudeFurnace.menu, SMELTING_RECIPE, 1, 1, 3, 36);
         registration.addRecipeTransferHandler(AdvancedBreweryMenu.class, ModBlocks.advancedBrewery.menu, BREWING_RECIPE, 0, 4, 5, 36);
     }
 
     @Override
     public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.advancedBrewery), BREWING_RECIPE);
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.crudeFurnace), SMELTING_RECIPE, RecipeTypes.FUELING);
-        registration.addRecipeCatalyst(new ItemStack(Blocks.SMITHING_TABLE), GILDING_RECIPE);
+        registration.addCraftingStation(BREWING_RECIPE, new ItemStack(ModBlocks.advancedBrewery));
+        registration.addCraftingStation(SMELTING_RECIPE, new ItemStack(ModBlocks.crudeFurnace));
+        registration.addCraftingStation(RecipeTypes.SMELTING_FUEL, new ItemStack(ModBlocks.crudeFurnace));
+        registration.addCraftingStation(GILDING_RECIPE, new ItemStack(Blocks.SMITHING_TABLE));
     }
 
     @Override
     public void registerGuiHandlers(@Nonnull IGuiHandlerRegistration registration) {
         registration.addRecipeClickArea(AdvancedBreweryScreen.class, 98, 17, 7, 26, BREWING_RECIPE);
-        registration.addRecipeClickArea(CrudeFurnaceScreen.class, 78, 32, 28, 23, SMELTING_RECIPE, RecipeTypes.FUELING);
+        registration.addRecipeClickArea(CrudeFurnaceScreen.class, 78, 32, 28, 23, SMELTING_RECIPE, RecipeTypes.SMELTING_FUEL);
     }
 
     @Override
@@ -148,11 +150,13 @@ public class UtiliJei implements IModPlugin {
         Ingredient gildingItem = Ingredient.of(ModItems.gildingCrystal);
 
         for (Map.Entry<ResourceKey<Item>, Item> entry : BuiltInRegistries.ITEM.entrySet()) {
-            if (entry.getValue() instanceof ArmorItem item && GildingArmorRecipe.canGild(item, new ItemStack(item))) {
-                ItemStack output = new ItemStack(item);
-                output.set(ModDataComponentTypes.gilded, true);
+            Item item = entry.getValue();
+            ItemStack stack = new ItemStack(item);
+            if (GildingArmorRecipe.canGild(stack)) {
+                DataComponentPatch patch = DataComponentPatch.builder().set(ModDataComponentTypes.gilded, true).build();
+                ItemStackTemplate output = new ItemStackTemplate(item, patch);
 
-                SmithingTransformRecipe recipe = new SmithingTransformRecipe(Ingredient.EMPTY, Ingredient.of(item), gildingItem, output);
+                SmithingTransformRecipe recipe = new SmithingTransformRecipe(new Recipe.CommonInfo(true), Optional.empty(), Ingredient.of(item), Optional.of(gildingItem), output);
 
                 recipes.add(recipe);
             }
@@ -162,10 +166,10 @@ public class UtiliJei implements IModPlugin {
     }
 
     private static List<SmeltingRecipe> getSmeltingRecipes(RecipeManager recipes, RegistryAccess registryAccess) {
-        Registry<Item> items = registryAccess.registryOrThrow(Registries.ITEM);
+        Registry<Item> items = registryAccess.lookupOrThrow(Registries.ITEM);
         List<SmeltingRecipe> crudingRecipes = new ArrayList<>();
         for (Item item : items) {
-            CrudeFurnaceRecipeHelper.ModifiedRecipe result = CrudeFurnaceRecipeHelper.getResult(recipes, registryAccess, new ItemStack(item));
+            CrudeFurnaceRecipeHelper.ModifiedRecipe result = CrudeFurnaceRecipeHelper.getResult(recipes, new ItemStack(item));
             if (result != null) {
                 crudingRecipes.add(result.getRecipeHolder().value());
             }

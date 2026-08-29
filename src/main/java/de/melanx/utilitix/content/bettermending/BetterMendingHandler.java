@@ -1,10 +1,8 @@
-package de.melanx.utilitix.content;
+package de.melanx.utilitix.content.bettermending;
 
 import de.melanx.utilitix.config.FeatureConfig;
 import de.melanx.utilitix.network.handler.ItemEntityRepaired;
 import de.melanx.utilitix.util.BoundingBoxUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -13,11 +11,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -34,16 +29,7 @@ public class BetterMendingHandler {
         }
     }
 
-    @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
-    public static void pullXPClient(ClientTickEvent.Post event) {
-        if (Minecraft.getInstance().level != null) {
-            ClientLevel level = Minecraft.getInstance().level;
-            BetterMendingHandler.moveExps(level, level.entitiesForRendering());
-        }
-    }
-
-    private static void moveExps(Level level, Iterable<Entity> entities) {
+    public static void moveExps(Level level, Iterable<Entity> entities) {
         if (!FeatureConfig.Misc.InWorldChanges.betterMending) return;
         List<ItemEntity> items = new ArrayList<>();
         for (Entity entity : entities) {
@@ -61,7 +47,7 @@ public class BetterMendingHandler {
             List<ExperienceOrb> xps = level.getEntitiesOfClass(ExperienceOrb.class, BoundingBoxUtils.expand(item, 7));
             for (ExperienceOrb orb : xps) {
                 Vec3 vector = new Vec3(item.getX() - orb.getX(), item.getY() + (orb.getEyeHeight() / 2) - orb.getY(), item.getZ() - orb.getZ());
-                if (vector.lengthSqr() >= 0.2 || level.isClientSide) {
+                if (vector.lengthSqr() >= 0.2 || level.isClientSide()) {
                     double scale = 1 - (vector.length() / 8);
                     orb.setDeltaMovement(orb.getDeltaMovement().add(vector.normalize().scale(scale * scale * 0.1)));
                     continue;
@@ -69,8 +55,8 @@ public class BetterMendingHandler {
 
                 int i = Math.min((int) (orb.getValue() * stack.getXpRepairRatio()), stack.getDamageValue());
                 stack.setDamageValue(stack.getDamageValue() - i);
-                orb.value -= (int) (i / stack.getXpRepairRatio());
-                if (orb.value <= 0) {
+                orb.setValue(orb.getValue() - (int) (i / stack.getXpRepairRatio()));
+                if (orb.getValue() <= 0) {
                     orb.discard();
                 }
 

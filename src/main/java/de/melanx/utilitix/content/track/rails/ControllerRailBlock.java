@@ -8,10 +8,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -28,7 +26,7 @@ import org.moddingx.libx.registration.RegistrationContext;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class ControllerRailBlock<T extends ControllerRailBlockEntity> extends RailBlock implements EntityBlock {
+public abstract class ControllerRailBlock<T extends ControllerRailBlockEntity> extends RailBlock implements EntityBlock, MaxSpeedRail {
 
     private final BlockEntityType<T> beType;
     public final boolean reinforced;
@@ -39,8 +37,7 @@ public abstract class ControllerRailBlock<T extends ControllerRailBlockEntity> e
 
     public ControllerRailBlock(ModX mod, Function3<BlockEntityType<T>, BlockPos, BlockState, T> ctor, boolean reinforced, BlockBehaviour.Properties properties, Item.Properties itemProperties) {
         super(mod, false, properties, itemProperties);
-        //noinspection ConstantConditions
-        this.beType = new BlockEntityType<>((pos, state) -> ctor.apply(this.getBlockEntityType(), pos, state), ImmutableSet.of(this), null);
+        this.beType = new BlockEntityType<>((pos, state) -> ctor.apply(this.getBlockEntityType(), pos, state), ImmutableSet.of(this));
         this.reinforced = reinforced;
     }
 
@@ -58,33 +55,21 @@ public abstract class ControllerRailBlock<T extends ControllerRailBlockEntity> e
 
     @Nonnull
     @Override
-    protected ItemInteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hitResult) {
+    protected InteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hitResult) {
         ItemStack held = player.getItemInHand(hand);
         if (held.isEmpty() || held.getItem() != ModItems.minecartTinkerer || !player.isShiftKeyDown()) {
             return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
         }
-
-        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+        if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
             MinecartTinkererMenu.open(serverPlayer, pos);
         }
 
-        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public void onRemove(BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
-        if (!state.hasBlockEntity() || (state.is(newState.getBlock()) && newState.hasBlockEntity())) {
-            super.onRemove(state, level, pos, newState, isMoving);
-            return;
-        }
-
-        ItemStack stack = this.getBlockEntity(level, pos).getFilterStack();
-        if (!stack.isEmpty()) {
-            ItemEntity entity = new ItemEntity(level, pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, stack.copy());
-            level.addFreshEntity(entity);
-        }
-
-        super.onRemove(state, level, pos, newState, isMoving);
+    public double getMaxRailSpeed() {
+        return this.reinforced ? 0.7 : 0.4;
     }
 
     public T getBlockEntity(BlockGetter level, BlockPos pos) {
@@ -99,10 +84,5 @@ public abstract class ControllerRailBlock<T extends ControllerRailBlockEntity> e
 
     public BlockEntityType<T> getBlockEntityType() {
         return this.beType;
-    }
-
-    @Override
-    public float getRailMaxSpeed(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull AbstractMinecart cart) {
-        return this.reinforced ? 0.7f : 0.4f;
     }
 }

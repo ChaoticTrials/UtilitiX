@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "b": {
-      "item": "minecraft:dark_oak_chest_boat"
-    },
-    "s": {
-      "item": "minecraft:shulker_shell"
-    }
+    "b": "minecraft:dark_oak_chest_boat",
+    "s": "minecraft:shulker_shell"
   },
   "pattern": [
     "s",
@@ -15,7 +11,6 @@
     "s"
   ],
   "result": {
-    "count": 1,
     "id": "utilitix:dark_oak_shulker_boat"
   }
 }

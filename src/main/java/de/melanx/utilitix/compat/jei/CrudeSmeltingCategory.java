@@ -10,11 +10,11 @@ import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import mezz.jei.library.util.RecipeUtil;
+import mezz.jei.api.recipe.types.IRecipeType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +31,7 @@ public class CrudeSmeltingCategory implements IRecipeCategory<SmeltingRecipe> {
 
     @Nonnull
     @Override
-    public RecipeType<SmeltingRecipe> getRecipeType() {
+    public IRecipeType<SmeltingRecipe> getRecipeType() {
         return UtiliJei.SMELTING_RECIPE;
     }
 
@@ -60,19 +60,19 @@ public class CrudeSmeltingCategory implements IRecipeCategory<SmeltingRecipe> {
     public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull SmeltingRecipe recipe, @Nonnull IFocusGroup focuses) {
         builder.addInputSlot(1, 1)
                 .setStandardSlotBackground()
-                .addIngredients(recipe.getIngredients().getFirst());
+                .add(recipe.placementInfo().ingredients().getFirst());
 
         builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 1, 37)
                 .setStandardSlotBackground();
 
         builder.addOutputSlot(61, 19)
                 .setOutputSlotBackground()
-                .addItemStack(RecipeUtil.getResultItem(recipe));
+                .add(recipe.assemble(new SingleRecipeInput(ItemStack.EMPTY)));
     }
 
     @Override
     public void createRecipeExtras(@Nonnull IRecipeExtrasBuilder builder, SmeltingRecipe recipe, @Nonnull IFocusGroup focuses) {
-        int cookTime = recipe.getCookingTime() / 2;
+        int cookTime = recipe.cookingTime() / 2;
         if (cookTime <= 0) {
             cookTime = DEFAULT_COOK_TIME;
         }
@@ -86,7 +86,7 @@ public class CrudeSmeltingCategory implements IRecipeCategory<SmeltingRecipe> {
     }
 
     protected void addExperience(IRecipeExtrasBuilder builder, SmeltingRecipe recipe) {
-        float experience = recipe.getExperience();
+        float experience = recipe.experience();
         if (experience > 0) {
             Component experienceString = Component.translatable("gui.jei.category.smelting.experience", experience);
             builder.addText(experienceString, getWidth() - 20, 10)
@@ -97,7 +97,7 @@ public class CrudeSmeltingCategory implements IRecipeCategory<SmeltingRecipe> {
     }
 
     protected void addCookTime(IRecipeExtrasBuilder builder, SmeltingRecipe recipe) {
-        int cookTime = recipe.getCookingTime() / 2;
+        int cookTime = recipe.cookingTime() / 2;
         if (cookTime <= 0) {
             cookTime = DEFAULT_COOK_TIME;
         }

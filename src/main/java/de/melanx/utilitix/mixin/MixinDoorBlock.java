@@ -33,7 +33,7 @@ public abstract class MixinDoorBlock {
             method = "useWithoutItem",
             at = @At(value = "RETURN")
     )
-    public void openSecondDoor(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
+    public void utilitix$openSecondDoor(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
         if (cir.getReturnValue() == InteractionResult.PASS || !FeatureConfig.Misc.InWorldChanges.doubleDoor || HANDLE_DOOR || ModList.get().isLoaded("quark")) {
             return;
         }

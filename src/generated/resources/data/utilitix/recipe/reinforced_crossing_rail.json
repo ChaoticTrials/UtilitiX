@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "r": {
-      "item": "utilitix:reinforced_rail"
-    }
+    "r": "utilitix:reinforced_rail"
   },
   "pattern": [
     " r ",

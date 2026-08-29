@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
 
 public class OpenCurioBackpack extends PacketHandler<OpenCurioBackpack.Message> {
 
-    public static final CustomPacketPayload.Type<OpenCurioBackpack.Message> TYPE = new CustomPacketPayload.Type<>(UtilitiX.getInstance().resource("open_curio_backpack"));
+    public static final CustomPacketPayload.Type<OpenCurioBackpack.Message> TYPE = new CustomPacketPayload.Type<>(UtilitiX.getInstance().id("open_curio_backpack"));
 
     public OpenCurioBackpack() {
         super(TYPE, PacketFlow.SERVERBOUND, OpenCurioBackpack.Message.CODEC, HandlerThread.MAIN);

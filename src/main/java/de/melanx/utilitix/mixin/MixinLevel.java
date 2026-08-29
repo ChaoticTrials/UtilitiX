@@ -17,7 +17,7 @@ public abstract class MixinLevel {
             method = "updateNeighbourForOutputSignal",
             at = @At("RETURN")
     )
-    public void updateComparatorOutputLevel(BlockPos pos, Block block, CallbackInfo ci) {
+    public void utilitix$updateComparatorOutputLevel(BlockPos pos, Block block, CallbackInfo ci) {
         if (block instanceof ComparatorRedirectorBlock) {
             return;
         }

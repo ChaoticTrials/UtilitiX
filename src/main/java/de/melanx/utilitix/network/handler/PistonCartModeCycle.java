@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 
 public class PistonCartModeCycle extends PacketHandler<PistonCartModeCycle.Message> {
 
-    public static final CustomPacketPayload.Type<PistonCartModeCycle.Message> TYPE = new CustomPacketPayload.Type<>(UtilitiX.getInstance().resource("piston_cart_mode_cycle"));
+    public static final CustomPacketPayload.Type<PistonCartModeCycle.Message> TYPE = new CustomPacketPayload.Type<>(UtilitiX.getInstance().id("piston_cart_mode_cycle"));
 
     public PistonCartModeCycle() {
         super(TYPE, PacketFlow.SERVERBOUND, PistonCartModeCycle.Message.CODEC, HandlerThread.MAIN);

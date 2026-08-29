@@ -4,7 +4,7 @@ import de.melanx.utilitix.config.FeatureConfig;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.ItemStack;
@@ -28,14 +28,12 @@ public class QuiverItem extends ItemBase implements Registerable {
 
     @Nonnull
     @Override
-    public InteractionResultHolder<ItemStack> use(@Nonnull Level level, @Nonnull Player player, @Nonnull InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-
-        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+    public InteractionResult use(@Nonnull Level level, @Nonnull Player player, @Nonnull InteractionHand hand) {
+        if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
             QuiverMenu.open(serverPlayer, hand);
         }
 
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Nullable
@@ -51,11 +49,6 @@ public class QuiverItem extends ItemBase implements Registerable {
         QuiverContainer inv = QuiverItem.getInventory(stack);
 
         return inv == null || inv.isEmpty();
-    }
-
-    @Override
-    public boolean isEnchantable(@Nonnull ItemStack stack) {
-        return true;
     }
 
     @Override

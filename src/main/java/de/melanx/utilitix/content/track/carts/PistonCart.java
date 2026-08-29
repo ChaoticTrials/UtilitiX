@@ -6,10 +6,9 @@ import de.melanx.utilitix.content.track.carts.piston.PistonCartMode;
 import de.melanx.utilitix.content.track.rails.PistonControllerRailBlock;
 import de.melanx.utilitix.registration.ModItemTags;
 import de.melanx.utilitix.registration.ModSerializers;
+import de.melanx.utilitix.util.ItemHandlerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
@@ -33,9 +32,13 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.RailShape;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import org.apache.commons.lang3.tuple.Pair;
 import org.moddingx.libx.inventory.BaseItemStackHandler;
+import org.moddingx.libx.inventory.IAdvancedItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -94,45 +97,45 @@ public class PistonCart extends BaseCart {
     }
 
     @Override
-    public void destroy(@Nonnull DamageSource source) {
-        super.destroy(source);
+    protected void destroy(@Nonnull ServerLevel level, @Nonnull DamageSource source) {
+        super.destroy(level, source);
 
-        for (int i = 0; i < this.railIn.getSlots(); i++) {
-            this.spawnAtLocation(this.railIn.getStackInSlot(i));
+        for (int i = 0; i < this.railIn.size(); i++) {
+            this.spawnAtLocation(level, ItemUtil.getStack(this.railIn, i));
         }
 
-        for (int i = 0; i < this.torchIn.getSlots(); i++) {
-            this.spawnAtLocation(this.torchIn.getStackInSlot(i));
+        for (int i = 0; i < this.torchIn.size(); i++) {
+            this.spawnAtLocation(level, ItemUtil.getStack(this.torchIn, i));
         }
 
-        for (int i = 0; i < this.railOut.getSlots(); i++) {
-            this.spawnAtLocation(this.railOut.getStackInSlot(i));
+        for (int i = 0; i < this.railOut.size(); i++) {
+            this.spawnAtLocation(level, ItemUtil.getStack(this.railOut, i));
         }
     }
 
     @Nonnull
     @Override
-    public InteractionResult interact(@Nonnull Player player, @Nonnull InteractionHand hand) {
-        InteractionResult ret = super.interact(player, hand);
+    public InteractionResult interact(@Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Vec3 location) {
+        InteractionResult ret = super.interact(player, hand, location);
         if (ret.consumesAction()) {
             return ret;
         }
 
-        if (!this.level().isClientSide && player instanceof ServerPlayer serverPlayer) {
+        if (!this.level().isClientSide() && player instanceof ServerPlayer serverPlayer) {
             PistonCartMenu.TYPE.open(serverPlayer, this.getDisplayName(), this.getId());
         }
 
-        return InteractionResult.sidedSuccess(this.level().isClientSide);
+        return this.level().isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
     }
 
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             return;
         }
 
-        if (this.mode == PistonCartMode.PLACE && this.shouldDoRailFunctions()) {
+        if (this.mode == PistonCartMode.PLACE && this.isOnRails()) {
             BlockPos pos = new BlockPos(Mth.floor(this.getX()), Mth.floor(this.getY()), Mth.floor(this.getZ()));
             if (!this.level().getBlockState(pos).is(BlockTags.RAILS) && !this.level().getBlockState(pos.below()).is(BlockTags.RAILS)) {
                 // Simulate extraction of a rail and see what we should place next.
@@ -146,7 +149,7 @@ public class PistonCart extends BaseCart {
 
                 List<ItemStack> placeResult = this.placeRail(railStack, pos, false);
                 if (placeResult != null) {
-                    this.railIn.extractItem(railSlot, 1, false);
+                    ItemHandlerUtil.extractItem(this.railIn, railSlot, 1, false);
                     for (ItemStack drop : placeResult) {
                         this.depositOrDrop(drop.copy());
                     }
@@ -156,7 +159,7 @@ public class PistonCart extends BaseCart {
             return;
         }
 
-        if (this.mode == PistonCartMode.REPLACE && this.shouldDoRailFunctions()) {
+        if (this.mode == PistonCartMode.REPLACE && this.isOnRails()) {
             BlockPos pos = new BlockPos(Mth.floor(this.getX()), Mth.floor(this.getY()), Mth.floor(this.getZ()));
             if (!this.level().getBlockState(pos).is(BlockTags.RAILS) && this.level().getBlockState(pos.below()).is(BlockTags.RAILS)) {
                 pos = pos.below();
@@ -177,7 +180,7 @@ public class PistonCart extends BaseCart {
 
             List<ItemStack> placeResult = this.placeRail(railStack, pos, true);
             if (placeResult != null) {
-                this.railIn.extractItem(railSlot, 1, false);
+                ItemHandlerUtil.extractItem(this.railIn, railSlot, 1, false);
                 for (ItemStack drop : placeResult) {
                     this.depositOrDrop(drop.copy());
                 }
@@ -185,9 +188,9 @@ public class PistonCart extends BaseCart {
         }
     }
 
-    private Pair<ItemStack, Integer> findRail(IItemHandlerModifiable inventory) {
-        for (int slot = inventory.getSlots() - 1; slot >= 0; slot--) {
-            ItemStack extracted = inventory.extractItem(slot, 1, true);
+    private Pair<ItemStack, Integer> findRail(IAdvancedItemHandlerModifiable inventory) {
+        for (int slot = inventory.size() - 1; slot >= 0; slot--) {
+            ItemStack extracted = ItemHandlerUtil.extractItem(inventory, slot, 1, true);
 
             if (!extracted.isEmpty()) {
                 return Pair.of(extracted.copy(), slot);
@@ -199,8 +202,8 @@ public class PistonCart extends BaseCart {
 
     private void depositOrDrop(ItemStack rail) {
         ItemStack remainder = rail;
-        for (int slot = 0; slot < this.railOut.getSlots(); slot++) {
-            remainder = this.railOut.insertItem(slot, remainder, false);
+        for (int slot = 0; slot < this.railOut.size(); slot++) {
+            remainder = ItemUtil.insertItemReturnRemaining(this.railOut, slot, remainder, false, null);
             if (remainder.isEmpty()) {
                 return;
             }
@@ -322,7 +325,7 @@ public class PistonCart extends BaseCart {
         }
 
         this.level().setBlock(pos, state, Block.UPDATE_ALL_IMMEDIATE);
-        this.torchIn.extractItem(torchSlot, 1, false);
+        ItemHandlerUtil.extractItem(this.torchIn, torchSlot, 1, false);
 
         if (drops == null) {
             return;
@@ -334,15 +337,15 @@ public class PistonCart extends BaseCart {
         }
     }
 
-    public IItemHandlerModifiable getRailInputInventory() {
+    public IAdvancedItemHandlerModifiable getRailInputInventory() {
         return this.railIn;
     }
 
-    public IItemHandlerModifiable getRailOutputInventory() {
+    public IAdvancedItemHandlerModifiable getRailOutputInventory() {
         return this.railOut;
     }
 
-    public IItemHandlerModifiable getTorchInventory() {
+    public IAdvancedItemHandlerModifiable getTorchInventory() {
         return this.torchIn;
     }
 
@@ -356,15 +359,14 @@ public class PistonCart extends BaseCart {
     }
 
     @Override
-    protected void readAdditionalSaveData(@Nonnull CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
+    protected void readAdditionalSaveData(@Nonnull ValueInput input) {
+        super.readAdditionalSaveData(input);
 
-        RegistryAccess registryAccess = this.registryAccess();
-        this.railIn.deserializeNBT(registryAccess, compound.getCompound("RailInput"));
-        this.torchIn.deserializeNBT(registryAccess, compound.getCompound("TorchIn"));
-        this.railOut.deserializeNBT(registryAccess, compound.getCompound("RailOut"));
+        this.railIn.deserialize(input.childOrEmpty("RailInput"));
+        this.torchIn.deserialize(input.childOrEmpty("TorchIn"));
+        this.railOut.deserialize(input.childOrEmpty("RailOut"));
 
-        String modeName = compound.getString("Mode");
+        String modeName = input.getStringOr("Mode", "");
 
         try {
             this.mode = PistonCartMode.valueOf(modeName);
@@ -378,13 +380,12 @@ public class PistonCart extends BaseCart {
     }
 
     @Override
-    protected void addAdditionalSaveData(@Nonnull CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
+    protected void addAdditionalSaveData(@Nonnull ValueOutput output) {
+        super.addAdditionalSaveData(output);
 
-        RegistryAccess registryAccess = this.registryAccess();
-        compound.put("RailInput", this.railIn.serializeNBT(registryAccess));
-        compound.put("TorchIn", this.torchIn.serializeNBT(registryAccess));
-        compound.put("RailOut", this.railOut.serializeNBT(registryAccess));
-        compound.putString("Mode", this.mode.name());
+        this.railIn.serialize(output.child("RailInput"));
+        this.torchIn.serialize(output.child("TorchIn"));
+        this.railOut.serialize(output.child("RailOut"));
+        output.putString("Mode", this.mode.name());
     }
 }

@@ -5,7 +5,7 @@ import de.melanx.utilitix.registration.ModItems;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -16,6 +16,7 @@ import net.neoforged.neoforge.event.entity.living.LivingGetProjectileEvent;
 import net.neoforged.neoforge.event.entity.player.ArrowLooseEvent;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 @EventBusSubscriber
 public class QuiverEventHandler {
@@ -31,7 +32,7 @@ public class QuiverEventHandler {
         }
 
         if (!event.getProjectileItemStack().isEmpty()) {
-            if (!player.level().isClientSide) {
+            if (!player.level().isClientSide()) {
                 player.getPersistentData().remove(QUIVER_PENDING);
             }
 
@@ -53,7 +54,7 @@ public class QuiverEventHandler {
 
         event.setProjectileItemStack(projectileItemStack);
 
-        if (!player.level().isClientSide) {
+        if (!player.level().isClientSide()) {
             CompoundTag tag = new CompoundTag();
             tag.putInt(KEY_INV_SLOT, found.invSlot);
             tag.putInt(KEY_QUIVER_SLOT, found.quiverSlot);
@@ -64,7 +65,7 @@ public class QuiverEventHandler {
     @SubscribeEvent
     public static void onArrowLoose(ArrowLooseEvent event) {
         Player player = event.getEntity();
-        if (player.level().isClientSide) {
+        if (player.level().isClientSide()) {
             return;
         }
 
@@ -73,12 +74,17 @@ public class QuiverEventHandler {
             return;
         }
 
-        CompoundTag tag = player.getPersistentData().getCompound(QUIVER_PENDING);
+        CompoundTag tag = player.getPersistentData().getCompoundOrEmpty(QUIVER_PENDING);
         if (tag.isEmpty()) {
             return;
         }
 
-        ItemStack quiverStack = player.getInventory().getItem(tag.getInt(KEY_INV_SLOT));
+        Optional<Integer> keyInvSlot = tag.getInt(KEY_INV_SLOT);
+        if (keyInvSlot.isEmpty()) {
+            return;
+        }
+
+        ItemStack quiverStack = player.getInventory().getItem(keyInvSlot.get());
         if (quiverStack.isEmpty() || quiverStack.getItem() != ModItems.quiver) {
             player.getPersistentData().remove(QUIVER_PENDING);
             return;
@@ -90,8 +96,12 @@ public class QuiverEventHandler {
             return;
         }
 
-        int quiverSlot = tag.getInt(KEY_QUIVER_SLOT);
-        ItemStack ammo = container.getItem(quiverSlot);
+        Optional<Integer> quiverSlot = tag.getInt(KEY_QUIVER_SLOT);
+        if (quiverSlot.isEmpty()) {
+            return;
+        }
+
+        ItemStack ammo = container.getItem(quiverSlot.get());
         if (ammo.isEmpty()) {
             player.getPersistentData().remove(QUIVER_PENDING);
             return;

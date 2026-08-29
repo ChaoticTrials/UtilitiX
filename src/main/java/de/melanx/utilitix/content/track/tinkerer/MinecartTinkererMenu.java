@@ -8,12 +8,13 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.items.ItemStackHandler;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
+import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
 import org.moddingx.libx.menu.MenuBase;
 import org.moddingx.libx.menu.type.AdvancedMenuType;
 
@@ -69,19 +70,19 @@ public class MinecartTinkererMenu extends MenuBase {
             default -> throw new IllegalStateException("Unknown target type: " + target.type());
         }
 
-        ItemStackHandler labelInventory = new ItemStackHandler(1) {
+        ItemStacksResourceHandler labelInventory = new ItemStacksResourceHandler(1) {
 
             @Override
-            public int getSlotLimit(int slot) {
+            protected int getCapacity(int index, @Nonnull ItemResource resource) {
                 return 1;
             }
 
             @Override
-            protected void onContentsChanged(int slot) {
-                if (slot != LABEL_SLOT) return;
+            protected void onContentsChanged(int index, @Nonnull ItemStack previousContents) {
+                if (index != LABEL_SLOT) return;
 
-                if (!MinecartTinkererMenu.this.level.isClientSide) {
-                    ItemStack stack = this.getStackInSlot(LABEL_SLOT);
+                if (!MinecartTinkererMenu.this.level.isClientSide()) {
+                    ItemStack stack = this.getResource(LABEL_SLOT).toStack(this.getAmountAsInt(LABEL_SLOT));
                     if (MinecartTinkererMenu.this.minecart != null) {
                         MinecartTinkererItem.setLabelStack(MinecartTinkererMenu.this.minecart, stack);
                     } else if (MinecartTinkererMenu.this.controllerRail != null) {
@@ -92,11 +93,17 @@ public class MinecartTinkererMenu extends MenuBase {
         };
 
         switch(target.type()) {
-            case ENTITY -> labelInventory.setStackInSlot(LABEL_SLOT, MinecartTinkererItem.getLabelStack(this.minecart));
-            case BLOCK -> labelInventory.setStackInSlot(LABEL_SLOT, this.controllerRail.getFilterStack().copy());
+            case ENTITY -> {
+                ItemStack stack = MinecartTinkererItem.getLabelStack(this.minecart);
+                labelInventory.set(LABEL_SLOT, ItemResource.of(stack), stack.getCount());
+            }
+            case BLOCK -> {
+                ItemStack stack = this.controllerRail.getFilterStack().copy();
+                labelInventory.set(LABEL_SLOT, ItemResource.of(stack), stack.getCount());
+            }
         }
 
-        this.addSlot(new SlotItemHandler(labelInventory, LABEL_SLOT, 80, 18));
+        this.addSlot(new ResourceHandlerSlot(labelInventory, labelInventory::set, LABEL_SLOT, 80, 18));
         this.layoutPlayerInventorySlots(8, 50);
     }
 

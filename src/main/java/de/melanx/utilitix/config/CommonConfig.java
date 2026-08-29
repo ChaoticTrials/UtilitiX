@@ -3,7 +3,7 @@ package de.melanx.utilitix.config;
 import com.google.common.collect.ImmutableList;
 import de.melanx.utilitix.content.MobYoinkerItem;
 import de.melanx.utilitix.util.ArmorStandRotation;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import org.moddingx.libx.annotation.config.RegisterConfig;
 import org.moddingx.libx.config.Config;
@@ -80,8 +80,8 @@ public class CommonConfig {
         @IntRange(min = 0)
         public static int maxXp = Integer.MAX_VALUE;
 
-        @Config("A ResourceLocation for an experience fluid. If it exists in the tag #c:experience, the crystal will always store this type of fluid xp")
-        public static Optional<ResourceLocation> fluidXp = Optional.empty();
+        @Config("A Identifier for an experience fluid. If it exists in the tag #c:experience, the crystal will always store this type of fluid xp")
+        public static Optional<Identifier> fluidXp = Optional.empty();
     }
 
     @Group("Config values for the two bells, mob bell and hand bell")

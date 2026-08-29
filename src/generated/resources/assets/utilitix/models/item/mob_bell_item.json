@@ -1,5 +1,5 @@
 {
-  "parent": "item/generated",
+  "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "utilitix:item/mob_bell_stick",
     "layer1": "utilitix:item/mob_bell_bell"

@@ -2,6 +2,7 @@ package de.melanx.utilitix.item;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.entity.FuelValues;
 import org.moddingx.libx.base.ItemBase;
 import org.moddingx.libx.mod.ModX;
 
@@ -18,7 +19,7 @@ public class BurnableItemBase extends ItemBase {
     }
 
     @Override
-    public int getBurnTime(@Nonnull ItemStack itemStack, @Nullable RecipeType<?> recipeType) {
+    public int getBurnTime(@Nonnull ItemStack itemStack, @Nullable RecipeType<?> recipeType, @Nonnull FuelValues fuelValues) {
         return this.burnTime;
     }
 }

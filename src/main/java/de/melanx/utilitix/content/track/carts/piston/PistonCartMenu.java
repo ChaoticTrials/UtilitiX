@@ -7,8 +7,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.items.SlotItemHandler;
 import org.moddingx.libx.menu.EntityMenu;
+import org.moddingx.libx.menu.slot.BaseSlot;
 import org.moddingx.libx.menu.slot.OutputSlot;
 import org.moddingx.libx.menu.type.AdvancedMenuType;
 
@@ -27,7 +27,7 @@ public class PistonCartMenu extends EntityMenu<PistonCart> {
     protected PistonCartMenu(@Nullable MenuType<?> type, int windowId, Level level, int entityId, Player player, Inventory inventory) {
         super(type, windowId, level, entityId, player, inventory, 13, 25);
         this.addSlotBox(this.entity.getRailInputInventory(), 0, 8, 18, 3, 18, 4, 18);
-        this.addSlot(new SlotItemHandler(this.entity.getTorchInventory(), 0, 80, 72));
+        this.addSlot(new BaseSlot(this.entity.getTorchInventory(), this.entity.getTorchInventory(), 0, 80, 72));
         this.addSlotBox(this.entity.getRailOutputInventory(), 0, 116, 18, 3, 18, 4, 18, OutputSlot::new);
         this.layoutPlayerInventorySlots(8, 104);
     }

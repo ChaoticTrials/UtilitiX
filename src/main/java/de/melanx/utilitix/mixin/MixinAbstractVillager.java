@@ -2,8 +2,8 @@ package de.melanx.utilitix.mixin;
 
 import de.melanx.utilitix.config.CommonConfig;
 import de.melanx.utilitix.config.FeatureConfig;
-import net.minecraft.world.entity.npc.AbstractVillager;
-import net.minecraft.world.entity.npc.WanderingTrader;
+import net.minecraft.world.entity.npc.villager.AbstractVillager;
+import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.item.trading.MerchantOffer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,7 +17,7 @@ public class MixinAbstractVillager {
             method = "notifyTrade",
             at = @At("TAIL")
     )
-    public void notifyTrade2(MerchantOffer offer, CallbackInfo ci) {
+    public void utilitix$notifyTrade2(MerchantOffer offer, CallbackInfo ci) {
         if (!FeatureConfig.Misc.InWorldChanges.wanderingTrader) {
             return;
         }

@@ -11,12 +11,11 @@ import de.melanx.utilitix.registration.ModItemTags;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
@@ -25,18 +24,18 @@ import org.moddingx.libx.util.Misc;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 public class Apply extends EffectTransformer {
 
     public static final Codec<Holder<MobEffect>> MOB_EFFECT_HOLDER_CODEC =
-            ResourceLocation.CODEC.comapFlatMap(
-                    id -> BuiltInRegistries.MOB_EFFECT.getHolder(id)
+            Identifier.CODEC.comapFlatMap(
+                    id -> BuiltInRegistries.MOB_EFFECT.get(id)
+                            .<Holder<MobEffect>>map(holder -> holder)
                             .<DataResult<Holder<MobEffect>>>map(DataResult::success)
                             .orElseGet(() -> DataResult.error(() -> "Unknown mob effect: " + id)),
                     holder -> {
-                        ResourceLocation key = BuiltInRegistries.MOB_EFFECT.getKey(holder.value());
+                        Identifier key = BuiltInRegistries.MOB_EFFECT.getKey(holder.value());
                         return key == null ? Misc.MISSINGNO : key;
                     }
             );
@@ -127,12 +126,7 @@ public class Apply extends EffectTransformer {
         int size = buffer.readVarInt();
         ImmutableList.Builder<MobEffectInstance> effects = ImmutableList.builder();
         for (int i = 0; i < size; i++) {
-            CompoundTag nbt = buffer.readNbt();
-            if (nbt == null) {
-                throw new IllegalStateException("Missing MobEffectInstance NBT in Apply transformer");
-            }
-
-            effects.add(Objects.requireNonNull(MobEffectInstance.load(nbt)));
+            effects.add(MobEffectInstance.STREAM_CODEC.decode(buffer));
         }
 
         return new Apply(name, effects.build());
@@ -146,7 +140,7 @@ public class Apply extends EffectTransformer {
 
         buffer.writeVarInt(transformer.effects.size());
         for (MobEffectInstance effect : transformer.effects) {
-            buffer.writeNbt(effect.save());
+            MobEffectInstance.STREAM_CODEC.encode(buffer, effect);
         }
     }
 }

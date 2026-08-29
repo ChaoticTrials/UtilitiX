@@ -4,15 +4,16 @@ import de.melanx.utilitix.UtilitiX;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import org.moddingx.libx.annotation.impl.RegistrationPropertiesHelper;
 import org.moddingx.libx.base.ItemBase;
 import org.moddingx.libx.registration.Registerable;
 import org.moddingx.libx.registration.RegistrationContext;
@@ -33,8 +34,8 @@ public class BaseCart extends AbstractMinecart {
 
     @Nonnull
     @Override
-    public Type getMinecartType() {
-        return Type.RIDEABLE;
+    public ItemStack getPickResult() {
+        return CART_ITEMS.getOrDefault(this.getType(), Items.MINECART).getDefaultInstance();
     }
 
     @Nonnull
@@ -43,17 +44,13 @@ public class BaseCart extends AbstractMinecart {
         return CART_ITEMS.getOrDefault(this.getType(), Items.MINECART);
     }
 
-    @Override
-    public boolean canBeRidden() {
-        return false;
-    }
-
     public static <T extends BaseCart> CartType<T> type(String id, EntityType.EntityFactory<T> factory) {
         return BaseCart.type(id, factory, new Item.Properties().stacksTo(1));
     }
 
     public static <T extends BaseCart> CartType<T> type(String id, EntityType.EntityFactory<T> factory, Item.Properties properties) {
-        EntityType<T> type = EntityType.Builder.of(factory, MobCategory.MISC).sized(0.98F, 0.7F).clientTrackingRange(8).build(UtilitiX.getInstance().modid + "_" + id);
+        EntityType<T> type = EntityType.Builder.of(factory, MobCategory.MISC).sized(0.98F, 0.7F).clientTrackingRange(8).build(ResourceKey.create(Registries.ENTITY_TYPE, UtilitiX.getInstance().id(id)));
+        RegistrationPropertiesHelper.setItemId(properties, UtilitiX.getInstance().modid + ":" + id);
         ItemBase item = new BaseCartItem(UtilitiX.getInstance(), type, properties);
 
         CART_ITEMS.put(type, item);
@@ -99,7 +96,6 @@ public class BaseCart extends AbstractMinecart {
         }
 
         @Override
-        @OnlyIn(Dist.CLIENT)
         public void setupClient(SetupContext ctx) {
             ctx.enqueue(() -> EntityRenderers.register(this.type, context -> new MinecartRendererX<>(context, ModelLayers.MINECART)));
         }

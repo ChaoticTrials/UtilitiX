@@ -1,50 +1,41 @@
 package de.melanx.utilitix.compat.jade;
 
 import de.melanx.utilitix.UtilitiX;
-import de.melanx.utilitix.content.redstone.wireless.LinkedRepeaterBlockEntity;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
-import snownee.jade.api.IServerDataProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
 
+import javax.annotation.Nonnull;
+import java.util.Optional;
 import java.util.UUID;
 
-public class LinkedRepeaterProvider implements IBlockComponentProvider, IServerDataProvider<BlockAccessor> {
+public class LinkedRepeaterProvider implements IBlockComponentProvider {
 
-    public static final ResourceLocation UID = UtilitiX.getInstance().resource("linked_repeater");
+    public static final Identifier UID = UtilitiX.getInstance().id("linked_repeater");
     public static final LinkedRepeaterProvider INSTANCE = new LinkedRepeaterProvider();
 
+    @Nonnull
     @Override
-    public ResourceLocation getUid() {
+    public Identifier getUid() {
         return UID;
     }
 
     @Override
-    public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
-        if (!config.get(UtilJade.LINKED_REPEATER) || !accessor.getServerData().getBoolean("showDetails")) {
+    public void appendTooltip(@Nonnull ITooltip tooltip, @Nonnull BlockAccessor accessor, IPluginConfig config) {
+        if (!config.get(UtilJade.LINKED_REPEATER) || !accessor.getServerData().getBooleanOr("showDetails", false)) {
             return;
         }
 
-        if (accessor.getServerData().get("LinkId") != null) {
-            UUID linkId = accessor.getServerData().getUUID("LinkId");
-            tooltip.add(Component.translatable("tooltip.utilitix.valid_link", Component.literal(linkId.toString()).withStyle(ChatFormatting.GREEN)).withStyle(ChatFormatting.RED));
+        Optional<UUID> linkId = accessor.getServerData().read("LinkId", UUIDUtil.CODEC);
+        if (linkId.isPresent()) {
+            tooltip.add(Component.translatable("tooltip.utilitix.valid_link", Component.literal(linkId.get().toString()).withStyle(ChatFormatting.GREEN)).withStyle(ChatFormatting.RED));
         } else {
             tooltip.add(Component.translatable("tooltip.utilitix.invalid_link").withStyle(ChatFormatting.RED));
         }
-    }
-
-    @Override
-    public void appendServerData(CompoundTag data, BlockAccessor accessor) {
-        LinkedRepeaterBlockEntity linkedRepeater = (LinkedRepeaterBlockEntity) accessor.getBlockEntity();
-        UUID id = linkedRepeater.getLinkId();
-        if (id != null) {
-            data.putUUID("LinkId", id);
-        }
-        data.putBoolean("showDetails", accessor.showDetails());
     }
 }

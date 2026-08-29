@@ -18,7 +18,5 @@
       "translate": "item.utilitix.apple_juice"
     }
   },
-  "input": {
-    "item": "minecraft:golden_apple"
-  }
+  "input": "minecraft:golden_apple"
 }
