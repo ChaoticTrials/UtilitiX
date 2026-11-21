@@ -31,6 +31,7 @@ public class StickyChunk {
     public void set(int x, int y, int z, Direction dir, boolean sticky) {
         StickySection section = this.getOrCreateSection(y);
         section.set(x, y & 0xF, z, dir, sticky);
+        this.updateRenderIndex();
     }
 
     public byte getData(int x, int y, int z) {
@@ -41,11 +42,13 @@ public class StickyChunk {
     public void setData(int x, int y, int z, byte data) {
         StickySection section = this.getOrCreateSection(y);
         section.setData(x, y & 0xF, z, data);
+        this.updateRenderIndex();
     }
 
     public void clearData(int x, int y, int z) {
         StickySection section = this.getOrCreateSection(y);
         section.clearData(x, y & 0xF, z);
+        this.updateRenderIndex();
     }
 
     public void foreach(ChunkAction action) {
@@ -59,6 +62,16 @@ public class StickyChunk {
         }
     }
     
+    boolean hasGlue() {
+        return this.sections.values().stream().anyMatch(section -> !section.canBeDiscarded());
+    }
+
+    private void updateRenderIndex() {
+        if (this.chunk != null && this.chunk.getLevel().isClientSide) {
+            SlimeRender.updateChunk(this.chunk, this);
+        }
+    }
+
     public void sync() {
         if (this.chunk != null && !this.chunk.getLevel().isClientSide) {
             this.chunk.setUnsaved(true);
@@ -78,6 +91,7 @@ public class StickyChunk {
 
     public void attach(LevelChunk chunk) {
         this.chunk = chunk;
+        this.updateRenderIndex();
     }
 
     public CompoundTag write() {
@@ -106,6 +120,7 @@ public class StickyChunk {
                 UtilitiX.getInstance().logger.error("Invalid chunk section id in sticky chunk: " + key);
             }
         }
+        this.updateRenderIndex();
     }
 
     public void write(FriendlyByteBuf buffer) {
@@ -125,6 +140,7 @@ public class StickyChunk {
             section.readRawDataFromBuffer(buffer);
             this.sections.put(sectionId, section);
         }
+        this.updateRenderIndex();
     }
     
     // Will clear the argument.
@@ -135,6 +151,7 @@ public class StickyChunk {
         this.sections.clear();
         this.sections.putAll(networkChunk.sections);
         networkChunk.sections.clear();
+        this.updateRenderIndex();
     }
     
     public interface ChunkAction {

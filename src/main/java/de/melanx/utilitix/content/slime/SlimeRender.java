@@ -14,41 +14,80 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.event.level.ChunkEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import org.moddingx.libx.render.RenderHelperBlock;
 import org.moddingx.libx.render.RenderHelperLevel;
 
+import java.util.IdentityHashMap;
+import java.util.Map;
+
 public class SlimeRender {
+
+    private static final Map<LevelChunk, StickyChunk> chunksWithGlue = new IdentityHashMap<>();
+    private static ClientLevel indexedLevel;
+
+    private static void selectLevel(ClientLevel level) {
+        if (indexedLevel != level) {
+            chunksWithGlue.clear();
+            indexedLevel = level;
+        }
+    }
+
+    static void updateChunk(LevelChunk chunk, StickyChunk glue) {
+        if (chunk.getLevel() instanceof ClientLevel level && level == Minecraft.getInstance().level) {
+            selectLevel(level);
+            if (glue.hasGlue()) {
+                chunksWithGlue.put(chunk, glue);
+            } else {
+                chunksWithGlue.remove(chunk);
+            }
+        }
+    }
+
+    public static void unloadChunk(ChunkEvent.Unload event) {
+        if (event.getLevel() == indexedLevel && event.getChunk() instanceof LevelChunk chunk) {
+            chunksWithGlue.remove(chunk);
+        }
+    }
+
+    public static void unloadLevel(LevelEvent.Unload event) {
+        if (event.getLevel() == indexedLevel) {
+            selectLevel(null);
+        }
+    }
 
     public static void renderWorld(RenderLevelStageEvent event) {
         if (!ClientConfig.renderGlueOnBlocks) return;
         ClientLevel level = Minecraft.getInstance().level;
         if (level != null && event.getStage() == RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS) {
+            selectLevel(level);
+            if (chunksWithGlue.isEmpty()) return;
             Minecraft.getInstance().getProfiler().push("utilitix_glue");
             Minecraft.getInstance().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS);
             TextureAtlasSprite slime = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(Textures.GLUE_OVERLAY_TEXTURE);
             if (slime != null) {
                 PoseStack poseStack = event.getPoseStack();
-                int size = level.getChunkSource().storage.chunks.length();
                 Frustum clip = new Frustum(poseStack.last().pose(), event.getProjectionMatrix());
                 Vec3 projection = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
                 clip.prepare(projection.x, projection.y, projection.z);
                 Minecraft.getInstance().getProfiler().push("render_chunks");
-                for (int i = 0; i < size; i++) {
-                    LevelChunk chunk = level.getChunkSource().storage.chunks.get(i);
-                    if (chunk != null) {
-                        ChunkPos pos = chunk.getPos();
-                        if (clip.isVisible(new AABB(pos.getMinBlockX(), level.getMinBuildHeight(), pos.getMinBlockZ(), pos.getMaxBlockX() + 1, level.getMaxBuildHeight() + 1, pos.getMaxBlockZ() + 1))) {
-                            //noinspection ConstantConditions
-                            StickyChunk data = chunk.getCapability(SlimyCapability.STICKY_CHUNK).orElse(null);
-                            //noinspection ConstantConditions
-                            if (data != null) {
-                                data.foreach(renderChunk(event.getCamera(), clip, poseStack, pos, chunk, slime));
-                            }
-                        }
+                var iterator = chunksWithGlue.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    var entry = iterator.next();
+                    LevelChunk chunk = entry.getKey();
+                    ChunkPos pos = chunk.getPos();
+                    if (level.getChunkSource().getChunk(pos.x, pos.z, ChunkStatus.FULL, false) != chunk) {
+                        iterator.remove();
+                        continue;
+                    }
+                    if (clip.isVisible(new AABB(pos.getMinBlockX(), level.getMinBuildHeight(), pos.getMinBlockZ(), pos.getMaxBlockX() + 1, level.getMaxBuildHeight() + 1, pos.getMaxBlockZ() + 1))) {
+                        entry.getValue().foreach(renderChunk(event.getCamera(), clip, poseStack, pos, chunk, slime));
                     }
                 }
                 Minecraft.getInstance().renderBuffers().bufferSource().endBatch();

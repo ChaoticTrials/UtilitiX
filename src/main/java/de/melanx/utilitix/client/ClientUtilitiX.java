@@ -17,6 +17,8 @@ public class ClientUtilitiX {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerKey);
 
         MinecraftForge.EVENT_BUS.addListener(SlimeRender::renderWorld);
+        MinecraftForge.EVENT_BUS.addListener(SlimeRender::unloadChunk);
+        MinecraftForge.EVENT_BUS.addListener(SlimeRender::unloadLevel);
         MinecraftForge.EVENT_BUS.register(new ClientEventListener());
     }
 
