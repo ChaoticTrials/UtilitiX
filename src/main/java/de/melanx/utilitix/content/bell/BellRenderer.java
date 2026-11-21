@@ -86,6 +86,8 @@ public class BellRenderer extends BlockEntityWithoutLevelRenderer {
                 this.blockEntityRenderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity);
             }
 
+            float partialTick = mc.getTimer().getGameTimeDeltaPartialTick(false);
+
             poseStack.pushPose();
             poseStack.scale(0.7F, 0.7F, 0.7F);
             poseStack.translate(0, 0F, 0.25F);
@@ -94,10 +96,10 @@ public class BellRenderer extends BlockEntityWithoutLevelRenderer {
             poseStack.translate(-0.475, -1.6, -1);
 
             if (stack.getItem() != ModItems.mobBell) {
-                this.blockEntityRenderer.render(blockEntity, mc.getFrameTimeNs(), poseStack, buffer, LightTexture.pack(15, 15), OverlayTexture.NO_OVERLAY);
+                this.blockEntityRenderer.render(blockEntity, partialTick, poseStack, buffer, LightTexture.pack(15, 15), OverlayTexture.NO_OVERLAY);
             } else {
                 int color = MobBellItem.getColor(stack);
-                float ringRotation = -(Mth.sin(blockEntity.ticks + mc.getFrameTimeNs() / (float) Math.PI) / (4 + (blockEntity.ticks + Minecraft.getInstance().getFrameTimeNs()) / 3f));
+                float ringRotation = -(Mth.sin(blockEntity.ticks + partialTick / (float) Math.PI) / (4 + (blockEntity.ticks + partialTick) / 3f));
 
                 this.grayscaleModel.xRot = 0;
                 this.grayscaleModel.zRot = blockEntity.shaking ? ringRotation : 0;
