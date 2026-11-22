@@ -19,6 +19,9 @@ public class ClientUtilitiX {
 
     public ClientUtilitiX(IEventBus modBus) {
         NeoForge.EVENT_BUS.addListener(StickyRenderHelper::renderWorld);
+        NeoForge.EVENT_BUS.addListener(StickyRenderHelper::unloadChunk);
+        NeoForge.EVENT_BUS.addListener(StickyRenderHelper::unloadLevel);
+        NeoForge.EVENT_BUS.addListener(StickyRenderHelper::clientTick);
         modBus.addListener(ClientUtilitiX::clientSetup);
     }
 
