@@ -62,13 +62,21 @@ public class StickyChunk implements ValueIOSerializable {
     }
 
     public void setData(int x, int y, int z, byte data) {
-        StickySection section = this.getOrCreateSection(y);
+        StickySection section = data == 0 ? this.getSection(y) : this.getOrCreateSection(y);
+        if (section == null) {
+            return;
+        }
+
         section.setData(x, y & 0xF, z, data);
         this.updateRenderIndex(data != 0);
     }
 
     public void clearData(int x, int y, int z) {
-        StickySection section = this.getOrCreateSection(y);
+        StickySection section = this.getSection(y);
+        if (section == null) {
+            return;
+        }
+
         section.clearData(x, y & 0xF, z);
         this.updateRenderIndex();
     }
