@@ -52,6 +52,7 @@ public class StickyChunk implements INBTSerializable<CompoundTag> {
     public void set(int x, int y, int z, Direction dir, boolean sticky) {
         StickySection section = this.getOrCreateSection(y);
         section.set(x, y & 0xF, z, dir, sticky);
+        this.updateRenderIndex(sticky);
     }
 
     public byte getData(int x, int y, int z) {
@@ -63,11 +64,13 @@ public class StickyChunk implements INBTSerializable<CompoundTag> {
     public void setData(int x, int y, int z, byte data) {
         StickySection section = this.getOrCreateSection(y);
         section.setData(x, y & 0xF, z, data);
+        this.updateRenderIndex(data != 0);
     }
 
     public void clearData(int x, int y, int z) {
         StickySection section = this.getOrCreateSection(y);
         section.clearData(x, y & 0xF, z);
+        this.updateRenderIndex();
     }
 
     public void foreach(ChunkAction action) {
@@ -80,6 +83,26 @@ public class StickyChunk implements INBTSerializable<CompoundTag> {
             if (sectionAction != null) {
                 entry.getValue().foreach(sectionAction);
             }
+        }
+    }
+
+    private boolean hasGlue() {
+        for (StickySection section : this.sections.values()) {
+            if (!section.canBeDiscarded()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void updateRenderIndex() {
+        this.updateRenderIndex(false);
+    }
+
+    private void updateRenderIndex(boolean addedGlue) {
+        if (this.chunk != null && this.chunk.getLevel().isClientSide) {
+            StickyRenderHelper.updateChunk(this.chunk, this, addedGlue || this.hasGlue());
         }
     }
     
@@ -134,6 +157,7 @@ public class StickyChunk implements INBTSerializable<CompoundTag> {
         this.sections.clear();
         this.sections.putAll(networkChunk.sections);
         networkChunk.sections.clear();
+        this.updateRenderIndex();
     }
 
     @Override
@@ -170,6 +194,8 @@ public class StickyChunk implements INBTSerializable<CompoundTag> {
                 UtilitiX.getInstance().logger.error("Invalid chunk section id in sticky chunk: {}", key);
             }
         }
+
+        this.updateRenderIndex();
     }
 
     public interface ChunkAction {

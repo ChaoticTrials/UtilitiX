@@ -13,6 +13,9 @@ public class ClientUtilitiX {
         modBus.addListener(this::registerItemColors);
 
         NeoForge.EVENT_BUS.addListener(StickyRenderHelper::renderWorld);
+        NeoForge.EVENT_BUS.addListener(StickyRenderHelper::unloadChunk);
+        NeoForge.EVENT_BUS.addListener(StickyRenderHelper::unloadLevel);
+        NeoForge.EVENT_BUS.addListener(StickyRenderHelper::clientTick);
     }
 
     private void registerItemColors(RegisterColorHandlersEvent.Item event) {
