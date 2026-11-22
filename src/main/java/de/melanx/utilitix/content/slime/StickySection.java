@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class StickySection {
-    
+
     private byte[] stickies;
     // For performance
     private Set<Integer> indicesWithGlue = null;
@@ -43,6 +43,10 @@ public class StickySection {
 
     public void setData(int x, int y, int z, byte data) {
         int idx = ((y & 0xF) << 8) | ((z & 0xF) << 4) | (x & 0xF);
+        if (this.stickies[idx] == data) {
+            return;
+        }
+
         this.stickies[idx] = data;
         this.indicesWithGlue = null;
         this.chunk.sync();
@@ -50,6 +54,10 @@ public class StickySection {
 
     public void clearData(int x, int y, int z) {
         int idx = ((y & 0xF) << 8) | ((z & 0xF) << 4) | (x & 0xF);
+        if (this.stickies[idx] == 0) {
+            return;
+        }
+
         this.stickies[idx] = 0;
         this.indicesWithGlue = null;
         this.chunk.sync();
@@ -59,7 +67,7 @@ public class StickySection {
         this.calculateIndicesWithGlueIfNeeded();
         return this.indicesWithGlue.isEmpty();
     }
-    
+
     public void foreach(StickyChunk.SectionAction action) {
         this.calculateIndicesWithGlueIfNeeded();
         action.start();
@@ -89,7 +97,7 @@ public class StickySection {
             }
         }
     }
-    
+
     public byte[] getStickies() {
         byte[] copy = new byte[4096];
         System.arraycopy(this.stickies, 0, copy, 0, 4096);
@@ -106,11 +114,11 @@ public class StickySection {
             this.indicesWithGlue = null;
         }
     }
-    
+
     public void writeRawDataToBuffer(FriendlyByteBuf buffer) {
         buffer.writeBytes(this.stickies);
     }
-    
+
     public void readRawDataFromBuffer(FriendlyByteBuf buffer) {
         this.stickies = new byte[4096];
         buffer.readBytes(this.stickies);
